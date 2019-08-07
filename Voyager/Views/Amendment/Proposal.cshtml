@@ -1,0 +1,144 @@
+﻿@model Voyager.App.ViewModels.ProposalViewModel
+<script src="~/js/Costing/Proposal.js"></script>
+<script>
+    $(document).ready(function () {
+        LoadProposalSection('@Model.MenuViewModel.QRFID');
+    });
+</script>
+<style>
+    .proposal-progress-bar-cont ul.steps-bar > li {
+        width: calc(19% - 37px);
+    }
+</style>
+
+@Html.HiddenFor(x => x.MenuViewModel.QRFID, new { @id = "QRFId" })
+<div class="wrapper">
+    <div class="main-content form-theme-04 form">
+        <div class="container">
+            <div class="pg-container">
+                <div class="listing-content" id="divCostingOfficerHeader">
+                    @*<div class="enquiry-ttl-due-section btm-border">
+                        <h1 class="full">Costing Officer</h1>
+                    </div>*@
+                    @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+                </div>
+                <div class="sqr-tab-cont">
+                    @Html.Partial("_AmendmentMenu", Model.MenuViewModel)
+                    @if (Model.MenuViewModel.EnquiryPipeline != "Costing Approval Pipeline")
+                    {
+                        <div class="sqr-tab-data flights">
+                            <div class="ttl-sec tbl-style">
+                                <div id="HeadersTab">
+                                    <h3 id="HeaderPriceBreakUp"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Price Breakup</span></h3>
+                                    <h3 id="HeaderSuggestedItinerary" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Suggested Itinerary </span></h3>
+                                    @*<h3 id="HeaderRouting" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Routing</span></h3>*@
+                                    <h3 id="HeaderInclusionsExclusions" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Inclusions / Exclusions</span></h3>
+                                    <h3 id="HeaderTerms" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Terms</span></h3>
+                                    <h3 id="HeaderCoveringNote" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Covering Note</span></h3>
+                                    <h3 id="HeaderReview" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Review</span></h3>
+                                </div>
+
+                                @if (Model.MenuViewModel.EnquiryPipeline == "Costing Pipeline" || Model.MenuViewModel.EnquiryPipeline == "Amendment Pipeline")
+                                {
+                                    <div class="rht-sec">
+                                        <div class="btn-cont ">
+                                            <a href="#commercials-submit-for-approval-alert" class="btn btn-blue popup-inline commercialsubmit">Submit For Approval</a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="co-alert-box">
+                                <div class="txt-cntent">
+                                    <div>
+                                        <i class="fa-custom-caution"></i>
+                                        <h3>Important</h3>
+                                    </div>
+                                </div>
+                                <div class="txt-para">
+                                    <p class="txt-red">The Build Proposal comprises five sections. Though these sections can be worked on individually, the system will not allow its generating or printing, until all six steps have been completed. </p>
+                                </div>
+                            </div>
+                            <div class="proposal-progress-bar-cont">
+                                <ul class="steps-bar" id="ProposalTabs" style="cursor:pointer;">
+                                    @Html.HiddenFor(x => x.ProposalId, new { @id = "ProposalId" })
+                                    <li id="PriceBreakup" class="active"><a id="aPriceBreakup">Price Break-Up</a></li>
+                                    <li id="SuggestedItinerary"><a id="aSuggestedItinerary">Suggested Itinerary</a></li>
+                                    @*<li id="Routing"><a id="aRouting">Routing</a></li>*@
+                                    <li id="InclusionsExclusions"><a id="aInclusionsExclusions">Inclusions / Exclusions</a></li>
+                                    <li id="Terms"><a id="aTerms">Terms</a></li>
+                                    <li id="CoveringNote"><a id="aCoveringNote">Covering Note</a></li>
+                                    <li id="Review"><a id="aReview">Review</a></li>
+                                </ul>
+                                <div class="clear"></div>
+                            </div>
+                            @*<div class="btn-cont-rgt" style="text-align:right">
+                                    <a href="#" class="btn btn-blue btn-md">Save &amp; Continue</a>
+                                </div>*@
+                            <div class="process-data-sec" id="ProposalTabsCont">
+                                <div class="simple-tab-data" id="ProposalPriceBreakup">@Html.Partial("_ProposalPriceBreakup", Model.ProposalPriceBreakupViewModel)</div>
+                                <div class="simple-tab-data" id="ProposalSuggestedItinerary" style="display:none;"></div>
+                                @*<div class="simple-tab-data" id="ProposalRouting" style="display:none;"></div>*@
+                                <div class="simple-tab-data" id="ProposalInclusionsExclusions" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalTerms" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalCoveringNote" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalReview" style="display:none;"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!--Commercial Submit For Approval Popup Start-->
+                <div class="mfp-hide popup-box pop-md form-theme-04 form" id="commercials-submit-for-approval-alert">
+                    @*<h2>18b-Itinerary-Submit-Quote-Popup</h2>*@
+                    <div class="popup-in">
+                        <h3 class="pop-tl">Approve Quote</h3>
+                        <p>
+                            <i>@Model.CurrentDate</i><br>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <b>The Product Accountant</b><br>
+                                    OBT - Series Department<br>
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.DropDownListFor(m => m.Officer, new SelectList(Model.OfficerList, "MAIL", "MAIL"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <br>
+                            Dear Sir / Madam<br>
+                            <br>
+                            Please made note of the following remarks while working this quotation.<br>
+                            <br>
+                            @Html.TextAreaFor(x => x.Remarks, new { @id = "remarks", @rows = 5 })
+                            <br>
+                            <br>
+                            Thank You.<br>
+                            <br>
+                            @Model.UserName<br>
+                            Costing Officer
+                        </p>
+                        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+                        <div class="btn-cont text-center">
+                            <a href="#commercial-approval-submitted" class="popup-inline btn btn-blue btn-md" id="btnSubmitCommercialSave">Submit</a>
+                            <a href="#" class="btn btn-blue-outline btn-md close-popup ">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+                <!--Commercial Submit For Approval Popup End-->
+                <!--Commercial Submitted Popup Start-->
+                <div class="mfp-hide popup-box pop-md" id="commercial-approval-submitted" style="display:none">
+                    @*<h2>18c-Itinerary-Quote-Submitted-Popup</h2>*@
+                    <div class="popup-in">
+                        <h3 class="pop-tl">Thank You</h3>
+                        <p> Your Quotation Reference <span class="blue-txt semi-bold">@Model.MenuViewModel.QRFID</span> has been submitted to our Product Accountant, who will reply you shortly. </p>
+
+                        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+                        <div class="btn-cont text-center">
+                            <a href="#" class="popup-inline btn btn-blue btn-md closeOkPopup">Ok</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

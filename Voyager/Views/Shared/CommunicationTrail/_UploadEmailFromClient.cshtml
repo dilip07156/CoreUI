@@ -1,0 +1,122 @@
+﻿@model Voyager.App.ViewModels.EmailDetail
+
+<link href="~/ckeditor/samples/css/samples.css" rel="stylesheet" />
+
+<div class="mfp-hide popup-box pop-lg" id="modelupldfrmemailclient">
+    <div class="popup-in">
+        <div class="radio-list-bar type02">
+            <h3>Upload Email from Client</h3>
+        </div>
+        <hr class="hrmargintop10">
+        <p class="fontsize17">
+            For QRF @Model.QRFID - @Model.AgentTourName
+        </p>
+        <div class="modal-body">
+            @Html.HiddenFor(Model => Model.QRFPriceID, new { @id = "QRFPriceID" })
+            @Html.HiddenFor(Model => Model.QRFID, new { @id = "QRFID" })
+            @Html.HiddenFor(Model => Model.AgentTourName, new { @id = "AgentTourName" })
+
+            <div class="card">
+                <div class="card-body">
+                    <div style="text-align:left;margin-top:3px;display:none;" id="divSuccessError">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                    </div>
+
+                    <div class="row" style="padding-top: 8px;" id="divEmailInfo">
+                        <div class="col-lg-8">
+                            <b>Email</b><span class="text-danger" id="speditorEmailHtml"></span>
+                            <div class="form-group sendhtmldiv" id="divemailhtml" style="overflow-y:unset;">
+                                <textarea id="editorEmailHtml" name="editorEmailHtml" class="editorEmailHtml"> 
+                                </textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <table style="width:100%;" class="tbluploademail">
+                                <tbody>
+                                    <tr>
+                                        <td><b>From</b></td>
+                                        <td>@Html.TextBoxFor(m => m.From, new { @id = "txtFrom", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtFrom"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>To</b></td>
+                                        <td>@Html.TextBoxFor(m => m.To, new { @id = "txtTo", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtTo"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Cc</b></td>
+                                        <td>@Html.TextBoxFor(m => m.CC, new { @id = "txtCC", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtCC"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Bcc</b></td>
+                                        <td>@Html.TextBoxFor(m => m.BCC, new { @id = "txtBCC", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtBCC"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Subject</b></td>
+                                        <td>@Html.TextBoxFor(m => m.Subject, new { @id = "txtSubject", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtSubject"></span></td>
+                                    </tr>
+                                    @*<tr>
+                                            <td><b>Mail Type</b></td>
+                                            <td>@Html.TextBoxFor(m => m.MailType, new { @id = "txtMailType", @class = "form-control" })</td>
+                                            <td><span class="text-danger" id="sptxtMailType"></span></td>
+                                        </tr>*@
+                                    <tr>
+                                        <td><b>Mail Status</b></td>
+                                        <td>@Html.TextBoxFor(m => m.MailStatus, new { @id = "txtMailStatus", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtMailStatus"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Remarks</b></td>
+                                        <td>@Html.TextAreaFor(m => m.Remarks, new { @id = "txtRemarks", @class = "form-control resizenone" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Mail Sent On</b></td>
+                                        <td class="form-theme-04">
+                                            <div class="input-append date" data-date-format="dd/M/yyyy" style="width: 120px;padding-left: 5px;">
+                                                @Html.TextBoxFor(m => m.MailSentOn, "{0:dd/MMM/yyyy}", new { @class = "span2 form-control alphanumericdate", @maxlength = "11", @id = "txtmailsenton", @placeholder = "dd/MMM/yyyy" })
+                                                <span class="add-on"></span>
+                                            </div>
+                                            <span style="float:right;margin-top: -22px;">(dd/MMM/yyyy)</span>
+                                        </td>
+                                        <td><span class="text-danger" id="sptxtmailsenton"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Mail Time</b></td>
+                                        <td>
+                                            @Html.TextBoxFor(m => m.Time, new { @class = "form-control timeFormat", @placeholder = "00:00", @id = "txtTime" })
+                                        </td>
+                                        <td>
+                                            <span class="text-danger" id="sptxtTime"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Mail Sent By</b></td>
+                                        <td>@Html.TextBoxFor(m => m.MailSentBy, new { @id = "txtMailSentBy", @class = "form-control" })</td>
+                                        <td><span class="text-danger" id="sptxtMailSentBy"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Is Mail Sent</b></td>
+                                        <td>@Html.CheckBoxFor(m => m.MailSent, new { @id = "chkIsMailSent" })</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close close-popup"></button>
+    <div class="btn-cont text-center">
+        <input type="button" class="btn btn-blue btn-md" id="savefromclient" title="Save" value="Save" />
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+    </div>
+</div>
+
+<link href="~/css/communicationtrail.css" rel="stylesheet" />
+
+<script src="~/js/AgentApproval/UploadEmailFromClient.js"></script>

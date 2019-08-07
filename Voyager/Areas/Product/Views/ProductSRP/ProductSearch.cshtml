@@ -1,0 +1,42 @@
+﻿@model Voyager.App.ViewModels.ProductsSRPViewModel
+@{
+    ViewData["Title"] = "Accomodation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        @using (Html.BeginForm("Product", "ProductSearch", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmProductSearch" }))
+        {
+            <div class="container">
+                <div class="pg-container">
+                    <div class="sqr-tab-cont">
+                        <div class="sqr-tab-data">
+                            <div class="row">
+                                <div class="col-md-12 lft-pnl" id="ProductFilterView">
+                                </div>
+                                @*@Html.Partial("_ProductSearchPage", Model)*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="listing-content">
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <!-- MAIN_CONTENT starts -->
+
+</div>
+<script>
+    $(document).ready(function () {
+        $('#ProductFilterView').load('/Product/_ProductSearchView');
+    });
+</script>
+<style>
+    .amendment-control{
+        display:none;
+    }
+</style>

@@ -1,0 +1,593 @@
+﻿@model Voyager.App.ViewModels.AccomodationViewModel
+
+@using (Html.BeginForm("Accomodation", "Accomodation", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmAccomodation" }))
+{
+	@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+	@Html.HiddenFor(Model => Model.MenuViewModel.PositionId, new { @id = "PositionId" })
+
+	@if (Model.MenuViewModel.PositionId == "" || Model.MenuViewModel.PositionId == null)
+	{<div class="btn-cont pull-right">
+			<ul>
+				<li><a href="#accomdefmealplan-popup" class="txt-lnk darkblue popup-inline accomdefmealplan"><i class="fa fa-chevron-circle-right"></i> Add Default Meal Plan</a></li>
+				<li><input type="button" value="Save" class="btn btn-blue btn-md SaveAccomodation"></li>
+			</ul>
+		</div>
+	}
+	<h3><i class="fa-custom-building"></i> Accommodation</h3>
+	<hr />
+	@if (TempData.Keys.Contains("success"))
+	{
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Success!</strong> @TempData["success"].ToString()
+		</div>
+	}
+	else if (TempData.Keys.Contains("error"))
+	{
+		<div class="alert alert-danger">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Error!</strong> @TempData["error"].ToString()
+		</div>
+	}
+	<div class="simple-tab-cont">
+		<div class="simple-tab-data">
+			<div>
+				<div style="display:block">
+
+					<div class="custom-mob-tbl type02 table-responsive table-departures-dates valign-top-tbl">
+						<table class="table top-align scroller tblAccomodationData">
+							<thead>
+								<tr>
+									<th class="col-md-2"><span>Cities</span>@*<span><small>(Select in the order you wish to stay)</small></span>*@</th>
+									<th class="col-md-2"><span>Hotel Details</span></th>
+									<th class="col-md-2"><span>Rooms Required</span>@*<span><small><label><input type="checkbox" /> Apply across cities</label></small></span>*@</th>
+									<th class="col-requirements col-md-2"><span>Requirements</span></th>
+									<th class="col-md-1"><span>Keep As</span></th>
+									<th class="col-md-1"><span>Remarks</span>@*<span><small><label><input type="checkbox" />  Applies to both</label></small></span>*@</th>
+									@if (Model.MenuViewModel.PositionId == "" || Model.MenuViewModel.PositionId == null)
+									{
+										<th class="col-md-1">&nbsp;</th>
+									}
+								</tr>
+							</thead>
+							<tbody>
+								@if (Model.AccomodationData != null && Model.AccomodationData.Count > 0)
+								{
+									@for (int i = 0; i < Model.AccomodationData.Count; i++)
+									{
+										<tr class="clonedHotel" id="clonedHotel_@i">
+											<td>
+												<label class="frm-sub-label txt-orange"> </label>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">&nbsp; </label>
+													<div class="row row-sm">
+														<div class="col-sm-12">
+															@Html.HiddenFor(m => m.AccomodationData[i].AccomodationSequence, new { @id = "AccomodationSequence_" + i })
+															@Html.HiddenFor(m => m.AccomodationData[i].AccomodationId, new { @id = "AccomodationId_" + i, @class = "clsAccomodationId" })
+															@Html.HiddenFor(m => m.AccomodationData[i].CityID, new { @id = "FromCity_" + i })
+															@Html.TextBoxFor(m => m.AccomodationData[i].CityName, new { @class = "form-control bindCity clsCity", @id = "FromCityUI_" + i, @style = "width:91%" })
+															@Html.ValidationMessageFor(m => m.AccomodationData[i].CityName, "", new { @class = "text-danger" })
+														</div>
+														@*<div class="col-sm-4">
+																<a class="icon-pls cloneCity">
+																	<i class="fa fa-plus txt-green"></i>
+																</a>
+																<a class="icon-pls removeCity">
+																	<i class="fa fa-times txt-red"></i>
+																</a>
+															</div>*@
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Starting From </label>
+													@Html.DropDownListFor(m => m.AccomodationData[i].StartingFrom, new SelectList(Model.AccomodationData[i].StartingFromList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select", @id = "ddlDayID_" + i })
+													@Html.HiddenFor(m => m.AccomodationData[i].DayName, new { @id = "ddlDay_" + i, @class = "DayName" })
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">No. of Nights </label>
+													@Html.DropDownListFor(m => m.AccomodationData[i].NoOfNight, new SelectList(Model.AccomodationData[i].NoOfNightList, "Value", "Value"), new { @class = "form-control" })
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Check-in Time</label>
+													@Html.TextBoxFor(m => m.AccomodationData[i].StartTime, new { @class = "form-control time24 clsStartTime", @id = "StartTimeUI_" + i, @placeholder = "00.00" })
+													@Html.ValidationMessageFor(m => m.AccomodationData[i].StartTime, "", new { @class = "text-danger" })
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Check-out Time</label>
+													@Html.TextBoxFor(m => m.AccomodationData[i].EndTime, new { @class = "form-control time24 clsEndTime", @id = "EndTimeUI_" + i, @placeholder = "00.00" })
+													@Html.ValidationMessageFor(m => m.AccomodationData[i].EndTime, "", new { @class = "text-danger" })
+												</div>
+											</td>
+											<td>
+												<div class="form-group-cont collapse-block">
+													<div class="form-group">
+														<label class="frm-sub-label txt-orange">Name </label>
+														@Html.HiddenFor(m => m.AccomodationData[i].SupplierId, new { @id = "SupplierId_" + i, @class = "clsSupplierId" })
+														@Html.HiddenFor(m => m.AccomodationData[i].SupplierName, new { @id = "SupplierName_" + i, @class = "clsSupplierName" })
+														@Html.HiddenFor(m => m.AccomodationData[i].HotelID, new { @id = "HotelName_" + i, @class = "clsHotelID" })
+														@Html.TextBoxFor(m => m.AccomodationData[i].HotelName, new { @class = "form-control filled bindHotelName", @id = "HotelNameUI_" + i, @style = "width:91%" })
+														@Html.ValidationMessageFor(m => m.AccomodationData[i].HotelName, "", new { @class = "text-danger" })
+														@Html.HiddenFor(m => m.AccomodationData[i].ProductTypeId, new { @id = "ProductTypeId_" + i, @class = "clsProductTypeId" })
+														@Html.HiddenFor(m => m.AccomodationData[i].ProductType, new { @id = "ProductType_" + i, @class = "clsProductType" })
+													</div>
+													<div class="collapse-container">
+														<div class="form-group">
+															<label class="frm-sub-label txt-orange">Star Rating</label>
+															@Html.DropDownListFor(m => m.AccomodationData[i].StarRating, new SelectList(Model.AccomodationData[i].StarRatingList, "Value", "Value"), "Select", new { @class = "form-control clsStarRating" })
+															@Html.HiddenFor(m => m.AccomodationData[i].StarRatingDef, new { @id = "StarRatingDef_" + i, @class = "clsStarRatingDef" })
+															@Html.HiddenFor(m => m.AccomodationData[i].StarRatingIdDef, new { @id = "StarRatingIdDef_" + i, @class = "clsStarRatingIdDef" })
+														</div>
+														<div class="form-group">
+															<label class="frm-sub-label txt-orange">Category</label>
+															@Html.DropDownListFor(m => m.AccomodationData[i].Category, new SelectList(Model.AccomodationData[i].CategoryList, "VoyagerDefProductCategoryId", "Name"), "Select", new { @class = "form-control clsCategory" })
+															@Html.HiddenFor(m => m.AccomodationData[i].CategoryIdDef, new { @id = "CategoryIdDef_" + i, @class = "clsCategoryIdDef" })
+															@Html.HiddenFor(m => m.AccomodationData[i].CategoryDef, new { @id = "CategoryDef_" + i, @class = "clsCategoryDef" })
+														</div>
+														<div class="form-group">
+															<label class="frm-sub-label txt-orange">Location </label>
+															@Html.DropDownListFor(m => m.AccomodationData[i].Location, new SelectList(Model.AccomodationData[i].LocationList, "Value", "Value"), "Select", new { @class = "form-control clsLocation" })
+															@Html.HiddenFor(m => m.AccomodationData[i].LocationDef, new { @id = "LocationDef_" + i, @class = "clsLocationDef" })
+															@Html.HiddenFor(m => m.AccomodationData[i].LocationIdDef, new { @id = "LocationIdDef_" + i, @class = "clsLocationIdDef" })
+														</div>
+														<div class="form-group">
+															<label class="frm-sub-label txt-orange">Chain </label>
+															@Html.HiddenFor(m => m.AccomodationData[i].ChainID, new { @id = "Chain_" + i, @class = "hfChain" })
+															@Html.TextBoxFor(m => m.AccomodationData[i].ChainName, new { @class = "form-control bindChain clsChain", @id = "ChainUI_" + i, @style = "width:91%" })
+
+															@Html.HiddenFor(m => m.AccomodationData[i].ChainDef, new { @id = "ChainDef_" + i, @class = "clsChainDef" })
+															@Html.HiddenFor(m => m.AccomodationData[i].ChainIdDef, new { @id = "ChainIdDef_" + i, @class = "clsChainIdDef" })
+														</div>
+													</div>
+													<div class="lnk-dotted"><a href="#" class="collapse-link"><i class="fa fa-angle-up"></i> Options </a> </div>
+												</div>
+											</td>
+											@{
+												Model.AccomodationData[i].PositionRoomsData.RowNo = i;
+												Model.AccomodationData[i].PositionRoomsData.PositionType = "AccomodationData[";
+											}
+											@Html.Partial("_PositionRoomDetails", Model.AccomodationData[i].PositionRoomsData)
+											<td>
+												<div class="form-group-cont collapse-block">
+													<div class="form-group">
+														<label class="frm-sub-label txt-orange">Meal Plan</label>
+														@Html.DropDownListFor(m => m.AccomodationData[i].MealPlan, new SelectList(Model.AccomodationData[i].MealPlanList, "AttributeId", "Value"), new { @class = "form-control clsAccomMealPlan" })
+													</div>
+													<div class="collapse-container" style="display:none">
+														<!--<h4 class="grey-box">Hub : Ex Mumbai</h4>-->
+														<div class="form-group">
+															<label class="frm-sub-label txt-orange">Early Check in </label>
+															<div class="row row-sm">
+																<div class="col-sm-6">
+																	<div class="input-append date" data-date-format="dd/mm/yyyy">
+																		@Html.TextBoxFor(m => m.AccomodationData[i].EarlyCheckInDate, "{0:dd/MM/yyyy}", new { @class = "span3 form-control clsEarlyCheckInDate alphanumericdate chkdate", @maxlength = "10", @id = "EarlyCheckInDate_" + i, @placeholder = "dd/MM/yyyy" })
+																		<span class="add-on"></span>
+																		@Html.ValidationMessageFor(m => m.AccomodationData[i].EarlyCheckInDate, "", new { @class = "text-danger" })
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	@Html.TextBoxFor(m => m.AccomodationData[i].EarlyCheckInTime, new { @class = "form-control time24 clsEarlyCheckInTime", @placeholder = "00:00", @id = "EarlyCheckInTime_" + i, @style = "width:91%" })
+																	@Html.ValidationMessageFor(m => m.AccomodationData[i].EarlyCheckInTime, "", new { @class = "text-danger" })
+																</div>
+																@*<div class="col-sm-4">
+																		@Html.TextBoxFor(m => m.AccomodationData[i].NumberOfEarlyCheckInRooms, new { @class = "form-control numeric clsNumberOfEarlyCheckInRooms", @placeholder = "No. of Rooms", @id = "NumberOfEarlyCheckInRooms_" + i, @style = "width:91%" })
+																			@Html.ValidationMessageFor(m => m.AccomodationData[i].NumberOfEarlyCheckInRooms, "", new { @class = "text-danger" })
+																	</div>*@
+															</div>
+														</div>
+
+														<div class="row row-sm">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<div class="frm-sub-label txt-orange">
+																		Inter-Connecting
+																		<div class="tool-tip info">
+																			<a href="#" class="info-lnk">
+																				<i class="fa fa-info-circle"></i>
+																			</a>
+																			<div class="tooltip-cont disable">
+																				<h5>Inter-connecting Rooms</h5>
+																				Adjacent Rooms having a special entrance between the rooms.
+																				<a href="#" class="btn-close"></a>
+																			</div>
+																		</div>
+																	</div>
+																	@Html.TextBoxFor(m => m.AccomodationData[i].NumberofInterConnectingRooms, new { @class = "form-control numeric", @placeholder = "No. of Rooms", @id = "NumberofInterConnectingRooms_" + i })
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label class="frm-sub-label txt-orange">Wash n change </label>
+																	@Html.TextBoxFor(m => m.AccomodationData[i].NumberOfWashChangeRooms, new { @class = "form-control numeric", @placeholder = "No. of Rooms", @id = "NumberOfWashChangeRooms_" + i, @style = "width:91%" })
+																</div>
+															</div>
+														</div>
+
+														<div class="form-group">
+															<label class="frm-sub-label txt-orange">Late Check out </label>
+															<div class="row row-sm">
+																<div class="col-sm-6">
+																	<div class="input-append date" data-date-format="dd/MM/yyyy">
+																		@Html.TextBoxFor(m => m.AccomodationData[i].LateCheckOutDate, "{0:dd/mm/yyyy}", new { @class = "span3 form-control clsLateCheckOutDate alphanumericdate chkdate", @maxlength = "10", @id = "LateCheckOutDate_" + i, @placeholder = "dd/MM/yyyy" })
+																		<span class="add-on"></span>
+																		@Html.ValidationMessageFor(m => m.AccomodationData[i].LateCheckOutDate, "", new { @class = "text-danger" })
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	@Html.TextBoxFor(m => m.AccomodationData[i].LateCheckOutTime, new { @class = "form-control time24 clsLateCheckOutTime", @placeholder = "00:00", @id = "LateCheckOutTime_" + i, @style = "width:91%" })
+																	@Html.ValidationMessageFor(m => m.AccomodationData[i].LateCheckOutTime, "", new { @class = "text-danger" })
+																</div>
+																@*<div class="col-sm-4">
+																		@Html.TextBoxFor(m => m.AccomodationData[i].NumberOfLateCheckOutRooms, new { @class = "form-control numeric clsNumberOfLateCheckOutRooms", @placeholder = "No. of Rooms", @id = "NumberOfLateCheckOutRooms_" + i, @style = "width:91%" })
+																			@Html.ValidationMessageFor(m => m.AccomodationData[i].NumberOfLateCheckOutRooms, "", new { @class = "text-danger" })
+																	</div>*@
+															</div>
+
+														</div>
+														@*<div class="form-group">
+																<label class="frm-sub-label txt-orange">Add Supplement</label>
+
+																<div class="row row-sm">
+																	<div class="col-sm-4">
+																		@Html.HiddenFor(m => m.AccomodationData[i].Supplement)
+																		@Html.DropDownListFor(m => m.AccomodationData[i].SupplementID, new SelectList(Model.AccomodationData[i].SupplementList, "AttributeId", "Value"), "Select", new { @id = "SupplementID_" + i, @class = "form-control clsSupplement selectName" })
+																	</div>
+																	<div class="col-sm-4">
+																		<a class="txt-lnk darkblue cloneSupplement">+ Add</a>
+																	</div>
+																</div>
+
+																<div>
+																	<small class="txt-red">
+																		<strong>Note:</strong> One or more of the above may involve extra charges and are subject to availability. We will check and let you know.
+																	</small>
+																</div>
+															</div>*@
+													</div>
+													<div class="lnk-dotted"><a href="#" class="collapse-link collapsed"><i class="fa fa-angle-up"></i> Options </a> </div>
+												</div>
+											</td>
+											<td>
+												<label class="frm-sub-label txt-orange"> &nbsp;</label>
+												@Html.DropDownListFor(m => m.AccomodationData[i].KeepAs, new SelectList(Model.AccomodationData[i].KeepAsList, "Value", "Value"), new { @class = "form-control" })
+												@Html.ValidationMessageFor(m => m.AccomodationData[i].KeepAs, "", new { @class = "text-danger" })
+											</td>
+											<td>
+												<div class="price-foc-sec">
+													<div class="tool-tip info Prices">
+														<span class="msg txt-green" style="display:none;">Prices Added</span>
+														<span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+														<a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+														<div id="divPrices_@i" class="tooltip-cont type03 divPrices">
+														</div>
+													</div>
+													<hr>
+													<div class="tool-tip info FOC">
+														<span class="msg txt-green" style="display:none;">FOC Added</span>
+														<span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+														<a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+														<div id="divFOC_@i" class="tooltip-cont type03 divFOC">
+														</div>
+													</div>
+													<hr>
+												</div>
+												<div>
+													<a href="#SimilarHotels-popup" class="txt-lnk darkblue btn-add popup-inline clsfocprice" data-name="similarhotel">Show Similar Hotels</a>
+												</div>
+												<hr />
+
+												<span class="frm-sub-label txt-orange">For TL</span>
+												@Html.TextAreaFor(m => m.AccomodationData[i].RemarksForTL, new { @class = "", @size = "", @rows = "7" })
+											</td>
+											@if (Model.MenuViewModel.PositionId == "" || Model.MenuViewModel.PositionId == null)
+											{
+												<td>
+													<div class="icon-squre-cont" style="margin-top:7px;">
+														<a class="icon-squre-green cloneHotel"><i class="fa fa-plus"></i></a>
+														<a class="icon-squre-red removeHotel"><i class="fa fa-times"></i></a>
+													</div>
+													<br />
+													<div>
+														<span class="frm-sub-label txt-orange">For OPS</span>
+														@Html.TextAreaFor(m => m.AccomodationData[i].RemarksForOPS, new { @class = "", @size = "", @rows = "10" })
+													</div>
+												</td>
+											}
+										</tr>
+
+												}
+												}
+							</tbody>
+						</table>
+					</div>
+
+					<div class="btn-cont" style="margin-top:20px;">
+						<ul class="pull-right">
+							<li><a href="#accomdefmealplan-popup" class="txt-lnk darkblue popup-inline accomdefmealplan"><i class="fa fa-chevron-circle-right"></i> Add Default Meal Plan</a></li>
+							<li><input type="button" value="Save" class="btn btn-blue btn-md SaveAccomodation"></li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+												}
+
+@*dummy row*@
+@if (Model.AccomodationData != null && Model.AccomodationData.Count > 0)
+{
+	<table class="hidden">
+		<tr class="clonedHotel" id="clonedHotel_00">
+			<td>
+				<label class="frm-sub-label txt-orange"> </label>
+				<div class="form-group">
+					<label class="frm-sub-label txt-orange">&nbsp; </label>
+					<div class="row row-sm">
+						<div class="col-sm-12">
+							@Html.HiddenFor(m => m.AccomodationData[0].AccomodationSequence, new { @id = "AccomodationSequence_" + 0 })
+							@Html.HiddenFor(m => m.AccomodationData[0].AccomodationId, new { @id = "AccomodationId_" + 0, @class = "clsAccomodationId" })
+							@Html.HiddenFor(m => m.AccomodationData[0].CityID, new { @id = "FromCity_" + 0 })
+							@Html.TextBoxFor(m => m.AccomodationData[0].CityName, new { @class = "form-control bindCity clsCity", @id = "FromCityUI_" + 0, @style = "width:91%" })
+							<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].CityName" data-valmsg-replace="true"></span>
+						</div>
+						@*<div class="col-sm-4">
+								<a class="icon-pls cloneCity">
+									<i class="fa fa-plus txt-green"></i>
+								</a>
+								<a class="icon-pls removeCity">
+									<i class="fa fa-times txt-red"></i>
+								</a>
+							</div>*@
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="frm-sub-label txt-orange">Starting From </label>
+					@Html.DropDownListFor(m => m.AccomodationData[0].StartingFrom, new SelectList(Model.AccomodationData[0].StartingFromList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select", @id = "ddlDayID_" + 0 })
+					@Html.HiddenFor(m => m.AccomodationData[0].DayName, new { @id = "ddlDay_" + 0, @class = "DayName" })
+				</div>
+				<div class="form-group">
+					<label class="frm-sub-label txt-orange">No. of Nights </label>
+					@Html.DropDownListFor(m => m.AccomodationData[0].NoOfNight, new SelectList(Model.AccomodationData[0].NoOfNightList, "Value", "Value"), new { @class = "form-control" })
+				</div>
+				<div class="form-group">
+					<label class="frm-sub-label txt-orange">Check-in Time</label>
+					@Html.TextBoxFor(m => m.AccomodationData[0].StartTime, new { @class = "form-control time24 clsStartTime", @id = "StartTimeUI_" + 0, @placeholder = "00.00" })
+					<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].StartTime" data-valmsg-replace="true"></span>
+				</div>
+				<div class="form-group">
+					<label class="frm-sub-label txt-orange">Check-out Time</label>
+					@Html.TextBoxFor(m => m.AccomodationData[0].EndTime, new { @class = "form-control time24 clsEndTime", @id = "EndTimeUI_" + 0, @placeholder = "00.00" })
+					<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].EndTime" data-valmsg-replace="true"></span>
+				</div>
+			</td>
+			<td>
+				<div class="form-group-cont collapse-block">
+					<div class="form-group">
+						<label class="frm-sub-label txt-orange">Name </label>
+						@Html.HiddenFor(m => m.AccomodationData[0].SupplierId, new { @id = "SupplierId_" + 0, @class = "clsSupplierId" })
+						@Html.HiddenFor(m => m.AccomodationData[0].SupplierName, new { @id = "SupplierName_" + 0, @class = "clsSupplierName" })
+						@Html.HiddenFor(m => m.AccomodationData[0].HotelID, new { @id = "HotelName_" + 0, @class = "clsHotelID" })
+						@Html.TextBoxFor(m => m.AccomodationData[0].HotelName, new { @class = "form-control filled bindHotelName", @id = "HotelNameUI_" + 0, @style = "width:91%" })
+						<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].HotelName" data-valmsg-replace="true"></span>
+						@Html.HiddenFor(m => m.AccomodationData[0].ProductTypeId, new { @id = "ProductTypeId_" + 0, @class = "clsProductTypeId" })
+						@Html.HiddenFor(m => m.AccomodationData[0].ProductType, new { @id = "ProductType_" + 0, @class = "clsProductType" })
+					</div>
+					<div class="collapse-container" style="display:none">
+						<div class="form-group">
+							<label class="frm-sub-label txt-orange">Star Rating</label>
+							@Html.DropDownList("AccomodationData[0].StarRating", new SelectList(Model.AccomodationData[0].StarRatingList, "Value", "Value"), "Select", new { @class = "form-control clsStarRating" })
+							@Html.HiddenFor(m => m.AccomodationData[0].StarRatingDef, new { @id = "StarRatingDef_" + 0, @class = "clsStarRatingDef" })
+							@Html.HiddenFor(m => m.AccomodationData[0].StarRatingIdDef, new { @id = "StarRatingIdDef_" + 0, @class = "clsStarRatingIdDef" })
+						</div>
+						<div class="form-group">
+							<label class="frm-sub-label txt-orange">Category</label>
+							@Html.DropDownList("AccomodationData[0].Category", new SelectList(Model.AccomodationData[0].CategoryList, "VoyagerDefProductCategoryId", "Name"), "Select", new { @class = "form-control clsCategory" })
+							@Html.HiddenFor(m => m.AccomodationData[0].CategoryIdDef, new { @id = "CategoryIdDef_" + 0, @class = "clsCategoryIdDef" })
+							@Html.HiddenFor(m => m.AccomodationData[0].CategoryDef, new { @id = "CategoryDef_" + 0, @class = "clsCategoryDef" })
+						</div>
+						<div class="form-group">
+							<label class="frm-sub-label txt-orange">Location </label>
+							@Html.DropDownList("AccomodationData[0].Location", new SelectList(Model.AccomodationData[0].LocationList, "Value", "Value"), "Select", new { @class = "form-control clsLocation" })
+							@Html.HiddenFor(m => m.AccomodationData[0].LocationDef, new { @id = "LocationDef_" + 0, @class = "clsLocationDef" })
+							@Html.HiddenFor(m => m.AccomodationData[0].LocationIdDef, new { @id = "LocationIdDef_" + 0, @class = "clsLocationIdDef" })
+						</div>
+						<div class="form-group">
+							<label class="frm-sub-label txt-orange">Chain </label>
+							@Html.HiddenFor(m => m.AccomodationData[0].ChainID, new { @id = "Chain_" + 0 })
+							@Html.TextBoxFor(m => m.AccomodationData[0].ChainName, new { @class = "form-control bindChain clsChain", @id = "ChainUI_" + 0, @style = "width:91%" })
+							@Html.HiddenFor(m => m.AccomodationData[0].ChainDef, new { @id = "ChainDef_" + 0, @class = "clsChainDef" })
+							@Html.HiddenFor(m => m.AccomodationData[0].ChainIdDef, new { @id = "ChainIdDef_" + 0, @class = "clsChainIdDef" })
+						</div>
+					</div>
+					<div class="lnk-dotted"><a href="#" class="collapse-link collapsed"><i class="fa fa-angle-up"></i> Options </a> </div>
+				</div>
+			</td>
+
+			@{
+				Model.AccomodationData[0].PositionRoomsData.RowNo = -1;
+				Model.AccomodationData[0].PositionRoomsData.PositionType = "AccomodationData[";
+			}
+			@Html.Partial("_PositionRoomDetails", Model.AccomodationData[0].PositionRoomsData)
+
+			<td>
+				<div class="form-group-cont collapse-block">
+					<div class="form-group">
+						<label class="frm-sub-label txt-orange">Meal Plan</label>
+						@Html.DropDownListFor(m => m.AccomodationData[0].MealPlan, new SelectList(Model.AccomodationData[0].MealPlanList, "AttributeId", "Value"), new { @class = "form-control clsMealPlan clsAccomMealPlan" })
+					</div>
+					<div class="collapse-container">
+						<!--<h4 class="grey-box">Hub : Ex Mumbai</h4>-->
+						<div class="form-group">
+							<label class="frm-sub-label txt-orange">Early Check in </label>
+							<div class="row row-sm">
+								<div class="col-sm-6">
+									<div class="input-append date" data-date-format="dd/MM/yyyy">
+										@Html.TextBoxFor(m => m.AccomodationData[0].EarlyCheckInDate, new { @class = "span3 form-control clsDate clsEarlyCheckInDate alphanumericdate chkdate", @maxlength = "10", @id = "EarlyCheckInDate_" + 0, @placeholder = "dd/MM/yyyy" })
+										<span class="add-on"></span>
+										<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].EarlyCheckInDate" data-valmsg-replace="true"></span>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									@Html.TextBoxFor(m => m.AccomodationData[0].EarlyCheckInTime, new { @class = "form-control time24 clsEarlyCheckInTime", @placeholder = "00:00", @id = "EarlyCheckInTime_" + 0, @style = "width:91%" })
+									<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].EarlyCheckInTime" data-valmsg-replace="true"></span>
+								</div>
+								@*<div class="col-sm-4">
+										@Html.TextBoxFor(m => m.AccomodationData[0].NumberOfEarlyCheckInRooms, new { @class = "form-control numeric clsNumberOfEarlyCheckInRooms", @placeholder = "No. of Rooms", @id = "NumberOfEarlyCheckInRooms_" + 0, @style = "width:91%" })
+											<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].NumberOfEarlyCheckInRooms" data-valmsg-replace="true"></span>
+									</div>*@
+							</div>
+						</div>
+
+						<div class="row row-sm">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<div class="frm-sub-label txt-orange">
+										Inter-Connecting
+										<div class="tool-tip info">
+											<a href="#" class="info-lnk">
+												<i class="fa fa-info-circle"></i>
+											</a>
+											<div class="tooltip-cont disable clsInterConnectingInfo">
+												<h5>Inter-connecting Rooms</h5>
+												Adjacent Rooms having a special entrance between the rooms.
+												<a href="#" class="btn-close"></a>
+											</div>
+										</div>
+									</div>
+									@Html.TextBoxFor(m => m.AccomodationData[0].NumberofInterConnectingRooms, new { @class = "form-control numeric", @placeholder = "No. of Rooms", @id = "NumberofInterConnectingRooms_" + 0, })
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label class="frm-sub-label txt-orange">Wash n change </label>
+									@Html.TextBoxFor(m => m.AccomodationData[0].NumberOfWashChangeRooms, new { @class = "form-control numeric", @placeholder = "No. of Rooms", @id = "NumberOfWashChangeRooms_" + 0, @style = "width:91%" })
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="frm-sub-label txt-orange">Late Check out </label>
+							<div class="row row-sm">
+								<div class="col-sm-6">
+									<div class="input-append date" data-date-format="dd/MM/yyyy">
+										@Html.TextBoxFor(m => m.AccomodationData[0].LateCheckOutDate, new { @class = "span3 form-control clsDate clsLateCheckOutDate alphanumericdate chkdate", @maxlength = "10", @id = "LateCheckOutDate_" + 0, @placeholder = "dd/MM/yyyy" })
+										<span class="add-on"></span>
+										<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].LateCheckOutDate" data-valmsg-replace="true"></span>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									@Html.TextBoxFor(m => m.AccomodationData[0].LateCheckOutTime, new { @class = "form-control time24 clsLateCheckOutTime", @placeholder = "00:00", @id = "LateCheckOutTime_" + 0, @style = "width:91%" })
+									<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].LateCheckOutTime" data-valmsg-replace="true"></span>
+								</div>
+								@*<div class="col-sm-4">
+										@Html.TextBoxFor(m => m.AccomodationData[0].NumberOfLateCheckOutRooms, new { @class = "form-control numeric clsNumberOfLateCheckOutRooms", @placeholder = "No. of Rooms", @id = "NumberOfLateCheckOutRooms_" + 0, @style = "width:91%" })
+											<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].NumberOfLateCheckOutRooms" data-valmsg-replace="true"></span>
+									</div>*@
+							</div>
+
+						</div>
+						@*<div class="form-group">
+								<label class="frm-sub-label txt-orange">Add Supplement</label>
+
+								<div class="row row-sm">
+									<div class="col-sm-4">
+										@Html.HiddenFor(m => m.AccomodationData[0].Supplement)
+										@Html.DropDownList("AccomodationData[0].SupplementID", new SelectList(Model.AccomodationData[0].SupplementList, "AttributeId", "Value"), "Select", new { @id = "SupplementID_" + 0, @class = "form-control clsSupplement selectName" })
+									</div>
+									<div class="col-sm-4">
+										<a class="txt-lnk darkblue cloneSupplement">+ Add</a>
+									</div>
+								</div>
+
+								<div>
+									<small class="txt-red">
+										<strong>Note:</strong> One or more of the above may involve extra charges and are subject to availability. We will check and let you know.
+									</small>
+								</div>
+							</div>*@
+					</div>
+					<div class="lnk-dotted"><a href="#" class="collapse-link collapsed"><i class="fa fa-angle-up"></i> Options </a> </div>
+				</div>
+			</td>
+			<td>
+				<label class="frm-sub-label txt-orange"> &nbsp;</label>
+				@*@Html.DropDownList("AccomodationData[0].KeepAs", new SelectList(Model.AccomodationData[0].KeepAsList, "Value", "Value"), "Select", new { @class = "form-control" })*@
+				@Html.DropDownListFor(m => m.AccomodationData[0].KeepAs, new SelectList(Model.AccomodationData[0].KeepAsList, "Value", "Value"), new { @class = "form-control clsKeepAs" })
+				<span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="AccomodationData[0].KeepAs" data-valmsg-replace="true"></span>
+			</td>
+			<td>
+				<div class="price-foc-sec">
+					<div class="tool-tip info Prices">
+						<span class="msg txt-green" style="display:none;">Prices Added</span>
+						<span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+						<a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+						<div id="divPrices_0" class="tooltip-cont type03 divPrices">
+						</div>
+					</div>
+					<hr>
+					<div class="tool-tip info FOC">
+						<span class="msg txt-green" style="display:none;">FOC Added</span>
+						<span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+						<a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+						<div id="divFOC_0" class="tooltip-cont type03 divFOC">
+						</div>
+					</div>
+					<hr>
+				</div>
+				<a href="#" class="txt-lnk darkblue">For TL</a>
+				@Html.TextArea("AccomodationData[0].RemarksForTL", new { @class = "", @size = "" })
+				<a href="#" class="txt-lnk darkblue">For OPS</a>
+				@Html.TextArea("AccomodationData[0].RemarksForOPS", new { @class = "", @size = "" })
+				<div>
+					<a href="#SimilarHotels-popup" class="txt-lnk darkblue btn-add popup-inline clsfocprice" data-name="similarhotel">Show Similar Hotels</a>
+				</div>
+			</td>
+			<td>
+				<div class="icon-squre-cont">
+					<a class="icon-squre-green cloneHotel"><i class="fa fa-plus"></i></a>
+					<a class="icon-squre-red removeHotel"><i class="fa fa-times"></i></a>
+				</div>
+			</td>
+		</tr>
+	</table>
+
+	<div class="mfp-hide popup-box pop-md form-theme-04 form" id="accomdefmealplan-popup" style="display:none">
+		<div class="popup-in">
+			<h4>Default Meal Plan</h4>
+			<div class="custom-mob-tbl table-responsive">
+				<div style="display:none;text-align:left;" id="divSuccessError">
+					<a class="close" title="close">×</a>
+					<strong id="stMsg"></strong> <label id="lblmsg"></label>
+				</div>
+				<table class="table">
+					<tbody class="row-grid-sm document-list">
+						<tr>
+							<td>
+								<div class="form-group">
+									<label class="frm-sub-label txt-orange">Meal Plan</label>
+									@Html.DropDownListFor(m => m.AccomodationData[0].MealPlan, new SelectList(Model.AccomodationData[0].MealPlanList, "AttributeId", "Value"), new { @class = "form-control clsAccomMealPlan", @id = "ddlAccomMealPlan" })
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+			<div class="btn-cont">
+				<button title="Apply" type="button" class="btn btn-blue btn-md saveaccomdefmealplan">Apply</button>
+				<button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="SimilarHotels-popup" style="display:none">
+		<div class="popup-box pop-lg form-theme-04 form" style="max-width:98%">
+			<div class="popup-in">
+
+			</div>
+		</div>
+	</div>
+				}
+<script src="~/js/Sales/Accomodation.js"></script>

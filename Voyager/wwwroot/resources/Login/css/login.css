@@ -1,0 +1,220 @@
+.main_right_container {
+    height: 750px;
+}
+
+main {
+    width: 100%;
+    height: 100%;
+}
+
+    main .main_left {
+        width: 40%;
+        height: 100%;
+        background-image: url("../../../images/login_bg.jpeg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        display: inline-block;
+    }
+
+        main .main_left .login_overlay {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 79, 146, 0.8);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        main .main_left .main_left_container {
+            width: 100%;
+            padding: 10% 10%;
+            position: relative;
+        }
+
+            main .main_left .main_left_container .login_date_block {
+                color: #e5b520;
+                font-weight: 200;
+            }
+
+                main .main_left .main_left_container .login_date_block .date_block_left {
+                    font-size: 5em;
+                    display: inline-block;
+                }
+
+                main .main_left .main_left_container .login_date_block .date_block_right {
+                    display: inline-block;
+                    font-size: 1.8em;
+                    text-transform: uppercase;
+                    margin-left: 15px;
+                }
+
+            main .main_left .main_left_container .login_info_block {
+                width: 70%;
+                margin-top: 30%;
+                color: #fff;
+            }
+
+                main .main_left .main_left_container .login_info_block h4 {
+                    font-size: 2em;
+                    font-weight: 300;
+                }
+
+                main .main_left .main_left_container .login_info_block p {
+                    font-size: 0.9em;
+                    line-height: 230%;
+                    margin-top: 7%;
+                }
+
+    main .main_right {
+        width: 60%;
+        height: 100%;
+        padding: 0% 10%;
+        display: inline-block;
+        float: right;
+    }
+
+        main .main_right .login_logo {
+            width: 180px;
+            height: 180px;
+        }
+
+            main .main_right .login_logo img {
+                width: 100%;
+                height: 100%;
+                -o-object-fit: contain;
+                object-fit: contain;
+                -webkit-object-fit: contain;
+            }
+
+        main .main_right h2 {
+            font-weight: 200;
+            color: #333;
+            font-size: 2.7em;
+            margin-left: 15px;
+            margin-bottom: 7%;
+            margin-top: 2%;
+        }
+
+        main .main_right .login_container {
+            width: 100%;
+            margin-left: 15px;
+            float: left;
+        }
+
+            main .main_right .login_container h3 {
+                font-size: 2.1em;
+                font-weight: 300;
+                color: #333;
+                margin-bottom: 8%;
+            }
+
+            main .main_right .login_container .login_warning_text {
+                font-weight: 500;
+                font-size: 14px;
+                color: #ff0000;
+                top: 16%;
+            }
+
+            main .main_right .login_container .input_block {
+                width: 67%;
+                float: left;
+                margin-bottom: 6%;
+            }
+
+                main .main_right .login_container .input_block i {
+                    display: inline-block;
+                    width: 55px;
+                    height: 55px;
+                    border-top-left-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                    border: #ccc solid 1px;
+                    background-color: #D2D2D2;
+                    background-repeat: no-repeat;
+                    background-size: 30px auto;
+                    background-position: center;
+                    display: inline-block;
+                    float: left;
+                }
+
+                main .main_right .login_container .input_block .user {
+                    background-image: url("../../../images/login_user.svg");
+                }
+
+                main .main_right .login_container .input_block .password {
+                    background-image: url("../../../images/login_password.svg");
+                }
+
+                main .main_right .login_container .input_block .user_red {
+                    background-image: url("../../../images/login_user_red.svg");
+                }
+
+                main .main_right .login_container .input_block .password_red {
+                    background-image: url("../../../images/login_password_red.svg");
+                }
+
+                main .main_right .login_container .input_block input {
+                    width: 88%;
+                    display: inline-block;
+                    height: 57px;
+                    border: #ccc solid 1px;
+                    outline: none;
+                    float: left;
+                    padding-left: 20px;
+                    font-size: 18px;
+                    font-weight: 300;
+                    color: #333;
+                    border-top-right-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                }
+
+                main .main_right .login_container .input_block .button {
+                    width: 180px;
+                    height: 50px;
+                    background-color: #004F92;
+                    font-size: 20px;
+                    color: #fff;
+                    border: #004F92 solid 1px;
+                    border-radius: 5px;
+                    -webkit-transition: all 0.3s;
+                    -o-transition: all 0.3s;
+                    transition: all 0.3s;
+                    float: left;
+                }
+
+                    main .main_right .login_container .input_block .button:hover {
+                        background: #fff;
+                        color: #004F92;
+                    }
+
+                main .main_right .login_container .input_block .forgot {
+                    float: right;
+                    line-height: 50px;
+                    font-size: 15px;
+                    color: #004F92;
+                }
+
+                main .main_right .login_container .input_block .field_red {
+                    border: #ff0000 solid 1px;
+                    border-left: 0;
+                }
+
+                main .main_right .login_container .input_block .icon_red {
+                    border: #ff0000 solid 1px;
+                    border-right: 0;
+                }
+
+.button {
+    width: 180px;
+    height: 50px;
+    background-color: #004F92;
+    font-size: 20px;
+    color: #fff;
+    border: #004F92 solid 1px;
+    border-radius: 5px;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    float: left;
+}

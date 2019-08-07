@@ -1,0 +1,128 @@
+﻿@model Voyager.App.ViewModels.ItineraryViewModel
+
+@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID" })
+<div class="wrapper">
+    @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02" }))
+    {
+        <!-- Main Content :: Starts -->
+        @*<div class="main-content form-theme-04 form">*@
+        <div class="main-content form form-theme-02">
+            <div class="container">
+                <div class="pg-container">
+                    <div class="listing-content">
+                        @*<div class="enquiry-ttl-due-section btm-border">
+                            <h1 class="full">Amendment</h1>
+                        </div>*@
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+                    </div>
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_AmendmentMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data costing-officers">
+                            <div class="ttl-sec tbl-style ItineraryHeader">
+                                <div class="date-btn-wrap">
+                                    <span class="date">Itinerary</span>
+                                </div>
+
+                                <div class="rht-sec">
+                                    <div class="btn-cont ">
+                                        <a class="btn btn-md btn-blue" onclick="createCostsheet();">Save & Regenrate Costsheet</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="collapse-block">
+                                <div class="collapse-container">
+                                    <div id="divPricingSummary"></div>
+                                </div>
+                                <div class="lnk-dotted"><a href="#" class="collapse-link"><i class="fa fa-angle-up"></i> View Prices </a> </div>
+                            </div>
+                            <div id="divItinerary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div id="action-popup" style="display:none;">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayPosition">
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetItineraryData();
+        GetPricingSummaryData();
+    });
+    function GetItineraryData(successMsg,errorMsg) {
+        $(".ajaxloader").show();
+        var QRFId = $("#QRFId").val();
+        var selectedDay = $("#Days option:selected").text();
+        var selectedServiceType = $("#Services option:selected").text();
+        var selectedDepartureId = $("#DepartureDate option:selected").val();
+        var selectedPaxSlabId = $("#PaxSlab option:selected").val();
+        $.ajax({
+            type: "GET",
+            url: "/Itinerary/GetItinerary",
+            data: { QRFId: QRFId, filterByDay: selectedDay, filterByServiceType: selectedServiceType, filterByDeparture: selectedDepartureId, filterByPaxSlab: selectedPaxSlabId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#divItinerary").html(response);
+                if (successMsg != "" && successMsg != undefined)
+                {
+                    var msg = '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success!</strong> Data saved successfully!!!</div>';
+                    $('.ItineraryHeader').before(msg);
+                }
+                else if (errorMsg != "" && successMsg != undefined)
+                {
+                    var msg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong>' + errorMsg + '!!!</div>';
+                    $('.ItineraryHeader').before(msg);
+                }
+                $(".ajaxloader").hide();
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function GetPricingSummaryData() {
+        $(".ajaxloader").show();
+        var QRFId = $("#QRFId").val();
+        var selectedDepartureId = $("#DepartureDate option:selected").val();
+        var selectedPaxSlabId = $("#PaxSlab option:selected").val();
+        $.ajax({
+            type: "GET",
+            url: "/Itinerary/GetPricingSummary",
+            data: { QRFId: QRFId, filterByDeparture: selectedDepartureId, filterByPaxSlab: selectedPaxSlabId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#divPricingSummary").html(response);
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+<link href="~/css/qrfSummary.css" rel="stylesheet" />
+

@@ -1,0 +1,274 @@
+﻿@model VGER_WAPI_CLASSES.BookingsDashboardSummary
+
+<form>
+    <div id="BookingVolume">
+        <div class="card">
+            <div class="header bg-blue-grey">
+                <h2>
+                    Booking Volume
+                </h2>
+            </div>
+            <div class="body row">
+                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                    <div class="clearfix">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width:120px;">SALES OFFICE</th>
+                                        <th>@Model.FinancialYearMonths[0]</th>
+                                        <th>@Model.FinancialYearMonths[1]</th>
+                                        <th>@Model.FinancialYearMonths[2]</th>
+                                        <th>@Model.FinancialYearMonths[3]</th>
+                                        <th>@Model.FinancialYearMonths[4]</th>
+                                        <th>@Model.FinancialYearMonths[5]</th>
+                                        <th>@Model.FinancialYearMonths[6]</th>
+                                        <th>@Model.FinancialYearMonths[7]</th>
+                                        <th>@Model.FinancialYearMonths[8]</th>
+                                        <th>@Model.FinancialYearMonths[9]</th>
+                                        <th>@Model.FinancialYearMonths[10]</th>
+                                        <th>@Model.FinancialYearMonths[11]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.BookingVolumeGrid.Count; i++)
+                                    {
+                                        <tr>
+                                            <th scope="row">@Model.BookingVolumeGrid[i].SalesOffice</th>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[0]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[1]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[2]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[3]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[4]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[5]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[6]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[7]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[8]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[9]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[10]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                            <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[11]).Select(a => a.Quotes).FirstOrDefault()</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                    <div class="clearfix">
+                        <div id="booking_volume_graph" style="min-height:420px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="PassengerVolume">
+        <div class="card">
+            <div class="header bg-blue-grey">
+                <h2>
+                    Passenger Volume
+                </h2>
+            </div>
+            <div class="body row">
+                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>SALES OFFICE</th>
+                                            <th>@Model.FinancialYearMonths[0]</th>
+                                            <th>@Model.FinancialYearMonths[1]</th>
+                                            <th>@Model.FinancialYearMonths[2]</th>
+                                            <th>@Model.FinancialYearMonths[3]</th>
+                                            <th>@Model.FinancialYearMonths[4]</th>
+                                            <th>@Model.FinancialYearMonths[5]</th>
+                                            <th>@Model.FinancialYearMonths[6]</th>
+                                            <th>@Model.FinancialYearMonths[7]</th>
+                                            <th>@Model.FinancialYearMonths[8]</th>
+                                            <th>@Model.FinancialYearMonths[9]</th>
+                                            <th>@Model.FinancialYearMonths[10]</th>
+                                            <th>@Model.FinancialYearMonths[11]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.BookingVolumeGrid.Count; i++)
+                                        {
+                                            <tr>
+                                                <th scope="row">@Model.BookingVolumeGrid[i].SalesOffice</th>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[0]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[1]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[2]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[3]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[4]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[5]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[6]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[7]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[8]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[9]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[10]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[11]).Select(a => a.TotalPax).FirstOrDefault()</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div id="passenger_volume_graph"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="BookingRevenue">
+        <div class="card">
+            <div class="header bg-blue-grey">
+                <h2>
+                    Booking Revenue
+                </h2>
+            </div>
+            <div class="body row">
+                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>SALES OFFICE</th>
+                                            <th>@Model.FinancialYearMonths[0]</th>
+                                            <th>@Model.FinancialYearMonths[1]</th>
+                                            <th>@Model.FinancialYearMonths[2]</th>
+                                            <th>@Model.FinancialYearMonths[3]</th>
+                                            <th>@Model.FinancialYearMonths[4]</th>
+                                            <th>@Model.FinancialYearMonths[5]</th>
+                                            <th>@Model.FinancialYearMonths[6]</th>
+                                            <th>@Model.FinancialYearMonths[7]</th>
+                                            <th>@Model.FinancialYearMonths[8]</th>
+                                            <th>@Model.FinancialYearMonths[9]</th>
+                                            <th>@Model.FinancialYearMonths[10]</th>
+                                            <th>@Model.FinancialYearMonths[11]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.BookingVolumeGrid.Count; i++)
+                                        {
+                                            <tr>
+                                                <th scope="row">@Model.BookingVolumeGrid[i].SalesOffice</th>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[0]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[1]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[2]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[3]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[4]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[5]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[6]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[7]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[8]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[9]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[10]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                                <td>@Model.BookingVolumeGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[11]).Select(a => a.SalesValue).FirstOrDefault()</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div id="booking_revenue_graph"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    var model = @Html.Raw(Json.Serialize(Model));
+    $(document).ready(function () {
+        try {
+            initLineChart();
+            $('.ajaxloader').hide();
+        } catch (e) {
+            console.log(e.message);
+            $('.ajaxloader').hide();
+        }
+    });
+
+    function initLineChart() {
+        Morris.Bar({
+            element: 'booking_volume_graph',
+            data: JSON.parse(model.bookingVolumeJson),
+            xkey: 'month',
+            ykeys: model.salesOfficeList,
+            labels: model.salesOfficeList,
+            resize: true,
+            stacked: true,
+            barSizeRatio: 0.60,
+            hideHover: 'auto'
+            //lineColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)']
+        });
+
+        Morris.Bar({
+            element: 'passenger_volume_graph',
+            data: JSON.parse(model.passengerVolumeJson),
+            xkey: 'month',
+            ykeys: model.salesOfficeList,
+            labels: model.salesOfficeList,
+            resize: true,
+            stacked: true,
+            barSizeRatio: 0.60,
+            hideHover: 'auto'
+            //lineColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)']
+        });
+
+        Morris.Bar({
+            element: 'booking_revenue_graph',
+            data: JSON.parse(model.bookingRevenueJson),
+            xkey: 'month',
+            ykeys: model.salesOfficeList,
+            labels: model.salesOfficeList,
+            resize: true,
+            stacked: true,
+            barSizeRatio: 0.60,
+            hideHover: 'auto'
+            //lineColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)']
+        });
+    }
+</script>
+
+<style>
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+        width: auto;
+    }
+
+    a:hover, a:focus, .btn:focus {
+        outline: 0;
+        text-decoration: none;
+    }
+
+    .filter-option {
+        color: #555 !important;
+    }
+
+    .table-responsive {
+        overflow-x: visible;
+    }
+</style>

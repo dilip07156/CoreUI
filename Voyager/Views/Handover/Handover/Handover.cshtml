@@ -1,0 +1,29 @@
+﻿@model Voyager.App.ViewModels.HandoverViewModel
+
+<div class="wrapper">
+    @using (Html.BeginForm("SetConfirmBooking", "Handover", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02" }))
+    {
+        @Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+         
+        <!-- Main Content :: Starts -->
+        @*<div class="main-content form-theme-04 form">*@
+        <div class="main-content form form-theme-02">
+            <div class="container">
+                <div class="pg-container">
+                    <div class="listing-content">
+                        @*<div class="enquiry-ttl-due-section btm-border">
+            <h1 class="full">Sales Officer</h1>
+        </div>*@
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel, new ViewDataDictionary(this.Vi‌​ewData) { { "EnquiryPipeline", Model.MenuViewModel.EnquiryPipeline } })
+                    </div>
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_HandoverMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data sales-officers">                           
+                            @Html.Partial("~/Views/Handover/Handover/_Handover.cshtml", Model)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

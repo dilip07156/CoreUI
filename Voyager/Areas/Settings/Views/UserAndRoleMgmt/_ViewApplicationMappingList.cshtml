@@ -1,0 +1,186 @@
+﻿@model Voyager.App.ViewModels.IntegrationApplicationMappingViewModel
+<style>
+    select.form-control-sm:not([size]):not([multiple]) {
+        height: calc(1.8125rem + 16px);
+    }
+    .icon-squre-pink {
+        background: #fff;
+    }
+</style>
+
+<div class="listing-table">
+    <div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+        <table class="table table-bordered tbl-theme-02 dataTables" id="tblIntegrationPlatform">
+            <thead>
+                <tr>
+                    <th class="col-md-3">Platform</th>
+                    <th class="col-md-3">Type</th>
+                    <th class="col-md-3">Entity</th>
+                    <th class="col-md-3">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        getDefaultList();
+    });
+
+    function getDefaultList() {
+
+        var model = {
+            Application_Id: $("#Application :selected").val(),
+            ApplicationName: $("#Application :selected").text(),
+            Type: $("#Type").val(),
+            Entity: $("#Entity").val()
+        }
+
+        var oTable = $('#tblIntegrationPlatform').dataTable({
+            processing: true,
+            serverSide: true,
+            info: true,
+            ajax: {
+                url: "/UserAndRoleMgmt/GetApplicationMappingList",
+                type: "GET",
+                data: model,
+            },
+            columns: [
+                { "data": "applicationName", "orderable": true },
+                { "data": "type", "orderable": true },
+                { "data": "entity", "orderable": true },
+                {
+                    "data": function (data, type, row, meta) {
+
+                        //var actionHTML = "<div>text</div>";
+                        var actionHTML = "<button type='button' class='icon-squre-pink' style='width:27px' title='View Details' onclick='ViewMappingData(\"" + data.application + "\", \"" + data.applicationName + "\", \"" + data.integrationApplicationMapping_Id + "\", \"" + data.type + "\", \"" + data.entity + "\", " + meta.row + ", this);' ><i class='fa fa-eye'></i></button> &nbsp;&nbsp;";
+                        actionHTML += "<button type='button' class='icon-squre-dark-blue' style='width:27px' title='Edit' onclick='EditMappingData(\"" + data.application + "\", \"" + data.applicationName + "\", \"" + data.integrationApplicationMapping_Id + "\", \"" + data.type + "\", \"" + data.entity + "\", " + meta.row + ", this);' ><i class='fa fa-pencil'></i></button> &nbsp;&nbsp;";
+                        actionHTML += "<button type='button' class='icon-squre-red' style='width:27px' title='Delete' onclick='DeleteMappingData(\"" + data.application + "\", \"" + data.applicationName + "\", \"" + data.integrationApplicationMapping_Id + "\", \"" + data.type + "\", \"" + data.entity + "\", " + meta.row + ", this);' ><i class='fa fa-times'></i></button>";
+
+                        return actionHTML;
+                    },
+                    "orderable": false
+                }
+            ],
+            "order": [[0, "asc"]],
+            "columnDefs": [{
+                "defaultContent": "",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+
+        $('#tblIntegrationPlatform_filter').css('display', 'none');
+
+    }
+
+
+    function ViewMappingData(application, applicationName, integrationApplicationMapping_Id,  type, entity, row, event) {
+        
+        var model = {
+            Application: application,
+            ApplicationName: applicationName,
+            IntegrationApplicationMapping_Id: integrationApplicationMapping_Id,
+            Type: type,
+            Entity: entity
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationMappingData",
+            data: model,
+            success: function (response) {
+                $("#divSuccessError").removeAttr('class');
+                if (response.status != undefined) {
+                    response.status.toLocaleLowerCase() == "alert" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+                    $("#divSuccessError").show();
+                    $("#lblmsg").text(response.responseText);
+                    $("#stMsg").text(response.status + "! ");
+                }
+                else {
+                    closePlatformURL();
+                    //$('<tr id="trPlatformURL"><td colspan="4">' + response.replace("action-popup ", "") + '</td></tr>').insertAfter(event.closest('tr'));
+                    $('<tr id="trPlatformURL"><td colspan="4">' + response + '</td></tr>').insertAfter(event.closest('tr'));
+                }
+                $(".ajaxloader").hide();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+
+    function DeleteMappingData(application, applicationName, integrationApplicationMapping_Id, type, entity, row, event) {
+
+        var model = {
+            Application: application,
+            ApplicationName: applicationName,
+            IntegrationApplicationMapping_Id: integrationApplicationMapping_Id,
+            Type: type,
+            Entity: entity
+        }
+        if (confirm("Are you sure want to delete?")) {
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/DeleteIntegrationApplicationMappingInfo",
+                data: model,
+                success: function (response) {
+                    $("#divSuccessError").removeAttr('class');
+                    if (response.responseStatus.status != undefined && response.responseStatus.status != null) {
+
+                        response.responseStatus.status.toLocaleLowerCase() == "success" ? $("#divSuccessError").addClass("alert alert-success") : $("#divSuccessError").addClass("alert alert-info");
+                        $("#divSuccessError").show();
+                        $("#lblmsg").text(response.responseStatus.errorMessage);
+                        $("#stMsg").text(response.responseStatus.status + "! ");
+                        $("#btnSearchApplicationMapping").trigger("click");
+                    }
+                    else {
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-danger");
+                        $("#lblmsg").text("Something went wrong!");
+                        $("#stMsg").text("Success! ");
+                    }
+                    $(".ajaxloader").hide();
+                    setTimeout(() => {
+                        $("#divSuccessError").hide();
+                    }, 5000);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+    }
+
+    function closePlatformURL() {
+        $('#tblIntegrationPlatform').find($("#trPlatformURL")).remove();
+    }
+
+    function EditMappingData(application, applicationName, integrationApplicationMapping_Id, type, entity, row, event) {
+        $("#Application").val(application);
+        $("#Type").val(type);
+        $("#Entity").val(entity);
+        $("#IntegrationApplicationMapping_Id").val(integrationApplicationMapping_Id);
+        $("#btnAppMapping").html("Update");
+    }
+
+</script>

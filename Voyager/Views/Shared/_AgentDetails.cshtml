@@ -1,0 +1,343 @@
+﻿
+@model Voyager.App.ViewModels.AgentDetails
+
+<style>
+    .leftalign {
+        text-align: left !important;
+    }
+
+    .btnWidth {
+        min-width: 75px !important;
+    }
+</style>
+
+
+@using (Html.BeginForm("UpdateAgentDetails", "Agent", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { role = "form", id = "frmAgentDetails" }))
+{
+    <div class="btn-cont-rgt" style="text-align:right">
+        <input type="submit" value="Update" name="command" id="btnUpdateAgentDetails" class="btn btn-blue btn-md updateButton" />
+    </div><br />
+
+    @if (TempData.Keys.Contains("frmsuccess"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Success!</strong> @TempData["frmsuccess"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("frmerror"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Error!</strong> @TempData["frmerror"].ToString()
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <div class="tbl-actn-btns"><h4>Key Info</h4></div>
+                <table class="table">
+                    <thead></thead>
+                    <tbody>
+                        @Html.HiddenFor(x => x.CompanyId, new { @id = "CompanyId", @class = "CompanyId" })
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label for="inputAddress">Company Name</label>
+                                @Html.TextBoxFor(x => x.CompanyName, new { @class = "form-control leftalign" })
+                            </td>
+                        </tr>
+
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label for="inputAddress">Agent Code</label>
+                                @Html.TextBoxFor(x => x.CompanyCode, new { @class = "form-control leftalign" })
+                            </td>
+                        </tr>
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label for="inputAddress">Address</label>
+                                @Html.TextBoxFor(x => x.Street, new { @class = "form-control leftalign" })
+                            </td>
+                        </tr>
+
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label for="inputAddress2">Address 2</label>
+                                @Html.TextBoxFor(x => x.Street2, new { @class = "form-control leftalign" })
+                            </td>
+                        </tr>
+
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label for="inputAddress2">Address 3</label>
+                                @Html.TextBoxFor(x => x.Street3, new { @class = "form-control leftalign" })
+                            </td>
+                        </tr>
+
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label for="inputCity">Country</label>
+                                @Html.DropDownListFor(m => m.CountryId, new SelectList(Model.CountryList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCountry", @class = "form-control leftalign" })
+                                @Html.HiddenFor(m => m.CountryName, new { @id = "ddlCountryName" })
+                            </td>
+                        </tr>
+
+                        <tr class="form-row">
+                            <td class="form-group col-md-6">
+                                <label for="inputCity">City</label>
+                                @Html.DropDownListFor(m => m.CityId, new SelectList(Model.CityList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCity", @class = "form-control leftalign" })
+                                @Html.HiddenFor(m => m.CityName, new { @id = "ddlCityName" })
+                            </td>
+
+                            <td class="form-group col-md-2" style="width:130px">
+                                <label style="float:left" for="inputZip">Zip</label>
+                                @Html.TextBoxFor(x => x.Zipcode, new { @class = "form-control leftalign", @maxlength = "10" })
+                            </td>
+                        </tr>
+
+                        <tr class="form-group">
+                            <td colspan="3">
+                                <label>Status</label>
+                                @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                        {
+                                        new SelectListItem{ Text="Active", Value = "Active",Selected=true },
+                                        new SelectListItem{ Text="Inactive", Value ="Inactive" }
+                                        }, new { @id = "ddlStatus", @class = "form-control" })
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            @if (Model.Issupplier == false)
+            {
+                <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                    <div class="tbl-actn-btns"><h4>Options</h4></div>
+                    <table class="table">
+                        <thead></thead>
+                        <tbody>
+
+                            <tr class="form-group">
+                                <td>
+                                    <label for="inputCity">Sales Office</label>
+                                    @Html.DropDownListFor(m => m.SalesOffices, new SelectList(Model.SalesOfficesList, "Company_Id", "Company_Name"), "Select", new { @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.SalesOfficesName, new { @id = "ddlSalesOfficesName" })
+                                </td>
+                            </tr>
+
+                            <tr class="input-group mb-3">
+                                <td>
+                                    @Html.CheckBoxFor(x => x.Issubagent, new { @class = "popupchk", @id = "chkIssubagent" })
+                                    @*@Html.CheckBox("Issubagent", Model.AgentDetailedInfo.Issubagent.HasValue ? Model.AgentDetailedInfo.Issubagent : false, new { @class = "popupchk" })*@
+                                    <label>Is Sub Agent</label>
+                                </td>
+                            </tr>
+                            <tr class="input-group mb-3">
+                                <td>
+                                    @Html.CheckBoxFor(x => x.B2C, new { @class = "popupchk" })
+                                    @*@Html.CheckBox("B2C", Model.AgentDetailedInfo.B2C.HasValue ? Model.AgentDetailedInfo.B2C : false, new { @class = "popupchk" })*@
+                                    <label>B2C Agent</label>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            }
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <div class="tbl-actn-btns"><h4>Logo</h4></div>
+                <table class="table">
+                    <thead></thead>
+                    <tbody>
+                        <tr class="form-group">
+                            <td>
+                                <img class="card-img-top">
+                                <div class="card-body">
+                                    <div class="form-group">
+
+
+                                    </div>
+                                    <div>
+                                        <div id="divLogo"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="divBranches"></div>
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        GetLogo();
+        GetBranches();
+    });
+
+    $("#ddlCity").on("change", function () {
+        var cityId = $(this).find("option:selected").val();
+        var cityName = $(this).find("option:selected").text();
+        if (cityId == null || cityId == "")
+            $("#ddlCityName").val("");
+        else
+            $("#ddlCityName").val(cityName);
+    });
+
+    $("#SalesOffices").on("change", function () {
+        var salesOfficeId = $(this).find("option:selected").val();
+        var salesOfficeName = $(this).find("option:selected").text();
+        if (salesOfficeId == null || salesOfficeId == "") {
+            $("#ddlSalesOfficesName").val("");
+            $("#chkIssubagent").prop('checked', false);
+        }
+        else {
+            $("#ddlSalesOfficesName").val(salesOfficeName);
+            $("#chkIssubagent").prop('checked', true);
+        }
+    });
+
+    $("#ddlCountry").on("change", function () {
+        var countryId = $(this).find("option:selected").val();
+        var countryName = $(this).find("option:selected").text();
+        $("#ddlCountryName").val(countryName);
+        $.ajax({
+            type: "POST",
+            url: "/Agent/PopulateCitiesByCountryId",
+            data: { countryId: countryId },
+            success: function (result) {
+                $("#ddlCity").empty();
+                $("#ddlCity").append($("<option></option>").val(null).html("Select"));
+                if (result.response.length > 0) {
+                    $.each(result.response, function (key, value) {
+                        $("#ddlCity").append($("<option></option>").val
+                            (value.attribute_Id).html(value.attributeName));
+                    });
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    function GetLogo() {
+        $(".ajaxloader").show();
+        var CompanyId = $("#CompanyId").val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/GetAgentDetailsLogo",
+            data: { CompanyId: CompanyId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#divLogo").html(response);
+                $(".ajaxloader").hide();
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+    function GetBranches() {
+        $(".ajaxloader").show();
+        var CompanyId = $("#CompanyId").val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/GetAgentDetailsBranches",
+            data: { CompanyId: CompanyId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#divBranches").html(response);
+                $(".ajaxloader").hide();
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+
+
+    //$("#btnUpload").on("click", function (e) {
+    //
+    //    var _validFileExtensions = ["jpg", "jpeg", "bmp", "png"];
+
+    //    var ext = $('#files').val().split('.').pop().toLowerCase();
+    //    var sFileName = $('#files').val();
+    //    if (sFileName !== "") {
+    //        if ($.inArray(ext, _validFileExtensions) == -1) {
+    //            alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+    //            return false;
+    //        }
+    //        var model = $('#frmAgentDetails').serialize();
+
+    //        var form = $('#frmAgentDetails')[0];
+    //        var data = new FormData(form);
+
+    //        $.ajax({
+    //            type: "POST",
+    //            url: "/Agent/UpdateAgentDetails",
+    //            enctype: 'multipart/form-data',
+    //            data: data,
+    //            processData: false,
+    //            contentType: false,
+    //            success: function (response) {
+    //                //$("#SuggestedItinerary").click();
+    //            },
+    //            failure: function (response) {
+    //                alert(response.responseText);
+    //            },
+    //            error: function (response) {
+    //                alert(response.responseText);
+    //            }
+    //        });
+    //    }
+    //    else {
+    //        alert("Please select the file to Upload.");
+    //        return false;
+    //    }
+    //    return true;
+    //});
+
+    //$("#btnUpdateAgentDetails").on("click", function (e) {
+    //
+    //    var frm = $('#frmAgentDetails').serialize();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Agent/UpdateAgentDetails",
+    //        data: { model: frm, sFileName: sFileName },
+    //        success: function (response) {
+    //            //$("#SuggestedItinerary").click();
+    //        },
+    //        failure: function (response) {
+    //            alert(response.responseText);
+    //        },
+    //        error: function (response) {
+    //            alert(response.responseText);
+    //        }
+    //    });
+    //});
+</script>

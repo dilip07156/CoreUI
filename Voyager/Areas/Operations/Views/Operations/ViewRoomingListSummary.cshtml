@@ -1,0 +1,204 @@
+﻿@model Voyager.App.ViewModels.OpsRoomListSummaryViewModel
+@{
+    ViewData["Title"] = "SearchHotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="ops-page">
+                    <div class="listing-content">
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeader)
+                    </div>
+                    <h3>RoomingList</h3>
+                    <hr />
+                    <div style="display:none;text-align:left;" id="divSuccessshow">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsgroomlist"></strong> <label id="lblmsgroomlist"></label>
+                    </div>
+                    @Html.HiddenFor(m => m.BookingNumber)
+                    @*<button type="button" class="btn btn-danger btn-md">Upload Rooming List</button>*@
+                    <a href="#VersionList-popup1" class="btn btn-danger btn-md  popup-inline" onclick="UploadRoomingListFile(@Model.BookingNumber);">Upload Rooming List</a>
+                    <button type="button" id="CreateRoomingList" class="btn btn-success btn-md" onclick="CreateRoomingList(@Model.BookingNumber)">Create Default Rooming List</button>
+                    <button type="button" class="btn btn-success btn-md" onclick="DownloadExcel(@Model.BookingNumber)">Download Rooming List template</button>
+                    <a href="#VersionList-popup2" class="btn btn-danger btn-md  popup-inline" onclick="SendToHotel(@Model.BookingNumber)">Send Rooming List to Hotels</a>
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-row">
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <br>
+
+                    <div class="RoomListdata"></div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div id="VersionList-popup1" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+<div id="VersionList-popup2" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+         
+        Getroomlistdata($("#BookingNumber").val())
+    });
+    function Getroomlistdata(bookingnumber) {
+         
+        $(".ajaxloader").show();
+        var model = {
+            BookingNumber: bookingnumber,
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/Operations/ViewRoomingData",
+            data: model,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $(".RoomListdata").html('');
+                $(".RoomListdata").html(response);
+                var count = $("#PassengerCount").val();
+                if (count > 0) {
+                    $("#CreateRoomingList").attr("disabled", "disabled");
+                }
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+    }
+    function CreateRoomingList(bookingnumber) {
+
+        var model = {
+            bookingnumber: bookingnumber,
+        }
+        $(".ajaxloader").show();
+        $.ajax({
+            type: "GET",
+            url: "/Operations/CreateRoomingList",
+            data: { BookingNumber: bookingnumber },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+
+                $(".RoomListdata").html('');
+                $(".RoomListdata").html(response);
+                var count = $("#PassengerCount").val();
+                if (count > 0) {
+                    $("#CreateRoomingList").attr("disabled", "disabled");
+                }
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+
+    }
+    function DownloadExcel(bookingnumber) {
+
+        var model = {
+            bookingnumber: bookingnumber,
+        }
+        window.location = '/Operations/DownloadExcel?bookingnumber=' + bookingnumber;
+    }
+    function ViewPersonalDetails(Passenger_id, Booking_number) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Operations/ViewPersonalDetails",
+            data: { Personid: Passenger_id, BookingNumber: Booking_number },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+
+    }
+    function UploadRoomingListFile(bookingnumber) {
+         
+        var model = {
+            bookingnumber: bookingnumber,
+        }
+        $.ajax({
+            type: "GET",
+            url: "/Operations/UploadRoomingListFile",
+            contentType: "application/json; charset=utf-8",
+            data: { BookingNumber: bookingnumber },
+            dataType: "html",
+            success: function (result) {
+
+                $("#VersionList-popup1 .popup-in").html(result);
+                $("#VersionList-popup1").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+
+    }
+    function SendToHotel(bookingnumber) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Operations/SendRoomingListToHotel",
+            contentType: "application/json; charset=utf-8",
+            data: { BookingNumber: bookingnumber },
+            dataType: "html",
+            success: function (result) {
+
+                $("#VersionList-popup2 .popup-in").html(result);
+                $("#VersionList-popup2").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+
+
+
+
+
+    }
+
+
+</script>
+

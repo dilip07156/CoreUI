@@ -1,0 +1,190 @@
+﻿@model Voyager.App.ViewModels.Settings.MisArtifactsViewModel
+<style>
+    .row1 {
+        margin-bottom: 15px !important;
+    }
+</style>
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        <h3>Mis Artifacts</h3>
+        <br />
+        <div class="modal-body">
+            <br />
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <div style="display:none;text-align:left;" id="divSuccessError">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                    </div>
+                    <form id="frmIntegrationPlatform">
+                        <div class="form-section">
+                            <div class="form-group-sec">
+                                <div class="row">
+                                    <div class="col-xs-3 mobile-12">
+                                        <label class="frm-sub-label">Type </label>
+                                        @Html.DropDownListFor(m => m.TypeName, new SelectList(Model.typeMaster, "TypeName", "TypeName"), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.TypeName, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-3 mobile-12">
+                                        <label class="frm-sub-label">Item </label>
+                                       
+                                        @Html.TextBoxFor(m=>m.Item,new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.Item, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-3 mobile-12">
+                                        <label class="frm-sub-label">Users </label>
+                                        @Html.DropDownListFor(m => m.RoleName, new SelectList(Model.Roles, "RoleName", "RoleName"), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.RoleID, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-3 mobile-12" style="text-align: left;">
+                                        <button type="button" class="btn btn-success btn-sm" onclick="SearchArtifacts();">Search</button>&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-success btn-sm" onclick="AddArtifacts();">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    @*<input type="hidden" id="Exp_Application_Id" name="Application_Id" />
+                    <input type="hidden" id="Exp_ContactPersonID" name="ContactPersonID" />*@
+                    <div class="popup-in displayArtifactsDetails">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ValidateMisArtifacts(value) {
+        var flag = true;
+        var Type_Name = $("#TypeName :selected").text();
+
+        if (value && (Type_Name == "" || Type_Name == "Select")) {
+            $("#TypeName").siblings("span").text("The Type field is required.");
+            flag = false;
+        }
+        else
+            $("#TypeName").siblings("span").text("");
+
+        var Item = $("#Item").val();
+        
+        if (value && (Item == "")) {
+            $("#Item").siblings("span").text("The  Item is required.");
+            flag = false;
+        }
+        else
+            $("#Item").siblings("span").text("");
+
+        var Role = $("#RoleName :selected").text();
+
+        if (value && (Role == "" || Role == "Select")) {
+            $("#RoleName").siblings("span").text("The RoleName field is required.");
+            flag = false;
+        }
+        else
+            $("#RoleName").siblings("span").text("");
+
+        if (!flag && value) {
+            $(".ajaxloader").hide();
+            return false;
+        }
+
+        return true;
+    };
+    function AddArtifacts() {
+        $(".ajaxloader").show();
+
+        if (ValidateMisArtifacts(true)) {
+
+            var model = {
+                TypeName: $("#TypeName :selected").text(),
+                Item: $("#Item").val(),
+                RoleName: $("#RoleName :selected").text(),
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/SaveArtifactsData",
+                data: model,
+                success: function (response) {
+                    $("#divSuccessError").removeAttr('class');
+                    if (response.status != undefined) {
+                        response.status.toLocaleLowerCase() == "alert" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+                        $("#divSuccessError").show();
+                        $("#lblmsg").text(response.responseText);
+                        $("#stMsg").text(response.status + "! ");
+                    }
+                    else {
+                        $(".displayArtifactsDetails").html(response.replace("action-popup ", ""));
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-success");
+                        $("#lblmsg").text("Artifacts created successfully.");
+                        $("#stMsg").text("Success! ");
+                    }
+                    setTimeout(() => {
+                        $("#divSuccessError").hide();
+                    }, 5000);
+                    $(".ajaxloader").hide();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+
+    }
+
+    function SearchArtifacts() {
+       $(".ajaxloader").show();
+        var model = {
+            TypeName : $("#TypeName :selected").text(),
+            Item : $("#Item").val(),
+            RoleName : $("#RoleName :selected").text(),
+        }
+        ValidateMisArtifacts(false);
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/SearchMisArtifactsList",
+            data: model,
+            success: function (response) {
+                $(".ajaxloader").hide();
+                $(".displayArtifactsDetails").html(response.replace("action-popup ", ""));
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                $("#divSuccessError").removeAttr('class');
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text("something went wrong!");
+                $("#stMsg").text("Error! ");
+                setTimeout(() => {
+                    $("#divSuccessError").hide();
+                }, 5000);
+            }
+        });
+    }
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblmsg").text("");
+        curdiv.find("#stMsg").text("");
+    });
+
+</script>
+
+
+

@@ -1,0 +1,94 @@
+@media screen and (max-width: 1680px)
+{
+
+.input_block
+{
+  width: 75% !important;
+}
+
+}
+/* 1680 */
+
+@media screen and (max-width: 1440px)
+{
+
+.input_block 
+{
+    width: 85% !important;
+}
+
+.login_info_block 
+{
+    width: 75% !important;
+}
+
+.h_right_main
+{
+	width: 88% !important;
+}
+
+.dropdown-menu
+{
+	left: -15.5% !important;
+	width: 117.5% !important;
+}
+
+.dual_right
+{
+	margin-top: 0px !important;
+}
+
+}
+/* 1440 */
+
+@media screen and (max-width: 1366px)
+{
+
+.input_block 
+{
+    width: 90% !important;
+}
+
+.main_right h2 
+{
+    font-size: 2.5em !important;
+}
+
+.login_container h3 
+{
+    font-size: 1.8em !important;
+}
+
+.main_right_container 
+{
+    height: 630px;
+}
+
+.dual_view 
+{
+    margin-top: 20px !important;
+}
+
+.left_list_menu, .dual_right
+{
+    height: 475px !important;
+}
+
+.biggle_label
+{
+    height: 43px !important;
+}
+
+}
+/* 1366 */
+
+@media screen and (max-width: 1280px)
+{
+
+.input_block 
+{
+    width: 95% !important;
+}
+
+}
+/* 1280 */

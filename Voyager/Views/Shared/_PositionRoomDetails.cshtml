@@ -1,0 +1,154 @@
+﻿
+@model Voyager.App.ViewModels.PositionRoomsViewModel
+
+@{
+    int i = Model.RowNo;
+    string type = Model.PositionType;
+}
+@if (Model.RowNo != -1)
+{
+    <td id="divRoomeDetails_@i" class="divRoomeDetails collapse-block" style="text-align:left;">
+        <div class="collapse-container">
+            <div class="row row-sm">
+                <div class="col-sm-12">
+                    <label class="frm-sub-label txt-orange">Services</label>
+                </div>
+            </div>
+            <ul id="clonedRoom_@i">
+                @for (int j = 0; j < Model.RoomDetails.Count; j++)
+                {
+                    <li class="clonedInput" id="clonedInput_@i@i@j">
+                        <div class="row row-sm">
+                            @Html.Hidden(type + i + "].PositionRoomsData.RoomDetails[" + j + "].RoomSequence", Model.RoomDetails[j].RoomSequence, new { @class = "clsRoomSequenceId" })
+                            @Html.Hidden(type + i + "].PositionRoomsData.RoomDetails[" + j + "].RoomId", Model.RoomDetails[j].RoomId)
+                            @Html.Hidden(type + i + "].PositionRoomsData.RoomDetails[" + j + "].IsSupplement", Model.RoomDetails[j].IsSupplement, new { @class = "clsIsSupplement" })
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.Hidden(type + i + "].PositionRoomsData.RoomDetails[" + j + "].ProductRange", Model.RoomDetails[j].ProductRange)
+                                    @Html.DropDownList(type + i + "].PositionRoomsData.RoomDetails[" + j + "].ProductRangeID", new SelectList(Model.RoomDetails[j].RoomTypeList, "AttributeId", "Value", Model.RoomDetails[j].ProductRangeID), "Select", new { @class = "form-control clsRoomType selectName option" })
+                                    <span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div class="divAddRemoveRoom">
+                <a class="txt-lnk darkblue cloneRoom">+ Add</a>
+                <a class="txt-lnk darkblue removeRoom" style="display: inline-block;">x Remove</a>
+            </div>
+            <hr />
+            <div class="form-group"></div>
+            <div class="">
+                <div class="row row-sm">
+                    <div class="col-sm-12">
+                        <label class="frm-sub-label txt-orange">Add Supplement</label>
+                    </div>
+                    <div class="col-sm-12 form-group">
+                        @Html.Hidden(type + i + "].PositionRoomsData.Supplement", Model.Supplement)
+                        @Html.DropDownList(type + i + "].PositionRoomsData.SupplementID", new SelectList(Model.SupplementList, "AttributeId", "Value"), "Select", new { @id = "SupplementID_" + i, @class = "form-control clsSupplement selectName option" })
+                    </div>
+                </div>
+                <div>
+                    <a class="txt-lnk darkblue cloneSupplement">+ Add</a>
+                </div>
+            </div>
+        </div>
+        <div class="lnk-dotted" style="display:none;"><a href="#" class="collapse-link"><i class="fa fa-angle-up"></i> Options </a> </div>
+    </td>
+}
+else
+{
+    <td id="divRoomeDetails_0" class="divRoomeDetails">
+        <div>
+            <div class="row row-sm">
+                <div class="col-sm-12">
+                    <label class="frm-sub-label txt-orange">Services</label>
+                </div>
+            </div>
+            <ul id="clonedRoom_0">
+                <li class="clonedInput" id="clonedInput_000">
+                    <div class="row row-sm">
+                        @Html.Hidden(type + 0 + "].PositionRoomsData.RoomDetails[" + 0 + "].RoomSequence", Model.RoomDetails[0].RoomSequence, new { @class = "clsRoomSequenceId" })
+                        @Html.Hidden(type + 0 + "].PositionRoomsData.RoomDetails[" + 0 + "].RoomId", Model.RoomDetails[0].RoomId)
+                        @Html.Hidden(type + 0 + "].PositionRoomsData.RoomDetails[" + 0 + "].IsSupplement", Model.RoomDetails[0].IsSupplement, new { @class = "clsIsSupplement" })
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.Hidden(type + 0 + "].PositionRoomsData.RoomDetails[" + 0 + "].ProductRange", Model.RoomDetails[0].ProductRange)
+
+                                @Html.DropDownList(type + 0 + "].PositionRoomsData.RoomDetails[" + 0 + "].ProductRangeID", new SelectList(Model.RoomDetails[0].RoomTypeList, "AttributeId", "Value", Model.RoomDetails[0].ProductRangeID), "Select", new { @class = "form-control clsRoomType selectName" })
+                                <span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="divAddRemoveRoom">
+                <a class="txt-lnk darkblue cloneRoom">+ Add</a>
+                <a class="txt-lnk darkblue removeRoom" style="display: inline-block;">x Remove</a>
+            </div>
+
+            <hr />
+            <div class="form-group">
+                <label class="frm-sub-label txt-orange">Add Supplement</label>
+
+                <div class="row row-sm">
+                    <div class="col-sm-12">
+                        @Html.Hidden(type + i + "].PositionRoomsData.Supplement", Model.Supplement)
+                        @Html.DropDownList(type + i + "].PositionRoomsData.SupplementID", new SelectList(Model.SupplementList, "AttributeId", "Value"), "Select", new { @id = "SupplementID_" + i, @class = "form-control clsSupplement selectName" })
+                    </div>
+                    <div class="col-sm-12">
+                        <a class="txt-lnk darkblue cloneSupplement">+ Add</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </td>
+}
+@*<td id="divRoomeDetails_@i" class="divRoomeDetails">
+        <div>
+            <div class="row row-sm">
+                <div class="col-sm-12">
+                    <label class="frm-sub-label txt-orange">Room Type</label>
+                </div>
+            </div>
+            <ul id="clonedRoom_@i">
+                @for (int j = 0; j < Model.RoomDetails.Count; j++)
+                {
+                    <li class="clonedInput" id="clonedInput_@j">
+                        <div class="row row-sm">
+                            @Html.HiddenFor(m => m.RoomDetails[j].RoomSequence, new { @id = "RoomSequence1_" + j, @name= "PositionRooms[0].RoomDetails["+ j + "].RoomSequence", @class = "clsRoomSequenceId" })
+                            @Html.HiddenFor(m => m.RoomDetails[j].RoomId, new { @id = "RoomId_" + j })
+                            @Html.HiddenFor(m => m.RoomDetails[j].IsSupplement, new { @id = "IsSupplement_" + j, @class = "clsIsSupplement" })
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.HiddenFor(m => m.RoomDetails[j].RoomType)
+                                    @Html.DropDownListFor(m => m.RoomDetails[j].RoomTypeID, new SelectList(Model.RoomDetails[j].RoomTypeList, "AttributeId", "Value"), "Select", new { @class = "form-control clsRoomType selectName" })
+                                    @Html.DropDownList(type + i + "].RoomDetails[" + j + "].RoomTypeID", new SelectList(Model.RoomDetails[0].RoomTypeList, "AttributeId", "Value"), "Select", new { @class = "form-control clsRoomType selectName" })
+                                    @Html.ValidationMessageFor(m => m.RoomDetails[j].RoomTypeID, "", new { @class = "text-danger" })
+                                    @Html.DropDownListFor(m => m.RoomDetails[j].RoomTypeID, new SelectList(Model.RoomDetails[j].RoomTypeList, "AttributeId", "Value"), "Select", new { @class = "form-control clsRoomType selectName" })
+                                    <span class="field-validation-valid text-danger" id="spanValidationMsg_0" data-valmsg-for='"" + ""' data-valmsg-replace="true"></span>
+                                    @Html.ValidationMessageFor(m => m.RoomDetails[j].RoomTypeID, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div class="divAddRemoveRoom">
+                <a class="txt-lnk darkblue cloneRoom">+ Add</a>
+                <a class="txt-lnk darkblue removeRoom" style="display: inline-block;">x Remove</a>
+            </div>
+        </div>
+    </td>*@
+
+@*<script>
+        $(document).ready(function () {
+            $("a.cloneRoom").on("click", { cloneType: "Room" }, cloneRoom);
+            $("a.cloneSupplement").on("click", { cloneType: "Supplement" }, cloneRoom);
+            $("a.removeRoom").on("click", removeRoom);
+        });
+    </script>*@

@@ -1,0 +1,335 @@
+﻿@model Voyager.App.ViewModels.Operations.PersonalDetailsViewModel
+
+<div style="display:none;text-align:left;" id="divSuccessError">
+    <a class="close" title="close">×</a>
+    <strong id="stMsg"></strong> <label id="lblmsg"></label>
+</div>
+<h3>Passenger Details</h3>
+<br />
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmViewPersonDetail" }))
+{
+<div class="row">
+    <div class="col-md-12">
+        <div class="card ">
+            <div class="card-header">Rooming</div>
+            <div class="card-body">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Passenger Room Type</label>
+                        @Html.DropDownListFor(m => m.RoomType, new SelectList(Model.RoomList, "Value", "Value"), "Select", new { @class = "form-control-1  " })
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Room Assignment</label>
+
+                        @Html.DropDownListFor(m => m.RoomAssignment, new SelectList(Model.RoomAssignmentList), "Select", new { @class = "form-control-1", @id = "PersonRoom" })
+                        @Html.ValidationMessageFor(x => x.RoomAssignment, "", new { @class = "text-danger leftalign" })
+
+                    </div>
+                </div>
+                @*@if (Model.RoomType?.ToUpper() == "CHILDWITHBED" || Model.RoomType?.ToUpper() == "CHILDWITHOUTBED" || Model.RoomType?.ToUpper() == "INFANT" )
+                {
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Passenger Age</label>
+
+                        @Html.TextBoxFor(x => x.Age, new { @class = " form-control-1", @id = "PassengerAge" })
+                        @Html.ValidationMessageFor(x => x.Age, "", new { @class = "text-danger leftalign" })
+
+                    </div>
+                </div>
+                }*@
+            </div>
+        </div>
+    </div>
+    </div>
+    <br/>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card ">
+            <div class="card-header">
+                Passenger Details
+            </div>
+            <div class="card-body">
+
+                <div class="col-md-6">
+                    @Html.HiddenFor(m => m.status)
+                    @Html.HiddenFor(m => m.Passenger_Id)
+                    @Html.HiddenFor(m => m.BookingNumber)
+                    @Html.HiddenFor(m=>m.PersonType)
+                    @Html.HiddenFor(m=>m.PassengerNumber)
+                    @Html.HiddenFor(m=>m.Age)
+                    <div class="form-group">
+                        <label>Title</label>
+                        @Html.DropDownListFor(m => m.Title, new SelectList(Model.NameTitle, "Value", "Value"), "Select", new { @class = " form-control-1" })
+                    </div>
+                    <div class="form-group">
+                        <label for="FirstName">First Name</label>
+                        @Html.TextBoxFor(x => x.FirstName, new { placeholder = "Tony", @class = " form-control-1", @id = "PassengerFirstName" })
+                        @Html.ValidationMessageFor(x => x.FirstName, "", new { @class = "text-danger leftalign" })
+                    </div>
+                    <div class="form-group">
+                        <label for="LastName">Last Name</label>
+                        @Html.TextBoxFor(x => x.LastName, new { placeholder = "Stark", @class = " form-control-1", @id = "PassengerLastName" })
+                        @Html.ValidationMessageFor(x => x.LastName, "", new { @class = "text-danger leftalign" })
+                    </div>
+                    <div class="form-group">
+                        <label for="PassengerName_LocalLanguage">Passenger Name (Non-English)</label>
+                        @Html.TextBoxFor(x => x.PassengerName_LocalLanguage, new { @class = " form-control-1", @id = "PassengerLocalname" })
+                        @Html.ValidationMessageFor(x => x.PassengerName_LocalLanguage, "", new { @class = "text-danger leftalign" })
+                    </div>
+                    <div class="form-group">
+                        <label for="DateOfBirth">Date Of Birth</label>
+                        <div class="input-append date" data-date-format="dd/mm/yyyy">
+                            @Html.TextBoxFor(m => m.DateOfBirth, "{0:dd/MM/yyyy}", new { @class = "span3  form-control-1 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy", @id = "PersonDateOFBirth" })
+                            @Html.ValidationMessageFor(x => x.DateOfBirth, "", new { @class = "text-danger leftalign" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="PassportNumber">Passport Number</label>
+                        @Html.TextBoxFor(x => x.PassportNumber, new { @class = " form-control-1", @id = "PassengerPassportNumber" })
+                        @Html.ValidationMessageFor(x => x.PassportNumber, "", new { @class = "text-danger leftalign" })
+
+                    </div>
+                   
+                    <div class="form-group">
+                        <label for="PassportIssued">Passport Issued</label>
+                        <div class="input-append date" data-date-format="dd/mm/yyyy">
+                            @Html.TextBoxFor(m => m.PassportIssued, "{0:dd/MM/yyyy}", new { @class = "span3  form-control-1 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy", @id = "PersonPassportIssued" })
+                            @Html.ValidationMessageFor(x => x.PassportIssued, "", new { @class = "text-danger leftalign" })
+                        </div>
+                    </div>
+                  
+                    <div class="form-group">
+                        <label for="PassportExpiry">Passport Expiry</label>
+                        <div class="input-append date" data-date-format="dd/mm/yyyy">
+                            @Html.TextBoxFor(m => m.PassportExpiry, "{0:dd/MM/yyyy}", new { @class = "span3 form-control-1 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy", @id = "PersonPassportExpired" })
+                            @Html.ValidationMessageFor(x => x.PassportExpiry, "", new { @class = "text-danger leftalign" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="VisaNumber">Visa Number</label>
+                        @Html.TextBoxFor(x => x.VisaNumber, new { @class = "form-control-1", @id = "PassengerVisaNumber" })
+                        @Html.ValidationMessageFor(x => x.VisaNumber, "", new { @class = "text-danger leftalign" })
+
+                    </div>
+                    <div class="form-group">
+                        <label>Sex</label>
+                        @Html.DropDownListFor(m => m.Sex, new SelectList(Model.SexList, "Value", "Value"), "Select", new { @class = " form-control-1" })
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="Notes">Notes / Details</label>
+                        @Html.TextAreaFor(x => x.Notes, new { @class = "form-control-1", @id = "PassengerNotes"  })
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Special Requests
+            </div>
+            <div class="card-body">
+                <div class="form-check">
+                    <label class="cntrl" data-label="ISTourLeader">@Html.CheckBoxFor(m => m.ISTourLeader, new { @class = "form-check-input", @id = "PassengerTourLeader" }) Is Tour Leader</label>
+                </div>
+                <br />
+              
+                <div class="form-group">
+                    <label for="DateOfAnniversary">Date Of Anniversary</label>
+                    <div class="input-append date" data-date-format="dd/mm/yyyy">
+                        @Html.TextBoxFor(m => m.DateOfAnniversary, "{0:dd/MM/yyyy}", new { @class = "span3  form-control-1 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy", @id = "PersonAnniversiry" })
+                        @Html.ValidationMessageFor(x => x.DateOfAnniversary, "", new { @class = "text-danger leftalign" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Dietary Requirements</label>
+                    @Html.DropDownListFor(m => m.DietaryRequirements, new SelectList(Model.DietaryRequirementsList, "Value", "Value"), "Select", new { @class = " form-control-1" })
+                </div>
+
+                <div class="form-group">
+                    <label>Special Assistance Requirements</label>
+                    @Html.ListBoxFor(m => m.SpecialAssistanceRequirements, new SelectList(Model.SpecialAssistanceList, "Value", "Value"), new { @class = "form-control-1", @style = "height: 100px;" })
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+    <button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+    <div class="btn-cont">
+        <button title="Save" type="button" class="btn btn-blue btn-md" onclick="SavePersonalData();">Update</button>
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+    </div>
+}
+
+<script>
+
+    $('.input-append').find('input.span3').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showOn: "both",
+        firstDay: 0, // Start with Monday
+        dayNamesMin: "Sun Mon Tue Wed Thu Fri Sat".split(" "),
+        dateFormat: "dd/mm/yy"
+    });
+
+    function SavePersonalData() {
+         
+        if (SetPersonData()) {
+             
+            $.ajax({
+                type: "POST",
+                url: "/Operations/SavePersonalDetail",
+                data: $("#frmViewPersonDetail").serialize(),
+                dataType: "json",
+                success: function (result) {
+                     
+                    $("#divSuccessError").removeAttr('class');
+
+                    if (result.status != undefined && result.status != null) {
+                        result.status.toLocaleLowerCase() == "success" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+                        $("#divSuccessError").show();
+                        $("#lblmsg").text(result.responseText);
+                        $("#stMsg").text(result.status + "! ");
+                        var redirectURL = '@Url.Action("ViewRoomingListSummary", "Operations")';
+                        redirectURL += "?BookingNumber=" + result.bookingNumber;
+                        window.location.href = redirectURL;
+                    }
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+        }
+    }
+
+    function SetPersonData() {
+        var flag = true;
+        var firstname = $("#PassengerFirstName").val();
+        if (firstname == "") {
+            $("#PassengerFirstName").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PassengerFirstName").siblings("span").text("");
+        }
+        var lastname = $("#PassengerLastName").val();
+        if (lastname == "") {
+            $("#PassengerLastName").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PassengerLastName").siblings("span").text("");
+        }
+        var Dob = $("#PersonDateOFBirth").val();
+        if (Dob == "") {
+            $("#PersonDateOFBirth").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PersonDateOFBirth").siblings("span").text("");
+        }
+
+        var PAssportNumber = $("#PassengerPassportNumber").val();
+        if (PAssportNumber == "") {
+            $("#PassengerPassportNumber").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PassengerPassportNumber").siblings("span").text("");
+        }
+
+        var PassportIssued = $("#PersonPassportIssued").val();
+        if (PassportIssued == "") {
+            $("#PersonPassportIssued").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PersonPassportIssued").siblings("span").text("");
+        }
+
+        var PassportExpired = $("#PersonPassportExpired").val();
+        if (PassportExpired == "") {
+            $("#PersonPassportExpired").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PersonPassportExpired").siblings("span").text("");
+        }
+
+        var VisaNo = $("#PassengerVisaNumber").val();
+        if (VisaNo == "") {
+            $("#PassengerVisaNumber").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PassengerVisaNumber").siblings("span").text("");
+        }
+
+        //var Anniversary = $("#PersonAnniversiry").val();
+        //if (Anniversary == "") {
+        //    $("#PersonAnniversiry").siblings("span").text("*");
+        //    flag = false;
+        //}
+        //else {
+        //    $("#PersonAnniversiry").siblings("span").text("");
+        //}
+        var RoomNo = $("#PersonRoom :selected").text();
+
+        if (RoomNo == "" || RoomNo == "Select") {
+            $("#PersonRoom").siblings("span").text("*");
+            flag = false;
+        }
+        else {
+            $("#PersonRoom").siblings("span").text("");
+        }
+        debugger;
+        //var Roomtype = $("#RoomType :selected").text();
+        //if (Roomtype.toUpperCase() == "CHILDWITHBED" || Roomtype.toUpperCase() == "CHILDWITHOUTBED" || Roomtype.toUpperCase() == "INFANT") {
+        //    var PassAge = $("#PassengerAge").val();
+        //    if (PassAge == "" || isNaN(PassAge)) {
+        //        $("#PassengerAge").siblings("span").text("*");
+        //        flag = false;
+        //    }
+        //    else {
+        //        $("#PassengerAge").siblings("span").text("");
+        //    }
+
+        //}
+
+        if (!flag) {
+            alert('Please fill the mandatory fields!');
+            flag = false;
+        }
+
+        return flag;
+    }
+
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblmsg").text("");
+        curdiv.find("#stMsg").text("");
+    });
+
+</script>
+<style>
+    .popup-box.form-theme-04 .input-append.date .ui-datepicker-trigger {
+        top: 20%;
+    }
+</style>

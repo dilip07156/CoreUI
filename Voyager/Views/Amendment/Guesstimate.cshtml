@@ -1,0 +1,166 @@
+﻿@model Voyager.App.ViewModels.GuesstimateViewModel
+
+@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="listing-content">
+                    @*<div class="enquiry-ttl-due-section btm-border">
+                        <h1 class="full">Costing Officer</h1>
+                    </div>*@
+                    @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+                </div>
+                <div class="sqr-tab-cont">
+
+                    <!-- Tab : Starts -->
+                    @Html.Partial("_AmendmentMenu", Model.MenuViewModel)
+                    <!-- Tab : Ends -->
+                    <!-- Tab Data : Starts -->
+                        <div class="sqr-tab-data costing-officers">
+                            <!-- Form : Starts -->
+                            <form>
+
+                                <div class="simple-tab-cont">
+                                    <div class="simple-tab-list-links">
+                                        <ul class="simple-tab-list">
+                                            @*<li><a href="#">Enter Cost</a></li>*@
+                                            <li><a href="#costs-guesstimate-change-rule" class="popup-inline">Change Rule</a></li>
+                                            <li><a href="#costs-guesstimate-recalculate-costs" class="popup-inline showRecalculatePUP">Search from database</a></li>
+                                        </ul>
+                                        @*<ul class="simple-tab-links right">
+                                                <li><a href="#">Tracking Quote Request <i class="fa fa-chevron-circle-right"></i></a></li>
+                                                <li><a href="#">Show in Actual Currency <i class="fa fa-chevron-circle-right"></i></a></li>
+                                            </ul>*@
+                                        <span class="clear"></span>
+                                    </div>
+                                    <div class="simple-tab-data">
+
+                                        <!-- Tab title : Starts -->
+                                        <div class="ttl-sec tbl-style">
+                                            <div class="show-hor-ver-wrap">
+                                                <h3><i class="fa-question"></i> Guesstimate</h3>
+
+                                                <ul class="show-hor-ver-link">
+                                                    <li><a href="#"><i class="custom-show-ver-icon"></i>Show Vertical</a></li>
+                                                    @*<li class="active"><a href="#"><i class="custom-show-hor-icon"></i>Show Horizontal</a></li>*@
+                                                </ul>
+                                                <div class="clear"></div>
+                                            </div>
+                                            <div class="rht-sec">
+                                                <div class="btn-cont ">
+                                                    @*<a href="#costs-guesstimate-compare-quotes-choose-suppliers" class="btn  btn-primary btn-md popup-inline">Compare Quotes</a>
+                                                        <a class="btn btn-md btn-blue ">Request for Quote</a>*@
+                                                    <a class="btn btn-md btn-blue" onclick="saveGuesstimate('YES');">Regenerate Costsheet</a>
+                                                    <a class="btn btn-md btn-blue" onclick="saveGuesstimate();">Save</a>
+                                                    @*<a href="#Version-popup" class="btn btn-md btn-blue popup-inline saveVersion">Save as Version</a>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Tab title : Ends -->
+
+                                        <div id="divQRFData"></div>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- Form : Ends -->
+                        </div>
+                    <!-- Tab Data : Ends -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Costs-Guesstimate-Recalculate-Costs-Popup Start-->
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetGuesstimateData("", "");
+
+        $(document).on('change', '.selectDDL', function (evt) {
+            var controlId = '#' + this.id.replace('ID', '');
+            $(this.closest('td')).find(controlId).val(evt.target.selectedOptions[0].label);
+        });
+
+        $(document).on('change', '.ddlSupplier', function (evt) {
+            var currentRow = $(this.closest('tr'));
+            var KeepZeroFlag = $(currentRow).find(".KeepZero").is(':checked');
+            if (KeepZeroFlag) // If keepzero checkbox is checked, then all its value will be zero, no need to take prices from databse
+                return false;
+            var QRFId = $("#QRFId").val();
+            var PositionId = $(currentRow).find("#PostionId").val();
+            var SupplierId = $(this).val();
+            var DepartureId = $("#DepartureDate option:selected").val();
+            var PaxSlabId = $("#PaxSlab option:selected").val();
+
+            $.ajax({
+                type: "GET",
+                url: "/Guesstimate/GetSupplierPrice",
+                data: { QRFId: QRFId, PositionId: PositionId, SupplierId: SupplierId, DepartureId: DepartureId, PaxSlabId: PaxSlabId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    $(currentRow).find(".guessPrice").each(function (index) {
+                        var PositionPriceId = $(this).find(".clsPositionPriceId").val();
+                        var BudgetPrice = $(this).find(".clsBudgetPrice");
+                        $(BudgetPrice).val(0);
+
+                        $.each(result.guesstimate.guesstimatePosition[0].guesstimatePrice, function (key, value) {
+                            if (value.positionPriceId == PositionPriceId) {
+                                $(BudgetPrice).val(value.budgetPrice);
+                                if (value.contractId == null || value.contractId == '')
+                                    $(BudgetPrice).attr('style', 'color: red;');
+                                else
+                                    $(BudgetPrice).attr('style', 'color: green;');
+                            }
+                        });
+                    });
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+    function GetGuesstimateData(SuccessMessage, ErrorMessage, CalculateFor, ShowAlertRegenCost) {
+
+        var QRFId = $("#QRFId").val();
+        var selectedDay = $("#Day option:selected").text();
+        var selectedServiceType = $("#Service option:selected").text();
+        var selectedPackageType = $("#KeepAs option:selected").text();
+        var selectedDepartureDate = $("#DepartureDate option:selected").val();
+        var selectedPaxSlab = $("#PaxSlab option:selected").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Guesstimate/GetGuesstimateData",
+            data: {
+                QRFId: QRFId, filterByDay: selectedDay, filterByServiceType: selectedServiceType, filterByPackageType: selectedPackageType, filterByDeparture: selectedDepartureDate,
+                filterByPaxSlab: selectedPaxSlab, SuccessMessage: SuccessMessage, ErrorMessage: ErrorMessage, CalculateFor: CalculateFor
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#divQRFData").html(response);
+                if (ShowAlertRegenCost == true)
+                    $(".divAlertRegenCost").css("display", "");
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>

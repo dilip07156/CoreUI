@@ -1,0 +1,296 @@
+﻿@model Voyager.App.ViewModels.AttachToMasterViewModel
+
+@using (Html.BeginForm("SetAttachToMaster", "Handover", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmAttachToMaster" }))
+{
+    @Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+    @Html.HiddenFor(Model => Model.QRFPriceId, new { @id = "QRFPriceId" })
+    @Html.HiddenFor(Model => Model.VersionId, new { @id = "VersionId" })
+    @Html.HiddenFor(Model => Model.GoAheadGetRes.mGoAhead.GoAheadId, new { @id = "GoAheadId" })
+
+    <h3><i class="fa-custom-proposal-black"></i>Handover Tour - <span class="txt-green"> Go Ahead</span></h3>
+    <hr>
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+
+    <div class="row divbuttons">
+        <div class="col-lg-8"></div>
+        <div class="col-lg-4" style="text-align: right;">
+            <input type="submit" value="Save" title="Save" class="btn btn-blue btn-md btnSave">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <h3>Booking Details</h3>
+            <p>Select which CostSheet you wish to apply:</p>
+            <div class="form-group">
+                @if (Model != null && Model.GoAheadGetRes.CostsheetVersion != null && Model.GoAheadGetRes.CostsheetVersion.Count > 0)
+                {
+                    <div class="table-responsive filter-table custom-mob-tbl">
+                        <table class="table tblversion">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Version</th>
+                                    <th>Version Name</th>
+                                    <th>Description</th>
+                                    <th>Created Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ var i = 1;}
+                                @foreach (var item in Model.GoAheadGetRes.CostsheetVersion)
+                                {
+                                    <tr class="trwithdetails">
+                                        <td>
+                                            <label class="chk-cont">
+                                                @Html.RadioButtonFor(m => item.IsCurrentVersion, true, new { @id = "rdoSelect_" + i, @name = "check-list", @class = "form-check-input rdoIsCurrentVersion" })
+                                            </label>
+                                        </td>
+                                        <td>
+                                            @Html.HiddenFor(m => item.QRFPriceId, new { @id = "QRFPriceId_" + i })
+                                            @*@Html.TextBoxFor(m => item.VersionId, new { @id = "VersionId_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })*@
+                                            <label class="chk-cont" style="word-wrap:break-word" id="VersionId_@i">@item.VersionId</label>
+                                        </td>
+                                        <td>
+                                            @*@Html.TextBoxFor(m => item.VersionName, new { @id = "VersionName_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })*@
+                                            <label class="chk-cont" style="word-wrap:break-word">@item.VersionName</label>
+                                        </td>
+                                        <td>
+                                            @*@Html.TextAreaFor(m => item.VersionDescription, new { @id = "VersionDesc_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })*@
+                                            <label class="chk-cont" style="word-wrap:break-word">@item.VersionDescription</label>
+                                        </td>
+                                        <td>
+                                            @*@Html.TextBoxFor(m => item.VersionCreateDate, "{0:dd MMM yyyy}", new { @id = "VersionCreateDt_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })*@
+                                            <label class="chk-cont">@item.VersionCreateDate.ToString("dd MMM yyyy")</label>
+                                            @if (item.QRFPackagePriceList != null && item.QRFPackagePriceList.Count > 0)
+                                            {
+                                                var paxlist = item.QRFPackagePriceList.Select(a => a.PaxSlab).Distinct().ToList();
+                                                @if (paxlist != null && paxlist.Count > 0)
+                                                {
+                                                    <span class="celldetails">
+                                                        <div class="divqrfprice">
+                                                            <span>Room Type :- @item.QRFPackagePriceList[0].RoomName </span>
+                                                        </div>
+                                                        <div style="float:right;color:red;font-size: 15px;">* All Rates in @item.QRFPackagePriceList[0].BuyCurrency</div>
+                                                        <table class="table tblqrfprice">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Pax Slab</th>
+                                                                    @for (int j = 0; j < item.QRFPkgDepartureList.Count; j++)
+                                                                    {
+                                                                        <th>
+                                                                            @Convert.ToDateTime(item.QRFPkgDepartureList[j]).ToString("dd MMM yy")
+                                                                        </th>
+                                                                    }
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @for (int k = 0; k < paxlist.Count; k++)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@paxlist[k]</td>
+                                                                        @for (int l = 0; l < item.QRFPkgDepartureList.Count; l++)
+                                                                        {
+                                                                            var price = item.QRFPackagePriceList.Where(a => a.DepartureDate == item.QRFPkgDepartureList[l] && a.PaxSlab == paxlist[k]).
+                                                                            Select(a => a.SellPrice).FirstOrDefault();
+                                                                            <td>
+                                                                                @price.ToString("0.00")
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="celldetails">No details found.</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="celldetails">No details found.</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <table class="table">
+                        <tr>
+                            <td>
+                                No Records Found.
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+            <div class="form-group">
+                <label for="comment">Remarks:</label>
+                @Html.TextAreaFor(m => m.GoAheadGetRes.mGoAhead.Remarks, new { @id = "txtRemarks", @maxlength = "500", @class = "resizenone" })
+                @Html.ValidationMessageFor(m => m.GoAheadGetRes.mGoAhead.Remarks, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.HiddenFor(m => m.GoAheadGetRes.mGoAhead.IsTemplateCreated, new { @id = "IsTemplateCreated" })
+                <label class="form-check-label">
+                    @if (Model.GoAheadGetRes.mGoAhead.IsTemplateCreated == true)
+                    {
+                        Model.GoAheadGetRes.mGoAhead.IsTemplate = true;
+                        @Html.CheckBoxFor(m => m.GoAheadGetRes.mGoAhead.IsTemplate, new { @id = "chkIsTemplate", @disabled = "disabled" })
+                    }
+                    else
+                    {
+                        @Html.CheckBoxFor(m => m.GoAheadGetRes.mGoAhead.IsTemplate, new { @id = "chkIsTemplate" })
+                    }
+                    Create Template in Voyager Operations?
+                </label>
+            </div>
+            <div class="form-group" style="display:none;">
+                <label class="form-check-label">
+                    @Html.CheckBoxFor(m => m.GoAheadGetRes.mGoAhead.IsQRF, new { @id = "chkIsQRF" }) Create QRF in Voyager Sales?
+                </label>
+            </div>
+            <div class="form-group">
+                <div class="row row-md">
+                    <div class="col-xs-6">
+                        <label class="frm-sub-label">Hotel Confirmation Deadline:</label>
+                    </div>
+                </div>
+                <div class="row row-md">
+                    <div class="col-xs-3">
+                        <div class="input-append date" data-date-format="dd/mm/yyyy">
+                            @Html.TextBoxFor(m => m.ConfirmationDT, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @id = "ConfirmationDeadline", @placeholder = "dd/MM/yyyy" })
+                            <span class="add-on"></span>
+                        </div>
+                    </div>
+                    <div class="col-xs-3" id="divdt">
+                        @Html.ValidationMessageFor(m => m.ConfirmationDT, "", new { @class = "text-danger" })
+                        (dd/MM/yyyy)
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row row-md">
+                    <div class="col-xs-6">
+                        <label for="sel1">Assign Operations User:</label>
+                    </div>
+                </div>
+                <div class="row row-md">
+                    <div class="col-xs-3">
+                        @Html.DropDownListFor(m => m.UserID, new SelectList(Model.UserList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select", @id = "ddlUserID" })
+                        @Html.HiddenFor(m => m.UserName, new { @id = "ddlUser" })
+                    </div>
+                    <div class="col-xs-1" id="divUserID">
+                        @Html.ValidationMessageFor(m => m.UserID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <h3>Departures</h3>
+            <p>Please select which departures you wish to create:</p>
+            @if (Model.GoAheadGetRes != null && Model.GoAheadGetRes.mGoAhead != null && Model.GoAheadGetRes.mGoAhead.Depatures != null && Model.GoAheadGetRes.mGoAhead.Depatures.Count > 0)
+            {
+                <div class="table-responsive filter-table custom-mob-tbl">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Departure</th>
+                                <th>Create</th>
+                                <th>Materialised?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.GoAheadGetRes.mGoAhead.Depatures.Count; i++)
+                            {
+                                <tr class="trMaterialised">
+                                    <td>
+                                        @Html.TextBoxFor(m => m.GoAheadGetRes.mGoAhead.Depatures[i].DepatureDate, "{0:dd MMM yyyy}", new { @id = "DepatureDate_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                        @Html.HiddenFor(m => m.GoAheadGetRes.mGoAhead.Depatures[i].DepatureId, new { @id = "DepatureId_" + i })
+                                        @Html.HiddenFor(m => m.GoAheadGetRes.mGoAhead.Depatures[i].ConfirmStatus, new { @id = "ConfirmStatus_" + i })
+                                    </td>
+                                    <td>
+                                        <label class="form-check-label">
+                                            @Html.CheckBoxFor(m => m.GoAheadGetRes.mGoAhead.Depatures[i].IsCreate, new { @id = "chkIsCreate_" + i, @class = "chkIsCreate" })
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="form-check-label">
+                                            @Html.CheckBoxFor(m => m.GoAheadGetRes.mGoAhead.Depatures[i].IsMaterialised, new { @id = "chkIsMaterialised_" + i, @class = "chkMaterialised", @data_type = "checkbox", @href = "#modelMaterialisation", @disabled = Model.GoAheadGetRes.mGoAhead.Depatures[i].ConfirmStatus ? "disabled" : "" })
+                                        </label>
+                                        @if (Model.GoAheadGetRes.mGoAhead.Depatures[i].IsMaterialised && Model.GoAheadGetRes.mGoAhead.Depatures[i].IsCreate)
+                                        {
+                                            @if (Model.GoAheadGetRes.mGoAhead.Depatures[i].ConfirmStatus)
+                                            {
+                                                <a id="viewdetails_@i" class="chkMaterialised anchorMaterialised" style="cursor: not-allowed;color: black;">View Details</a>
+                                            }
+                                            else
+                                            {
+                                                <a id="viewdetails_@i" class="chkMaterialised anchorMaterialised" data-type="anchor" href="#modelMaterialisation" style="cursor: pointer;">View Details</a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive filter-table custom-mob-tbl">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                No Departures Found.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            }
+
+            <div class="table-responsive filter-table custom-mob-tbl" style="text-align: right;">
+                @*<a href="#modelAddDeparture-popup" title="Add Departure" class="btn btn-blue btn-md popup-inline" id="btnAddDept" >Add Departure</a>*@
+                <a href="#modelAddDeparture-popup" title="Add Departure" class="btn btn-blue btn-md" id="btnAddDept">Add Departure</a>
+            </div>
+        </div>
+    </div>
+    <div id="modelMaterialisation-popup"></div>
+    <div id="modelAddDeparture-popup" class="mfp-hide">
+        <div class="popup-box pop-lg form-theme-04 form" style="max-width:98%;">
+            <div class="popup-in">
+
+            </div>
+            <button title="Close (Esc)" type="button" class="mfp-close close-adddept-popup"></button>
+        </div>
+    </div>
+}
+
+<link href="~/css/attachtomaster.css" rel="stylesheet" />
+<script src="~/js/Handover/AttachToMaster.js"></script>

@@ -1,0 +1,251 @@
+﻿@model Voyager.App.ViewModels.IntegrationApplicationMappingViewModel
+
+<style>
+    .btn-pop-closepopup {
+        float: right;
+    }
+
+    .popup-box .custom-mob-tbl .table .form-control {
+        padding-right: 0px;
+    }
+</style>
+<form id="frmPlatformURL">
+    <div class="action-popup table-responsive div-pop-sec valign-top-tbl" style="display:block;">
+        <a href="#" class="btn-pop-closepopup" style="display:block;" onclick="closePlatformURL()"><i class="fa-custom-close lg"></i></a>
+        <h3 class="text-left">
+            <span class="headertextposition" style="text-transform: capitalize;">
+                Mapping Data
+            </span>
+        </h3>
+        <div style="display:none;text-align:left;" id="divURLSuccessError">
+            <a class="close" title="close">×</a>
+            <strong id="stURLMsg"></strong> <label id="lblURLmsg"></label>
+        </div>
+        @Html.HiddenFor(m => m.Application, new { @id = "txtApplication" })
+        @Html.HiddenFor(m => m.Type, new { @id = "txtType" })
+        @Html.HiddenFor(m => m.Entity, new { @id = "txtEntity" })
+        @Html.HiddenFor(m => m.IntegrationApplicationMapping_Id, new { @id = "txtIntegrationApplicationMapping_Id" })
+
+        <table class="table table-bordered tbl-theme-03 top-align scroller" id="tblPlatformURL">
+            <tbody id="tNewConfig">
+                <tr id="ConfigItem" class="trNewConfigAdd">
+
+                    <td class="text-left col-xs-3">
+                        <div class="form-control">
+                            @*<input type="hidden" id="hdnSeqNo" value="@i" />*@
+                            <label class="frm-sub-label txt-orange">Partner Entity Name</label>
+                            @Html.TextBoxFor(m => m.PartnerEntityName, new { @class = "form-control filter" })
+                            @Html.ValidationMessageFor(m => m.PartnerEntityName, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(m => m.IntegrationApplicationMappingItem_Id)
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-2">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">Partner Entity Code</label>
+                            @Html.TextBoxFor(m => m.PartnerEntityCode, new { @class = "form-control filter" })
+                            @Html.ValidationMessageFor(m => m.PartnerEntityCode, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-3">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">System Entity Name</label>
+                            @Html.TextBoxFor(m => m.SystemEntityName, new { @class = "form-control filter" })
+                            @Html.ValidationMessageFor(m => m.SystemEntityName, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-2">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">System Entity Code</label>
+                            @Html.TextBoxFor(m => m.SystemEntityCode, new { @class = "form-control filter" })
+                            @Html.ValidationMessageFor(m => m.SystemEntityCode, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-2">
+                        <div class="action align-center top-gap-md">
+                            <button type="button" class="icon-squre-green" style='width:27px' title="Serach" id="btnSearchMappingData" onclick="SearchApplicationMappingData();"><i class="fa fa-search"></i></button>
+                            <button type="button" class="icon-squre-dark-blue" style='width:27px' title="Add" onclick="AddApplicationMappingData();"><i id="iPlusEditMappingData" class="fa fa-plus"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="popup-in displayApplicationMappingDataList">
+        </div>
+
+        <div class="action align-right top-gap-md">
+            <button type="button" class="btn btn-primary" onclick="closePlatformURL()">Close</button>
+        </div>
+
+    </div>
+</form>
+
+
+
+<script>
+
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divURLSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblURLmsg").text("");
+        curdiv.find("#stURLMsg").text("");
+    });
+
+    $(document).ready(function () {
+        SearchApplicationMappingData();
+    });
+
+    function SearchApplicationMappingData() {
+        var model = {
+            Application: $("#txtApplication").val(),
+            ApplicationName: $("#Application :selected").text(),
+            Type: $("#txtType").val(),
+            Entity: $("#txtEntity").val(),
+            IntegrationApplicationMapping_Id: $("#txtIntegrationApplicationMapping_Id").val(),
+            PartnerEntityName: $("#PartnerEntityName").val(),
+            PartnerEntityCode: $("#PartnerEntityCode").val(),
+            SystemEntityName: $("#SystemEntityName").val(),
+            SystemEntityCode: $("#SystemEntityCode").val()
+        }
+
+        validateApplicationDataItem(false);
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewApplicationMappingDataList",
+            data: model,
+            success: function (response) {
+                $(".ajaxloader").hide();
+                $(".displayApplicationMappingDataList").html(response.replace("action-popup ", ""));
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                $("#divURLSuccessError").removeAttr('class');
+                $("#divURLSuccessError").show();
+                $("#divURLSuccessError").addClass("alert alert-danger");
+                $("#lblURLmsg").text("something went wrong!");
+                $("#stURLMsg").text("Error! ");
+
+
+                setTimeout(() => {
+                    $("#divURLSuccessError").hide();
+                }, 5000);
+            }
+        });
+    }
+
+    function validateApplicationDataItem(value) {
+        var flag = true;
+        var PartnerEntityName = $("#PartnerEntityName").val();
+
+        if (value && (PartnerEntityName == "" || PartnerEntityName == "undefined")) {
+            $("#PartnerEntityName").siblings("span").text("The Partner Entity Name field is required.");
+            flag = false;
+        }
+        else
+            $("#PartnerEntityName").siblings("span").text("");
+
+        var PartnerEntityCode = $("#PartnerEntityCode").val();
+
+        if (value && (PartnerEntityCode == "" || PartnerEntityCode == "undefined")) {
+            $("#PartnerEntityCode").siblings("span").text("The Partner Entity Code field is required.");
+            flag = false;
+        }
+        else
+            $("#PartnerEntityCode").siblings("span").text("");
+
+        var SystemEntityName = $("#SystemEntityName").val();
+
+        if (value && (SystemEntityName == "" || SystemEntityName == "undefined")) {
+            $("#SystemEntityName").siblings("span").text("The System Entity Name field is required.");
+            flag = false;
+        }
+        else
+            $("#SystemEntityName").siblings("span").text("");
+
+        var SystemEntityCode = $("#SystemEntityCode").val();
+        if (value && (SystemEntityCode == "" || SystemEntityCode == "undefined")) {
+            $("#SystemEntityCode").siblings("span").text("The System Entity Code field is required.");
+            flag = false;
+        }
+        else
+            $("#SystemEntityCode").siblings("span").text("");
+
+        if (!flag && value) {
+            $(".ajaxloader").hide();
+            return false;
+        }
+
+        return true;
+    }
+
+    function AddApplicationMappingData() {
+        $(".ajaxloader").show();
+
+        if (validateApplicationDataItem(true)) {
+
+            var model = {
+                Application: $("#txtApplication").val(),
+                ApplicationName: $("#Application :selected").text(),
+                Type: $("#txtType").val(),
+                Entity: $("#txtEntity").val(),
+                IntegrationApplicationMapping_Id: $("#txtIntegrationApplicationMapping_Id").val(),
+                IntegrationApplicationMappingItem_Id: $("#IntegrationApplicationMappingItem_Id").val(),
+                PartnerEntityName: $("#PartnerEntityName").val(),
+                PartnerEntityCode: $("#PartnerEntityCode").val(),
+                SystemEntityName: $("#SystemEntityName").val(),
+                SystemEntityCode: $("#SystemEntityCode").val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/SaveIntegrationApplicationMappingItemsInfo",
+                data: model,
+                success: function (response) {
+                    $("#divURLSuccessError").removeAttr('class');
+                    if (response.status != undefined) {
+                        response.status.toLocaleLowerCase() == "success" ? $("#divURLSuccessError").addClass("alert alert-success") : $("#divURLSuccessError").addClass("alert alert-danger");
+                        $("#divURLSuccessError").show();
+                        $("#lblURLmsg").text(response.responseText);
+                        $("#stURLMsg").text(response.status + "! ");
+                        resetApplicationfrm()
+                        SearchApplicationMappingData();
+                    }
+                    else {
+                        $("#divURLSuccessError").show();
+                        $("#divURLSuccessError").addClass("alert alert-danger");
+                        $("#lblURLmsg").text("Something went wrong.");
+                        $("#stURLMsg").text("Error! ");
+                    }
+                    setTimeout(() => {
+                        $("#divURLSuccessError").hide();
+                    }, 5000);
+                    $(".ajaxloader").hide();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+
+    }
+
+    function resetApplicationfrm() {
+        $("#IntegrationApplicationMappingItem_Id").val("");
+        $("#PartnerEntityName").val("");
+        $("#PartnerEntityCode").val("");
+        $("#SystemEntityName").val("");
+        $("#SystemEntityCode").val("");
+        //$("#iPlusEditMappingData").removeClass();
+        //$("#iPlusEditMappingData").addClass("fa fa-plus");
+    }
+
+</script>

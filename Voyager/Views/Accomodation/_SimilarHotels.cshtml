@@ -1,0 +1,184 @@
+﻿@model Voyager.App.ViewModels.SimilarHotelsViewModel
+
+<form id="frmSimilarHotels">
+
+    <h2 class="sales-ctrl">Similar Hotels</h2>
+    <hr>
+    @Html.HiddenFor(model => model.BookingNumber)
+    @Html.HiddenFor(model => model.HotelName)
+    @Html.HiddenFor(model => model.ProductId)
+    @Html.HiddenFor(model => model.PositionId)
+    @Html.HiddenFor(model => model.IsClone)
+    @Html.HiddenFor(model => model.Caller)
+
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.HotelName))
+    {
+        <h3>@Model.HotelName</h3>
+        <p><b>@Model.HotelDesc </b></p>
+        <hr>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Selected Hotels</h4>
+            <br />
+            <div class="form-group">
+                @*<select multiple class="form-control" id="exampleFormControlSelect2">
+                        <option>Abba QueensGate Hotel (London, 4/Standard/City Centre)</option>
+                        <option>Abbey Court Hotel (London, 4/Standard/City Centre)</option>
+                        <option>Hilton Schmilton Hotel (London, 4/Standard/City Centre)</option>
+                    </select>*@
+                @Html.ListBoxFor(m => m.HotelName, new MultiSelectList(Model.SelectedHotelList, "VoyagerProductId", "Name"), new { @id = "SelectedHotelList", @class = "form-control", @style = "height:210px;border:1px solid grey;" })
+            </div>
+        </div>
+
+        <div class="col-md-1" style="height:210px">
+            @if (ViewBag.EnquiryPipeline != "Costing Pipeline")
+            {
+                <div class="up-down" style="position:sticky;top:50%">
+                    <a><i class="fa-arrow-up move-up"></i> </a><br /><br />
+                    <a><i class="fa-arrow-down move-down"></i> </a><br /><br />
+                    <a><i class="fa-arrow-right move-right"></i> </a><br /><br />
+                    <a><i class="fa-arrow-left move-left"></i> </a>
+                </div>
+            }
+        </div>
+        <div class="col-md-5">
+            <h4>Blacklisted Hotels</h4>
+            <br />
+            <div class="form-group">
+                @Html.ListBoxFor(m => m.HotelName, new MultiSelectList(Model.BlackListedHotelList, "VoyagerProductId", "Name"), new { @id = "BlacklistedHotelList", @class = "form-control", @style = "height:210px;border:1px solid grey;" })
+                @*<select multiple class="form-control" id="exampleFormControlSelect2">
+                        <option>Barn Hotel (London, 4/Standard/City Centre)</option>
+                    </select>*@
+            </div>
+        </div>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+    <div class="sales-ctrl" style="text-align:right">
+
+        @if (ViewBag.EnquiryPipeline != "Costing Pipeline")
+        {
+            <button type="button" class="btn btn-primary btn-md saveSimilarHotels">Save</button>
+            <button type="button" class="btn btn-primary btn-md close-popup">Cancel</button>
+        }
+    </div>
+    <hr>
+</form>
+<script>
+    $(function () {
+        function moveItems(origin, dest) {
+            $(origin).find(':selected').appendTo(dest);
+        }
+
+        function MoveUpDown(origin) {
+
+            var $op = $('#SelectedHotelList option:selected');
+            if ($op.length) {
+                (origin == 'UP') ?
+                    $op.first().prev().before($op) :
+                    $op.last().next().after($op);
+            }
+        }
+
+        $('.move-left').click(function () {
+            moveItems('#BlacklistedHotelList', '#SelectedHotelList');
+        });
+
+        $('.move-right').on('click', function () {
+            moveItems('#SelectedHotelList', '#BlacklistedHotelList');
+        });
+
+        $('.move-up').on('click', function () {
+            MoveUpDown('UP');
+        });
+
+        $('.move-down').on('click', function () {
+            MoveUpDown('DOWN');
+        });
+
+        $(".saveSimilarHotels").off("click").on('click', function () {
+            var PositionId = $('#PositionId').val();
+            var IsClone = $('#IsClone').val();
+
+            var Caller = $('#Caller').val();
+            var BookingNumber = $('#BookingNumber').val();
+
+            var HotelList = $('#SelectedHotelList >option');
+            var HotelListLen = $(HotelList).length;
+
+            var SelectedHotelList = new Array();
+            if (HotelListLen > 0) {
+                for (var i = 0; i < HotelListLen; i++) {
+                    var ProductId = $(HotelList[i]).val().split("|");
+                    SelectedHotelList.push({
+                        VoyagerProductId: ProductId[0],
+                        SupplierId: ProductId[1]
+                    });
+                }
+            }
+
+            var HotelList = $('#BlacklistedHotelList >option');
+            var HotelListLen = $(HotelList).length;
+
+            var BlacklistedHotelList = new Array();
+            if (HotelListLen > 0) {
+                for (var i = 0; i < HotelListLen; i++) {
+                    var ProductId = $(HotelList[i]).val().split("|");
+                    BlacklistedHotelList.push({
+                        VoyagerProductId: ProductId[0],
+                        SupplierId: ProductId[1]
+                    });
+                }
+            }
+
+            var model = {
+                SelectedHotelList: SelectedHotelList,
+                BlacklistedHotelList: BlacklistedHotelList,
+                PositionId: PositionId,
+                ProductId: ProductId,
+                IsClone: IsClone,
+                Caller: Caller,
+                BookingNumber: BookingNumber,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Accomodation/SaveSimilarHotels",
+                data: model,
+                async: false,
+                success: function (response) {
+                    $("#divSuccessError").show();
+                    if (response != null && response != undefined && response.status != "" && response.status != null
+                        && response.msg != "" && response.msg != null) {
+                        $("#frmSimilarHotels #divSuccessError").find("#stMsg").text(response.status + "!");
+                        $("#frmSimilarHotels #divSuccessError").find("#lblmsg").text("Alternate Hotels " + response.msg);
+
+                        if (response.status.toLowerCase() == "success") {
+                            $("#frmSimilarHotels #divSuccessError").addClass("alert alert-success");
+                        }
+                        else if (response.status.toLowerCase() == "error") {
+                            $("#frmSimilarHotels #divSuccessError").addClass("alert alert-danger");
+                        }
+                        else if (response.status.toLowerCase() == "failure") {
+                            $("#frmSimilarHotels #divSuccessError").addClass("alert alert-danger");
+                        }
+                    }
+                    else {
+                        $("#frmSimilarHotels #divSuccessError").find("#stMsg").text("Error!");
+                        $("#frmSimilarHotels #divSuccessError").find("#lblmsg").text("Not Updated");
+                    }
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+        });
+    });
+</script>

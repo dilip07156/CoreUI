@@ -1,0 +1,782 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" height="1288" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        @*        @Html.Partial("~/Views/ProposalDocument/_ProposalDocumentHeader.cshtml", Model.COHeaderViewModel)*@
+        <tr>
+            <td align="center" valign="top" height="1081">
+                <table width="773" border="0" align="center" cellpadding="0" cellspacing="0" class="container">
+                    <tr>
+                        <td class="main-title">Your Itinerary in Detail</td>
+                    </tr>
+                    <tr>
+                        <td style="height:15px"></td>
+                    </tr>
+                    <tr style="display:none;">
+                        <td height="20" align="left" valign="top" class="blue-title"><strong>Trip Highlights</strong></td>
+                    </tr>
+                    <tr style="display:none;">
+                        <td height="15" align="left" valign="top" class="black-title"></td>
+                    </tr>
+                    <tr style="display:none;">
+                        <td height="10" style="height:20px;">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td height="20" width="2%"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" /></td>
+                                    <td height="20">Enjoy the famous Alcazar Show.</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height:7px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                                </tr>
+                                <tr>
+                                    <td height="20" width="2%"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" /></td>
+                                    <td height="20">Relax on the Idyllic Coral island in Pattaya.</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height:7px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                                </tr>
+                                <tr>
+                                    <td height="20" width="2%"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" /></td>
+                                    <td height="20">Discover two of Bangkok's finest temples.</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height:7px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                                </tr>
+                                <tr>
+                                    <td height="20" width="2%"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" /></td>
+                                    <td width="98%" height="20">Explore the most popular open air zoo, the Safari World and Marine Park.</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="height:7px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="15" valign="top"></td>
+                    </tr>
+                </table>
+                <table width="773" border="0" align="center" cellpadding="0" cellspacing="0">
+                    @for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+                    {
+                        <tr>
+                            <td width="50" valign="top">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td><div class="day-no">@Model.Itinerary.ItineraryDays[i].Day</div></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td width="10" valign="top">&nbsp;</td>
+                            <td width="773" valign="top">
+                                <strong class="itinarary">@Model.Itinerary.ItineraryDays[i].ItineraryName</strong>
+                                <span class="date-info">
+                                    @Convert.ToDateTime(Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy") <em>@Model.Itinerary.ItineraryDays[i].DayOfWeek</em>
+                                </span>
+                                @{
+                                    string CityDesc = "";
+                                    var IteDesc = Model.Itinerary.ItineraryDays[i].ItineraryDescription.Where(a => a.Type == "Extra" && string.IsNullOrEmpty(a.ProductType) && !string.IsNullOrEmpty(a.City)).FirstOrDefault();
+                                    if (IteDesc != null)
+                                    {
+                                        CityDesc = IteDesc.ProductName;
+                                    }
+                                    <p>@CityDesc</p>
+                                }
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg">
+
+                                    @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+                                    {
+                                        string ProdType = Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType;
+                                        <tr>
+                                            <td style="height:10px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                                        </tr>
+                                        @if (ProdType == "Domestic Flight" || ProdType == "Coach" || ProdType == "LDC" || ProdType == "Private Transfer" || ProdType == "Scheduled Transfer" || ProdType == "Ferry Transfer" || ProdType == "Ferry Passenger")
+                                        {
+                                            <tr class="itinerary-dtl-bg">
+                                                <td width="573">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg" style="border-bottom:none;">
+                                                        <tr>
+                                                            <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/transfer-img.png" width="19" height="15" /></span></td>
+                                                            <td width="24%"><span class="tl"><strong>@ProdType</strong></span></td>
+                                                            <td width="9%">&nbsp;</td>
+                                                            <td width="56%">&nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4" height="10" style="height:10px;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;</td>
+                                                            <td>Pick Up Time</td>
+                                                            <td align="center" class="grey-txt">:</td>
+                                                            <td><span class="grey-txt">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;</td>
+                                                            <td>Drop off Time</td>
+                                                            <td align="center" class="grey-txt">:</td>
+                                                            <td><span class="grey-txt">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</span></td>
+                                                        </tr>
+                                                        @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime) && !string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime))
+                                                        {
+                                                            int EndHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[0]);
+                                                            int EndMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[1]);
+                                                            int StartHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[0]);
+                                                            int StartMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[1]);
+
+                                                            DateTime dateEnd = new DateTime(2012, 1, 1, EndHour, EndMin, 0);
+                                                            DateTime dateStart = new DateTime(2012, 1, 1, StartHour, StartMin, 0);
+                                                            TimeSpan duration = dateEnd - dateStart;
+
+                                                            <tr>
+                                                                <td>&nbsp;</td>
+                                                                <td>Duration</td>
+                                                                <td align="center" class="grey-txt">:</td>
+                                                                <td><span class="grey-txt">@duration.Hours hrs @duration.Minutes mins approx</span></td>
+                                                            </tr>
+                                                        }
+                                                    </table>
+                                                </td>
+                                                <td width="200">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        @{
+                                                            var genericImage = Model.GenericImages.Where(a => a.ImageSubType == ProdType).FirstOrDefault();
+                                                            if (genericImage != null)
+                                                            {
+
+                                                                <tr>
+                                                                    <td>
+                                                                        <span class="itinerary-dtl-img">
+                                                                            <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="200">
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        }
+                                        else if (ProdType == "Hotel")
+                                        {
+                                            <tr class="itinerary-dtl-bg">
+                                                <td width="573">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg" style="border-bottom: none;">
+                                                        <tr>
+                                                            <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/hotel-img1.png" width="19" height="12" /></span></td>
+                                                            <td width="91%" colspan="3"><span class="tl"><strong>@ProdType</strong> <small>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName Or Similar</small></span></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="200">
+                                                    @*Jira Ticket 598
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                            @{
+                                                                var genericImage = Model.GenericImages.Where(a => a.ImageSubType == ProdType).FirstOrDefault();
+                                                                if (genericImage != null)
+                                                                {
+
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="itinerary-dtl-img">
+                                                                                <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="200">
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </table>*@
+                                                </td>
+                                            </tr>
+                                        }
+                                        else if (ProdType == "Attractions" || ProdType == "Sightseeing - CityTour")
+                                        {
+                                            <tr class="itinerary-dtl-bg">
+                                                <td width="573">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="10%">&nbsp;</td>
+                                                                                <td width="90%" style="height:10px;">&nbsp;</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="99%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-cont">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/magnifine-icon.png" width="19" height="15"></span></td>
+                                                                                <td width="90%"><span class="tl"><strong>@ProdType</strong></span> - <span class="grey-txt">Included in your trip</span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>&nbsp;</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td width="40%">
+                                                                                                    <strong>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</strong><br>
+                                                                                                    @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City
+                                                                                                </td>
+                                                                                                <td width="23%">
+                                                                                                    <table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                                                                                        <tbody>
+                                                                                                            <tr>
+                                                                                                                <td width="45%"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/time-icon.png" alt="" width="19" height="26"></span></td>
+                                                                                                                <td width="55%">
+                                                                                                                    <strong class="txt-uppcase">TIME</strong><br>
+                                                                                                                    @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </td>
+                                                                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime) && !string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime))
+                                                                                                {
+                                                                                                    int EndHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[0]);
+                                                                                                    int EndMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[1]);
+                                                                                                    int StartHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[0]);
+                                                                                                    int StartMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[1]);
+
+                                                                                                    DateTime dateEnd = new DateTime(2012, 1, 1, EndHour, EndMin, 0);
+                                                                                                    DateTime dateStart = new DateTime(2012, 1, 1, StartHour, StartMin, 0);
+                                                                                                    TimeSpan duration = dateEnd - dateStart;
+
+                                                                                                    <td width="37%">
+                                                                                                        <table width="83%" border="0" cellspacing="0" cellpadding="0">
+                                                                                                            <tbody>
+                                                                                                                <tr>
+                                                                                                                    <td width="35%"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/duration-icon.png" alt="" width="25" height="25"></span></td>
+                                                                                                                    <td width="65%">
+                                                                                                                        <strong class="txt-uppcase">DURATION</strong><br>
+                                                                                                                        @{ string hrs = "", mins = ""; }
+                                                                                                                        @if (duration.Hours != 0)
+                                                                                                                        {
+                                                                                                                            hrs = duration.Hours + " hrs ";
+                                                                                                                        }
+                                                                                                                        @if (duration.Minutes != 0)
+                                                                                                                        {
+                                                                                                                            mins = duration.Minutes + " mins";
+                                                                                                                        }
+                                                                                                                        @hrs@mins
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </tbody>
+                                                                                                        </table>
+                                                                                                    </td>
+                                                                                                }
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            @{
+                                                                if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductDescription != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td height="10" style="height:10px;"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td width="9%">&nbsp;</td>
+                                                                                        <td width="87%"><p>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductDescription</p></td>
+                                                                                        <td width="3%">&nbsp;</td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="10%">&nbsp;</td>
+                                                                                <td width="90%" style="height:10px;">&nbsp;</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td width="200">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        @{
+                                                            var genericImage = Model.GenericImages.Where(a => a.ImageSubType == ProdType).FirstOrDefault();
+                                                            if (genericImage != null)
+                                                            {
+
+                                                                <tr>
+                                                                    <td>
+                                                                        <span class="itinerary-dtl-img">
+                                                                            <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="200">
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        }
+                                        else if (ProdType == "Meal")
+                                        {
+                                            <tr class="itinerary-dtl-bg">
+                                                <td width="573">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="10%">&nbsp;</td>
+                                                                                <td width="90%" style="height:10px;">&nbsp;</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="99%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-cont">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/restaurant-icon.png" width="19" height="15"></span></td>
+                                                                                <td width="90%"><span class="tl"><strong>@ProdType</strong></span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>&nbsp;</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td width="40%">
+                                                                                                    <strong>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</strong><br>
+                                                                                                    @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City
+                                                                                                </td>
+                                                                                                <td width="23%">
+                                                                                                    <table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                                                                                        <tbody>
+                                                                                                            <tr>
+                                                                                                                <td width="45%"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/time-icon.png" alt="" width="19" height="26"></span></td>
+                                                                                                                <td width="55%">
+                                                                                                                    <strong class="txt-uppcase">TIME</strong><br>
+                                                                                                                    @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </td>
+                                                                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime) && !string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime))
+                                                                                                {
+                                                                                                    int EndHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[0]);
+                                                                                                    int EndMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[1]);
+                                                                                                    int StartHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[0]);
+                                                                                                    int StartMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[1]);
+
+                                                                                                    DateTime dateEnd = new DateTime(2012, 1, 1, EndHour, EndMin, 0);
+                                                                                                    DateTime dateStart = new DateTime(2012, 1, 1, StartHour, StartMin, 0);
+                                                                                                    TimeSpan duration = dateEnd - dateStart;
+
+                                                                                                    <td width="37%">
+                                                                                                        <table width="83%" border="0" cellspacing="0" cellpadding="0">
+                                                                                                            <tbody>
+                                                                                                                <tr>
+                                                                                                                    <td width="35%"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/duration-icon.png" alt="" width="25" height="25"></span></td>
+                                                                                                                    <td width="65%">
+                                                                                                                        <strong class="txt-uppcase">DURATION</strong><br>
+                                                                                                                        @{ string hrs = "", mins = ""; }
+                                                                                                                        @if (duration.Hours != 0)
+                                                                                                                        {
+                                                                                                                            hrs = duration.Hours + " hrs ";
+                                                                                                                        }
+                                                                                                                        @if (duration.Minutes != 0)
+                                                                                                                        {
+                                                                                                                            mins = duration.Minutes + " mins";
+                                                                                                                        }
+                                                                                                                        @hrs@mins
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </tbody>
+                                                                                                        </table>
+                                                                                                    </td>
+                                                                                                }
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>&nbsp;</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                        <tbody>
+                                                                                            <tr><td><strong>SERVICES</strong><br></td></tr>
+                                                                                            @foreach (var item in Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails)
+                                                                                            {
+                                                                                                <tr>
+                                                                                                    <td>@item.RangeDesc </td>
+                                                                                                    <td>@item.ProdDesc</td>
+                                                                                                </tr>
+                                                                                            }
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            @{
+                                                                if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductDescription != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td height="10" style="height:10px;"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td width="9%">&nbsp;</td>
+                                                                                        <td width="87%"><p>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductDescription</p></td>
+                                                                                        <td width="3%">&nbsp;</td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="10%">&nbsp;</td>
+                                                                                <td width="90%" style="height:10px;">&nbsp;</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td width="200">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        @*@*Jira Ticket 598
+                                                                @{
+                                                                var genericImage = Model.GenericImages.Where(a => a.ImageSubType == ProdType).FirstOrDefault();
+                                                                if (genericImage != null)
+                                                                {
+
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="itinerary-dtl-img">
+                                                                                <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="200">
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }*@
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        }
+                                        else if (!string.IsNullOrEmpty(ProdType))
+                                        {
+                                            <tr class="itinerary-dtl-bg">
+                                                <td width="573">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="10%">&nbsp;</td>
+                                                                                <td width="90%" style="height:10px;">&nbsp;</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="99%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-cont">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/magnifine-icon.png" width="19" height="15"></span></td>
+                                                                                <td width="90%"><span class="tl"><strong>@ProdType</strong></span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>&nbsp;</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td width="40%">
+                                                                                                    <strong>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</strong><br>
+                                                                                                    @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City
+                                                                                                </td>
+                                                                                                <td width="23%">
+                                                                                                    <table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                                                                                        <tbody>
+                                                                                                            <tr>
+                                                                                                                <td width="45%"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/time-icon.png" alt="" width="19" height="26"></span></td>
+                                                                                                                <td width="55%">
+                                                                                                                    <strong class="txt-uppcase">TIME</strong><br>
+                                                                                                                    @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </td>
+                                                                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime) && !string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime))
+                                                                                                {
+                                                                                                    int EndHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[0]);
+                                                                                                    int EndMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split(':')[1]);
+                                                                                                    int StartHour = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[0]);
+                                                                                                    int StartMin = Convert.ToInt32(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime.Split(':')[1]);
+
+                                                                                                    DateTime dateEnd = new DateTime(2012, 1, 1, EndHour, EndMin, 0);
+                                                                                                    DateTime dateStart = new DateTime(2012, 1, 1, StartHour, StartMin, 0);
+                                                                                                    TimeSpan duration = dateEnd - dateStart;
+
+                                                                                                    <td width="37%">
+                                                                                                        <table width="83%" border="0" cellspacing="0" cellpadding="0">
+                                                                                                            <tbody>
+                                                                                                                <tr>
+                                                                                                                    <td width="35%"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/duration-icon.png" alt="" width="25" height="25"></span></td>
+                                                                                                                    <td width="65%">
+                                                                                                                        <strong class="txt-uppcase">DURATION</strong><br>
+                                                                                                                        @{ string hrs = "", mins = ""; }
+                                                                                                                        @if (duration.Hours != 0)
+                                                                                                                        {
+                                                                                                                            hrs = duration.Hours + " hrs ";
+                                                                                                                        }
+                                                                                                                        @if (duration.Minutes != 0)
+                                                                                                                        {
+                                                                                                                            mins = duration.Minutes + " mins";
+                                                                                                                        }
+                                                                                                                        @hrs@mins
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </tbody>
+                                                                                                        </table>
+                                                                                                    </td>
+                                                                                                }
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>&nbsp;</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>&nbsp;</td>
+                                                                                <td>
+                                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                        <tbody>
+                                                                                            <tr><td><strong>SERVICES</strong><br></td></tr>
+                                                                                            @foreach (var item in Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails)
+                                                                                            {
+                                                                                                <tr>
+                                                                                                    <td>@item.RangeDesc</td>
+                                                                                                </tr>
+                                                                                            }
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            @{
+                                                                if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductDescription != null)
+                                                                {
+                                                                    <tr>
+                                                                        <td height="10" style="height:10px;"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td width="9%">&nbsp;</td>
+                                                                                        <td width="87%"><p>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductDescription</p></td>
+                                                                                        <td width="3%">&nbsp;</td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                            <tr>
+                                                                <td>
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="10%">&nbsp;</td>
+                                                                                <td width="90%" style="height:10px;">&nbsp;</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td width="200">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                        @{
+                                                            var genericImage = Model.GenericImages.Where(a => a.ImageSubType == ProdType).FirstOrDefault();
+                                                            if (genericImage != null)
+                                                            {
+
+                                                                <tr>
+                                                                    <td>
+                                                                        <span class="itinerary-dtl-img">
+                                                                            <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="200">
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                    <tr class="itinerary-dtl-bg">
+                                        <td height="30" style="height:30px;">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="itinerary-dtl-bg">
+                                                @{
+                                                    string OverNightDesc = "";
+                                                    var ItinDesc = Model.Itinerary.ItineraryDays[i].ItineraryDescription.Where(a => a.Type == "Extra" && string.IsNullOrEmpty(a.ProductType) && string.IsNullOrEmpty(a.City) && !string.IsNullOrEmpty(a.ProductName) && a.ProductName.Contains("Overnight")).FirstOrDefault();
+                                                    if (ItinDesc != null)
+                                                    {
+                                                        OverNightDesc = ItinDesc.ProductName;
+                                                        <tr>
+                                                            <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/over-night-img.png" width="16" height="16" /></span></td>
+                                                            <td colspan="3"><span class="tl"> <small> @OverNightDesc</small></span></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td colspan="3">&nbsp;</td>
+                                                </tr>
+                                                @if (Model.Itinerary.ItineraryDays[i].Meal.Count > 0)
+                                                {
+                                                    <tr>
+                                                        <td width="9%" align="left"><span class="icon-img"><img src="@Model.URLinitial/resources/images/proposal-report/dinner-icon.png" width="13" height="16" /></span></td>
+                                                        <td colspan="3">
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                <tr>
+                                                                    <td>
+                                                                        @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].Meal.Count; j++)
+                                                                        {
+                                                                            if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Meal[j].MealType))
+                                                                            {
+                                                                                if (Model.Itinerary.ItineraryDays[i].Meal[j].MealType.ToLower() == "breakfast")
+                                                                                {
+                                                                                    <img src="@Model.URLinitial/resources/images/proposal-report/breakfast-img.png" alt="Dinner img" width="81" height="26" style="margin-right: 10px;">
+                                                                                }
+                                                                                if (Model.Itinerary.ItineraryDays[i].Meal[j].MealType.ToLower() == "lunch")
+                                                                                {
+                                                                                    <img src="@Model.URLinitial/resources/images/proposal-report/lunch-img.png" alt="Dinner img" width="81" height="26" style="margin-right: 10px;">
+                                                                                }
+                                                                                if (Model.Itinerary.ItineraryDays[i].Meal[j].MealType.ToLower() == "dinner")
+                                                                                {
+                                                                                    <img src="@Model.URLinitial/resources/images/proposal-report/dinner-img.png" alt="Dinner img" width="81" height="26" style="margin-right: 10px;">
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td colspan="3">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="9%"></td>
+                                                    <td colspan="3"></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            @*
+                                <td width="254" align="right" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+                                        {
+                                        string ProdType = Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType;
+                                        var genericImage = Model.GenericImages.Where(a => a.ImageSubType == ProdType).FirstOrDefault();
+                                        if (genericImage != null)
+                                        {
+
+                                        <tr>
+                                            <td>
+                                                <span class="itinerary-dtl-img">
+                                                    <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="200">
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        }
+                                        }
+                                    </table>
+                                </td>*@
+                        </tr>
+                    }
+                </table>
+                <p>&nbsp;</p>
+            </td>
+        </tr>
+        @*  @Html.Partial("~/Views/ProposalDocument/_ProposalDocumentFooter.cshtml", Model.COHeaderViewModel)*@
+    </table>
+</div>

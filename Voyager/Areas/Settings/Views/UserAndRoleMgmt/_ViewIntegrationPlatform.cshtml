@@ -1,0 +1,213 @@
+﻿@model Voyager.App.ViewModels.IntegrationPlatformViewModel
+<style>
+    .row1 {
+        margin-bottom: 15px !important;
+    }
+</style>
+
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        <h3>Integration Platform</h3>
+        <br />
+        <div class="modal-body">
+            <br />
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <div style="display:none;text-align:left;" id="divSuccessError">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                    </div>
+                    <form id="frmIntegrationPlatform">
+                        <div class="form-section">
+                            <div class="form-group-sec">
+                                <div class="row">
+                                    <div class="col-xs-2 mobile-12">
+                                        <label class="frm-sub-label">Selected Platform </label>
+                                        @Html.DropDownListFor(m => m.Application_Id, new SelectList(Model.ApplicationList, "Attribute_Id", "AttributeName"), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.Application_Id, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-2 mobile-12">
+                                        <label class="frm-sub-label">Module </label>
+                                        @Html.DropDownListFor(m => m.Module, new SelectList(Model.ModuleList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.Module, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-2 mobile-12">
+                                        <label class="frm-sub-label">Type </label>
+                           @Html.DropDownListFor(m => m.TypeName, new SelectList(new List<string>() { "GET", "POST", "PUT","DELETE" }),"Select",new { @class = "form-control filter" })
+    @*@Html.DropDownList("Foo", new SelectList(Model.TypeName.Select(x => new { Value = x, Text = x }), "Value", "Text"), "Select", new { @class = "form-control filter" })
+        @Html.DropDownListFor(m => m.TypeName, new SelectList(Model.Type, "TypeName", "TypeName"), "Select", new { @class = "form-control filter" })*@
+    @Html.ValidationMessageFor(m => m.TypeName, "", new { @class = "text-danger" })
+</div>
+                                    <div class="col-xs-2 mobile-12">
+                                        <label class="frm-sub-label">Operation </label>
+                                        @Html.DropDownListFor(m => m.ActionId, new SelectList(Model.ActionList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.ActionId, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-2 mobile-12" style="text-align: left;">
+                                        <button type="button" class="btn btn-success btn-sm" onclick="SearchIntegrationPlatform();">Search</button>&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-success btn-sm" onclick="AddIntegrationPlatform();">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <input type="hidden" id="Exp_Application_Id" name="Application_Id" />
+                    <input type="hidden" id="Exp_ContactPersonID" name="ContactPersonID" />
+                    <div class="popup-in displayIntegrationPlatformURL">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function AddIntegrationPlatform() {
+        $(".ajaxloader").show();
+
+        if (validateIntegartionPlatform(true)) {
+            
+            var model = {
+                Application_Id: $("#Application_Id :selected").val(),
+                ApplicationName: $("#Application_Id :selected").text(),
+                Module: $("#Module :selected").val(),
+                ModuleName: $("#Module :selected").text(),
+                ActionId: $("#ActionId :selected").val(),
+                ActionName: $("#ActionId :selected").text(),
+                TypeName: $("#TypeName :selected").text(),
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/SaveIntegrationPlatform",
+                data: model,
+                success: function (response) {
+                    $("#divSuccessError").removeAttr('class');
+                    if (response.status != undefined) {
+                        response.status.toLocaleLowerCase() == "alert" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+                        $("#divSuccessError").show();
+                        $("#lblmsg").text(response.responseText);
+                        $("#stMsg").text(response.status + "! ");
+                    }
+                    else {
+                        $(".displayIntegrationPlatformURL").html(response.replace("action-popup ", ""));
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-success");
+                        $("#lblmsg").text("Integration Platform created successfully.");
+                        $("#stMsg").text("Success! ");
+                    }
+                    setTimeout(() => {
+                        $("#divSuccessError").hide();
+                    }, 5000);
+                    $(".ajaxloader").hide();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+
+    }
+
+    function validateIntegartionPlatform(value) {
+        var flag = true;
+        var Application_Id = $("#Application_Id :selected").text();
+
+        if (value && (Application_Id == "" || Application_Id == "Select")) {
+            $("#Application_Id").siblings("span").text("The Platform field is required.");
+            flag = false;
+        }
+        else
+            $("#Application_Id").siblings("span").text("");
+
+        var Module = $("#Module :selected").text();
+
+        if (value && (Module == "" || Module == "Select")) {
+            $("#Module").siblings("span").text("The Module field is required.");
+            flag = false;
+        }
+        else
+            $("#Module").siblings("span").text("");
+
+        var Action = $("#ActionId :selected").text();
+
+        if (value && (Action == "" || Action == "Select")) {
+            $("#ActionId").siblings("span").text("The Operation field is required.");
+            flag = false;
+        }
+        else
+            $("#ActionId").siblings("span").text("");
+        var Type = $("#TypeName :selected").text();
+        if (value && (Type == "" || Type == "Select")) {
+            $("#TypeName").siblings("span").text("The Type field is required.");
+            flag = false;
+        }
+        else
+            $("#TypeName").siblings("span").text("");
+
+        if (!flag && value) {
+            $(".ajaxloader").hide();
+            return false;
+        }
+
+        return true;
+    }
+
+    function SearchIntegrationPlatform() {
+        $(".ajaxloader").show();
+        var model = {
+            Application_Id: $("#Application_Id :selected").val(),
+            ApplicationName: $("#Application_Id :selected").text(),
+            Module: $("#Module :selected").val(),
+            ModuleName: $("#Module :selected").text(),
+            ActionId: $("#ActionId :selected").val(),
+            ActionName: $("#ActionId :selected").text(),
+            TypeName: $("#TypeName :selected").text(),
+        }
+        validateIntegartionPlatform(false);
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationPlatformList",
+            data: model,
+            success: function (response) {
+                $(".ajaxloader").hide();
+                $(".displayIntegrationPlatformURL").html(response.replace("action-popup ", ""));
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                $("#divSuccessError").removeAttr('class');
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text("something went wrong!");
+                $("#stMsg").text("Error! ");
+                setTimeout(() => {
+                    $("#divSuccessError").hide();
+                }, 5000);
+            }
+        });
+    }
+
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblmsg").text("");
+        curdiv.find("#stMsg").text("");
+    });
+
+</script>

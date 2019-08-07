@@ -1,0 +1,90 @@
+﻿.table tbody tr {
+    background-color: #fff !important;
+}
+
+.pop-lg {
+    background: #fff;
+    color: #000;
+    font: 14px Open Sans, Arial, 'Helvetica Neue', Helvetica, sans-serif !important;
+}
+
+    .pop-lg hr {
+        margin-bottom: 5px;
+        margin-top: 5px;
+    }
+
+.sendhtmldiv p {
+    padding-top: 10px;
+}
+
+.sendhtmldiv {
+    /*word-break: break-all;*/
+    overflow-y: scroll;
+    background-color: #e9ecef;
+    opacity: 1;
+    border: 3px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    padding: 15px;
+}
+
+    .sendhtmldiv table, .sendhtmldiv table tbody tr {
+        background-color: #e9ecef !important;
+    }
+
+.sendhtml a, .sendhtml p, .sendhtml span, .sendhtml button {
+    pointer-events: none;
+}
+
+.popup-box.pop-lg {
+    max-width: 1200px;
+}
+
+.modal-body {
+    border: 2px solid #ced4da;
+    border-radius: 0.50rem;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.card {
+    padding: 0px 8px 0px 8px;
+}
+
+.fontsize17 {
+    font-size: 17px !important;
+}
+
+.hrmargintop10 {
+    margin-top: 10px !important;
+}
+
+.texttolabel {
+    padding-left: 0px;
+}
+
+.tblcommunitrail {
+    margin-bottom: 0px;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+    .tblcommunitrail tr > td, .tbluploademail tr > td {
+        padding-top: 10px;
+    }
+
+.btnview {
+    cursor: pointer;
+}
+
+.text-danger {
+    padding-left: 5px;
+    font-size: 20px !important;
+}
+
+.ui-datepicker-year {
+    z-index: 99999;
+}
+
+#modelcommunitrail .card {
+    padding-top: 8px;
+}

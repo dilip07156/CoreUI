@@ -1,0 +1,151 @@
+﻿@model VGER_WAPI_CLASSES.GoAheadNewDeptGetRes
+
+@Html.HiddenFor(Model => Model.GoAheadId, new { @id = "GoAheadId" })
+@Html.HiddenFor(Model => Model.QRFID, new { @id = "QRFId" })
+
+<div id="modelAddDeparture-popup">
+    <div class="radio-list-bar type02">
+        <h5 class="modal-title">Add New Departure</h5>
+    </div>
+    @*<div style="display:none;text-align:left;margin-top:3px;" id="divSuccessError">
+            <a class="close" title="close">×</a>
+            <strong id="stMsg"></strong> <label id="lblmsg"></label>
+        </div>*@
+
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success" style="margin-top:3px;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger" style="margin-top:3px;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    <div class="custom-mob-tbl table-responsive valign-top-tbl top-gap-lg">
+        <div class="row">
+            @if (Model?.ExisitingDepatures?.Count > 0)
+            {
+                <div class="col-lg-6">
+                    <h3>Existing Departures</h3>
+                    <p>Please select departures from which the price should be copied into new departures :</p>
+                    <div class="table-responsive filter-table custom-mob-tbl">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center">Select</th>
+                                    <th style="text-align:center">Departure</th>
+                                    <th style="text-align:center">PP Twin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyExistingDeptDates">
+                                @for (int i = 0; i < Model.ExisitingDepatures.Count; i++)
+                                {
+                                    <tr class="trExistingDeptDates" style="text-align:center">
+                                        <td style="text-align:center">
+                                            @Html.RadioButtonFor(m => m.ExistDepartureId, Model.ExisitingDepatures[i].DepatureId.ToString(), new { @id = "rdoExistDept_" + i, @class = "rdoExistDept" })
+                                        </td>
+                                        <td style="text-align:center">
+                                            @Html.TextBoxFor(m => m.ExisitingDepatures[i].DepatureDate, "{0:dd MMM yyyy}", new { @id = "lblDepatureDate_" + i, @class = "txt-span texttolabel", @ReadOnly = "true", customdt = Model.ExisitingDepatures[i].DepatureDate.Value.ToString("dd/MM/yyyy") })
+                                        </td>
+                                        <td style="text-align:center">
+                                            @Html.DisplayFor(m => m.ExisitingDepatures[i].Currency, new { @id = "lblCurrency_" + i, @class = "form-check-label" })
+                                            @Html.DisplayFor(m => m.ExisitingDepatures[i].PPTwin, new { @id = "lblPPTwin_" + i, @class = "form-check-label" })
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h3>New Departures</h3>
+                    <p>Select New Date to create departure on</p>
+                    <div class="table-responsive filter-table custom-mob-tbl">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>New Departure Dates</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tNewDepartures">
+                                <tr class="trNewDeptDatesAdd" style="text-align:center">
+                                    <td style="text-align:center">
+                                        <label class="form-check-label">
+                                            New Departure Date
+                                        </label>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <div class="row">
+                                            <div class="col-lg-11">
+                                                <input type="hidden" id="hdnSeqNo" value="0" />
+                                                <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                                    @Html.TextBoxFor(m => m.NewDepatures[0].DepatureDate, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @id = "txtnewDt_0", @placeholder = "dd/MM/yyyy" })                                                    
+                                                </div>
+                                                <small id="txtnewDtDesc_0" class="form-text text-muted">Select New Date to create departure</small>
+                                            </div>
+                                            <div class="col-lg-1" style="padding:0px;padding-top:15px;padding-right:15px;">
+                                                @Html.ValidationMessageFor(m => m.NewDepatures[0].DepatureDate, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <div class="row" style="padding-left:0px;">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-6" style="padding-right: 0px;"> 
+                                                    <a href="#" title="Delete" class="icon-squre-red btnRemoveDt" id="btnRemove_0"><i class="fa fa-times"></i></a>
+                                                </div>
+                                                <div class="col-lg-6 divAddButton" style="padding-left: 0px;">
+                                                    <a href="#" title="Add" class="icon-squre-green btnAddNewDt" id="btnAddNewDt_0"><i class="fa fa-plus"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-12">
+                    No Records Found.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="btn-cont text-center">
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-adddept-popup">Close</button>
+        @if (Model?.ExisitingDepatures?.Count > 0)
+        {
+            <input type="submit" value="Create Departure" title="Create Departure" class="btn btn-blue btn-md" id="btnCreateDeparture">
+        }
+    </div>
+</div>
+
+<style>
+    .popup-box.pop-lg {
+        max-width: 1200px !important;
+    }
+
+    .hiddenDeparture {
+        display: none;
+    }
+
+    tr.trExistingDeptDates:hover {
+        cursor: pointer;
+    }
+</style> 
+<script src="~/resources/js/main.js"></script>
+<link href="~/resources/css/style.css" rel="stylesheet" />
+<script src="~/js/Handover/AddDepartures.js"></script>

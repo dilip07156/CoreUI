@@ -1,0 +1,24 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+<!-- SECTION TABS -->
+<!-- Nav tabs -->
+@Html.HiddenFor(m => m.MenuName, new { @data_posid=Model.PositionId}) 
+<ul class="sqr-tab-list" id="ulOpsProdType">
+    <li id="liItinerary" liProdType="Itinerary"><a id="aItinerary"><strong>Itinerary</strong> </a></li>
+    <li id="liAccomodation" liProdType="Accommodation"><a id="aAccomodation" class="aProdType" prodtype="HOTEL"><strong>Accommodation</strong> </a></li>
+    <li id="liMeals" liProdType="Meals"><a id="aMeals" href="#" class="aProdType" prodtype="MEAL"><strong>Meals</strong></a></li>
+    <li id="liActivities" liProdType="Activities"><a id="aActivities" href="#" class="aProdType" prodtype="ATTRACTIONS,SIGHTSEEING - CITYTOUR"><strong>Activities</strong></a></li>
+    <li id="liCruise" liProdType="Cruise"><a id="aCruise" href="#" class="aProdType" prodtype="OVERNIGHT FERRY"><strong>Cruise</strong></a></li>
+    <li id="liRail" liProdType="Rail"><a id="aRail" href="#" class="aProdType" prodtype="TRAIN"><strong>Rail</strong></a></li>
+    <li id="liTransfers" liProdType="Transfers"><a id="aTransfers" href="#" class="aProdType" prodtype="PRIVATE TRANSFER,SCHEDULED TRANSFER,FERRY TRANSFER,FERRY PASSENGER"><strong>Transfers</strong> </a></li>
+    <li id="liFlights" liProdType="Flights"><a id="aFlights" href="#" class="aProdType" prodtype="DOMESTIC FLIGHT"><strong>Flights</strong></a></li>
+    <li id="liBus" liProdType="Bus"><a id="aBus" href="#" class="aProdType" prodtype="LDC,COACH"><strong>Bus</strong></a></li>
+    <li id="liLocalGuide" liProdType="LocalGuide"><a id="aLocalGuide" href="#" class="aProdType" prodtype="GUIDE,ASSISTANT"><strong>Local Guide</strong></a></li>
+    <li id="liTourEntities" liProdType="TourEntities"><a id="aTourEntities" href="#" class="aProdType" prodtype="ASSISTANTTE"><strong>Tour Entities</strong></a></li>
+    <li id="liOthers" liProdType="Others"><a id="aOthers" href="#" class="aProdType" prodtype="VISA,INSURANCE,OTHER,FEE"><strong>Others</strong></a></li>
+</ul>
+<div class="tab-domestic-sec" id="divOpsProdTypeMain">
+    <div class="sqr-tab-data" role="tabpanel" aria-labelledby="home-tab" id="divOpsItinerary" style="display:none;"></div>
+    <div class="sqr-tab-data" role="tabpanel" aria-labelledby="home-tab" id="divOpsProdTypeInfo" style="display:none;"></div>
+</div>
+
+<script src="~/js/Operations/OpsProdTypeMenu.js"></script>

@@ -1,0 +1,72 @@
+﻿<style>
+	.popup-box.pop-lg {
+		max-width: 750px;
+	}
+</style>
+
+@model Voyager.App.ViewModels.ExtraPosition
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02", id = "frmAddNewItinerary" }))
+{
+	<div class="popup-box pop-lg form-theme-04 form" id="frmAddNewItinerary">
+		<div class="popup-in">
+			<div class="custom-mob-tbl table-responsive">
+				<div class="alert alert-success" id="SuccessAlert" style="display:none">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+					<div id="SuccessMessage"></div>
+				</div>
+				<div class="alert alert-danger" id="ErrorAlert" style="display:none">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+					<div id="ErrorMessage"></div>
+				</div>
+
+
+				<table class="table">
+					<thead>
+						<tr>
+							@Html.HiddenFor(Model => Model.flag, new { @id = "Flag" })
+							@Html.HiddenFor(Model => Model.QRFID, new { @id = "QRFId" })
+							@Html.HiddenFor(Model => Model.Type, new { @id = "Type" })
+							@Html.HiddenFor(Model => Model.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryID" })
+							@Html.HiddenFor(Model => Model.ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+							<th class="col-lg-2 display"><span>Day</span></th>
+							<th class="col-lg-2 display"><span>Start Time</span></th>
+							<th class="col-lg-2 display"><span>End Time</span></th>
+							<th class="col-lg-2 display"><span>Location</span></th>
+							<th class="col-lg-4"><span>Description</span></th>
+						</tr>
+					</thead>
+
+					<tbody class="row-grid-sm document-list">
+						<tr>
+							@Html.HiddenFor(Model => Model.PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+							<td class="display">
+								@Html.DropDownListFor(m => m.Day, new SelectList(Model.DayList, "Attribute_Id", "AttributeName"), new { @class = "form-control" })
+							</td>
+							<td class="time display">
+								@Html.TextBoxFor(x => x.StartTime, new { @class = "form-control time24", id = "StartTime" })
+								<span class="field-validation-error error" data-valmsg-replace="true" id="spanStartTime"></span>
+							</td>
+							<td class="time display">
+								@Html.TextBoxFor(x => x.EndTime, new { @class = "form-control time24", id = "EndTime" })
+								<span class="field-validation-error error" data-valmsg-replace="true" id="spanEndTime"></span>
+							</td>
+							<td class="display">
+								@Html.DropDownListFor(m => m.City, new SelectList(Model.CityList, "AttributeName", "AttributeName"), new { @class = "form-control" })
+							</td>
+							<td>
+								@Html.TextAreaFor(x => x.ProductName, new { @class = "form-control", id = "ProductName" })
+								<span class="field-validation-error error" data-valmsg-replace="true" id="spanProductName"></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<button title="Close (Esc)" type="button" class="mfp-close"></button>
+			<div class="btn-cont text-center">
+				<button id="btnExtraItinerarySave" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+				<button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+			</div>
+		</div>
+	</div>
+}
+<script src="~/js/Costing/NewItineraryElement.js"></script>

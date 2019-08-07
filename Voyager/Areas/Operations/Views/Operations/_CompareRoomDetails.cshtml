@@ -1,0 +1,576 @@
+﻿@model Voyager.App.ViewModels.Operations.UploadRoomingListDetailsVm
+<form id="frmRoomingData">
+    <div class="card">
+        <div class="card-header">
+            Booking Package Level
+        </div>
+        <div class="alert alert-success" id="showhotelNotSelectError1" style="display:none" role="alert">
+            BookingRoomsPostion Updated Successfully
+        </div>
+        <div class="alert alert-success" role="alert" style="display: none" id="PassengerSaveSuccess">
+            Rooming List Updated Successfully
+        </div>
+        <div class="alert alert-danger" role="alert" style="display: none" id="PassengerSaveFailure">
+            There was an error updating the Rooming list
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-md-12 table-responsive filter-table custom-mob-tbl">
+
+
+                    <table class="table table-striped table" id="tblCompareRooming" name="tblBookingRoomsDetails">
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    <h5 class="card-title">
+                                        Current Rooming Configuration
+                                    </h5>
+                                </th>
+                                <th colspan="2">
+                                    <h5 class="card-title">Rooming List Configuration</h5>
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <th>Room Type</th>
+                                <th>Quantity</th>
+                                <th>Quantity</th>
+                                <th>Age</th>
+                                <th>Difference</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (int i = 0; i < Model.PassengerDetailsFromExcel.Count; i++)
+                            {
+
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].Pax)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].Room)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].RoomName)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].FullName)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].FirstName)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].LastName)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].Sex)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].Dob)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].PassportNumber)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].DateofIssue)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].DateOfExp)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].VisaNo)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].Comments)
+                                @Html.HiddenFor(a => a.PassengerDetailsFromExcel[i].Age)
+
+                            }
+                            @for (int i = 0; i < Model.DisplayRoomingData.Count; i++)
+                            {
+                                @Html.HiddenFor(a => a.BookingNumber)
+                                <tr>
+                                    @Html.HiddenFor(a => a.DisplayRoomingData[i].RoomName)
+                                    @Html.HiddenFor(a => a.DisplayRoomingData[i].ExcelSheetRoomQuantity)
+                                    @Html.HiddenFor(a => a.DisplayRoomingData[i].Difference)
+                                    @Html.HiddenFor(a => a.DisplayRoomingData[i].BookingRoomQuantity)
+                                    @Html.HiddenFor(a => a.DisplayRoomingData[i].BookingRoomsid)
+                                    @Html.HiddenFor(a => a.DisplayRoomingData[i].Age)
+                                    <td> @Model.DisplayRoomingData[i].RoomName</td>
+                                    <td> @Model.DisplayRoomingData[i].BookingRoomQuantity</td>
+                                    <td>@Model.DisplayRoomingData[i].ExcelSheetRoomQuantity</td>
+                                    <td>@Model.DisplayRoomingData[i].Age</td>
+                                    <td>
+                                        @if (Model.DisplayRoomingData[i].Difference != null)
+                                        {
+                                            <h4><span class="badge badge-danger">@Model.DisplayRoomingData[i].Difference</span></h4>
+
+                                        }
+                                        else if (Model.DisplayRoomingData[i].ExcelSheetRoomQuantity > Model.DisplayRoomingData[i].BookingRoomQuantity)
+                                        {
+
+                                            <h4><span class="badge badge-danger">Change + @(Model.DisplayRoomingData[i].ExcelSheetRoomQuantity - Model.DisplayRoomingData[i].BookingRoomQuantity )Rooms</span></h4>
+                                        }
+                                        else if (Model.DisplayRoomingData[i].ExcelSheetRoomQuantity < Model.DisplayRoomingData[i].BookingRoomQuantity)
+                                        {
+                                            <h4><span class="badge badge-danger">Change - @(Model.DisplayRoomingData[i].BookingRoomQuantity - Model.DisplayRoomingData[i].ExcelSheetRoomQuantity )Rooms</span></h4>
+
+                                        }
+                                        else
+                                        {
+                                            <h4><span class="badge badge-success">No Change</span></h4>
+                                        }
+                                    </td>
+
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+
+                    <br>
+                    <div id="Success" style="display: none">
+                        <div class="alert alert-success" role="alert">
+                            Rooming Configuration in file matches current Materialisation
+                            Level of Booking
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <button type="button" class="btn btn-primary" onclick="UpdateRoomingList()">Update the Rooming List</button>
+                                    <br> <small> (This will overwrite any existing passenger data)</small>
+                                </p>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <p>
+                                    <button type="button" class="btn btn-secondary btn btn-secondary btn btn-blue-outline btn-md  close-popup" id="CancelRoomingList">Cancel the Rooming List Update</button>
+                                    <br>     <small> (All changes will be discarded)</small>
+                                </p>
+
+                            </div>
+
+                        </div>
+                        @*<div class="alert alert-success" role="alert" style="display: none" id="PassengerSaveSuccess">
+                            Rooming List Updated Successfully
+                        </div>
+                        <div class="alert alert-danger" role="alert" style="display: none" id="PassengerSaveFailure">
+                            There was an error updating the Rooming list
+                        </div>*@
+                    </div>
+                    <div id="Alert" style="display: none">
+                        <div class="alert alert-danger" role="alert">
+                            Rooming Configuration in this rooming list does not match the current Materialisation level of the Booking
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+
+                                <p>
+                                    <button type="button" id="UpdateBookingSelectedSupplier" class="btn btn-warning">Update the Booking and Update All Suppliers</button>
+                                    <br> <small> (This will change the Booking Levels for All Services and contact all suppliers)</small>
+                                </p>
+
+                                <p>
+                                    <button type="button" id="UpdateBookingSelectedSupplier1" class="btn btn-warning">Update the Booking and Update <b>Selected Suppliers</b></button>
+                                    <br>    <small> (This will change the Booking Levels for All Services and contact all suppliers)</small>
+                                </p>
+
+
+                                <p>
+                                    <button type="button" id="UpdateBookingSelectedSupplier2" class="btn btn-danger">Update the Rooming List but do not Automatically inform Suppliers</button>
+                                    <br>        <small> (This will change the Booking Levels for All Services and contact all suppliers)</small>
+                                </p>
+
+                                <p></p>
+                                <p>
+                                    <button type="button" class="btn btn-secondary btn btn-blue-outline btn-md  close-popup" id="CancelRoomingList1">Cancel the Rooming List Update</button>
+                                    <br>          <small> (All changes will be discarded)</small>
+                                </p>
+                            </div>
+
+                            <div class="col-md-6">
+                                @*<span class="text-danger" id="showhotelNotSelectErrorInRooming" style="display:none;font-size:12px !important"></span>*@
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-header">Select Suppliers</h6>
+                                        <div table-responsive filter-table custom-mob-tbl>
+                                            <table class="table table-hover table-sm table" id="tblRoomingSupplierDetails" name="tblSuppliers">
+                                                <tbody>
+                                                    @for (int i = 0; i < Model.SuppliersDetails.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @switch (Model.SuppliersDetails[i].ProductType.ToUpper())
+                                                                {
+                                                                    case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+                                                                        break;
+                                                                    case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+                                                                        break;
+                                                                    case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+                                                                        break;
+                                                                    case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                        break;
+                                                                    case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                        break;
+                                                                    case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+                                                                        break;
+                                                                    case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+                                                                        break;
+                                                                    case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                        break;
+                                                                    case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                        break;
+                                                                    case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                        break;
+                                                                    case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+                                                                        break;
+                                                                    case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+                                                                        break;
+                                                                    case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+                                                                        break;
+                                                                    case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+                                                                        break;
+                                                                    case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+                                                                        break;
+                                                                    case "VISA": <img src="~/resources/images/common/icons/visa.png">
+                                                                        break;
+                                                                    case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+                                                                        break;
+                                                                    default:
+                                                                        break;
+                                                                } - @Model.SuppliersDetails[i].StartDate - @Model.SuppliersDetails[i].ProductName - (@Model.SuppliersDetails[i].SupplierName)
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-check">
+                                                                    @*<input class="form-control-1" type="checkbox" value="" id="Check_@i">*@
+                                                                    @Html.HiddenFor(m => m.SuppliersDetails[i].SupplierName)
+                                                                    @Html.HiddenFor(m => m.SuppliersDetails[i].ProductName)
+                                                                    @Html.HiddenFor(m => m.SuppliersDetails[i].Position_ID)
+                                                                    @Html.HiddenFor(m => m.SuppliersDetails[i].ProductType)
+                                                                    <input type="checkbox" class="form-check-input form-control-1" name="SupplierDetails[@i].IsSelected" value="@Model.SuppliersDetails[i].IsSelected">
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        @*<div class="alert alert-danger" id="showhotelNotSelectErrorInRooming" style="display:none;" role="alert">
+                                            You have not selected any suppliers
+                                        </div>*@
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    @*<div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <button type="button" class="btn btn-primary">Update the Rooming List</button>
+                                <br> <small> (This will overwrite any existing passenger data)</small>
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <p>
+                                <button type="button" class="btn btn-secondary">Cancel the Rooming List Update</button>
+                                <br>     <small> (All changes will be discarded)</small>
+                            </p>
+
+                        </div>
+
+                    </div>*@
+
+                    <br>
+
+
+
+                    <!-- End of Rooming List Matches -->
+                    <!-- Rooming List doees not match  -->
+                    @*<div class="alert alert-danger" role="alert">
+                        Rooming Configuration in this rooming list does not match the current Materialisation level of the Booking
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+
+    <style>
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-secondary {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn:not(:disabled):not(.disabled) {
+            cursor: pointer;
+        }
+
+        [type=reset], [type=submit], button, html [type=button] {
+            -webkit-appearance: button;
+        }
+
+        ::after, ::before {
+            box-sizing: border-box;
+        }
+        *, ::after, ::before {
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        var positionFormData = {};
+            //function UpdateRoomingListDetails() {
+            //     
+            //    var model = $("#RoomingForm").serialize();
+            //    //var modelnew = model.replace(/BudgetSupplements/g, 'BudgetSupplementsOld');
+            //    //$(".divBudgtSupp").html('');
+
+            //    $.ajax({
+            //        type: "POST",
+            //        url: "/Operations/SaveRoomingList",
+            //        data: model,
+            //        //contentType: "application/json; charset=utf-8",
+            //        dataType: "html",
+            //        success: function (response) {
+
+            //            //$(".divBudgtSupp").html(response);
+            //            //var form = $("#frmUpdateAvailability");
+            //            //form.removeData('validator');
+            //            //form.removeData('unobtrusiveValidation');
+            //            //$.validator.unobtrusive.parse(form);
+            //        },
+            //        failure: function (response) {
+            //            //alert(response.responseText);
+            //            //$(".ajaxloader").hide();
+            //        },
+            //        error: function (response) {
+            //            //alert(response.responseText);
+            //            //$(".ajaxloader").hide();
+            //        }
+            //    });
+
+
+            //}
+            //$(document).ready(function () {
+            //    $('#SubmitRoomingForm').click(function () {
+            //         
+            //        var model = $("#frmRoomingData").serialize();
+
+
+            //    });
+            //}
+
+        //$('#SubmitRoomingForm').click(function () {
+        //     
+        //    var formData = new FormData();
+        //    var booking = $("#BookingNumber").val();
+        //    formData.append("files", file1);
+        //    formData.append('BookingNumber', booking);
+        //    $.ajax({
+        //           type: "POST",
+        //           url: "/Operations/SaveRoomingList",
+        //        data: formData,
+        //        datatype: "json",
+        //        contentType: false,
+        //        processData: false,
+        //           success: function (response) {
+
+              
+        //         },
+        //           failure: function (response) {
+                     
+        //         },
+        //          error: function (response) {
+                    
+        //            }
+        //       });
+
+
+        //});
+        function UpdateRoomingList() {
+        //$('#SubmitRoomingForm').click(function () {
+            //var CheckForCheckbox = IfCheckBoxesAreChecked();
+            //if (CheckForCheckbox) 
+                $(".ajaxloader").show();
+            var model = $("#frmRoomingData").serialize();
+            //$("#showhotelNotSelectError1").hide();
+                $.ajax({
+                    type: "POST",
+                    url: "/Operations/SaveRoomingListPersonDetails",
+                    data: model,
+                    dataType: "json",
+                    success: function (response) {
+                        debugger;
+                        if (response.responseStatus.status == "Success") {
+                            $("#PassengerSaveSuccess").show();
+                        }
+                        else {
+                            $("#PassengerSaveFailure").show();
+                        }
+
+                    },
+
+                    error: function (response) {
+                        $(".ajaxloader").hide();
+                        alert(response.responseStatus.status);
+                    }
+                });
+            
+
+        //});
+        };
+        $('#UpdateBookingSelectedSupplier').click(function () {
+             
+            var CheckForCheckbox = IfCheckBoxesAreChecked();
+            if ($("#tblCompareRooming > tbody > tr ").length > 0) {
+                var tablerow = $("#tblCompareRooming tbody tr:first");
+                var input = tablerow.find('input:first');
+                positionFormData = addChangedValueToList(input, positionFormData);
+
+            }
+            if ($("#tblRoomingSupplierDetails > tbody > tr ").length > 0) {
+                var tablerow = $("#tblRoomingSupplierDetails tbody tr:first");
+                var input = tablerow.find('td:last').find("input[type='checkbox']");
+                positionFormData = addChangedValueToList(input, positionFormData);
+
+
+            }
+            var BookingNumber = $("#BookingNumber").val();
+            positionFormData['Action'] = "ChangeRoomCount";
+            positionFormData['Module'] = "Booking";
+            positionFormData['ModuleParent'] = "Booking";
+            positionFormData['BookingNumber'] = BookingNumber;
+            //if (CheckForCheckbox) {
+            $(".ajaxloader").show();
+            $("#showhotelNotSelectError1").hide();
+                var model = $("#frmRoomingData").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/Operations/UpdateBookingRoomsDataAsperExcel",
+                    data: { model: positionFormData },
+                    dataType: "json",
+                    success: function (response) {
+                        debugger;
+                        if (response.status == "Success") {
+                            $("#PassengerSaveSuccess").show();
+                            $("#showhotelNotSelectError1").show();
+                            UpdateRoomingList();
+                        }
+                        else {
+                            $("#PassengerSaveFailure").show();
+                            $("#showhotelNotSelectError1").text('Booking Postions not updated');
+                            $("#showhotelNotSelectError1").show();
+                            $(".ajaxloader").hide();
+                        }
+
+                    },
+
+                    error: function (response) {
+                        $(".ajaxloader").hide();
+                        alert(response.responseStatus.status);
+                    }
+                });
+           // }
+
+        });
+        $('#UpdateBookingSelectedSupplier1').click(function () {
+
+            var CheckForCheckbox = IfCheckBoxesAreChecked();
+            if ($("#tblCompareRooming > tbody > tr ").length > 0) {
+                var tablerow = $("#tblCompareRooming tbody tr:first");
+                var input = tablerow.find('input:first');
+                positionFormData = addChangedValueToList(input, positionFormData);
+
+            }
+            if ($("#tblRoomingSupplierDetails > tbody > tr ").length > 0) {
+                var tablerow = $("#tblRoomingSupplierDetails tbody tr:first");
+                var input = tablerow.find('td:last').find("input[type='checkbox']");
+                positionFormData = addChangedValueToList(input, positionFormData);
+               
+
+            }
+            var BookingNumber = $("#BookingNumber").val();
+            positionFormData['Action'] = "ChangeRoomCount";
+            positionFormData['Module'] = "Booking";
+            positionFormData['ModuleParent'] = "Booking";
+            positionFormData['BookingNumber'] = BookingNumber;
+            //if (CheckForCheckbox) {
+            $(".ajaxloader").show();
+            $("#showhotelNotSelectError1").hide();
+                //var model = $("#frmRoomingData").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/Operations/UpdateBookingRoomsDataAsperExcel",
+                    data: { model: positionFormData },
+                    dataType: "json",
+                    success: function (response) {
+                        debugger;
+                        if (response.status == "Success") {
+                           
+                            $("#PassengerSaveSuccess").show();
+                            $("#showhotelNotSelectError1").show();
+                            UpdateRoomingList();
+                        }
+                        else {
+                            $("#PassengerSaveFailure").show();
+                            $("#showhotelNotSelectError1").text('Booking Postions not updated');
+                            $("#showhotelNotSelectError1").show();
+                            $(".ajaxloader").hide();
+                        }
+
+                    },
+
+                    error: function (response) {
+                        $(".ajaxloader").hide();
+                        alert(response.responseStatus.status);
+                    }
+                });
+            //}
+
+        });
+        function IfCheckBoxesAreChecked() {
+            var IsanyChecked = true;
+            if (!$("#tblRoomingSupplierDetails input:checkbox:checked").length > 0) {
+                IsanyChecked = false;
+                $("#showhotelNotSelectErrorInRooming").show();
+                //$("#showhotelNotSelectErrorInRooming").text('Please Select Atleast One Hotel');
+
+            }
+            if (IsanyChecked) {
+                $("#showhotelNotSelectErrorInRooming").hide();
+                //$("#showhotelNotSelectErrorInRooming").text('');
+            }
+            return IsanyChecked;
+        }
+        //$("#CancelRoomingList2 , #CancelRoomingList3").click(function () {
+        //    var BookingNumber = $("#BookingNumber").val();
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/Operations/CancelRoomingListUpdate",
+        //        data: { BookingNumber: BookingNumber },
+        //        dataType: "json",
+        //        success: function (response) {
+        //            debugger;
+        //            if (response.status == "Success") {
+
+        //                $("#PassengerSaveSuccess").show();
+        //                $("#PassengerSaveSuccess").html('Rooming List Cancel');
+        //            }
+        //            else {
+        //                $("#PassengerSaveFailure").show();
+        //                $("#PassengerSaveFailure").html('Rooming List Not Cancel');
+        //            }
+
+        //        },
+
+        //        error: function (response) {
+        //            $(".ajaxloader").hide();
+        //            alert(response.responseStatus.status);
+        //        }
+        //    });
+
+
+        //})
+        $(".mfp-close , #closerefresh").click(function () {
+            var BookingNumber = $("#BookingNumber").val();
+             var redirectURL = '@Url.Action("ViewRoomingListSummary", "Operations")';
+            redirectURL += "?BookingNumber=" + BookingNumber;
+            window.location.href = redirectURL;
+        });
+    </script>

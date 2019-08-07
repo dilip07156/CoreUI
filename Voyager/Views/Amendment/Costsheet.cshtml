@@ -1,0 +1,169 @@
+﻿@model Voyager.App.ViewModels.CostsheetViewModel
+@Html.HiddenFor(x => x.MenuViewModel.QRFID, new { @id = "QRFId" });
+<div class="wrapper">
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="listing-content">
+                @*<div class="enquiry-ttl-due-section btm-border">
+                    <h1 class="full">Costing Officer</h1>
+                </div>*@
+                @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+            </div>
+            <div class="sqr-tab-cont">
+                @Html.Partial("_AmendmentMenu", Model.MenuViewModel)
+                @if (Model.MenuViewModel.EnquiryPipeline != "Costing Approval Pipeline")
+                {
+                    <div class="sqr-tab-data costing-officers">
+                        <div class="ttl-sec tbl-style">
+                            <div class="ttl">
+                                <i class="fa-custom-cost-sheet-black"></i> Costsheet - <span class="txt-green"> Consolidated Summary
+                                    @*@Html.DropDownListFor(x=>x.Type, new List<SelectListItem> { new SelectListItem { Text = "Consolidated Summary", Value = "1", Selected=true },
+                                        new SelectListItem { Text = "Detailed Info", Value = "2" }}, new { @class = "form-control", @style = "width:17%", @id="ddlCostSheet" })*@
+                                </span>
+                            </div>
+                        </div><br /><br />                               
+                                <div class=" filter-wrap SHProposalDoc">
+                                    <h6>Filters:</h6>
+                                    <ul class="filter-links">
+                                        <li>
+                                            <a href="#">Departure Dates <i class="fa fa-angle-down"></i></a>
+                                            <div class="compare-dropdown">
+                                                @Html.DropDownListFor(m => m.ConsolidatedSummaryViewModel.DepartureDate, new SelectList(Model.ConsolidatedSummaryViewModel.DepartureDatesList, "AttributeValue_Id", "Value"), "All", new { @class = "form-control filter filterdate" })
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl SHProposalDoc">
+                                    <div class="tbl-actn-btns">
+                                        <h4>Version: @Model.ConsolidatedSummaryViewModel.CostsheetVersion.VersionId (@Model.ConsolidatedSummaryViewModel.CostsheetVersion.VersionName -  @Model.ConsolidatedSummaryViewModel.CostsheetVersion.VersionDescription)</h4>
+                                        <span><a href="#VersionList-popup" class="btn btn-white popup-inline showVersion">Show more Version</a></span>
+                                    </div>
+                                </div>
+                                <br />
+                                <div id="divConsolidatedSummary" style="display:none"></div>
+                                <div id="loadAllData" style="display:none">
+                                    @{ Model.ConsolidatedSummaryViewModel.DepartureDatesList = Model.ConsolidatedSummaryViewModel.DepartureDatesList.OrderBy(a => a.Value).ToList(); }
+                                    @for (int i = 0; i < Model.ConsolidatedSummaryViewModel.DepartureDatesList.Count; i++)
+                                    {
+                                        <h5><b>For Departure Date: <span style="color:#000096">@Model.ConsolidatedSummaryViewModel.DepartureDatesList[i].Value</span> </b></h5>
+
+                                        <div class="collapse-block">
+                                            <div class="collapse-container" style="display:none">
+                                                <div id="divConsolidatedSummary_@i"></div>
+                                            </div>
+                                            <div class="lnk-dotted"><a href="#" class="collapse-link collapsed"><i class="fa fa-angle-up"></i> View Prices </a> </div>
+                                        </div>                                       
+                                    }
+                                </div>
+                            </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div id="VersionList-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {        
+        loadAllData();   
+    });
+
+    function loadAllData() {
+        var DateArray = @Json.Serialize(Model.ConsolidatedSummaryViewModel.DepartureDatesList.Select(a => a.AttributeValue_Id).ToList());
+        if (DateArray != undefined && DateArray != "") {
+            for (var i = 0; i < DateArray.length; i++) {
+                $('#divConsolidatedSummary_' + i).load('../Costsheet/GetConsolidatedSummary?QRFId=@Model.MenuViewModel.QRFID&filterByDeparture=' + DateArray[i]);
+                $("#loadAllData").show();
+                if (i == 0) {
+                    $('#divConsolidatedSummary_' + i).parent(".collapse-container").css("display", "block");
+                }
+            }           
+        }  
+     };
+
+     function GetConsolidatedSummary(SuccessMessage, ErrorMessage) {
+         
+        var QRFId = $("#QRFId").val();
+        var selectedDepartureDate = $(".filterdate").val(); //$("#DepartureDate").val();
+        $.ajax({
+            type: "GET",
+            url: "/Costsheet/GetConsolidatedSummary",
+            data: { QRFId: QRFId, filterByDeparture: selectedDepartureDate, SuccessMessage: SuccessMessage, ErrorMessage: ErrorMessage },
+            contentType: "application/json; charset=utf-8",
+            datatype: "html",
+            success: function (response) {
+                $("#loadAllData").hide();
+                $("#divConsolidatedSummary").html(response);
+                $("#divConsolidatedSummary").show();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    };
+
+    $(".filterdate").change(function () {
+         
+        if ($(".filterdate").val() == "" || $(".filterdate").val() == undefined || $(".filterdate").val() == null) {
+            $("#divConsolidatedSummary").hide();
+            loadAllData();
+        }
+        else
+        GetConsolidatedSummary();
+    });
+    
+    function changeCurrentVersion() {
+         
+        $(".ajaxloader").show();
+        var QRFId = $("#QRFId").val();
+        var QRFPriceId = $("#SelectedVersion:checked").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Costsheet/UpdateCostsheetVersion",
+            data: { QRFId: QRFId, QRFPriceId: QRFPriceId },
+            global: false,            
+            dataType: "json",
+            success: function (response) {
+                $('#VersionList-popup .close-popup').click();
+                window.location.href = "/CostingOfficer/Costsheet?QRFId=" + QRFId;   
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+
+    $(".showVersion").click(function () {
+        $(".ajaxloader").show();
+        var QRFId = $("#QRFId").val();
+        $.ajax({
+            type: "GET",
+            url: "/Costsheet/GetCostsheetVersions",
+            data: { QRFId: QRFId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $(".ajaxloader").hide();
+                $("#VersionList-popup .popup-in").html(response);
+                $("#VersionList-popup").show();
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.statusText);
+            }
+        });
+    });
+</script>

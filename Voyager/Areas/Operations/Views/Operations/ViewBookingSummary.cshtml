@@ -1,0 +1,453 @@
+﻿@model Voyager.App.ViewModels.OpsBookingSummaryViewModel
+@{
+    ViewData["Title"] = "SearchHotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <div class="main-content form form-theme-02">
+        <div class="container">
+            <div class="pg-container">
+                <div class="ops-page">
+                    <div class="listing-content">
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeader)
+                    </div>
+                    @*<hr>*@
+
+                    <!-- start of booking summary section-->
+                    <div class="row">
+                        <div class="col-md-1">
+                            <b>Confirmation Status: </b>
+                        </div>
+
+                        <div class="col-md-10">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: @Model.OpsBookingSummary.ConfirmationPerc%"
+                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="70">
+                                    @Model.OpsBookingSummary.ConfirmationPerc%
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <a href="#FollowUpList-popup" class="btn btn-sm btn-success popup-inline showFollowUp">Add Follow Up</a>
+                            <a href="#CancelBooking-popup" title="Delete" class="btn btn-sm btn-danger popup-inline showCancelBooking">Cancel Booking</a>
+                            <a href="#ShiftBooking-popup" title="Delete" class="btn btn-sm btn-warning popup-inline showShiftBooking">Shift Booking</a>
+                            <a href="#Confirm-popup" title="Create Hotel Confirmation" class="btn btn-success popup-inline" id="showHotelConfirmation">Create Hotel Confirmation</a>
+                            <a href="#Confirm-popup" title="Download Vouchers" class="btn btn-sm btn-success popup-inline" id="showDownloadVouchers">Download Vouchers</a>
+                            <a href="" id="aFilePath" style="display:none;" class="btn btn-primary btn-sm">File Download</a>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <!-- Left-->
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    Materialisation Level
+                                </div>
+
+                                <div class="card-body">
+                                    <h4 class="card-title">Passengers</h4>
+                                    <hr />
+                                    <div class="table-responsive filter-table custom-mob-tbl">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Room</th>
+                                                    <th>
+                                                        <a href="#RoomChange-popup" title="Delete" class="btn btn-sm btn-warning popup-inline showRoomChange">Change</a>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.OpsBookingSummary.PaxRooms?.Count > 0)
+                                                {
+                                                    for (int i = 0; i < Model.OpsBookingSummary.PaxRooms.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>@Model.OpsBookingSummary.PaxRooms[i].Count</td>
+                                                            <td colspan="2">@Model.OpsBookingSummary.PaxRooms[i].For</td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="3">No data available</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+
+                                    <h4 class="card-title">Tour Staff</h4>
+                                    <hr />
+                                    <div class="table-responsive filter-table custom-mob-tbl">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Room</th>
+                                                    <th>#</th>
+                                                    <th>For</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.OpsBookingSummary.TourStaffRooms?.Count > 0)
+                                                {
+                                                    @for (int i = 0; i < Model.OpsBookingSummary.TourStaffRooms.Count; i++)
+                                                    {
+                                                        <tr>
+                                                            <td>@Model.OpsBookingSummary.TourStaffRooms[i].For</td>
+                                                            <td>@Model.OpsBookingSummary.TourStaffRooms[i].Count</td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-sm btn-danger" data-toggle="popover" title="Popover title"
+                                                                        data-content="And here's some amazing content. It's very engaging. Right?">
+                                                                    Details
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="3">No data available</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Booking Workflow
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="panel panel-red">
+                                                <div class="panel-heading">
+                                                    <div class="row">
+                                                        <div class="col-xs-3">
+                                                            <i class="fa fa-exclamation-triangle fa-2x"></i>
+                                                        </div>
+                                                        <div class="col-xs-9 text-right">
+                                                            <div class="huge">@Model.OpsBookingSummary.PlacingPendingCnt</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">Placing Pending</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="panel panel-yellow">
+                                                <div class="panel-heading">
+                                                    <div class="row">
+                                                        <div class="col-xs-3">
+                                                            <i class="fa fa-envelope fa-2x"></i>
+                                                        </div>
+                                                        <div class="col-xs-9 text-right">
+                                                            <div class="huge">@Model.OpsBookingSummary.BookingPendingCnt</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">Booking Pending</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="panel panel-green">
+                                                <div class="panel-heading">
+                                                    <div class="row">
+                                                        <div class="col-xs-3">
+                                                            <i class="fa fa-check-circle fa-2x"></i>
+                                                        </div>
+                                                        <div class="col-xs-9 text-right">
+                                                            <div class="huge">@Model.OpsBookingSummary.BookingConfirmedCnt</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">Booking Confirmed</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*<hr>*@
+                                    <h4 class="card-title">Booking Fixes</h4>
+                                    <hr />
+                                    <div id="ddlTableFilter" class="col-sm-3">
+                                        <div class="input-group mb-3">
+                                            <label>Filter</label>
+                                            @Html.DropDownList("FilterProdType", new SelectList(Model.ProdTypeList, "Value", "Value"), "ALL", new { @class = "form-control form-control-sm" })
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive filter-table custom-mob-tbl">
+                                        <table id="BookingTable" class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="display:none;"></th>
+                                                    <th><u>Service</u></th>
+                                                    <th><u>Date</u></th>
+                                                    <th><u>Description</u></th>
+                                                    <th><u>Created</u></th>
+                                                    <th><u>Due</u></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.OpsBookingSummary.BookingFixes?.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td style="display:none;">@Model.OpsBookingSummary.BookingFixes[i].Position_ProductType</td>
+                                                        <td class="type">
+                                                            @switch (Model.OpsBookingSummary.BookingFixes[i].Position_ProductType?.ToUpper())
+                                                            {
+                                                                case "HOTEL":<i class="fa fa-custom-hotel-blue" alt="HOTEL"></i>
+                                                                    break;
+                                                                case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+                                                                    break;
+                                                                case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+                                                                    break;
+                                                                case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                    break;
+                                                                case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                    break;
+                                                                case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+                                                                    break;
+                                                                case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+                                                                    break;
+                                                                case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                    break;
+                                                                case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                    break;
+                                                                case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                    break;
+                                                                case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+                                                                    break;
+                                                                case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+                                                                    break;
+                                                                case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+                                                                    break;
+                                                                case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+                                                                    break;
+                                                                case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+                                                                    break;
+                                                                case "VISA": <img src="~/resources/images/common/icons/visa.png">
+                                                                    break;
+                                                                case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+                                                                    break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        </td>
+                                                        <td>@Model.OpsBookingSummary.BookingFixes[i].Position_CityName - @Model.OpsBookingSummary.BookingFixes[i].Position_StartDate?.ToString("dd/MM")</td>
+                                                        <td>@Model.OpsBookingSummary.BookingFixes[i].FixDescription</td>
+                                                        <td>@Model.OpsBookingSummary.BookingFixes[i].CREA_DT?.ToString("dd/MM")</td>
+                                                        <td>28/10</td>
+                                                        <td>
+                                                            @Html.ActionLink("Fix", "GetServiceStatusParam", "Operations", new { PositionId = Model.OpsBookingSummary.BookingFixes[i].Position_Id,
+                                                           BookingNumber = Model.OpsBookingSummary.BookingNumber}, new { @class = "btn btn-sm btn-danger" })
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    Client Info
+                                </div>
+
+                                <div class="card-body">
+                                    <h4 class="card-title">Key Info</h4>
+                                    <hr />
+                                    <table class="table table-sm table-borderless table-light">
+                                        <tr>
+                                            <td><b>Agent</b></td>
+                                            <td>@Model.OpsBookingSummary.AgentName</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>Contact</b></td>
+                                            <td>@Model.OpsBookingSummary.ContactName</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Tel: </b></td>
+                                            <td>@Model.OpsBookingSummary.ContactTel</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>Email: </b></td>
+                                            <td><a href="mailto:@Model.OpsBookingSummary.ContactEmail">@Model.OpsBookingSummary.ContactEmail</a></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b>Tour Name</b></td>
+                                            <td>@Model.OpsBookingSummary.TourName</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Type</b></td>
+                                            <td>@Model.OpsBookingSummary.TourType</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Division</b></td>
+                                            <td>@Model.OpsBookingSummary.Division</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Nationality</b></td>
+                                            <td>@Model.OpsBookingSummary.Nationality</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Priority</b></td>
+                                            <td>
+                                                @if (@Model.OpsBookingSummary.PRIORITY == "3")
+                                                {
+                                                    <span>High</span>
+                                                }
+                                                else if (@Model.OpsBookingSummary.PRIORITY == "2")
+                                                {
+                                                    <span>Medium</span>
+                                                }
+                                                else if (@Model.OpsBookingSummary.PRIORITY == "1")
+                                                {
+                                                    <span>Low</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Destination</b></td>
+                                            <td>@Model.OpsBookingSummary.Destination</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Purpose of Travel</b></td>
+                                            <td>@Model.OpsBookingSummary.TravelReason</td>
+                                        </tr>
+                                    </table>
+                                    <h4 class="card-title">Timeline</h4>
+                                    <hr />
+                                    <ul class="timeline">
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge warning">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Go Ahead</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>@Model.OpsBookingSummary.GoAheadDate</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge warning">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Hotel Confirmation</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>@Model.OpsBookingSummary.HotelConfirmationDate</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge warning">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Start Date</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>@Model.OpsBookingSummary.StartDate?.ToString("dd/MM/yyyy")</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge warning">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">End Date</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>@Model.OpsBookingSummary.EndDate?.ToString("dd/MM/yyyy")</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge warning">
+                                                <i class="fa fa-credit-card"></i>
+                                            </div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Payment Due</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>@Model.OpsBookingSummary.PaymentDueDate</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="FollowUpList-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+<div id="CancelBooking-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+<div id="ShiftBooking-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div> 
+<div id="RoomChange-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div> 
+
+<link href="~/resources/css/sb-admin-2.css" rel="stylesheet" />
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/js/Operations/ViewBookingSummary.js"></script>

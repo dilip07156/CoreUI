@@ -1,0 +1,203 @@
+﻿@model Voyager.App.ViewModels.MealsViewModel
+
+<style>
+    .chk-cont {
+        padding-left: 0px;
+    }
+</style>
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                @using (Html.BeginForm("Meals", "Meals", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmMeals" }))
+                {
+                    @Html.HiddenFor(m => m.MenuViewModel.QRFID, new { @id = "hfqrfid" })
+                    <div class="head-ttl">
+                        <h2 class="pg-ttl pull-left">Meals</h2>
+                        @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                        <div class="clearfix"></div>
+                    </div>
+                    @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data">
+                            <div class="btn-cont pull-right">
+                                <ul>
+                                    <li><input type="button" value="Save" class="btn btn-blue btn-md mealsave"></li>
+                                </ul>
+                            </div>
+                            <h3><i class="fa-custom-meals-black"></i> Meals</h3>
+                            <div style="display:none;text-align:left;" id="divSuccessError">
+                                <a class="close" title="close">×</a>
+                                <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                            </div>
+                            <div class="simple-tab-cont">
+                                <div class="simple-tab-data">
+                                    <div>
+                                        <div style="display:block">
+                                            <div class="custom-mob-tbl type02 table-responsive table-departures-dates meals-tbl">
+                                                @if (Model.MealDetails != null && Model.MealDetails.Count > 0)
+                                                {
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="col-xs"><span>Day</span></th>
+                                                                <th><span>Routing</span></th>
+                                                                <th class="col-sm4">
+                                                                    <span>Early Morning Tea</span>
+                                                                </th>
+                                                                <th><span>Breakfast</span></th>
+                                                                <th><span>Brunch</span></th>
+                                                                <th><span>Lunch</span></th>
+                                                                <th><span>Tea</span></th>
+                                                                <th><span>Dinner</span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="row-grid-sm meal-list">
+                                                            @for (int i = 0; i < Model.MealDetails.Count; i++)
+                                                            {
+                                                                <tr>
+                                                                    <td data-label="Day">
+                                                                        @Html.TextBoxFor(m => m.MealDetails[i].DayID, new { @id = "DayID_" + i, @class = "form-control txt-span", @ReadOnly = "true" })
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].RoutingDaysID, new { @id = "hfRoutingDaysID_" + i })
+                                                                    </td>
+                                                                    <td data-label="City">
+                                                                        @Html.TextAreaFor(m => m.MealDetails[i].RoutingCity, new { @id = "RoutingCity_" + i, @class = "routinglabel form-control txt-span", @ReadOnly = "true" })
+
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].PositionSequence, new { @id = "hfPositionSeq_" + i })
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].DayNo, new { @id = "hfDayNo_" + i })
+                                                                        @Html.Hidden("hfindex_" + i.ToString(), i, new { @id = "hfindex_" + i })
+                                                                    </td>
+                                                                    <td data-label="Early Morning Tea">
+                                                                        @if (!string.IsNullOrEmpty(@Model.MealDetails[i].EarlyMorningTea))
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.MealDetails[i].EarlyMorningTea, new { @id = "lblearlymorningtea_" + i, @class = "text-center form-control txt-span txt-green", @ReadOnly = "true" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="chk-cont">
+                                                                                @Html.CheckBoxFor(m => m.MealDetails[i].IsEarlyMorningTea, new { @id = "chkEarlyMorningTea_" + i, data_name = "earlymorningtea-type", @class = "popupchk chkSingle", data_action = "earlymorningtea" })
+                                                                            </label>
+                                                                            <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="earlymorningtea-type" data-action="earlymorningtea" style='cursor:pointer;display:@(Model.MealDetails[i].IsEarlyMorningTea?"block":"none");'>View Details</a>
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].EarlyMorningTeaId, new { @id = "hfearlyteaVenueId_" + i, datasechf = "earlymorningtea" })
+
+                                                                    </td>
+                                                                    <td data-label="Breakfast">
+                                                                        @if (!string.IsNullOrEmpty(@Model.MealDetails[i].Breakfast) && !string.IsNullOrEmpty(@Model.MealDetails[i].DefaultPlan) && ((@Model.MealDetails[i].DefaultPlan.ToLower().Contains("bb"))
+                                                                          || (@Model.MealDetails[i].DefaultPlan.ToLower().Contains("hb")) || (@Model.MealDetails[i].DefaultPlan.ToLower().Contains("fb"))
+                                                                          || (@Model.MealDetails[i].DefaultPlan.ToLower().Contains("hl") || (@Model.MealDetails[i].DefaultPlan.ToLower().Contains("hd")))))
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.MealDetails[i].Breakfast, new { @id = "lblBreakfast_" + i, @class = "text-center form-control txt-span txt-green", @ReadOnly = "true" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="chk-cont">
+                                                                                @Html.CheckBoxFor(m => m.MealDetails[i].IsBreakfast, new { @id = "chkBreakfast_" + i, data_name = "breakfast-type", @class = "popupchk chkSingle", data_action = "breakfast" })
+                                                                            </label>
+                                                                            <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="breakfast-type" data-action="breakfast" style='cursor:pointer;display:@(Model.MealDetails[i].IsBreakfast?"block":"none");'>View Details</a>
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].BreakfastId, new { @id = "hfBFVenueId_" + i, datasechf = "breakfast" })
+                                                                    </td>
+                                                                    <td data-label="Brunch">
+                                                                        @if (!string.IsNullOrEmpty(@Model.MealDetails[i].Brunch))
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.MealDetails[i].Brunch, new { @id = "lblbrunch_" + i, @class = "text-center form-control txt-span txt-green", @ReadOnly = "true" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="chk-cont">
+                                                                                @Html.CheckBoxFor(m => m.MealDetails[i].IsBrunch, new { @id = "chkBrunch_" + i, data_name = "brunch-type", @class = "popupchk chkSingle", data_action = "brunch" })
+                                                                            </label>
+                                                                            <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="brunch-type" data-action="brunch" style='cursor:pointer;display:@(Model.MealDetails[i].IsBrunch?"block":"none");'>View Details</a>
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].BrunchId, new { @id = "hfbrunchVenueId_" + i, datasechf = "brunch" })
+                                                                    </td>
+                                                                    <td data-label="Lunch">
+                                                                        @if (!string.IsNullOrEmpty(@Model.MealDetails[i].Lunch) && !string.IsNullOrEmpty(@Model.MealDetails[i].DefaultPlan) && (@Model.MealDetails[i].DefaultPlan.ToLower().Contains("fb") || @Model.MealDetails[i].DefaultPlan.ToLower().Contains("hl")))
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.MealDetails[i].Lunch, new { @id = "lblLunch_" + i, @class = "text-center form-control txt-span txt-green", @ReadOnly = "true" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="chk-cont">
+                                                                                @Html.CheckBoxFor(m => m.MealDetails[i].IsLunch, new { @id = "chkLunch_" + i, data_name = "lunch-type", @class = "popupchk chkSingle", data_action = "lunch" })
+                                                                            </label>
+                                                                            <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="lunch-type" data-action="lunch" style='cursor:pointer;display:@(Model.MealDetails[i].IsLunch?"block":"none");'>View Details</a>
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].LunchId, new { @id = "hfLNVenueId_" + i, datasechf = "lunch" })
+                                                                    </td>
+                                                                    <td data-label="Tea">
+                                                                        @if (!string.IsNullOrEmpty(@Model.MealDetails[i].Tea))
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.MealDetails[i].Tea, new { @id = "lbltea_" + i, @class = "text-center form-control txt-span txt-green", @ReadOnly = "true" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="chk-cont">
+                                                                                @Html.CheckBoxFor(m => m.MealDetails[i].IsTea, new { @id = "chkTea_" + i, data_name = "tea-type", @class = "chkSingle popupchk", data_action = "tea" })
+                                                                            </label>
+                                                                            <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="tea-type" data-action="tea" style='cursor:pointer;display:@(Model.MealDetails[i].IsTea?"block":"none");'>View Details</a>
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].TeaId, new { @id = "hfteaVenueId_" + i, datasechf = "tea" })
+                                                                    </td>
+                                                                    <td data-label="Dinner">
+                                                                        @if (!string.IsNullOrEmpty(@Model.MealDetails[i].Dinner) && !string.IsNullOrEmpty(@Model.MealDetails[i].DefaultPlan) && ((@Model.MealDetails[i].DefaultPlan.ToLower().Contains("hb")) || (@Model.MealDetails[i].DefaultPlan.ToLower().Contains("fb")) || @Model.MealDetails[i].DefaultPlan.ToLower().Contains("hd")))
+                                                                        {
+                                                                            @Html.TextBoxFor(m => m.MealDetails[i].Dinner, new { @id = "lblDinner_" + i, @class = "text-center form-control txt-green txt-span", @ReadOnly = "true" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="chk-cont">
+                                                                                @Html.CheckBoxFor(m => m.MealDetails[i].IsDinner, new { @id = "chkdinner_" + i, data_name = "dinner-type", @class = "popupchk chkSingle", data_action = "dinner" })
+                                                                            </label>
+                                                                            <a id="viewdetails_@i" data-type="anchor" data-name="dinner-type" data-action="dinner" class="popupchk" style='cursor:pointer;display:@(Model.MealDetails[i].IsDinner?"block":"none");'>View Details</a>
+                                                                        }
+                                                                        @Html.HiddenFor(m => m.MealDetails[i].DinnerId, new { @id = "hfDINVenueId_" + i, datasechf = "dinner" })
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="tr-pop-sec">
+                                                                    <td colspan="10" class="action-popup-wrap" id="divpopup"></td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                }
+                                                else
+                                                {
+                                                    <table class="table top-align">
+                                                        <tbody>
+                                                            <tr>
+                                                                You have not added Routing details.
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                }
+                                            </div>
+
+                                            <div class="btn-cont" style="margin-top:20px;">
+                                                <ul class="pull-right">
+                                                    <li><input type="button" value="Save" class="btn btn-blue btn-md mealsave"></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    <div class="clearfix"></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/Sales/common.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>
+<script src="~/js/Sales/Meals/Meals.js"></script>

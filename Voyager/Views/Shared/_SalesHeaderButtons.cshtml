@@ -1,0 +1,12 @@
+﻿@model Voyager.App.ViewModels.TourInfoHeaderViewModel
+
+@if (!string.IsNullOrEmpty(Model.QRFID))
+{
+    <div class="btn-cont right top-gap-md">
+        <ul>
+            <li><a class="btn btn-white bld" onclick="QuoteRejectOpprtunity(@Model.QRFID)">Reject Opportunity</a></li>
+            <li><a href="#CopyQuote-popup" class="btn btn-white bld popup-inline" onclick="CopyQuote();">Copy Quote</a></li>
+            <li><a href="/QRFSummary/QRFSummary?QRFId=@Model.QRFID" class="btn btn-white bld">Summary</a></li>
+        </ul>
+    </div>
+}

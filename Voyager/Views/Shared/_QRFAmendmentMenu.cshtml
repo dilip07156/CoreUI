@@ -1,0 +1,26 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+
+@Html.HiddenFor(Model => Model.QRFID)
+<ul class="sqr-tab-list">
+    <li id="Accomodation"><a id="aAccomodation" href="/Amendment/Accomodation?QRFId=@Model.QRFID"> <figure><i class="fa-custom-accommodation"></i></figure> <strong>Accommodation</strong> </a></li>
+    <li id="Meals"><a id="aMeals" href="#"> <figure><i class="fa-custom-meals"></i></figure> <strong>Meals</strong> </a></li>
+    <li id="Activities"><a id="aActivities" href="#"> <figure><i class="fa-custom-activities"></i></figure> <strong>Activities</strong> </a></li>
+    <li id="Cruise"><a id="aCruise" href="#"> <figure><i class="fa-custom-cruise"></i></figure> <strong>Cruise</strong> </a></li>
+    <li id="Rail"><a id="aRail" href="#"> <figure><i class="fa-custom-rail"></i></figure> <strong>Rail</strong> </a></li>
+    <li id="Transfers"><a id="aTransfers" href="#"> <figure><i class="fa-custom-car"></i></figure> <strong>Transfers</strong> </a></li>
+    <li id="Flights"><a id="aFlights" href="#"> <figure><i class="fa-custom-flights"></i></figure> <strong>Flights</strong> </a></li>
+    <li id="Bus"><a id="aBus" href="#"> <figure><i class="fa-custom-bus"></i></figure> <strong>Bus</strong> </a></li>
+    <li id="LocalGuide"><a id="aLocalGuide" href="#"> <figure><i class="fa-local-guide"></i></figure> <strong>Local Guide</strong> </a></li>
+    @*<li id="TourEntities"><a id="aTourEntities" href="/TourEntities/TourEntities?QRFId=@Model.QRFID"> <figure><i class="fa-custom-tour-entities"></i></figure> <strong>Tour Entities</strong> </a></li>*@
+    <li id="Others"><a id="aOthers" href="#"> <figure><i class="fa-custom-more"></i></figure> <strong>Others</strong> </a></li>
+</ul>
+<script>
+    $(document).ready(function () {
+        var SelectedMenu = '@Model.MenuName'; //$("#hdnSelection").val();
+        $("#" + SelectedMenu).parent().find("li").removeClass("active");
+        $("#" + SelectedMenu).addClass("active");
+        if (@Model.QRFID==0) {
+            $("#Accomodation,#aAccomodation,#Meals,#aMeals,#Activities,#aActivities,#Cruise,#aCruise,#Rail,#aRail,#Transfers,#aTransfers,#Bus,#aBus,#Flights,#aFlights,#LocalGuide,#aLocalGuide,#Others,#aOthers").addClass("disabled");
+        }
+    });
+</script>

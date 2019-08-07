@@ -1,0 +1,78 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        <tr>
+            <td height="154" valign="top">
+                <table width="700" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+                    <tr>
+                        <td style="height:46px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                        <td style="height:46px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top"><img src="@Model.URLinitial/resources/images/proposal-report/cnk-logo-new.png" alt="voyagerlogo" width="686" height="123" /></td>
+                        <td align="right" valign="middle">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" height="700">
+                <table width="700" border="0" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="height:146px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                    </tr>
+                    <tr>
+                        <td align="center"><img src="@Model.URLinitial/resources/images/proposal-report/thank-you-top-bdr.jpg" width="593" height="12"></td>
+                    </tr>
+                    <tr>
+                        <td height="30">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center" class="ty-heading"><b>Thank You!</b></td>
+                    </tr>
+                    <tr>
+                        <td height="40">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <p class="ty-para">
+                                We hope the information enclosed meets your requirements and <br>
+                                helps you plan your trip with Cox and Kings.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-heading">
+                            <p class="ty-para">
+                                If you like the trip designed by us, then do go ahead<br>
+                                and book your trip.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="sub-heading">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <p class="ty-para">
+                                Should you need any further assistance, you could email our Travel<br>
+                                Expert or reach us on our toll free <strong class="help-no">helpline @Model.COHeaderViewModel.SystemPhone.</strong><br>
+                                <i class="last-tl">Look forward to creating a great trip for you.</i>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="30">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><img src="@Model.URLinitial/resources/images/proposal-report/thank-you-top-bdr.jpg" width="593" height="12"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentFooter.cshtml", Model.COHeaderViewModel)*@
+    </table>
+</div>

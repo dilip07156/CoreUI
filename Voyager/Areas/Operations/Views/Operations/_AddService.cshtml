@@ -1,0 +1,143 @@
+﻿@model Voyager.App.ViewModels.OpsAddPositionViewModel
+<style>
+    .popup-box.pop-lg {
+        max-width: 1250px;
+    }
+</style>
+<h3>Add Position</h3>
+<form action="/" method="post" class="form-theme-04" id="frmAddPosition">
+    <div class="custom-mob-tbl table-responsive" id="divAddPosition">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Booking Details
+                </div>
+                <div class="card-body">
+
+                    <p>Please fill in the Reservation Details for your New Service</p>
+                    <table class="table table-striped">
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Type</label>
+                                    @Html.Hidden("ServiceType", "AddPosition")
+                                    @Html.DropDownListFor(m => m.PositionType, new SelectList(Model.PositionTypeList), new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.PositionType, "", new { @class = "text-danger" })
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Date</label>
+                                    <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                        @Html.TextBoxFor(m => m.PositionStartDate, "{0:dd/MM/yyyy}", new { @class = "span3 form-control clsEarlyCheckInDate alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                        <span class="add-on"></span>
+                                        @Html.ValidationMessageFor(m => m.PositionStartDate, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Days</label>
+                                    @Html.TextBoxFor(m => m.NoOfDays, new { @class = "form-control numericInt clsDays", @style = "text-align:center" })
+                                    @Html.ValidationMessageFor(m => m.NoOfDays, "", new { @class = "error" })
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Start</label>
+                                    @Html.TextBoxFor(m => m.StartTime, new { @class = "form-control time24 clsStartTime" })
+                                    @Html.ValidationMessageFor(m => m.StartTime, "", new { @class = "error" })
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">End</label>
+                                    @Html.TextBoxFor(m => m.EndTime, new { @class = "form-control time24 clsEndTime" })
+                                    @Html.ValidationMessageFor(m => m.EndTime, "", new { @class = "error" })
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                </div>
+            </div>
+            <br />
+            <div class="card">
+                <div class="card-header">
+                    Search for Product
+                </div>
+                <div class="card-body">
+
+                    <div class="card-body">
+
+                        <div class="lft-pnl" id="ProductFilterView">
+                        </div>
+                        <br>
+                        <div id="divProductList" style="margin:-15px"></div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-popup">Close</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('change', '.select', function (evt) {
+            var controlId = '#' + this.id.replace('ID', '');
+            $(this.closest('form')).find(controlId).val(evt.target.selectedOptions[0].label);
+            //$(controlId).val(evt.target.selectedOptions[0].label);
+            var form = $("#frmAddPosition");
+            form.removeData('validator');
+            form.removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse(form);
+        });
+        $('.input-append.date').find('input.span3').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showOn: "both",
+            dateFormat: "dd/mm/yy",
+            beforeShow: function (el, dp) {
+                $(el).parent().append($('#ui-datepicker-div'));
+                $('#ui-datepicker-div').hide();
+            }
+        });
+
+        var ProductTypeId = $("#ProductType_Id").val();
+        var ProductCity = $("#ProductCity").val();
+        var Location = $("#proLocation").val();
+        var BdgPriceCategory = $("#proBdgPriceCategory").val();
+        var StarRating = $("#proStarRating").val(); //.substring(0, 1);
+        var Chain = $("#proChain").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Product/_ProductSearchView",
+            data: { PageName: "OpsChangeProduct", ProductTypeID: ProductTypeId, CityName: ProductCity, LocationID: Location, BudgetCategoryID: BdgPriceCategory, StarRating: StarRating, Chain: Chain },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#ProductFilterView").html(response);
+                var ProductType = $("#ProductTypeID option:selected").text();
+                if (ProductType == 'Hotel') {
+                    $(".budget-category, .hotel-star, .prod-location, .hotel-chain").css('display', '');
+                }
+                //$(".searchProduct").click();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+</script>

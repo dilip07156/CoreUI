@@ -1,0 +1,607 @@
+﻿@model Voyager.App.ViewModels.QuoteMarginViewModel
+
+<script src="~/js/Sales/QuoteMargin.js"></script>
+
+@using (Html.BeginForm("QuoteMarginInformation", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmQuoteMarginInformation" }))
+{
+    @Html.HiddenFor(m => m.QRFID)
+    @Html.Hidden("IsCostingMargin", TempData["IsCostingMargin"].ToString())
+
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="successmsg">Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="errormsg">Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    <div class="btn-cont pull-right">
+        <ul>
+            @if (Convert.ToBoolean(TempData["IsCostingMargin"]))
+            {
+                <li>
+                    <input type="button" value="Save" class="btn btn-blue btn-md SaveMargin" style="margin-top:-40px">
+                    <input type="button" value="Close" class="btn btn-blue-outline btn-md btnCloseMargin" style="margin-top:-40px">
+                </li>
+            }
+            else
+            {
+                <li><input type="button" value="Save" class="btn btn-blue btn-md SaveMargin"></li>
+            }
+        </ul>
+    </div>
+    <h3>Margins </h3>
+    <div>
+        <div class="radio-list-bar">
+            <span class="table-cell"><em>Apply Margins</em> </span>
+            @Html.HiddenFor(m => m.SelectedMargin, new { @id = "SelectedMargin" })
+            <ul class="table-cell" id="chkMargin">
+                <li class="active">
+                    <label class="chk-cont inline-pop">
+                        @Html.CheckBox("pkgd-type", true, new { id = "chkPackage" }) Package based
+                    </label>
+                </li>
+                <li>
+                    <label class="chk-cont">
+                        @Html.CheckBox("pkgd-type", false, new { id = "chkProduct", data_pop_name = "form-product-based-alert" }) Product based
+                    </label>
+                </li>
+                <li>
+                    <label class="chk-cont inline-pop">
+                        @Html.CheckBox("pkgd-type", false, new { id = "chkServiceItem", data_pop_name = "form-margins-item-wise" }) Item wise
+                    </label>
+                </li>
+                @*<li><a href="#" class="btn btn-primary btn-go" id="btnGo">Go</a></li>*@
+            </ul>
+        </div>
+        <div class="top-gap-md">
+            <div class="">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="custom-mob-tbl table-responsive table-departures-dates">
+                            <span id="spanPkgComponent"></span>
+                            @*Package Margin starts here*@
+                            <div id="tblPackage">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg2 text-left"><span>Component</span></th>
+                                            <th class="col-md1 text-left"><span>Margins on Selling Price</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+                                        <tr>
+                                            <td data-label="Component">
+                                                <label class="chk-cont">
+                                                    @Html.RadioButtonFor(m => m.PackageMarginDetails.Accommodation, "Package including Accommodation", new { @id = "rdoIncAccommodation", name = "check-list" })
+                                                    Package including Accommodation
+                                                    @Html.HiddenFor(m => m.PackageMarginDetails.IncPackageID)
+                                                </label>
+
+                                            </td>
+                                            <td data-label="Margins on Selling Price">
+                                                <ul class="prc-perc-cont">
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.IncSellingPrice, new { @Value = 10, @class = "form-control OnlyNumericOneDigit", @id = "txtIncSellingPrice", @maxlength = "6" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanIncSellingPrice" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.IncMarginUnit, new { @class = "form-control bindCurrency", @id = "txtIncMarginUnit", @maxlength = "3" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanIncMarginUnit" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td data-label="Component">
+                                                <label class="chk-cont">
+                                                    @Html.RadioButtonFor(m => m.PackageMarginDetails.Accommodation, "Package not including Accommodation", new { @id = "rdoExcAccommodation", name = "check-list" })
+                                                    Package not including Accommodation
+                                                    @Html.HiddenFor(m => m.PackageMarginDetails.ExcPackageID)
+                                                </label>
+                                            </td>
+
+                                            <td data-label="Margins on Selling Price">
+                                                <ul class="prc-perc-cont ul-li-horizontalcust">
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.ExcSellingPrice, new { @Value = 10, @class = "form-control OnlyNumericOneDigit", @id = "txtExcSellingPrice", @maxlength = "6" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanExcSellingPrice" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.ExcMarginUnit, new { @class = "form-control bindCurrency", @id = "txtExcMarginUnit", @maxlength = "3" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanExcMarginUnit" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br />
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg2 text-left"><span>Additional Services</span></th>
+                                            <th class="col-md1 text-left"><span>Margins on Selling Price</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+                                        <tr>
+                                            <td data-label="Additional Services">
+                                                <label class="chk-cont">
+                                                    @Html.CheckBoxFor(m => m.PackageMarginDetails.SupSelected, new { @id = "rdoSupAccommodation" })
+                                                    Suppliments
+                                                    @*@Html.HiddenFor(m => m.PackageMarginDetails.AdditionalAccommodation)*@
+                                                    @Html.HiddenFor(m => m.PackageMarginDetails.SupPackageID)
+                                                </label>
+                                            </td>
+                                            <td data-label="Margins on Selling Price">
+                                                <ul class="prc-perc-cont ul-li-horizontalcust">
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.SupSellingPrice, new { @Value = 10, @class = "form-control OnlyNumericOneDigit", @id = "txtSupSellingPrice", @maxlength = "6" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanSupSellingPrice" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.SupMarginUnit, new { @class = "form-control bindCurrency", @id = "txtSupMarginUnit", @maxlength = "3" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanSupMarginUnit" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td data-label="Additional Services">
+                                                <label class="chk-cont">
+                                                    @Html.CheckBoxFor(m => m.PackageMarginDetails.OptSelected, new { @id = "rdoOptAccommodation" })
+                                                    Optionals
+                                                    @*@Html.HiddenFor(m => m.PackageMarginDetails.AdditionalAccommodation)*@
+                                                    @Html.HiddenFor(m => m.PackageMarginDetails.OptPackageID)
+                                                </label>
+                                            </td>
+                                            <td data-label="Margins on Selling Price">
+                                                <ul class="prc-perc-cont ul-li-horizontalcust">
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.OptSellingPrice, new { @Value = 10, @class = "form-control OnlyNumericOneDigit", @id = "txtOptSellingPrice", @maxlength = "6" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanOptSellingPrice" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                    <li>
+                                                        @Html.TextBoxFor(m => m.PackageMarginDetails.OptMarginUnit, new { @class = "form-control bindCurrency", @id = "txtOptMarginUnit", @maxlength = "3" })
+                                                    </li>
+                                                    <li>
+                                                        <span id="spanOptMarginUnit" class="text-danger" style="display:none;">*</span>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br />
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg-12 text-left"><span>Markup / Margin to be computed on</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+                                        <tr>
+                                            <td>
+                                                <div class="col-lg-12">
+                                                    <div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Total Cost </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.TotalCost, "Including", new { @id = "TotalCostInc", @class = "rdoMargin" })Including Taxes
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.TotalCost, "Excluding", new { @id = "TotalCostExc", @class = "rdoMargin" })Excluding Taxes
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chk-wrp">
+                                                        <div class="main-lbl">Tour Leaders costs </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.TotalLeadersCost, "Including", new { @id = "TotalLeadersCostInc", @class = "rdoMargin" })Including
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.TotalLeadersCost, "Excluding", new { @id = "TotalLeadersCostExc", @class = "rdoMargin" })Excluding
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Upgrade </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.Upgrade, "Including", new { @id = "UpgradeInc", @class = "rdoMargin" })Including
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.Upgrade, "Excluding", new { @id = "ExcludingExc", @class = "rdoMargin" })Excluding
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    @*<div class="chk-wrp markup-cont">*@
+                                                    @*<div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Markup </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.MarkupType, "Corporate Markup", new { @id = "MarkupTypeC", @class = "rdoMargin" })Corporate Markup
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.PackageMarginDetails.MarkupType, "Regional Markup", new { @id = "MarkupTypeR", @class = "rdoMargin" })Regional Markup
+                                                            </label>
+                                                        </div>
+                                                    </div>*@
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            @*Package Margin ends here*@
+
+                            @*Product Margin starts here*@
+                            <div id="divProductMargin">
+                                <table class="table" id="tblProduct" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg2 text-left"><span>Component</span></th>
+                                            <th class="col-md1 text-left"><span>Margins on Selling Price</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+
+                                        @for (int i = 0; i < Model.ProductMarginDetails.ProductProperties.Count; i++)
+                                        {
+                                            if (!Model.ProductMarginDetails.ProductProperties[i].IsProduct)
+                                            {
+                                                <tr class="StandardRow">
+                                                    <td data-label="Component">
+                                                        <label class="chk-cont main-lbl" style="width:auto !important;">
+                                                            @Html.CheckBoxFor(m => m.ProductMarginDetails.ProductProperties[i].IsProdtype, new { @id = "chkExcAccommodation_" + i, @class = "chkIsProdType" })
+                                                            <span class="ProductMaster">@Model.ProductMarginDetails.ProductProperties[i].ProductMaster</span>
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].ProductID, new { @id = "ProductID_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].VoyagerProductType_Id, new { @id = "VoyagerProductType_Id_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].Prodtype, new { @id = "Prodtype_Id_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].IsProduct, new { @id = "IsProduct_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].ProductMaster)
+                                                        </label>
+                                                        <a><i class="fa fa-chevron-circle-down show-margin-products" style="font-size:15px;"></i></a>
+                                                    </td>
+                                                    <td data-label="Margins on Selling Price">
+                                                        <ul class="prc-perc-cont">
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ProductMarginDetails.ProductProperties[i].SellingPrice, new { @class = "form-control OnlyNumericOneDigit txtProdPrice", @id = "txtSellingPrice_" + i, @maxlength = "6" })
+
+                                                                @*@Html.ValidationMessageFor(m => m.ProductMarginDetails.ProductProperties[i].SellingPrice, "", new { @class = "text-danger" })*@
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblSellingPrice_" + i, @class = "text-danger" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ProductMarginDetails.ProductProperties[i].MarginUnit, new { @class = "form-control bindCurrency", @id = "txtMarginUnit_" + i, @maxlength = "3" })
+                                                                @*@Html.ValidationMessageFor(m => m.ProductMarginDetails.ProductProperties[i].MarginUnit, "", new { @class = "text-danger" })*@
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblMarginUnit_" + i, @class = "text-danger" })
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr class="ProductRow @Model.ProductMarginDetails.ProductProperties[i].ProductMaster.Replace(" ","-")" style="display: none;">
+                                                    <td data-label="Component">
+                                                        <label class="chk-cont">
+                                                            @Html.CheckBoxFor(m => m.ProductMarginDetails.ProductProperties[i].IsProdtype, new { @id = "chkExcAccommodation_" + i, @class = "chkIsProdType" })
+                                                            @Model.ProductMarginDetails.ProductProperties[i].Prodtype
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].ProductID, new { @id = "ProductID_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].VoyagerProductType_Id, new { @id = "VoyagerProductType_Id_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].Prodtype, new { @id = "Prodtype_Id_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].IsProduct, new { @id = "IsProduct_" + i })
+                                                            @Html.HiddenFor(m => m.ProductMarginDetails.ProductProperties[i].ProductMaster)
+                                                        </label>
+                                                    </td>
+                                                    <td data-label="Margins on Selling Price">
+                                                        <ul class="prc-perc-cont">
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ProductMarginDetails.ProductProperties[i].SellingPrice, new { @class = "form-control OnlyNumericOneDigit txtProdPrice", @id = "txtSellingPrice_" + i, @maxlength = "6" })
+
+                                                                @*@Html.ValidationMessageFor(m => m.ProductMarginDetails.ProductProperties[i].SellingPrice, "", new { @class = "text-danger" })*@
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblSellingPrice_" + i, @class = "text-danger" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ProductMarginDetails.ProductProperties[i].MarginUnit, new { @class = "form-control bindCurrency", @id = "txtMarginUnit_" + i, @maxlength = "3" })
+                                                                @*@Html.ValidationMessageFor(m => m.ProductMarginDetails.ProductProperties[i].MarginUnit, "", new { @class = "text-danger" })*@
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblMarginUnit_" + i, @class = "text-danger" })
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                                <br />
+                                <table class="table" id="divProductMargin" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg-12 text-left"><span>Markup / Margin to be computed on</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+                                        <tr>
+                                            <td>
+                                                <div class="col-lg-12">
+                                                    <div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Total Cost </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.TotalCost, "Including", new { @id = "TotalCostIncProd", @class = "rdoMargin" })Including Taxes
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.TotalCost, "Excluding", new { @id = "TotalCostExcProd", @class = "rdoMargin" })Excluding Taxes
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chk-wrp">
+                                                        <div class="main-lbl">Tour Leaders costs </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.TotalLeadersCost, "Including", new { @id = "TotalLeadersCostIncProd", @class = "rdoMargin" })Including
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.TotalLeadersCost, "Excluding", new { @id = "TotalLeadersCostExcProd", @class = "rdoMargin" })Excluding
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Upgrade </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.Upgrade, "Including", new { @id = "UpgradeIncProd", @class = "rdoMargin" })Including
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.Upgrade, "Excluding", new { @id = "UpgradeExcProd", @class = "rdoMargin" })Excluding
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    @*<div class="chk-wrp markup-cont">*@
+                                                    @*<div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Markup </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.MarkupType, "Corporate Markup", new { @id = "MarkupTypeCProd", @class = "rdoMargin" })Corporate Markup
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ProductMarginDetails.MarkupType, "Regional Markup", new { @id = "MarkupTypeRProd", @class = "rdoMargin" })Regional Markup
+                                                            </label>
+                                                        </div>
+                                                    </div>*@
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            @*Product Margin ends here*@
+
+                            @*Itemwise Margin starts here*@
+                            <div id="divItemMargin">
+                                <table class="table" id="tblItemwise" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg2 text-left"><span>Component</span></th>
+                                            <th class="col-md1 text-left"><span>Margins on Selling Price</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+                                        @for (int i = 0; i < Model.ItemwiseMarginDetails.ProductProperties.Count; i++)
+                                        {
+                                            if (!Model.ItemwiseMarginDetails.ProductProperties[i].IsPosition)
+                                            {
+                                                <tr class="StandardRow">
+                                                    <td data-label="Component">
+                                                        <label class="chk-cont main-lbl" style="width:auto !important;">
+                                                            @Html.CheckBoxFor(m => m.ItemwiseMarginDetails.ProductProperties[i].IsProdtype, new { @id = "chkItem_" + i, @class = "chkIsProdType" })
+                                                            <span class="ProductName">@Model.ItemwiseMarginDetails.ProductProperties[i].ProductName</span>
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].ProductName, new { @id = "ProductName_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].IsPosition, new { @id = "IsItemPosition_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].ProductID, new { @id = "ItemProductID_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].PositionID, new { @id = "ItemPositionID_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].VoyagerProductType_Id, new { @id = "VoyagerItemProductType_Id_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].Prodtype, new { @id = "ItemProdtype_Id_" + i })
+                                                        </label>
+                                                        <a><i class="fa fa-chevron-circle-down show-margin-positions" style="font-size:15px;"></i></a>
+                                                    </td>
+                                                    <td data-label="Margins on Selling Price">
+                                                        <ul class="prc-perc-cont">
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ItemwiseMarginDetails.ProductProperties[i].SellingPrice, new { @class = "form-control OnlyNumericOneDigit txtProdPrice", @id = "txtItemSellingPrice_" + i, @maxlength = "6" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblItemSellingPrice_" + i, @class = "text-danger" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ItemwiseMarginDetails.ProductProperties[i].MarginUnit, new { @class = "form-control bindCurrency", @id = "txtItemMarginUnit_" + i, @maxlength = "3" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblItemMarginUnit_" + i, @class = "text-danger" })
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr class="ProductRow @Model.ItemwiseMarginDetails.ProductProperties[i].Prodtype.Replace(" ","-")" style="display: none;">
+                                                    <td data-label="Component">
+                                                        <label class="chk-cont">
+                                                            @Html.CheckBoxFor(m => m.ItemwiseMarginDetails.ProductProperties[i].IsProdtype, new { @id = "chkItem_" + i, @class = "chkIsProdType" })
+                                                            @Model.ItemwiseMarginDetails.ProductProperties[i].ProductName
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].ProductName, new { @id = "ProductName_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].IsPosition, new { @id = "IsItemPosition_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].ProductID, new { @id = "ItemProductID_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].PositionID, new { @id = "ItemPositionID_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].VoyagerProductType_Id, new { @id = "VoyagerItemProductType_Id_" + i })
+                                                            @Html.HiddenFor(m => m.ItemwiseMarginDetails.ProductProperties[i].Prodtype, new { @id = "ItemProdtype_Id_" + i })
+                                                        </label>
+                                                    </td>
+                                                    <td data-label="Margins on Selling Price">
+                                                        <ul class="prc-perc-cont">
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ItemwiseMarginDetails.ProductProperties[i].SellingPrice, new { @class = "form-control OnlyNumericOneDigit txtProdPrice", @id = "txtItemSellingPrice_" + i, @maxlength = "6" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblItemSellingPrice_" + i, @class = "text-danger" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.TextBoxFor(m => m.ItemwiseMarginDetails.ProductProperties[i].MarginUnit, new { @class = "form-control bindCurrency", @id = "txtItemMarginUnit_" + i, @maxlength = "3" })
+                                                            </li>
+                                                            <li>
+                                                                @Html.Label("", " ", new { @id = "lblItemMarginUnit_" + i, @class = "text-danger" })
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                                <br />
+                                <table class="table" id="divItemwiseMargin" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-lg-12 text-left"><span>Markup / Margin to be computed on</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="row-grid-sm document-list">
+                                        <tr>
+                                            <td>
+                                                <div class="col-lg-12">
+                                                    <div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Total Cost </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.TotalCost, "Including", new { @id = "TotalCostIncProd", @class = "rdoMargin" })Including Taxes
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.TotalCost, "Excluding", new { @id = "TotalCostExcProd", @class = "rdoMargin" })Excluding Taxes
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chk-wrp">
+                                                        <div class="main-lbl">Tour Leaders costs </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.TotalLeadersCost, "Including", new { @id = "TotalLeadersCostIncProd", @class = "rdoMargin" })Including
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.TotalLeadersCost, "Excluding", new { @id = "TotalLeadersCostExcProd", @class = "rdoMargin" })Excluding
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Upgrade </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.Upgrade, "Including", new { @id = "UpgradeIncProd", @class = "rdoMargin" })Including
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.Upgrade, "Excluding", new { @id = "UpgradeExcProd", @class = "rdoMargin" })Excluding
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    @*<div class="chk-wrp markup-cont">*@
+                                                    @*<div class="chk-wrp" style="display:none;">
+                                                        <div class="main-lbl">Markup </div>
+                                                        <div class="frm-opts">
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.MarkupType, "Corporate Markup", new { @id = "MarkupTypeCProd", @class = "rdoMargin" })Corporate Markup
+                                                            </label>
+                                                            <label class="inline-inputs width-half">
+                                                                @Html.RadioButtonFor(m => m.ItemwiseMarginDetails.MarkupType, "Regional Markup", new { @id = "MarkupTypeRProd", @class = "rdoMargin" })Regional Markup
+                                                            </label>
+                                                        </div>
+                                                    </div>*@
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            @*Itemwise Margin ends here*@
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close marginClose"></button>
+
+    <div class="btn-cont pull-right">
+        <ul>
+            @if (Convert.ToBoolean(TempData["IsCostingMargin"]))
+            {
+                <li>
+                    <input type="button" value="Save" class="btn btn-blue btn-md SaveMargin" style="margin-top:-40px">
+                    <input type="button" value="Close" class="btn btn-blue-outline btn-md btnCloseMargin" style="margin-top:-40px">
+                </li>
+            }
+            else
+            {
+                <li><input type="button" value="Save" class="btn btn-blue btn-md SaveMargin"></li>
+            }
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+
+
+    <div id="modalAlert" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="modelHeader"></h4>
+                </div>
+                <div class="modal-body">
+                    <p id="modelBody"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .ProductRow .chkIsProdType {
+        margin-left: 30px;
+    }
+</style>

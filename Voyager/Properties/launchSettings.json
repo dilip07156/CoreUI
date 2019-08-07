@@ -1,0 +1,83 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52127/",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Voyager": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:52128/"
+    },
+    "VGER_APC": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "VGER_APC"
+      },
+      "applicationUrl": "http://localhost:52129/"
+    },
+    "VGER_DXB": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "VGER_DXB"
+      },
+      "applicationUrl": "http://localhost:52130/"
+    },
+    "VGER_IND": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "VGER_IND"
+      },
+      "applicationUrl": "http://localhost:52131/"
+    },
+    "VGER_LON": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "VGER_LON"
+      },
+      "applicationUrl": "http://localhost:52132/"
+    },
+    "VGER_DEV": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:52133/"
+    },
+    "VGER_UAT": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "VGER_UAT"
+      },
+      "applicationUrl": "http://localhost:52134/"
+    },
+    "VGER_DXBUAT": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "VGER_DXBUAT"
+      },
+      "applicationUrl": "http://localhost:52135/"
+    }
+  }
+}

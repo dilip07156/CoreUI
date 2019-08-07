@@ -1,0 +1,415 @@
+﻿@model VGER_WAPI_CLASSES.SalesDashboardSummary
+
+<div id="summary_container" class="row clearfix">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-pink hover-expand-effect hover-zoom-effect">
+            <div class="icon">
+                <i class="material-icons">playlist_add_check</i>
+            </div>
+            <div class="content">
+                <h4>Sales & Amendment Pipeline</h4>
+                <!--<div class="font-bold"></div>-->
+                <div><span class="number">@Model.SAPQuotes.ToString("N0") </span>Quotes</div>
+                <div><span class="number">@Model.SAPPax.ToString("N0") </span>Passengers</div>
+                <div><span class="number">@Model.SAPValue.ToString("N0") </span>EUR</div>
+                <!--<div class="number count-to" data-from="0" data-to="125" data-speed="15" data-fresh-interval="20"></div>-->
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-cyan hover-expand-effect hover-zoom-effect">
+            <div class="icon">
+                <i class="material-icons">help</i>
+            </div>
+            <div class="content">
+                <h4>Costing & Approval Pipeline</h4>
+                <div><span class="number">@Model.CAPQuotes.ToString("N0") </span>Quotes</div>
+                <div><span class="number">@Model.CAPPax.ToString("N0") </span>Passengers</div>
+                <div><span class="number">@Model.CAPValue.ToString("N0") </span>EUR</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-light-green hover-expand-effect hover-zoom-effect">
+            <div class="icon">
+                <i class="material-icons">forum</i>
+            </div>
+            <div class="content">
+                <h4>Agent Approval Pipeline</h4>
+                <div><span class="number">@Model.AAPQuotes.ToString("N0") </span>Quotes</div>
+                <div><span class="number">@Model.AAPPax.ToString("N0") </span>Passengers</div>
+                <div><span class="number">@Model.AAPValue.ToString("N0") </span>EUR</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box bg-orange hover-expand-effect hover-zoom-effect">
+            <div class="icon">
+                <i class="material-icons">person_add</i>
+            </div>
+            <div class="content">
+                <h4>Go Ahead Pipeline</h4>
+                <div><span class="number">@Model.GAPQuotes.ToString("N0") </span>Quotes</div>
+                <div><span class="number">@Model.GAPPax.ToString("N0") </span>Passengers</div>
+                <div><span class="number">@Model.GAPValue.ToString("N0") </span>EUR</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="age_analysis_donut" class="clearfix">
+    <div class="card">
+        <div class="header bg-blue-grey">
+            <h2>
+                Pipeline Age Analysis
+            </h2>
+        </div>
+        <div class="body">
+            <div class="row clearfix">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div id="donut_SAP" class="morris-donut"></div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div id="donut_CAP" class="morris-donut"></div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div id="donut_AAP" class="morris-donut"></div>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div id="donut_GAP" class="morris-donut"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="passenger_forecast">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header bg-blue-grey">
+                    <h2>
+                        Passenger Forecast Table
+                    </h2>
+                </div>
+                <div class="body table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>SALES OFFICE</th>
+                                <th>@Model.FinancialYearMonths[0]</th>
+                                <th>@Model.FinancialYearMonths[1]</th>
+                                <th>@Model.FinancialYearMonths[2]</th>
+                                <th>@Model.FinancialYearMonths[3]</th>
+                                <th>@Model.FinancialYearMonths[4]</th>
+                                <th>@Model.FinancialYearMonths[5]</th>
+                                <th>@Model.FinancialYearMonths[6]</th>
+                                <th>@Model.FinancialYearMonths[7]</th>
+                                <th>@Model.FinancialYearMonths[8]</th>
+                                <th>@Model.FinancialYearMonths[9]</th>
+                                <th>@Model.FinancialYearMonths[10]</th>
+                                <th>@Model.FinancialYearMonths[11]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.PassengerForecastGrid.Count; i++)
+                            {
+                                <tr>
+                                    <th scope="row">@Model.PassengerForecastGrid[i].SalesOffice</th>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[0]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[1]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[2]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[3]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[4]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[5]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[6]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[7]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[8]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[9]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[10]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[11]).Select(a => a.TotalPax).FirstOrDefault().ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Passenger_Forecast_Graph" class="clearfix">
+        <div class="card">
+            <div class="header bg-blue-grey">
+                <h2>
+                    Passenger Forecast Graph
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div id="passenger_forecast_area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="quote_forecast">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header bg-blue-grey">
+                    <h2>
+                        Quote Forecast Table
+                    </h2>
+                </div>
+                <div class="body table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>SALES OFFICE</th>
+                                <th>@Model.FinancialYearMonths[0]</th>
+                                <th>@Model.FinancialYearMonths[1]</th>
+                                <th>@Model.FinancialYearMonths[2]</th>
+                                <th>@Model.FinancialYearMonths[3]</th>
+                                <th>@Model.FinancialYearMonths[4]</th>
+                                <th>@Model.FinancialYearMonths[5]</th>
+                                <th>@Model.FinancialYearMonths[6]</th>
+                                <th>@Model.FinancialYearMonths[7]</th>
+                                <th>@Model.FinancialYearMonths[8]</th>
+                                <th>@Model.FinancialYearMonths[9]</th>
+                                <th>@Model.FinancialYearMonths[10]</th>
+                                <th>@Model.FinancialYearMonths[11]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.PassengerForecastGrid.Count; i++)
+                            {
+                                <tr>
+                                    <th scope="row">@Model.PassengerForecastGrid[i].SalesOffice</th>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[0]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[1]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[2]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[3]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[4]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[5]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[6]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[7]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[8]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[9]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[10]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[11]).Select(a => a.Quotes).FirstOrDefault().ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Quote_Forecast_Graph" class="clearfix">
+        <div class="card">
+            <div class="header bg-blue-grey">
+                <h2>
+                    Quote Forecast Graph
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div id="quote_forecast_area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="revenue_forecast">
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header bg-blue-grey">
+                    <h2>
+                        Revenue Forecast Table (@Model.BaseCurrency)
+                    </h2>
+                </div>
+                <div class="body table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>SALES OFFICE</th>
+                                <th>@Model.FinancialYearMonths[0]</th>
+                                <th>@Model.FinancialYearMonths[1]</th>
+                                <th>@Model.FinancialYearMonths[2]</th>
+                                <th>@Model.FinancialYearMonths[3]</th>
+                                <th>@Model.FinancialYearMonths[4]</th>
+                                <th>@Model.FinancialYearMonths[5]</th>
+                                <th>@Model.FinancialYearMonths[6]</th>
+                                <th>@Model.FinancialYearMonths[7]</th>
+                                <th>@Model.FinancialYearMonths[8]</th>
+                                <th>@Model.FinancialYearMonths[9]</th>
+                                <th>@Model.FinancialYearMonths[10]</th>
+                                <th>@Model.FinancialYearMonths[11]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.PassengerForecastGrid.Count; i++)
+                            {
+                                <tr>
+                                    <th scope="row">@Model.PassengerForecastGrid[i].SalesOffice</th>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[0]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[1]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[2]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[3]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[4]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[5]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[6]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[7]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[8]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[9]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[10]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                    <td>@Model.PassengerForecastGrid[i].PaxDetails.Where(a => a.MonthYear.ToUpper() == Model.FinancialYearMonths[11]).Select(a => a.SalesValue).FirstOrDefault().ToString("N0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Revenue_Forecast_Graph" class="clearfix">
+        <div class="card">
+            <div class="header bg-blue-grey">
+                <h2>
+                    Revenue Forecast Graph (@Model.BaseCurrency)
+                </h2>
+            </div>
+            <div class="body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div id="revenue_forecast_area"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var model = @Html.Raw(Json.Serialize(Model));
+    $(document).ready(function () {
+        try {
+            initDonutChart();
+            initAreaChart();
+        } catch (e) {
+            console.log(e.message);
+        }
+    });
+
+    function initAreaChart() {
+        Morris.Area({
+            element: 'passenger_forecast_area',
+            data: JSON.parse(model.passengerChartJson),
+            xkey: 'month',
+            ykeys: model.salesOfficeList,
+            labels: model.salesOfficeList,
+            pointSize: 2,
+            resize: true,
+            hideHover: 'auto'
+            //lineColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)']
+        });
+
+        Morris.Area({
+            element: 'quote_forecast_area',
+            data: JSON.parse(model.quoteChartJson),
+            xkey: 'month',
+            ykeys: model.salesOfficeList,
+            labels: model.salesOfficeList,
+            pointSize: 2,
+            resize: true,
+            hideHover: 'auto'
+            //lineColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)']
+        });
+
+        Morris.Area({
+            element: 'revenue_forecast_area',
+            data: JSON.parse(model.revenueChartJson),
+            xkey: 'month',
+            ykeys: model.salesOfficeList,
+            labels: model.salesOfficeList,
+            pointSize: 2,
+            resize: true,
+            hideHover: 'auto'
+            //lineColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)']
+        });
+    }
+
+    function initDonutChart() {
+        Morris.Donut({
+            element: 'donut_SAP',
+            resize: true,
+            data: [
+                { label: '1 Week', value: Math.round(model.sapAge1Week) },
+                { label: '2 Week', value: Math.round(model.sapAge2Week) },
+                { label: '+2 Week', value: Math.round(model.sapAge2PlusWeek) }
+            ],
+            colors: ['#2b982b', '#ffc107', '#ff0000'],
+            formatter: function (y) {
+                return y + '%';
+            }
+        });
+        Morris.Donut({
+            element: 'donut_CAP',
+            resize: true,
+            data: [
+                { label: '1 Week', value: Math.round(model.capAge1Week) },
+                { label: '2 Week', value: Math.round(model.capAge2Week) },
+                { label: '+2 Week', value: Math.round(model.capAge2PlusWeek) }
+            ],
+            colors: ['#2b982b', '#ffc107', '#ff0000'],
+            formatter: function (y) {
+                return y + '%';
+            }
+        });
+        Morris.Donut({
+            element: 'donut_AAP',
+            resize: true,
+            data: [
+                { label: '1 Week', value: Math.round(model.aapAge1Week) },
+                { label: '2 Week', value: Math.round(model.aapAge2Week) },
+                { label: '+2 Week', value: Math.round(model.aapAge2PlusWeek) }
+            ],
+            colors: ['#2b982b', '#ffc107', '#ff0000'],
+            formatter: function (y) {
+                return y + '%';
+            }
+        });
+        Morris.Donut({
+            element: 'donut_GAP',
+            resize: true,
+            data: [
+                { label: '1 Week', value: Math.round(model.gapAge1Week) },
+                { label: '2 Week', value: Math.round(model.gapAge2Week) },
+                { label: '+2 Week', value: Math.round(model.gapAge2PlusWeek) }
+            ],
+            colors: ['#2b982b', '#ffc107', '#ff0000'],
+            formatter: function (y) {
+                return y + '%';
+            }
+        });
+    }
+
+</script>
+<style>
+    .morris-donut {
+        height: 270px;
+    }
+
+    #age_analysis_donut .col-lg-3, #age_analysis_donut .col-md-3, #age_analysis_donut .col-sm-6, #age_analysis_donut .col-xs-12 {
+        margin-bottom: 0px !important;
+    }
+</style>

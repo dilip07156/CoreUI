@@ -1,0 +1,165 @@
+﻿@model Voyager.App.ViewModels.TransferPopup
+
+<style>
+    .btn-pop-closepopup {
+        float: right;
+    }
+</style>
+<!--Transfers Start-->
+<div class="action-popup table-responsive div-pop-sec valign-top-tbl">
+    <a href="#" class="btn-pop-closepopup" style="display:none;"><i class="fa-custom-close lg"></i></a>
+    <h3 class="text-left">
+        <span class="headertextposition" style="text-transform: capitalize;">
+            @Html.DisplayFor(m => m.ProductType, new { @id = "PositionType" })
+        </span>
+    </h3>
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+    <table class="table table-bordered tbl-theme-03 top-align scroller">
+        <thead>
+            <tr>
+                <th class="col-md-2"><span>From</span></th>
+                <th class="col-md-2"><span>To</span></th>
+                <th class="col-md-2"><span>Product</span></th>
+                <th class="col-md-2"><span>Services</span></th>
+                <th class="col-md-1"><span>Keep As</span></th>
+                <th class="col-md-1"><span>Remarks</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="TransferRow_0" class="TransferRow">
+                <td class="text-left">
+
+                    <div class="form-group">
+                        <label class="frm-sub-label txt-orange">From City</label>
+                        @Html.TextBoxFor(m => m.FromCity, new { @class = "form-control bindCity fromcityUI", @id = "FromCityUI" })
+                        @Html.HiddenFor(m => m.FromCityID, new { @id = "FromCity", @class = "fromcity" })
+
+                        @Html.HiddenFor(m => m.SupplierID, new { @id = "hfSupplierID" })
+                        @Html.HiddenFor(m => m.SupplierName, new { @id = "hfSupplierName" })
+                        @Html.HiddenFor(m => m.TransferProperties.PositionSequence, new { @id = "hfPositionSeq" })
+                        @Html.HiddenFor(m => m.TransferProperties.QRFID, new { @id = "hfQRFId" })
+                        @Html.HiddenFor(m => m.TransferProperties.DayName, new { @id = "hfDayName" })
+                        @Html.HiddenFor(m => m.TransferProperties.DayID, new { @id = "hfDayID" })
+                        @Html.HiddenFor(m => m.TransferProperties.RoutingDaysID, new { @id = "hfRoutingDaysID" })
+                        @Html.HiddenFor(m => m.TransferProperties.PositionId, new { @id = "hfPositionId" })
+                        <label class="text-danger" id="lblFromCity"></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="frm-sub-label txt-orange">Duration</label>
+                        @Html.DropDownListFor(m => m.Duration, new SelectList(Model.DurationList, "Value", "Value"), new { @class = "form-control ddlDuration", @id = "ddlDuration" })
+                        <select name="@Html.NameFor(m =>m.TransferProperties.DayID)" id="ddlday" class="form-control ddlday" style="display:none;">
+                            <option value="">Select</option>
+                            @foreach (var item in Model.DayList)
+                            {
+                                <option value="@item.AttributeValue_Id" cityname="@item.CityName"
+                                        cityid="@item.CityId"
+                                        selected="@(Model != null && item.AttributeValue_Id == Model.TransferProperties.RoutingDaysID)">
+                                    @item.Value
+                                </option>
+                            }
+                        </select>
+                        <label class="text-danger" id="lblDurationList"></label>
+                    </div>
+                    <div class="collapse-container">
+                        <div class="form-group">
+                            <label class="frm-sub-label txt-orange">PickUp Location</label>
+                            @Html.TextBoxFor(m => m.FromPickUpLoc, new { @class = "form-control bindPickUpLoc", @id = "FromPickUpLocUI" })
+                            @Html.HiddenFor(m => m.FromPickUpLocID, new { @id = "FromPickUpLoc" })
+                            <label class="text-danger" id="lblFromPickUpLoc"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="frm-sub-label txt-orange">PickUp Time</label>
+                            @Html.TextBoxFor(m => m.StartTime, new { @class = "form-control time24", @id = "FromPickUpTimeUI", @placeholder = "00.00" })
+                            <label class="text-danger" id="lblFromPickUpTime"></label>
+                        </div>
+                    </div>
+                </td>
+
+                <td class="text-left">
+                    <div class="form-group">
+                        <label class="frm-sub-label txt-orange">To City</label>
+                        @Html.TextBoxFor(m => m.ToCity, new { @class = "form-control bindCity tocityUI", @id = "ToCityUI" })
+                        @Html.HiddenFor(m => m.ToCityID, new { @id = "ToCity", @class = "tocity" })
+                        <label class="text-danger" id="lblToCity"></label>
+                    </div>
+                    <div class="collapse-container">
+                        <div class="form-group">
+                            <label class="frm-sub-label txt-orange">DropOff Location</label>
+                            @Html.TextBoxFor(m => m.ToDropOffLoc, new { @class = "form-control bindPickUpLoc", @id = "ToDropOffLocUI" })
+                            @Html.HiddenFor(m => m.ToDropOffLocID, new { @id = "ToDropOffLoc" })
+                            <label class="text-danger" id="lblToDropOffLoc"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="frm-sub-label txt-orange">DropOff Time</label>
+                            @Html.TextBoxFor(m => m.EndTime, new { @class = "form-control time24", @id = "ToDropOffTimeUI", @placeholder = "00.00" })
+                            <label class="text-danger" id="lblToDropOffTime"></label>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-left">
+                    <div class="form-group">
+                        <label class="frm-sub-label txt-orange">Product Name</label>
+                        @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control bindpositionprod", @id = "ProductNameUI" })
+                        @Html.HiddenFor(m => m.ProductID, new { @id = "ProductName" })
+                        @Html.HiddenFor(m => m.ProductTypeID, new { @id = "ProductName" + "TypeID" })
+                        @Html.HiddenFor(m => m.ProductType, new { @id = "ProductName" + "Type" })
+                        <label class="text-danger" id="lblProductName"></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="frm-sub-label txt-orange">Transfer Category</label>
+                        @Html.DropDownListFor(m => m.BudgetCategory, new SelectList(Model.ProdCategoryList, "ProductCategoryId", "ProductCategoryName"), "Select", new { @class = "form-control bindProductRange", @id = "ddlCategoryID" })
+                        @Html.HiddenFor(m => m.BudgetCategoryId, new { @id = "ddlCategory" })
+                        <label class="text-danger" id="lblBudgetCategory"></label>
+                    </div>
+                </td>
+                @{
+                    Model.TransferProductRange[0].PositionRoomsData.RowNo = 0;
+                    Model.TransferProductRange[0].PositionRoomsData.PositionType = "TransferProductRange[";
+                }
+                @Html.Partial("_PositionRoomDetails", Model.TransferProductRange[0].PositionRoomsData)
+                <td class="text-left">
+                    @{
+                        var keepasList = new List<SelectListItem>();
+                        keepasList.Add(new SelectListItem { Text = "Included", Value = "Included" });
+                        keepasList.Add(new SelectListItem { Text = "Optional", Value = "Optional" });
+                        keepasList.Add(new SelectListItem { Text = "Supplement", Value = "Supplement" });
+                    }
+                    @Html.DropDownListFor(m => m.KeepAs, keepasList, new { @class = "form-control", @id = "ddlKeepAs" })
+                </td>
+
+                <td class="text-center" id="tdPriceFoc">
+                    <div class="price-foc-sec">
+                        <div class="tool-tip info Prices">
+                            <span class="msg txt-green" style="display:none;">Prices Added</span>
+                            <span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+                            <a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+                            <div id="divPrices" class="tooltip-cont type03">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="tool-tip info FOC">
+                            <span class="msg txt-green" style="display:none;">FOC Added</span>
+                            <span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+                            <a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+                            <div id="divFOC" class="tooltip-cont type03">
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <span class="frm-sub-label txt-orange">For TL</span>
+                    @Html.TextAreaFor(m => m.TLRemarks, new { @id = "txtTLRemarks", @maxlength = "250", @class = "alphanumeric" })
+                    <span class="frm-sub-label txt-orange">For OPS</span>
+                    @Html.TextAreaFor(m => m.OPSRemarks, new { @id = "txtOPSRemarks", @maxlength = "250", @class = "alphanumeric" })
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="action align-right top-gap-md">
+        <a class="btn btn-primary transferContinue" id="aContinue">Continue</a>
+    </div>
+</div>
+<!--Transfers End-->
+<script src="~/js/Sales/Transfers/TransferPopup.js"></script>

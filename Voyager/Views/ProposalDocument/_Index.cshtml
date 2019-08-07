@@ -1,0 +1,94 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        @*<tr>
+            <td style="height:15px;" valign="top">
+                <table width="950" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="width:219px; height:15px; background-color:#c8c8c8"></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>*@
+        <tr>
+            <td height="154" valign="top">
+                <table width="700" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+                    <tr>
+                        <td style="height:46px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                        <td style="height:46px;">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top"><img src="@Model.URLinitial/resources/images/proposal-report/cnk-logo-new.png" alt="voyagerlogo" width="686" height="123" /></td>
+                        <td align="right" valign="middle">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top" height="850">
+                <table width="700" border="0" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="height:146px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                    </tr>
+                    <tr>
+                        <td align="center"><img src="@Model.CountryImageInitial@Model.ProductImages.Where(a=>a.ImageIdentifier=="country").FirstOrDefault().ImageURL" width="686" height="438" alt="banner" /></td>
+                    </tr>
+                    <tr>
+                        <td style="height:33px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="heading">@Model.COHeaderViewModel.TourName</td>
+                    </tr>
+                    <tr>
+                        <td style="height:15px;"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                    </tr>
+                    <tr>
+                        <td class="sub-heading">
+                            <table width="176" border="0" align="center" cellpadding="0" cellspacing="0">
+                                <tr class="sub-heading">
+                                    <td valign="middle"><img src="@Model.URLinitial/resources/images/proposal-report/days-icon.jpg" width="15" height="15" /></td>
+                                    <td>@Model.COHeaderViewModel.NoOfDays Days</td>
+                                    <td style="width:20px;"> / </td>
+                                    <td><img src="@Model.URLinitial/resources/images/proposal-report/night-icon.jpg" width="14" height="14" /></td>
+                                    <td>@Model.COHeaderViewModel.NoOfNights Nights</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="sub-heading">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="txt-italic18">Quotation specially designed for</td>
+                    </tr>
+                    <tr>
+                        <td class="sub-heading">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center" class="heading-name">@Model.COHeaderViewModel.ContactPerson of @Model.COHeaderViewModel.AgentName</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><span class="blue-b13">Travel Date</span> : @Convert.ToDateTime(Model.COHeaderViewModel.TravelDate).ToString("dd-MM-yyyy")  | <span class="blue-b13">Quote Reference No </span> : @Model.COHeaderViewModel.QRFID</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="464" border="0" align="center" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="background-color:#e5e5e5; height:1px;"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentFooter.cshtml", Model.COHeaderViewModel)*@
+    </table>
+</div>

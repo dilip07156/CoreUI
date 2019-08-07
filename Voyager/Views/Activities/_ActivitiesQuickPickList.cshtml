@@ -1,0 +1,84 @@
+﻿@model Voyager.App.ViewModels.ActivitiesViewModel
+
+<div class="mfp-hide popup-box pop-lg1 form-theme-04 form" id="activities-quice-pick">
+    <h2>Activities-Quick-Pick</h2>
+    <div class="popup-in">
+        <h3 class="pop-tl">Quick Pick List</h3>
+        <div class="simple-tab-cont">
+            <div class="simple-tab-data">
+                <div style="display:block">
+                    <div class="custom-mob-tbl type02 table-responsive table-departures-dates valign-top-tbl">
+                        @using (Html.BeginForm("QuickPickActivities", "Activities", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmQuickPickActivities" }))
+                        {
+                            @Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+                            <table class="table top-align" id="tblQuickPickList">
+                                <thead>
+                                    <tr>
+                                        <th class="col-sm-2"><span>Routing City</span></th>
+                                        <th class="col-sm-3"><span>Activity Name</span></th>
+                                        <th class="col-sm-1"><span>Select</span></th>
+                                        <th class="col-sm-3"><span>Category</span></th>
+                                        <th class="col-sm-3"><span>Range</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sortable">
+                                    @for (int i = 0; i < Model.QuickPickActivities.Count; i++)
+                                    {
+                                        string rowclass = "";
+                                        string disableclass = "";
+                                        if (Model.QuickPickActivities[i].IsSelected)
+                                        {
+                                            rowclass = "ui-state-disabled";
+                                            disableclass = "disable-quick-pick";
+                                        }
+                                        <tr id="ActivitiesRow_@i" class="QuickPickRow @rowclass">
+                                            <td data-label="CityName">
+                                                @Model.QuickPickActivities[i].CityName
+                                                @Html.Hidden("QuickPickActivities[" + i + "].QPSeqNo", (i + 1), new { @id = "QPSeqNo" })
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].CityID)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].CityName)
+                                            </td>
+                                            <td data-label="ProductId">
+                                                @Model.QuickPickActivities[i].ProdName
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].PositionID)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].ProdID)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].ProdName)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].ProdType)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].ProdTypeID)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].StartTime)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].ActivityDayNo)
+                                                @Html.HiddenFor(m => m.QuickPickActivities[i].DayName)
+                                            </td>
+                                            <td data-label="ProductSelected" class="text-center">
+                                                @Html.CheckBoxFor(m => m.QuickPickActivities[i].IsSelected, new { @class = "chkQuickPickSelected " + disableclass })
+                                            </td>
+                                            <td data-label="ProductCategory">
+                                                <div class="form-group">
+                                                    @Html.HiddenFor(m => m.QuickPickActivities[i].ProdCategory)
+                                                    @Html.HiddenFor(m => m.QuickPickActivities[i].SupplierID)
+                                                    @Html.HiddenFor(m => m.QuickPickActivities[i].SupplierName)
+                                                    @Html.DropDownListFor(m => m.QuickPickActivities[i].ProdCategoryID, new SelectList(Model.QuickPickActivities[i].ProdCategoryList, "AttributeValue_Id", "Value"), new { @class = "form-control select bindProductRange" })
+                                                    @Html.ValidationMessageFor(m => m.QuickPickActivities[i].ProdCategoryID, "", new { @class = "error" })
+                                                </div>
+                                            </td>
+                                            @{
+                                                Model.QuickPickActivities[i].PositionRoomsData.RowNo = i;
+                                                Model.QuickPickActivities[i].PositionRoomsData.PositionType = "QuickPickActivities[";
+                                            }
+                                            @Html.Partial("_PositionRoomDetails", Model.QuickPickActivities[i].PositionRoomsData)
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="btn-cont text-center">
+            <input type="button" value="Save" class="btn btn-blue btn-md SaveQuickPickActivities">
+            <input type="button" value="Cancel" class="btn btn-blue-outline btn-md close-popup">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cox &amp; Kings</title>
+
+    <environment include="Development">
+        <link href="~/resources/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/resources/css/bootstrap-multiselect.css" rel="stylesheet" />
+        <link href="~/resources/css/plugin.css" rel="stylesheet" />
+        <link href="~/resources/css/myStyle.css" rel="stylesheet" />
+        <link href="~/resources/css/master.css" rel="stylesheet" />
+    </environment>
+
+    <environment include="Production">
+        <link href="~/resources/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/resources/css/bootstrap-multiselect.css" rel="stylesheet" />
+        <link href="~/resources/css/plugin.css" rel="stylesheet" />
+        <link href="~/resources/css/myStyle.css" rel="stylesheet" />
+        <link href="~/resources/css/master.css" rel="stylesheet" />
+    </environment>
+    
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <div class="right-top-bar" style="padding-top:30px;">
+                </div>
+            </div>
+        </div>
+        <div class="main-header">
+            <div class="container">
+                <div class="logo-div">
+                    <a href="/Account/Login" class="ck-logo"><img src="/resources/images/common/ck-logo.png" style="height:65px" alt="Cox and Kings Logo"></a>
+                </div>
+                <span class="clear"></span>
+            </div>
+        </div>
+    </header>
+
+    <environment include="Development">
+        <script src="~/ckeditor/ckeditor.js"></script>
+        <script src="~/resources/js/jquery.min.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/resources/js/modernizr-2.6.2.min.js"></script>
+        <script src="~/resources/js/form-elements.js"></script>
+    </environment>
+
+    <environment include="Production">
+        <script src="~/ckeditor/ckeditor.js"></script>
+        <script src="~/resources/js/jquery.min.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/resources/js/modernizr-2.6.2.min.js"></script>
+        <script src="~/resources/js/form-elements.js"></script>
+    </environment>
+    @RenderBody()
+    <div class="ajaxloader" style="display:none;">Loading&#8230;</div>
+    <environment include="Development">
+        <script src="~/resources/js/bootstrap.min.js"></script>
+        <script src="/resources/js/bootstrap-multiselect.js"></script>
+        <script src="~/resources/js/plugins.js"></script>
+        <script src="~/resources/js/main.js"></script>
+    </environment>
+
+    <environment include="Production">
+        <script src="~/resources/js/bootstrap.min.js"></script>
+        <script src="/resources/js/bootstrap-multiselect.js"></script>
+        <script src="~/resources/js/plugins.js"></script>
+        <script src="~/resources/js/main.js"></script>
+    </environment>
+    @RenderSection("Scripts", required: false)
+</body>
+</html> 

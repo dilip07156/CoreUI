@@ -1,0 +1,136 @@
+﻿@model Voyager.App.ViewModels.CopyQuoteViewModel
+
+
+<div id="copy-quote-main">
+    <h3>Copy Quote</h3>
+    @if (string.IsNullOrEmpty(Model.QRFID))
+    {
+        <br />
+        <h4>No Data Found!!!</h4>
+    }
+    else if (Model.ExisitingDepatures?.Count < 1)
+    {
+        <br />
+        <h4>No Depatures Found!!!</h4>
+    }
+    else
+    {
+        @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmCopyQuote" }))
+        {
+            <div class="form-section">
+                <br />
+                <div class="form-group-sec">
+                    <div class="row ">
+                        <div class="col-sm-12 col-xs-12 mobile-12">
+                            <h5>Please enter Tour Name</h5>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-sm-6 col-xs-12 mobile-12">
+                            <label class="frm-sub-label">New Tour Name </label>
+                            @Html.HiddenFor(m => m.QRFID)
+                            @Html.TextBoxFor(m => m.TourName, new { @class = "form-control", @placeholder = "Enter Tour Name", @style = "text-align:left !important" })
+                            @Html.ValidationMessageFor(m => m.TourName, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group-sec">
+                    <div class="row ">
+                        <div class="col-sm-12 col-xs-12 mobile-12">
+                            <h5>Please enter Agent details if new quote is for new Agent:</h5>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-sm-6 col-xs-12 mobile-12">
+                            <label class="frm-sub-label">Agent Name </label>
+                            @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control bindAgent", @placeholder = "Enter Agent Name", @id = "AgentIdUI" })
+                            @Html.HiddenFor(m => m.AgentId)
+                            @Html.ValidationMessageFor(m => m.AgentName, "", new { @class = "error" })
+                        </div>
+                        <div class="col-sm-6 col-xs-12 mobile-12">
+                            <label class="frm-sub-label">Agent Contact</label>
+                            @Html.DropDownListFor(m => m.ContactPerson, new SelectList(Model.ContactPersonList, "VoyagerContact_Id", "FullName"), "Select", new { @class = "form-control" })
+                            @Html.HiddenFor(m => m.MobileNo)
+                            @Html.HiddenFor(m => m.Email)
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-mob-tbl table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>New Departure Dates</th>
+                                <th>Copy from Existing Departure</th>
+                                <th>PP Twin</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tNewDepartures">
+                            <tr class="trNewDeptDatesAdd">
+                                <td class="form-group">
+                                    <div class="form-group">
+                                        <input type="hidden" id="hdnSeqNo" value="0" />
+                                        <div class="input-append date" data-date-format="dd/MM/yyyy">
+                                            @Html.TextBoxFor(m => m.CopyQuoteDepartures[0].NewDepartureDate, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate clsNewDepartureDate", @maxlength = "10", @id = "txtnewDt_0", @placeholder = "dd/MM/yyyy" })
+                                            <span class="add-on"></span>
+                                            @Html.ValidationMessageFor(m => m.CopyQuoteDepartures[0].NewDepartureDate, "", new { @class = "text-danger" })
+                                            <br>
+                                            <small id="emailHelp" class="form-text text-muted">Select New Date to create departure</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="form-group">
+                                    <select name="@Html.NameFor(m => m.CopyQuoteDepartures[0].DepartureId)" id="ddlDepatureId_0" class="form-control ddlDeparture">
+                                        @foreach (var item in Model.ExisitingDepatures)
+                                        {
+                                            <option value="@item.DepatureId" Rate="@item.PPTwin"
+                                                    Currency="@item.Currency"
+                                                    selected="@(Model != null && item.DepatureId == Model.CopyQuoteDepartures[0].DepartureId)">
+                                                @Convert.ToDateTime(@item.DepatureDate).ToString("dd/MM/yyyy")
+                                            </option>
+                                        }
+                                    </select>
+                                    @*@Html.DropDownListFor(m => m.CopyQuoteDepartures[0].DepartureId, new SelectList(Model.ExisitingDepatures, "DepatureId", "DepatureDate"), "Select", new { @class = "form-control" })*@
+                                </td>
+                                <td class="form-group">
+                                    <label class="lblPrice"> @Model.ExisitingDepatures[0].Currency @Model.ExisitingDepatures[0].PPTwin</label>
+                                </td>
+                                <td style="text-align:center">
+                                    <div class="row" style="padding-left:0px;">
+                                        <div class="col-lg-12">
+                                            <div class="col-lg-3">
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <a href="#" title="Delete" class="icon-squre-red btnRemove" id="btnRemove_0"><i class="fa fa-times"></i></a>
+                                            </div>
+                                            <div class="col-lg-2 divAddButton">
+                                                <a href="#" title="Add" class="icon-squre-green btnAddNewDt" id="btnAddNewDt_0"><i class="fa fa-plus"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="btn-cont">
+                <button title="Copy Quote" type="button" class=" btn btn-blue btn-md btnValid" onclick="SetCopyQuote();">Create Quote</button>
+                <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+            </div>
+        }
+    }
+</div>
+<!--Copy Quote Submitted Popup Start-->
+<div id="copy-quote-submitted" style="display:none">
+    <h3 class="pop-tl">Thank You</h3>
+    <p> New QRFID generated <span id="spnNewQRFID" class="blue-txt semi-bold"></span></p>
+    <div class="btn-cont text-center">
+        @Html.ActionLink("Ok", "Quote", "Quote", new { }, new { @class = "btn btn-blue btn-md" })
+    </div>
+</div>
+<!--Copy Quote Submitted Popup End-->
+<button title="Close (Esc)" type="button" class="mfp-close close-popup"></button>
+
+<script src="~/js/Sales/CopyQuote.js"></script>

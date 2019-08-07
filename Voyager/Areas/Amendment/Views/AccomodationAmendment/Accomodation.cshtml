@@ -1,0 +1,142 @@
+﻿@model Voyager.App.ViewModels.AccomodationAmendmentVM
+@{
+    ViewData["Title"] = "Accomodation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="listing-content">
+                    @*<div class="enquiry-ttl-due-section btm-border">
+                        <h1>Costing Officer</h1>
+                    </div>*@
+                    <!--Header info Section-->
+                    @*@Html.Partial("~/Views/Shared/_CostingOfficerHeader.cshtml", Model.COHeaderViewModel)*@
+                    @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+                    <!--Header info Section-->
+                </div>
+                <div class="sqr-tab-cont">
+                    <!--Menu Section-->
+                    @Html.Partial("_QRFAmendmentMenu", Model.MenuViewModel)
+                    <!--Menu Section-->
+                    <div class="sqr-tab-data">
+                        <div class="row">
+                            <div class="col-md-9 lft-pnl">
+                                <div class="ttl-sec tbl-style">
+                                    <h3><i class="fa-custom-building"></i> Accommodation </h3>
+                                </div>
+                                <div class="simple-tab-data">
+
+                                    <div id="divHotelRoute">
+                                        <div class="radio-list-bar js-tab theme-blue">
+                                            <ul class="table-cell" id="ulHotelRouts">
+                                                @for (int i = 0; i < Model.ProductSRPRouteInfo.Count; i++)
+                                                {
+                                                    <li data-id="@i">
+                                                        <label class="cntrl" data-label="domestic">@Model.ProductSRPRouteInfo[i].ToCity</label>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        @for (int i = 0; i < Model.ProductSRPRouteInfo.Count; i++)
+                                        {
+                                            {
+                                                Model.ProductsSRPViewModel.PageName = "hotel";
+                                                Model.ProductsSRPViewModel.ProductSRPDetails = new List<VGER_WAPI_CLASSES.ProductSRPDetails>();
+                                                Model.ProductsSRPViewModel.ProductSRPDetails.Add(Model.ProductSRPRouteInfo[i].ProductSRPDetails);
+                                            }
+                                            <div class="tab-domestic-sec radio-list-data routehotelinfo" style="display:none;border: 1px solid #d7d7d7;" data-id="@i">
+                                                @Html.Partial("~/Areas/Product/Views/ProductSRP/_ProductInfo.cshtml", Model.ProductsSRPViewModel)
+                                            </div>
+
+                                        } 
+                                    </div>
+                                </div>
+                                <br>
+
+                                <!-- Filter Section :: Start -->
+                                <div id="HotelsFilterSection"></div>
+                                <!-- Filter Section :: End -->
+                            </div>
+
+                            <div class="col-md-3 rgh-pnl">
+                                <div class="btn-cont clearfix">
+                                    <ul class="pull-right">
+                                        <li><a class="btn btn-blue-outline">Modify Search <i class="fa-angle-right"></i></a> </li>
+                                        <li><a class="btn btn-blue-outline"><i class="fa-search"></i> At a glance</a> </li>
+                                    </ul>
+                                </div>
+                                <div class="add-to-menu">
+
+                                    <div class="collapse-block">
+
+                                        <div class="collapse-link heading collapsed">
+                                            <a href="javascript:void(0)" class="">Add to Menu / Calculator <i class="fa arrow"></i></a>
+                                        </div>
+                                        <div class="collapse-container" style="display: block;">
+
+                                            <div class="detail-container">
+
+                                                <div class="package-title">
+                                                    <i class="fa-suitcase pkg-icon"></i>
+                                                    <h5>Thailand Thrill </h5>
+                                                    <div class="tbl-style">
+                                                        <div class="trvl-info">
+                                                            <p>Departure: 01 Apr 17</p>
+                                                        </div>
+                                                        <div class="pax-info">
+                                                            <p>28 Adults</p>
+                                                            <p>2 Children</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="checkout-section">
+                                                    <a class="btn btn-blue btn-checkout">Checkout</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="listing-content">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#HotelsFilterSection').load('/Product/_ProductSearchView');
+
+        $("#ulHotelRouts li").click(function (e) {
+            e.preventDefault();
+            $("#divHotelRoute .routehotelinfo").hide();
+            $("#ulHotelRouts").find("li").removeClass("active");
+            $(this).addClass("active");
+            $("#divHotelRoute").find("[data-id=" + $(this).attr("data-id") + "]").show();
+        });
+        $(".routehotelinfo table").removeClass("dataTable");
+    });
+
+    $('.btn-upgrade-room').click(function (e) {
+        e.preventDefault();
+        $('.room-upgraded').show();
+        $(this).addClass('disabled');
+    });
+
+    $('.select-room').on('ifChecked', function (e) {
+        document.location = 'accommodations-onrequest-room-selected.shtml';
+    });
+
+
+</script>
+
+

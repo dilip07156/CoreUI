@@ -1,0 +1,287 @@
+﻿@model Voyager.App.ViewModels.FollowUpViewModel
+
+<style>
+    .popup-box.pop-lg {
+        max-width: 1210px;
+    }
+</style>
+
+<h3>Follow Up Reminder</h3>
+<form id="frmFollowUp">
+    <div class="custom-mob-tbl table-responsive">
+        @*@Html.HiddenFor(m => m.NextVersionId, new { @id = "NextVersionId" })*@
+        <div style="display:none;text-align:left;" id="divSuccessError">
+            <a class="close" title="close">×</a>
+            <strong id="stMsg"></strong> <label id="lblmsg"></label>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-sm" rowspan="2"><span>Task</span></th>
+                    <th class="col-sm" rowspan="2"><span>Follow up Date & Time </span></th>
+                    <th class="col-sm" colspan="2"><span>Follow up With</span></th>
+                    <th class="col-sm" rowspan="2"><span>Notes</span></th>
+                    <th class="col-sm" rowspan="2"><span></span></th>
+                </tr>
+                <tr>
+                    <th class="col-sm"><span>Internal</span></th>
+                    <th class="col-sm"><span>External </span></th>
+                </tr>
+            </thead>
+            <tbody class="row-grid-sm document-list">
+                <tr>
+                    @Html.HiddenFor(a => a.QRFID)
+
+                    <td>
+                        @Html.DropDownListFor(m => m.FollowUpTask, new SelectList(Model.FollowUpTaskList, "Value", "Value"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.FollowUpTask, "", new { @class = "text-danger" })
+                    </td>
+                    <td class="form-theme-04">
+                        <div class="input-append date" data-date-format="dd/M/yyyy" style="width: 120px;padding-left: 5px;">
+                            @Html.TextBoxFor(m => m.FollowUpDate, "{0:dd/MMM/yyyy}", new { @class = "span2 form-control alphanumericdate", @maxlength = "11", @id = "FollowUpDate", @placeholder = "dd/MMM/yyyy" })
+                            @Html.ValidationMessageFor(m => m.FollowUpDate, "", new { @class = "text-danger" })
+
+                        </div>
+                        <div style="width: 120px;padding-left: 5px;">
+                            @Html.TextBoxFor(m => m.FollowUpTime, new { @class = "form-control timeFormat", @placeholder = "00:00", @id = "txtTime" })
+                            <span class="text-danger" id="sptxtTime"></span>
+                        </div>
+                    </td>
+                    <td class="form-group">
+                        @Html.RadioButton("FollowUpType", "Internal", true, new { @class = "FollowUpType" })
+                        @Html.DropDownListFor(m => m.InternalUser, new SelectList(Model.InternalUserList, "Contact_Id", "FIRSTNAME"), "Select", new { @class = "form-control followUpUser" })
+                        @Html.ValidationMessageFor(m => m.InternalUser, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.RadioButton("FollowUpType", "External", false, new { @class = "FollowUpType" })
+                        @Html.DropDownListFor(m => m.ExternalUser, new SelectList(Model.ExternalUserList, "Contact_Id", "FIRSTNAME"), "Select", new { @class = "form-control followUpUser", @disabled = "true" })
+                        @Html.ValidationMessageFor(m => m.ExternalUser, "", new { @class = "text-danger" })
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(m => m.Notes, new { @id = "Notes", @rows = 4 })
+                        @Html.ValidationMessageFor(m => m.Notes, "", new { @class = "text-danger" })
+                    </td>
+                    <td style="text-align:center">
+                        <button title="Add Follow Up" type="button" class="btn btn-blue btn-md" onclick="SetFollowup();">Add</button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</form>
+<h3>History</h3>
+@if (Model.FollowUp.Count == 0)
+{
+    <br />
+    <h4>No Records Found.</h4>
+}
+else
+{
+    <div class="custom-mob-tbl table-responsive">
+        <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+        <table class="table FollowUpTables">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th><span>Date & Time</span></th>
+                    <th><span>Task</span></th>
+					<th><span>Notes</span></th>
+                    <th><span>Internal Follow-up</span></th>
+                    <th><span>External Follow-up</span></th>
+                </tr>
+            </thead>
+            <tbody class="row-grid-sm document-list">
+                @for (int i = 0; i < Model.FollowUp.Count; i++)
+                {
+                    @for (int j = 0; j < Model.FollowUp[i].FollowUpTask.Count; j++)
+                    {
+                        <tr>
+                            <td class="text-center">
+                                @if (Model.FollowUp[i].FollowUpTask[j].FollowUpType == "Internal")
+                                {
+                                    <a onclick="SendMail('@Model.FollowUp[i].FollowUp_Id')">Send</a>
+                                }
+                            </td>
+                            <td>
+                                @Convert.ToDateTime(@Model.FollowUp[i].FollowUpTask[j].FollowUpDateTime).ToString("ddd, dd MMM yyyy, hh:mm tt")
+                            </td>
+                            <td>
+                                @Model.FollowUp[i].FollowUpTask[j].Task
+                            </td>
+							<td>
+								@Model.FollowUp[i].FollowUpTask[j].Notes
+							</td>
+                            <td>
+                                @if (Model.FollowUp[i].FollowUpTask[j].FollowUpType == "Internal")
+                                {
+                                    @Model.FollowUp[i].FollowUpTask[j].ToName
+                                }
+                            </td>
+                            <td>
+                                @if (Model.FollowUp[i].FollowUpTask[j].FollowUpType == "External")
+                                {
+                                    @Model.FollowUp[i].FollowUpTask[j].ToName
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<button title="Close (Esc)" type="button" class="mfp-close followupClose"></button>
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.FollowUpTables').DataTable({
+            "ordering": false,
+            "aLengthMenu": [5,10, 25, 50, 100],
+            "iDisplayLength": 5,
+            "searching": false,
+            "lengthChange": true,
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-3'f><'col-sm-6'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+
+        $('.input-append.date').find('input.span2').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showOn: "both",
+            firstDay: 0, // Start with Monday
+            dayNamesMin: "Sun Mon Tue Wed Thu Fri Sat".split(" "),
+            dateFormat: "dd/M/yy"
+        });
+
+        $('.FollowUpType').click(function () {
+            $(".followUpUser").prop('disabled', 'true').val("");
+            $(".followUpUser").siblings("span").text("");
+            $(this).siblings("select").removeAttr("disabled");
+        });
+
+        $('.followupClose').click(function () {
+            $('#btnSearch').click();
+        });
+    });
+    function SetFollowup() {
+        var flag = true;
+        var FollowUpTask = $("#FollowUpTask :selected").text();
+        if (FollowUpTask == "" || FollowUpTask == "Select") {
+            $("#FollowUpTask").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#FollowUpTask").siblings("span").text("");
+
+        var FollowUpDate = $("#FollowUpDate").val();
+        if (FollowUpDate == "") {
+            $("#FollowUpDate").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#FollowUpDate").siblings("span").text("");
+
+
+        var FollowUpType = $('#FollowUpType:checked').val();
+        if (FollowUpType == "Internal") {
+            var InternalUser = $("#InternalUser :selected").text();
+            if (InternalUser == "" || InternalUser == "Select") {
+                $("#InternalUser").siblings("span").text("*");
+                flag = false;
+            }
+            else
+                $("#InternalUser").siblings("span").text("");
+        }
+        else {
+            var ExternalUser = $("#ExternalUser :selected").text();
+            if (ExternalUser == "" || ExternalUser == "Select") {
+                $("#ExternalUser").siblings("span").text("*");
+                flag = false;
+            }
+            else
+                $("#ExternalUser").siblings("span").text("");
+        }
+
+        var Notes = $("#Notes").val();
+        if (Notes == "") {
+            $("#Notes").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#Notes").siblings("span").text("");
+
+        if (!flag) {
+            alert('Please fill the mandatory fields!');
+            return false;
+        }
+
+
+        $(".ajaxloader").show();
+        var model = $("#frmFollowUp").serialize();
+        var InternalUserName = $("#InternalUser :selected").text();
+        var ExternalUserName = $("#ExternalUser :selected").text();
+
+        model += '&InternalUserName=' + InternalUserName + '&ExternalUserName=' + ExternalUserName;
+
+        $.ajax({
+            type: "POST",
+            url: "/Quote/SetQuoteFollowUp",
+            data: model,
+            global: false,
+            dataType: "json",
+            success: function (response) {
+                if (response.status == 'Success') {
+                    GetFollowup($("#QRFID").val(), "Follow Up saved successfully.", "");
+                }
+                else {
+                    GetFollowup($("#QRFID").val(), "", response.errorMessage);
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+    function SendMail(FollowupId) {
+        var QRFID = $("#QRFID").val();
+        $.ajax({
+            type: "POST",
+            url: "/Quote/SendQuoteFollowUpMail",
+            data: { QRFID: QRFID, FollowUpId: FollowupId},
+            dataType: "json",
+            success: function (response) {
+                if (response.status == 'Success') {
+                    alert("Mail sent successfully!!!");
+                }
+                else {
+                    alert("Error in sending Mail : " + response.errorMessage);
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblmsg").text("");
+        curdiv.find("#stMsg").text("");
+    });
+</script>

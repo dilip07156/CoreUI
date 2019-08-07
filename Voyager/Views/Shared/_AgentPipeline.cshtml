@@ -1,0 +1,122 @@
+﻿@model Voyager.App.ViewModels.AgentPipelineViewModel
+
+<style>
+	.smallbutton {
+		font-weight: 700;
+		min-width: 60px;
+	}
+
+	.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+		z-index: 3;
+		color: #fff;
+		cursor: default;
+		background-color: #000096;
+		border-color: #000096;
+	}
+
+	.container-fluid {
+		padding-right: 0px;
+		padding-left: 0px;
+		margin-right: auto;
+		margin-left: auto;
+	}
+</style>
+
+<div class="gridresults">
+	<div class="main-content form form-theme-02">
+		<div class="container">
+			<div class="listing-content">
+				<div class="listing-table">
+					<div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+						<table class="table table-bordered tbl-theme-02" id="tblAgent">
+							<thead>
+								@Html.HiddenFor(x => x.IsSupplier, new { @id = "Issupplier", @class = "Issupplier" })
+								<tr>
+									<th class="col-md-2">Code</th>
+									<th class="col-md-4">Name</th>
+									<th class="col-md-2">Country</th>
+									<th class="col-md-2">City</th>
+									<th class="col-md-2">Action</th>
+								</tr>
+							</thead>						
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		var issupplier = $('.Issupplier').val();
+		var AgentName, Country, CNKReferenceNo, Status, ProductType, City;
+		if (issupplier == "False" || issupplier == false) {
+			AgentName = $('.frmAgent .AgentIdUI').val();
+			Country = $('.frmAgent .ddlCountry').find("option:selected").val();
+			CNKReferenceNo = $('.frmAgent .CNKReferenceNo').val();
+			Status = $('.frmAgent .Status').find("option:selected").val();
+		}
+		else {
+			AgentName = $('.frmSupplier .SupplierName').val();
+			Country = $('.frmSupplier .ddlCountry').find("option:selected").val();			
+			CNKReferenceNo = $('.frmSupplier .CNKReferenceNo').val();			
+			Status = $('.frmSupplier .Status').find("option:selected").val();
+			ProductType = $('.frmSupplier .ddlProductType').find("option:selected").val();
+			City = $('.frmSupplier .ddlCity').find("option:selected").val();
+		}
+		var oTable = $('#tblAgent').dataTable({
+			processing: true,
+			serverSide: true,
+			info: true,
+			ajax: {
+				url: "/Agent/LoadData",
+				type: "GET",
+				data: function (d) {
+					d.AgentName = AgentName;
+					d.CNKReferenceNo = CNKReferenceNo;
+					d.Country = Country;
+					d.Status = Status;
+					d.City = City;
+					d.ProductType = ProductType;
+					d.IsSupplier = issupplier;
+				}
+			},
+			columns: [
+				{ "data": "code", "orderable": true },
+				{ "data": "name", "orderable": true },
+				{ "data": "country", "orderable": true },
+				{ "data": "city", "orderable": true },
+				{
+					"data": function (data, type, row, meta) {
+						if (data.isSupplier == true) {
+							return "<a id='btnSupplierView' class='btn btn-blue smallbutton btnSupplierView' href='/Supplier/SupplierDetail?CompanyId=" + data.companyId + "'>View</a>";
+						}
+						else {
+							return "<a id='btnView' class='btn btn-blue smallbutton btnView' href='/Agent/AgentDetail?CompanyId=" + data.companyId + "'>View</a>";
+						}
+					},
+					"orderable": false
+				}
+			],
+			"order": [[0, "asc"]],
+			"columnDefs": [{
+				"defaultContent": "",
+				"targets": "_all"
+			},
+			{
+				"targets": [4],
+				"className": "text-center"
+			}],
+			"oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+			"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+		});
+
+		$('#tblAgent_filter').css('display', 'none');
+	});
+</script>

@@ -1,0 +1,352 @@
+﻿@model Voyager.App.ViewModels.BookingPipelineViewModel
+
+<style>
+    .center {
+        text-align: center !important;
+    }
+
+    .tr-strikthrough {
+        text-decoration: line-through;
+    }
+</style>
+
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        <div style="text-align:center">
+            <button title="Close (Esc)" type="button" class="btn btn-blue btn-md close-popup">Back to Search Results</button>
+        </div>
+        <div class="clear"></div><br />
+        <h1 class="center">@Model.Header</h1>
+        @if (Model.HotelPositions.Count > 0)
+        {
+            <div class="clear"></div>
+            <h3 style="text-align:center">Hotels</h3>
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Product Name</th>
+                        <th>Board</th>
+                        <th>SGL</th>
+                        <th>TWN/DBL</th>
+                        <th>TPL</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody class="row-grid-sm document-list">
+                    @for (int i = 0; i < Model.HotelPositions.Count; i++)
+                    {
+                        string className = "";
+                        @if (Model.HotelPositions[i].Status == "Invoice" || Model.HotelPositions[i].Status == "Confirmation Outstanding" || Model.HotelPositions[i].Status == "Booked")
+                        {
+                            className = "alert-success";
+                        }
+                        @if (Model.HotelPositions[i].Status == "Modification" || Model.HotelPositions[i].Status == "Option")
+                        {
+                            className = "alert-warning";
+                        }
+                        @if (Model.HotelPositions[i].Status == "Rejected" || Model.HotelPositions[i].Status == "Cancelled")
+                        {
+                            className = "tr-strikthrough";
+                        }
+                        @if (Model.HotelPositions[i].Status == "Rate Check" || Model.HotelPositions[i].Status == "To Be Placed" || Model.HotelPositions[i].Status == "Quotation")
+                        {
+                            className = "alert-danger";
+                        }
+                        <tr class="alert @className">
+                            <td class="center">@Convert.ToDateTime(@Model.HotelPositions[i].StartDate).ToString("dd MMM")</td>
+                            <td>@Model.HotelPositions[i].Country</td>
+                            <td>@Model.HotelPositions[i].City</td>
+                            <td>@Model.HotelPositions[i].ProductName</td>
+                            <td class="center">@Model.HotelPositions[i].Board</td>
+                            <td class="center">@Model.HotelPositions[i].Single</td>
+                            <td class="center">
+                                @if (Model.HotelPositions[i].Double != "" && Model.HotelPositions[i].Twin != "")
+                                {
+                                    @(Model.HotelPositions[i].Double + "/" + Model.HotelPositions[i].Twin)
+                                }
+                                else if (Model.HotelPositions[i].Double == "" && Model.HotelPositions[i].Twin != "")
+                                {
+                                    @Model.HotelPositions[i].Twin
+                                }
+                                else if (Model.HotelPositions[i].Double != "" && Model.HotelPositions[i].Twin == "")
+                                {
+                                    @Model.HotelPositions[i].Double
+                                }
+                                else if (Model.HotelPositions[i].Double == "" && Model.HotelPositions[i].Twin == "")
+                                {
+                                    @Model.HotelPositions[i].Double
+                                }
+                            </td>
+                            <td class="center">@Model.HotelPositions[i].Triple</td>
+                            <td>@Model.HotelPositions[i].Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (Model.MealPositions.Count > 0)
+        {
+            <div class="clear"></div><br />
+            <h3 style="text-align:center">Restaurants</h3>
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Product Name</th>
+                        <th>Restaurant Type</th>
+                        <th>Meal</th>
+                        <th>Menu</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody class="row-grid-sm document-list">
+                    @for (int i = 0; i < Model.MealPositions.Count; i++)
+                    {
+                        string className = "";
+                        @if (Model.MealPositions[i].Status == "Invoice" || Model.MealPositions[i].Status == "Confirmation Outstanding" || Model.MealPositions[i].Status == "Booked")
+                        {
+                            className = "alert-success";
+                        }
+                        @if (Model.MealPositions[i].Status == "Modification" || Model.MealPositions[i].Status == "Option")
+                        {
+                            className = "alert-warning";
+                        }
+                        @if (Model.MealPositions[i].Status == "Rejected" || Model.MealPositions[i].Status == "Cancelled")
+                        {
+                            className = "tr-strikthrough";
+                        }
+                        @if (Model.MealPositions[i].Status == "Rate Check" || Model.MealPositions[i].Status == "To Be Placed" || Model.MealPositions[i].Status == "Quotation")
+                        {
+                            className = "alert-danger";
+                        }
+                        <tr class="alert @className">
+                            <td class="center">@Convert.ToDateTime(@Model.MealPositions[i].StartDate).ToString("dd MMM")</td>
+                            <td>@Model.MealPositions[i].Country</td>
+                            <td>@Model.MealPositions[i].City</td>
+                            <td>@Model.MealPositions[i].ProductName</td>
+                            <td>@Model.MealPositions[i].RestaurantType</td>
+                            <td>@Model.MealPositions[i].Meal</td>
+                            <td>@Model.MealPositions[i].Menu</td>
+                            <td>@Model.MealPositions[i].Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (Model.AttractionPositions.Count > 0)
+        {
+            <div class="clear"></div><br />
+            <h3 style="text-align:center">Attractions</h3>
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Product Name</th>
+                        <th>Option</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody class="row-grid-sm document-list">
+                    @for (int i = 0; i < Model.AttractionPositions.Count; i++)
+                    {
+                        string className = "";
+                        @if (Model.AttractionPositions[i].Status == "Invoice" || Model.AttractionPositions[i].Status == "Confirmation Outstanding" || Model.AttractionPositions[i].Status == "Booked")
+                        {
+                            className = "alert-success";
+                        }
+                        @if (Model.AttractionPositions[i].Status == "Modification" || Model.AttractionPositions[i].Status == "Option")
+                        {
+                            className = "alert-warning";
+                        }
+                        @if (Model.AttractionPositions[i].Status == "Rejected" || Model.AttractionPositions[i].Status == "Cancelled")
+                        {
+                            className = "tr-strikthrough";
+                        }
+                        @if (Model.AttractionPositions[i].Status == "Rate Check" || Model.AttractionPositions[i].Status == "To Be Placed" || Model.AttractionPositions[i].Status == "Quotation")
+                        {
+                            className = "alert-danger";
+                        }
+                        <tr class="alert @className">
+                            <td class="center">@Convert.ToDateTime(@Model.AttractionPositions[i].StartDate).ToString("dd MMM")</td>
+                            <td>@Model.AttractionPositions[i].Country</td>
+                            <td>@Model.AttractionPositions[i].City</td>
+                            <td>@Model.AttractionPositions[i].ProductName</td>
+                            <td>@Model.AttractionPositions[i].Option</td>
+                            <td>@Model.AttractionPositions[i].Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (Model.TransferPositions.Count > 0)
+        {
+            <div class="clear"></div><br />
+            <h3 style="text-align:center">LDC / Coaches / Ferry Transfers</h3>
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Unit</th>
+                        <th>P/UP</th>
+                        <th>D/OFF</th>
+                        <th>Driver</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody class="row-grid-sm document-list">
+                    @for (int i = 0; i < Model.TransferPositions.Count; i++)
+                    {
+                        string className = "";
+                        @if (Model.TransferPositions[i].Status == "Invoice" || Model.TransferPositions[i].Status == "Confirmation Outstanding" || Model.TransferPositions[i].Status == "Booked")
+                        {
+                            className = "alert-success";
+                        }
+                        @if (Model.TransferPositions[i].Status == "Modification" || Model.TransferPositions[i].Status == "Option")
+                        {
+                            className = "alert-warning";
+                        }
+                        @if (Model.TransferPositions[i].Status == "Rejected" || Model.TransferPositions[i].Status == "Cancelled")
+                        {
+                            className = "tr-strikthrough";
+                        }
+                        @if (Model.TransferPositions[i].Status == "Rate Check" || Model.TransferPositions[i].Status == "To Be Placed" || Model.TransferPositions[i].Status == "Quotation")
+                        {
+                            className = "alert-danger";
+                        }
+                        <tr class="alert @className">
+                            <td class="center">@Convert.ToDateTime(@Model.TransferPositions[i].StartDate).ToString("dd MMM")</td>
+                            <td class="center">@Convert.ToDateTime(@Model.TransferPositions[i].EndDate).ToString("dd MMM")</td>
+                            <td>@Model.TransferPositions[i].ProductType</td>
+                            <td>@Model.TransferPositions[i].ProductName</td>
+                            <td>@Model.TransferPositions[i].City</td>
+                            <td></td>
+                            <td>@Model.TransferPositions[i].Unit</td>
+                            <td>@Model.TransferPositions[i].PickUpLoc</td>
+                            <td>@Model.TransferPositions[i].DropOffLoc</td>
+                            <td>@Model.TransferPositions[i].Driver</td>
+                            <td>@Model.TransferPositions[i].Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (Model.GuidePositions.Count > 0)
+        {
+            <div class="clear"></div><br />
+            <h3 style="text-align:center">Guides and Assistants</h3>
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Product Name</th>
+                        <th>Option</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody class="row-grid-sm document-list">
+                    @for (int i = 0; i < Model.GuidePositions.Count; i++)
+                    {
+                        string className = "";
+                        @if (Model.GuidePositions[i].Status == "Invoice" || Model.GuidePositions[i].Status == "Confirmation Outstanding" || Model.GuidePositions[i].Status == "Booked")
+                        {
+                            className = "alert-success";
+                        }
+                        @if (Model.GuidePositions[i].Status == "Modification" || Model.GuidePositions[i].Status == "Option")
+                        {
+                            className = "alert-warning";
+                        }
+                        @if (Model.GuidePositions[i].Status == "Rejected" || Model.GuidePositions[i].Status == "Cancelled")
+                        {
+                            className = "tr-strikthrough";
+                        }
+                        @if (Model.GuidePositions[i].Status == "Rate Check" || Model.GuidePositions[i].Status == "To Be Placed" || Model.GuidePositions[i].Status == "Quotation")
+                        {
+                            className = "alert-danger";
+                        }
+                        <tr class="alert @className">
+                            <td class="center">@Convert.ToDateTime(@Model.GuidePositions[i].StartDate).ToString("dd MMM")</td>
+                            <td>@Model.GuidePositions[i].Country</td>
+                            <td>@Model.GuidePositions[i].City</td>
+                            <td>@Model.GuidePositions[i].ProductName</td>
+                            <td>@Model.GuidePositions[i].Option</td>
+                            <td>@Model.GuidePositions[i].StartTime</td>
+                            <td>@Model.GuidePositions[i].EndTime</td>
+                            <td>@Model.GuidePositions[i].Driver</td>
+                            <td>@Model.GuidePositions[i].Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        @if (Model.OtherPositions.Count > 0)
+        {
+            <div class="clear"></div><br />
+            <h3 style="text-align:center">Others</h3>
+            <br />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Product Name</th>
+                        <th>Option</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody class="row-grid-sm document-list">
+                    @for (int i = 0; i < Model.OtherPositions.Count; i++)
+                    {
+                        string className = "";
+                        @if (Model.OtherPositions[i].Status == "Invoice" || Model.OtherPositions[i].Status == "Confirmation Outstanding" || Model.OtherPositions[i].Status == "Booked")
+                        {
+                            className = "alert-success";
+                        }
+                        @if (Model.OtherPositions[i].Status == "Modification" || Model.OtherPositions[i].Status == "Option")
+                        {
+                            className = "alert-warning";
+                        }
+                        @if (Model.OtherPositions[i].Status == "Rejected" || Model.OtherPositions[i].Status == "Cancelled")
+                        {
+                            className = "tr-strikthrough";
+                        }
+                        @if (Model.OtherPositions[i].Status == "Rate Check" || Model.OtherPositions[i].Status == "To Be Placed" || Model.OtherPositions[i].Status == "Quotation")
+                        {
+                            className = "alert-danger";
+                        }
+                        <tr class="alert @className">
+                            <td class="center">@Convert.ToDateTime(@Model.OtherPositions[i].StartDate).ToString("dd MMM")</td>
+                            <td>@Model.OtherPositions[i].Country</td>
+                            <td>@Model.OtherPositions[i].City</td>
+                            <td>@Model.OtherPositions[i].ProductName</td>
+                            <td>@Model.OtherPositions[i].Option</td>
+                            <td>@Model.OtherPositions[i].Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

@@ -1,0 +1,127 @@
+﻿@model Voyager.App.ViewModels.TransfersViewModel
+<style>
+    .chk-cont {
+        padding-left: 0px;
+    }
+</style>
+<!-- Wrapper ::Starts -->
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                @using (Html.BeginForm("Transfers", "Transfers", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmTransfers" }))
+                {
+                    @Html.HiddenFor(m => m.MenuViewModel.QRFID, new { @id = "hfqrfid" })
+                    <div class="head-ttl">
+                        <h2 class="pg-ttl pull-left">Transfers</h2>
+                        @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                        <div class="clearfix"></div>
+                    </div>
+                    @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data">
+                            <div class="btn-cont pull-right">
+                                <ul>
+                                    <li><input type="button" value="Save" class="btn btn-blue btn-md transferSave"></li>
+                                </ul>
+                            </div>
+                            <h3><i class="fa-custom-car-black"></i> Transfers</h3>
+                            <div style="display:none;text-align:left;" id="divSuccessError">
+                                <a class="close" title="close">×</a>
+                                <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                            </div>
+                            <div class="simple-tab-cont">
+                                <div class="simple-tab-data">
+                                    <div>
+                                        <div class="custom-mob-tbl type02 table-responsive table-departures-dates meals-tbl">
+                                            @if (Model.TransferDetails != null && Model.TransferDetails.Count > 0)
+                                            {
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-xs"><span>Day</span></th>
+                                                            <th><span>Routing</span></th>
+                                                            <th><span>Private Car Transfer</span></th>
+                                                            <th><span>Scheduled Transfer</span></th>
+                                                            <th><span>Ferry Passenger</span></th>
+                                                            <th><span>Ferry Transfer</span></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="row-grid-sm document-list">
+                                                        @for (int i = 0; i < Model.TransferDetails.Count; i++)
+                                                        {
+                                                            <tr>
+                                                                <td data-label="Day"> @Html.TextBoxFor(m => m.TransferDetails[i].TransferProperties.DayName, new { @class = "form-control txt-span", @id = "dayname_" + i, @ReadOnly = "true" })</td>
+                                                                <td data-label="City">
+                                                                    @Html.TextAreaFor(m => m.TransferDetails[i].TransferProperties.RoutingCity, new { @class = "form-control txt-span routinglabel", @id = "cityname_" + i, @ReadOnly = "true" })
+                                                                    @Html.Hidden("hfindex_" + i.ToString(), i, new { @id = "hfindex_" + i })
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].TransferProperties.PositionSequence, new { @id = "hfPositionSeq_" + i })
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].TransferProperties.RoutingDaysID, new { @id = "hfRoutingDaysID_" + i })
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].TransferProperties.DayID, new { @id = "hfDayID_" + i })
+                                                                </td>
+                                                                <td data-label="Private Transfer">
+                                                                    <label class="chk-cont">
+                                                                        @Html.CheckBoxFor(m => m.TransferDetails[i].IsPCT, new { @id = "chkPCT_" + i, data_name = "pct-type", @class = "required-chk popupchk", data_action = "pct" })
+                                                                    </label>
+                                                                    <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="pct-type" data-action="pct" style='cursor:pointer;display:@(Model.TransferDetails[i].IsPCT?"block":"none");'>View Details</a>
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].PCTID, new { @id = "hfpctId_" + i, datasechf = "pct" })
+                                                                </td>
+                                                                <td data-label="Scheduled Transfer">
+                                                                    <label class="chk-cont">
+                                                                        @Html.CheckBoxFor(m => m.TransferDetails[i].IsST, new { @id = "chkST_" + i, data_name = "st-type", @class = "required-chk popupchk", data_action = "st" })
+                                                                    </label>
+                                                                    <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="st-type" data-action="st" style='cursor:pointer;display:@(Model.TransferDetails[i].IsST?"block":"none");'>View Details</a>
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].STID, new { @id = "hfstId_" + i, datasechf = "st" })
+                                                                </td>
+                                                                <td data-label="Ferry Passenger">
+                                                                    <label class="chk-cont">@Html.CheckBoxFor(m => m.TransferDetails[i].IsFP, new { @id = "chkFP_" + i, data_name = "fp-type", @class = "required-chk popupchk", data_action = "fp" })</label>
+                                                                    <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="fp-type" data-action="fp" style='cursor:pointer;display:@(Model.TransferDetails[i].IsFP?"block":"none");'>View Details</a>
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].FPID, new { @id = "hffpId_" + i, datasechf = "fp" })
+                                                                </td>
+                                                                <td data-label="Ferry Transfer">
+                                                                    <label class="chk-cont">@Html.CheckBoxFor(m => m.TransferDetails[i].IsFT, new { @id = "chkFT_" + i, data_name = "ft-type", @class = "required-chk popupchk", data_action = "ft" })</label>
+                                                                    <a id="viewdetails_@i" class="popupchk" data-type="anchor" data-name="ft-type" data-action="ft" style='cursor:pointer;display:@(Model.TransferDetails[i].IsFT?"block":"none");'>View Details</a>
+                                                                    @Html.HiddenFor(m => m.TransferDetails[i].FTID, new { @id = "hfftId_" + i, datasechf = "ft" })
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="tr-pop-sec">
+                                                                <td colspan="10" class="action-popup-wrap" id="divpopup"></td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <table class="table top-align">
+                                                    <tbody>
+                                                        <tr>
+                                                            You have not added Routing details.
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            }
+                                        </div>
+
+                                        <div class="clearfix"></div>
+
+                                        <div class="btn-cont top-gap-md">
+                                            <input type="button" value="Save" class="btn btn-blue btn-md transferSave">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    <div class="clearfix"></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/Sales/Common.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>
+<script src="~/js/Sales/Transfers/Transfers.js"></script>

@@ -1,0 +1,660 @@
+﻿@model Voyager.App.ViewModels.QRFSummaryViewModel
+
+<style>
+	.filter-table table .day {
+		width: 85px;
+	}
+
+	.filter-table table .time {
+		width: 100px;
+	}
+
+	.ulItems li::before {
+		content: "\2022";
+		color: #000096;
+		font-weight: bold;
+		display: inline-block;
+		width: 1em;
+		margin-left: 0em;
+	}
+
+	.filter-table .table > tbody > tr > td {
+		vertical-align: top;
+	}
+
+	b, strong {
+		font-weight: 600 !important;
+	}
+
+	.buttonLink {
+		
+		color: white !important;
+	}
+</style>
+
+<div class="alert alert-success" id="SuccessAlert" style="display:none">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+	<div id="SuccessMessage"></div>
+</div>
+<div class="alert alert-danger" id="ErrorAlert" style="display:none">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+	<div id="ErrorMessage"></div>
+</div>
+<div class="filter-wrap">
+	<h6>Filters:</h6>
+	<ul class="filter-links">
+		<li>
+			@Html.DropDownListFor(m => m.Days, new SelectList(Model.DayList, "Attribute_Id", "AttributeName"), "Day", new { @id = "ddlDays", @class = "form-control ddlFilter" })
+		</li>
+		<li>
+			@Html.DropDownListFor(m => m.Services, new SelectList(Model.ServiceTypeList, "Prodtype", "Prodtype"), "Service Type", new { @id = "ddlServiceType", @class = "form-control ddlFilter" })
+		</li>
+		<li>
+		<ul><button class="btn btn-sm btn-primary btnSave" id="btnSave">Save</button></ul>&nbsp;&nbsp;
+		<ul><a href="#Confirm-popup" title="Generate Full Itinerary" class="btn btn-sm btn-primary popup-inline buttonLink" id="btnCreateFullItinerary">Create Full Itinerary</a>
+<a href="" id="aFilePath" class="btn btn-primary btn-sm" style="display:none;">File Download</a></ul>
+			
+			@*<button class="btn btn-sm btn-primary">Create Skeleton Itinerary</button>&nbsp;&nbsp;*@
+			@*<button class="btn btn-sm btn-primary btnCreateFullItinerary" id="btnCreateFullItinerary">Create Full Itinerary</button>*@
+				
+		</li>
+
+	</ul>
+</div>
+<span class="clear"></span>
+
+<form id="frmItineraryBuilder">
+	<div class="table-responsive filter-table custom-mob-tbl">
+		<table class="table" id="tblItineraryBuilder">
+			<thead>
+				<tr>
+					@Html.HiddenFor(x => x.QRFID, new { @id = "QRFID" })
+					<th>Day</th>
+					<th class="col-md-1">Place of Service</th>
+					<th>Type</th>
+					<th class="col-md-2">Original Itinerary</th>
+					<th class="col-md-3">Service Details</th>
+					<th class="col-md-3">Product Description</th>
+					<th class="col-md-3">Itinerary Remarks</th>
+					<th>Remarks</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+				{
+					<tr class="tbl-sub-heading">
+						<td class="day">@Model.Itinerary.ItineraryDays[i].Day</td>
+						<td class="day" colspan="8">
+							@if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Arrive at"))
+							{
+								@Model.Itinerary.ItineraryDays[i].ItineraryName.Replace("Arrive at", "")
+							}
+							else if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Depart from"))
+							{
+								@Model.Itinerary.ItineraryDays[i].ItineraryName.Replace("Depart from", "")
+							}
+							else
+							{
+								@Model.Itinerary.ItineraryDays[i].ItineraryName
+							}
+						</td>
+					</tr>
+
+					@for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+				{
+						<tr class="light-pink-bg">
+							@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+							@Html.HiddenFor(Model => Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName, new { @id = "ProductName", @class = "clsProductName" })
+							@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted, new { @id = "IsDeleted", @class = "clsIsDeleted" })
+							@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+							@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductId, new { @id = "ItineraryDetailId", @class = "clsItineraryDetailId" })
+							@if (j == 0)
+					{
+								<td class="date" style="vertical-align:top" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count">@DateTime.Parse(@Model.Itinerary.ItineraryDays[i].Date.ToString()).ToString("dd MMM yy") @Model.Itinerary.ItineraryDays[i].DayOfWeek</td>
+					}
+							@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsRoutingMatrix == true)
+					{
+								<td></td>
+					}
+					else if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null || @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Contains("0:00"))
+					{
+								<td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</td>
+					}
+					else
+					{
+								<td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime?.Split("|")[0]</td>
+					}
+							<td class="type">
+
+								@switch (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper())
+								{
+									case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+										break;
+									case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+										break;
+									case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+										break;
+									case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+										break;
+									case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+										break;
+									case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+										break;
+									case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+										break;
+									case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+										break;
+									case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+										break;
+									case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+										break;
+									case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+										break;
+									case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+										break;
+									case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+										break;
+									case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+										break;
+									case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+										break;
+									case "VISA": <img src="~/resources/images/common/icons/visa.png">
+										break;
+									case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+										break;
+									default:
+										break;
+								}
+							</td>
+
+							@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "TRUE")
+					{
+								@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs.ToUpper() == "INCLUDED")
+								{
+									<td class="original-itinerary" style="text-decoration:line-through">
+										@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+										{
+											<b>
+												@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City
+											@if (!string.IsNullOrWhiteSpace(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City))
+											{
+												<span>:</span>
+											}
+										</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+										else
+										{
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+									</td>
+								}
+								else
+								{
+									<td class="original-itinerary" style="text-decoration:line-through">
+										<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</b>
+
+										@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+										{
+											<b>
+												@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City
+											@if (!string.IsNullOrWhiteSpace(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City))
+											{
+												<span>:</span>
+											}
+										</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+										else
+										{
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+									</td>
+								}
+					}
+
+							@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+					{
+								@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs.ToUpper() == "INCLUDED")
+								{
+									<td class="original-itinerary">
+										@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+										{
+											<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City 
+										@if (!string.IsNullOrWhiteSpace(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City))
+										{
+											<span>:</span>
+										}
+										</b>
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+										else
+										{
+											@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+									</td>
+								}
+								else
+								{
+									<td class="original-itinerary">
+										<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</b>
+
+										@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+										{
+											<b>
+												@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City
+											@if (!string.IsNullOrWhiteSpace(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City))
+											{
+												<span>:</span>
+											}
+										</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+										else
+										{
+											@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+										}
+									</td>
+								}
+					}
+
+							<td>
+								@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime != null && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Contains("|")
+					&& (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split("|")[1].Contains("Check out") || Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split("|")[1].Contains("Check-out")))
+								{
+									<table class="table">
+										<tbody>
+											<tr>
+												@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+												{
+													<td><b>Check Out Time</b></td>
+													<td>
+														@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime != null && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Contains("0:00|") && @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime != null)
+														{
+												@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime
+														}
+														else if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime != null && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Contains("|"))
+														{
+															@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split("|")[0]
+														}
+														else if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime != null && !(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Contains("|")))
+														{
+															@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime
+														}
+													</td>
+												}
+												else
+												{
+													<td style="text-decoration:line-through"><b>Check Out Time</b></td>
+													<td style="text-decoration:line-through">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime.Split("|")[0]</td>
+												}
+											</tr>
+										</tbody>
+									</table>
+								}
+								else
+								{
+									@for (int a = 0; a < Model.Positions.Count; a++)
+									{
+										@if ((Model.Positions[a].Position_Id == Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId))
+										{
+											@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "HOTEL")
+											{
+												<table class="table">
+													<tbody>
+														<tr>
+															<td><b>Voucher Reference</b></td>
+															<td></td>
+														</tr>
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].STARTTIME))
+														{
+															<tr>
+																<td><b>Check In Time</b></td>
+																<td>@Model.Positions[a].STARTTIME</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].HOTELMEALPLAN))
+														{
+															<tr>
+																<td><b>Board Basis</b></td>
+																<td>@Model.Positions[a].HOTELMEALPLAN</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].BreakFastType))
+														{
+															<tr>
+																<td><b>Breakfast Type</b></td>
+																<td>@Model.Positions[a].BreakFastType</td>
+															</tr>
+														}
+
+														<tr>
+															<td><b>Porterage Included</b></td>
+															<td>@Model.Positions[a].Porterage</td>
+														</tr>
+													</tbody>
+												</table>
+											}
+
+											@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "LDC" || Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "COACH")
+											{
+												<table class="table">
+													<tbody>
+														<tr>
+															<td><b>Voucher Reference</b></td>
+															<td></td>
+														</tr>
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].STARTLOC))
+														{
+															<tr>
+																<td><b>Start Location</b></td>
+																<td>@Model.Positions[a].STARTLOC</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].ENDLOC))
+														{
+															<tr>
+																<td><b>End Location</b></td>
+																<td>@Model.Positions[a].ENDLOC</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].DriverName))
+														{
+															<tr>
+																<td><b>Driver Name</b></td>
+																<td>@Model.Positions[a].DriverName</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].DriverContactNumber))
+														{
+															<tr>
+																<td><b>Driver Contact</b></td>
+																<td>@Model.Positions[a].DriverContactNumber</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].LicencePlate))
+														{
+															<tr>
+																<td><b>Licence Plate</b></td>
+																<td>@Model.Positions[a].LicencePlate</td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											}
+
+											@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "MEAL")
+											{
+												<table class="table">
+													<tbody>
+														<tr>
+															<td><b>Voucher Reference</b></td>
+															<td></td>
+														</tr>
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].STARTTIME))
+														{
+															<tr>
+																<td><b>Start Time</b></td>
+																<td>@Model.Positions[a].STARTTIME</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].ENDTIME) && !string.IsNullOrWhiteSpace(Model.Positions[a].ENDTIME.Split("|")[0]))
+														{
+															<tr>
+																<td><b>End Time</b></td>
+																<td>@Model.Positions[a].ENDTIME.Split("|")[0]</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].Menu))
+														{
+															<tr>
+																<td><b>Menu Details</b></td>
+																<td>@Model.Positions[a].Menu</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].MealStyle))
+														{
+															<tr>
+																<td><b>Meal Style</b></td>
+																<td>@Model.Positions[a].MealStyle</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].Course))
+														{
+															<tr>
+																<td><b>Menu Courses</b></td>
+																<td>@Model.Positions[a].Course</td>
+															</tr>
+														}
+
+														<tr>
+															<td><b>Inclusions</b></td>
+															<td>
+																<ul class="ulItems">
+																	<li>Tea Coffee</li>
+																	<li>Dessert</li>
+																	<li>Water</li>
+																	<li>Bread</li>
+																</ul>
+															</td>
+														</tr>
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].Itinerary))
+														{
+															<tr>
+																<td><b>Itinerary Note</b></td>
+																<td></td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											}
+
+											@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "GUIDE" || Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "ASSISTANT")
+											{
+												<table class="table">
+													<tbody>
+														<tr>
+															<td><b>Voucher Reference</b></td>
+															<td></td>
+														</tr>
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].STARTLOC))
+														{
+															<tr>
+																<td><b>Start Location</b></td>
+																<td>@Model.Positions[a].STARTLOC</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].ENDLOC))
+														{
+															<tr>
+																<td><b>End Location</b></td>
+																<td>@Model.Positions[a].ENDLOC</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].DriverName))
+														{
+															<tr>
+																<td><b>Guide Name</b></td>
+																<td>@Model.Positions[a].DriverName</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].DriverContactNumber))
+														{
+															<tr>
+																<td><b>Contact</b></td>
+																<td>@Model.Positions[a].DriverContactNumber</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].Itinerary))
+														{
+															<tr>
+																<td><b>Itinerary Note</b></td>
+																<td></td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											}
+
+											@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "ATTRACTIONS" || Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "SIGHTSEEING - CITYTOUR")
+											{
+												<table class="table">
+													<tbody>
+														<tr>
+															<td><b>Voucher Reference</b></td>
+															<td></td>
+														</tr>
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].STARTLOC))
+														{
+															<tr>
+																<td><b>Start Location</b></td>
+																<td>@Model.Positions[a].STARTLOC</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].ENDLOC))
+														{
+															<tr>
+																<td><b>End Location</b></td>
+																<td>@Model.Positions[a].ENDLOC</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].TicketLocation))
+														{
+															<tr>
+																<td><b>Ticket Location</b></td>
+																<td>@Model.Positions[a].TicketLocation</td>
+															</tr>
+														}
+
+														<tr>
+															<td><b>Guide Purchase Tickets</b></td>
+															<td>@Model.Positions[a].GuidePurchaseTicket</td>
+														</tr>
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].TrainNumber))
+														{
+															<tr>
+																<td><b>Specific Train / Entrance Number</b></td>
+																<td>@Model.Positions[a].TrainNumber</td>
+															</tr>
+														}
+
+														@if (!string.IsNullOrWhiteSpace(Model.Positions[a].Itinerary))
+														{
+															<tr>
+																<td><b>Itinerary Note</b></td>
+																<td></td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											}
+										}
+									}
+								}
+							</td>
+							<td>
+								@for (int a = 0; a < Model.Positions.Count; a++)
+								{
+									@if (Model.Positions[a].Position_Id == Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId)
+						{
+										@Model.Positions[a].ProdDescription
+						}
+								}
+							</td>
+							<td>
+								@Html.TextAreaFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ItineraryRemarks, new { @style = "width:100%" })
+							</td>
+
+							@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type?.ToUpper() != "EXTRA" && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId != null)
+					{
+								@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].TLRemarks != null || @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].OPSRemarks != null)
+								{
+
+									<td class="remarks"><a href="#remarks-popup" class="popup-inline comment-drk" data-toggle="tooltip" data-placement="top" title="TL Remarks: @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].TLRemarks | OPS Remarks: @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].OPSRemarks"><i class="fa fa-comment-o"></i></a></td>
+								}
+								else
+								{
+									<td class="remarks"><a href="#remarks-popup" class="popup-inline comment-plus"><i class="fa fa-comment-o"></i></a></td>
+								}
+					}
+					else
+					{
+								<td></td>
+					}
+
+							@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+							{
+								@if (string.IsNullOrWhiteSpace(@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId))
+								{
+									<td class="action">
+										@if (string.IsNullOrWhiteSpace(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId))
+										{
+											<a href="#EditPositionDetails-popup" class="popup-inline icon-squre-dark-blue editPosition"><i class="fa fa-pencil"></i></a>
+											<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+										}
+									</td>
+								}
+								else
+								{
+									@if ((string.IsNullOrWhiteSpace(Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType)))
+									{
+										<td class="action">
+											<a href="#addNewDetails-popup" class="popup-inline icon-squre-dark-blue addEditNewItinerary" data-val="Edit"><i class="fa fa-pencil"></i></a>
+											<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+										</td>
+									}
+									else
+									{
+										<td></td>
+									}
+								}
+
+							}
+							else
+							{
+								<td class="action"><a href="#" class="enableDisablePosition"><img src="~/resources/images/common/icons/check.png"></a></td>
+							}
+						</tr>
+				}
+					<tr>
+						@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+						@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+						@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].Day, new { @id = "Day", @class = "clsDay" })
+						<td class="no-side-border"></td>
+						<td colspan="7" class="no-side-border txt-semibold">Add Itinerary Element*</td>
+						<td class="no-side-border">
+							<a href="#addNewDetails-popup" class="popup-inline btn btn-blue btn-md addEditNewItinerary pull-right" data-val="Add">Add</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</form>
+
+<div id="remarks-popup"></div>
+<div id="addNewDetails-popup"></div>
+<div id="EditPositionDetails-popup"></div>
+
+<script src="~/js/Operations/ViewItineraryBuilder.js"></script>
+

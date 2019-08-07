@@ -1,0 +1,127 @@
+﻿@model Voyager.App.ViewModels.OpsChangeSupplierViewModel
+<h3>Change Supplier</h3>
+
+<br />
+<div class="">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Current Supplier
+            </div>
+            <div class="card-body">
+
+                <h4>@Model.Supplier_Name</h4>
+                <br />
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td><b>Booking Status</b></td>
+                            <td><b>@Model.PositionStatus</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <br />
+
+                <table class="table table-striped table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Budget</th>
+                            <th>Buy / Contract</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.BookingRoomsAndPrices?.Count > 0)
+                        {
+                            for (int i = 0; i < Model.BookingRoomsAndPrices.Count; i++)
+                            {
+                                <tr>
+                                    <td>(@Model.BookingRoomsAndPrices[i].CategoryName) @Model.BookingRoomsAndPrices[i].RoomName</td>
+                                    <td> @Model.BookingRoomsAndPrices[i].BuyCurrency_Name @Model.BookingRoomsAndPrices[i].BudgetPrice</td>
+                                    <td> @Model.BookingRoomsAndPrices[i].BuyCurrency_Name @Model.BookingRoomsAndPrices[i].ContractedBuyPrice</td>
+                                </tr>
+                            }
+                        }
+                        @*<tr>
+                                <td>(STANDARD) TWIN</td>
+                                <td>EUR 1234</td>
+                                <td>N/A</td>
+                            </tr>
+
+                            <tr>
+                                <td>(%Category%) %Range%</td>
+                                <td>%CURRENCY% %BudgetRate%</td>
+                                <td>N/A</td>
+                            </tr>*@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br />
+        <div class="card">
+            <div class="card-header">
+                Available Suppliers
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Rates</th>
+                            <th>Change</th>
+                        </tr>
+                    <tbody>
+                        @for (int i = 0; i < Model.SupplierList.Count; i++)
+                        {
+                            <tr>
+                                @Html.HiddenFor(m => m.SupplierList[i].SupplierId)
+                                <td>@Model.SupplierList[i].SupplierName</td>
+                                <td>@Model.SupplierList[i].CityName</td>
+                                <td>
+                                    @for (int j = 0; j < Model.SupplierList[i].ProductRangeContract.Count; j++)
+                                    {
+                                        <span>
+                                            (@Model.SupplierList[i].ProductRangeContract[j].ProductCategory) @Model.SupplierList[i].ProductRangeContract[j].ProductRange
+                                            @Model.SupplierList[i].ProductRangeContract[j].ContractCurrency @Model.SupplierList[i].ProductRangeContract[j].ContractPrice
+                                        </span>
+                                        <br />
+                                    }
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        @Html.RadioButtonFor(m => m.ChangeSupplierId, Model.SupplierList[i].SupplierId, new { @id = "ChangeSupplierId", @class= "rdoChangeSupplier" })
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    </thead>
+                </table>
+
+            </div>
+        </div>
+
+        <br />
+
+        <div class="divChangeSuppAlrMsg" style="display:none">
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                    You are about to change the supplier on this Position. Please be aware that
+                    Budgets and Contracted rates
+                    used on the original Quotation may not be applicable for this Supplier.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <a href="#Confirm-popup" title="Switch Product" class="btn btn-danger popup-inline showSwitchSuppPopup" id="">Switch</a>
+        <button type="button" class="btn btn-secondary close-popup">Close</button>
+    </div>
+</div>
+
+<button title="Close (Esc)" type="button" class="mfp-close"></button>
+<script src="~/js/Operations/OpsChangeSupplier.js"></script>

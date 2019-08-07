@@ -1,0 +1,112 @@
+﻿@model Voyager.App.ViewModels.SalesDashboardFilters
+
+<div class="card">
+    <div class="header bg-cyan">
+        <h2>
+            Filters
+        </h2>
+    </div>
+    <div class="body" style="padding-bottom:0px;">
+        <div class="row clearfix">
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                @*<h2 class="card-inside-title">Sales Office</h2>*@
+                @Html.DropDownListFor(m => m.SalesOfficeID, new SelectList(Model.SalesOfficeList, "Company_Id", "Company_Name"), "By Sales Office", new { @class = "form-control selectpicker select" })
+                @Html.HiddenFor(m => m.SalesOffice)
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                @Html.DropDownListFor(m => m.SalesPersonID, new SelectList(Model.SalesPersonList, "AttributeValue_Id", "Value"), "By Sales Officer", new { @class = "form-control selectpicker select" })
+                @Html.HiddenFor(m => m.SalesPerson)
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                @*<h2 class="card-inside-title">Destination</h2>*@
+                @Html.DropDownListFor(m => m.DestinationID, new SelectList(Model.DestinationList, "AttributeValue_Id", "Value", "", "CityName"), "By Destination", new { @class = "form-control selectpicker select" })
+                @Html.HiddenFor(m => m.Destination)
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                @*<h2 class="card-inside-title">Agent Name</h2>*@
+                @Html.DropDownListFor(m => m.AgentID, new SelectList(Model.AgentNameList, "AttributeValue_Id", "Value"), "By Agent Name", new { @class = "form-control selectpicker select" })
+                @Html.HiddenFor(m => m.Agent)
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                <button type="button" id="btnSearch" class="btn btn-sm btn-primary">Search</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#btnSearch').click(function () {
+            SearchDetails();
+        });
+
+        $('#SalesOfficeID').change(function () {
+            var SalesOfficeID = $('#SalesOfficeID').val();
+
+            $.ajax({
+                type: "GET",
+                url: "/MIS/LoadSalesOfficeBySalesOffice",
+                data: { SalesOfficeID: SalesOfficeID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result != undefined && result != null) {
+                        if (result != undefined && result != null) {
+                            var $elem = $('#SalesPersonID');
+                            $elem.empty();
+                            $elem.append($("<option></option>").attr("value", '').text('By Sales Officer'));
+                            $.each(result, function (i, list) {
+                                $elem.append($("<option></option>").attr("value", list.attributeValue_Id).text(list.value));
+                            });
+                            $elem.selectpicker('refresh');
+                        }
+                    }
+                },
+                error: function (error) {
+                    alert(error.statusText);
+                }
+            });
+
+        });
+
+        SearchDetails();
+    });
+
+    function SearchDetails() {
+         
+        var filters = {
+            SalesOfficeID: $('#SalesOfficeID').val(),
+            SalesOffice: $('#SalesOffice').val(),
+            SalesPersonID: $('#SalesPersonID').val(),
+            SalesPerson: $('#SalesPerson').val(),
+            DestinationID: $('#DestinationID').val(),
+            Destination: $('#Destination').val(),
+            AgentID: $('#AgentID').val(),
+            Agent: $('#Agent').val()
+        }
+
+        //$('#SalesDashboardResults').load("/MIS/_SalesDashboardResult", filters);
+
+        $('.ajaxloader').show();
+        $.ajax({
+            type: "GET",
+            url: "/MIS/_SalesDashboardResult",
+            data: filters,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            //async: false,
+            success: function (result) {
+                if (result !== undefined && result !== null) {
+                    $('#SalesDashboardResults').html(result);
+                }
+                $('.ajaxloader').hide();
+            },
+            error: function (error) {
+                alert(error.statusText);
+                $('.ajaxloader').hide();
+            }
+        });
+
+    }
+</script>

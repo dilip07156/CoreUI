@@ -1,0 +1,58 @@
+﻿@model Voyager.App.ViewModels.ItineraryViewModel
+
+@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID" })
+<div class="wrapper">
+    @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02" }))
+    {
+        <!-- Main Content :: Starts -->
+        <div class="main-content form form-theme-02">
+            <div class="container">
+                <div class="pg-container">
+                    <div class="listing-content">
+                        @Html.Partial("_AgentApprovalHeaderButtons", Model.AgentApprovalHeaderButtons)
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel, new ViewDataDictionary(this.Vi‌​ewData) { { "EnquiryPipeline", Model.MenuViewModel.EnquiryPipeline } })
+                    </div>
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_AgentApprovalMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data sales-officers">
+                            <div id="divActivityList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    }
+</div>
+<link href="~/css/qrfSummary.css" rel="stylesheet" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+         
+        GetItineraryData();
+    });
+
+    function GetItineraryData() {
+         
+        var QRFId = $("#QRFId").val();
+        var selectedDay = $("#Days option:selected").text();
+        var selectedServiceType = $("#Services option:selected").text();
+         
+        $.ajax({
+            type: "GET",
+            url: "/AgentApproval/GetActivityList",
+            data: { QRFId: QRFId, filterByDay: selectedDay, filterByServiceType: selectedServiceType },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#divActivityList").html(response);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script> 

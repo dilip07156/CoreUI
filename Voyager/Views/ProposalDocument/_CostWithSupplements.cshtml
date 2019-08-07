@@ -1,0 +1,76 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentHeader.cshtml", Model.COHeaderViewModel)*@
+        <tr>
+            <td align="center" valign="top">
+                <table width="773" border="0" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="776" class="main-title">Departure Dates</td>
+                    </tr>
+                    <tr class="container">
+                        <td height="25" valign="top"></td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top">
+                            <table width="100%" border="0" align="left" cellpadding="0" cellspacing="0" class="plain-table">
+                                <tr class="bck-col">
+                                    <td width="159" height="40" align="center" valign="middle"><b>Month</b></td>
+                                    <td class="padl10" width="595" height="40" align="left" valign="middle"><b>Date</b></td>
+                                </tr>
+                                @for (int i = 0; i < Model.DatesList.Count; i++)
+                                {
+                                    <tr>
+                                        <td align="center" valign="middle" class="bck-white padl15">@Model.DatesList[i].Month</td>
+                                        <td align="left" valign="middle" class="bck-white padl10">@Model.DatesList[i].Day</td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top" height="40">&nbsp;</td>
+                    </tr>
+                    @{ Model.QRFQuote.Departures = Model.QRFQuote.Departures.OrderBy(a => a.Date).ToList(); }
+                    @for (int i = 0; i < Model.QRFQuote.Departures.Count; i++)
+                    {
+                        <tr>
+                            <td width="776" class="main-title">Package Price</td>
+                        </tr>
+                        <tr>
+                            <td align="left" valign="top">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td align="left" valign="top">
+                                <p>All prices are valid for <strong>@Convert.ToDateTime(Model.QRFQuote.Departures[i].Date).ToString("dd MMMM yyyy")</strong> (unless specified otherwise)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left" valign="top">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td align="left" valign="top">
+                                <div id="CostsheetView_@i"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left" valign="top">&nbsp;</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+        @Html.Partial("~/Views/ProposalDocument/_HotelSummary.cshtml", Model)
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+         
+        var DateArray = @Json.Serialize(Model.QRFQuote.Departures.Select(a => a.Departure_Id).ToList());
+        if (DateArray != undefined && DateArray != "") {
+            for (var i = 0; i < DateArray.length; i++) {
+                $('#CostsheetView_' + i).load('@Model.URLinitial/Costsheet/GetConsolidatedSummary?QRFId=@Model.QRFQuote.QRFID&filterByDeparture=' + DateArray[i]);
+            }
+        }
+    });
+</script>

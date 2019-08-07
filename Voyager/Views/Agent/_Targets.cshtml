@@ -1,0 +1,164 @@
+﻿@model VGER_WAPI_CLASSES.TargetGetRes
+
+<style>
+    .ui-datepicker-calendar {
+        display: none;
+    }
+
+    #tfootTargets tr td {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        border: #d5d9da solid 1px !important;
+    }
+
+    .ui-datepicker {
+        min-width: 236px !important;
+    }
+
+    #tbodyTargets tr td, #tfootTargets tr td {
+        text-align: center;
+    }
+
+    .summary-tbl.custom-mob-tbl .table > tbody > tr > td input {
+        text-align: left;
+    }
+
+    .clsbasecur {
+        margin-right: 0.5em;
+    }
+</style>
+@Html.HiddenFor(x => x.CompanyId, new { @id = "CompanyId" })
+@Html.HiddenFor(x => x.ContactId, new { @id = "ContactId" })
+@Html.HiddenFor(x => x.Currency, new { @id = "Currency" })
+<div class="row">
+    <br />
+    <div class="col-md-12">
+        <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+            <div class="tbl-actn-btns"><h4>Targets</h4></div>
+            <br />
+            @if (!string.IsNullOrEmpty(Model.ActionType))
+            {
+                @if (Model.ActionType == "add")
+                {
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                        <strong>Success!</strong> Details added successfully.
+                    </div>
+                }
+                else if (Model.ActionType == "update")
+                {
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                        <strong>Success!</strong> Details updated successfully.
+                    </div>
+                }
+            }
+            <div id="divTargets">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-lg-2">Month</th>
+                            <th class="col-lg-2">QRFs</th>
+                            <th class="col-lg-2">Bookings</th>
+                            <th class="col-lg-2">Income</th>
+                            <th class="col-lg-2">Passengers</th>
+                            <th class="col-lg-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyTargets">
+                        @for (int i = 0; i < Model.TargetList?.Count; i++)
+                        {
+                            <tr>
+
+                                <td>
+                                    @Html.HiddenFor(x => x.TargetList[i].TargetId, new { @id = "TargetId" })
+                                    <input type='hidden' id='hfCnt' value='@i' />
+                                    <label id='lblMonth_@i' class='clsMonth'>@Model.TargetList[i].Month.ToString("MMMM yyyy")</label>
+                                </td>
+                                <td><label id='lblQRFs_@i'>@Model.TargetList[i].QRFs</label></td>
+                                <td><label id='lblBookings_@i'>@Model.TargetList[i].Bookings</label></td>
+                                <td><label id="lblCur_@i" class="clsbasecur">@Model.Currency</label><label id='lblIncome_@i'>@Model.TargetList[i].Income</label></td>
+                                <td><label id='lblPassengers_@i'>@Model.TargetList[i].Passengers</label></td>
+                                <td>
+                                    <div class='row'>
+                                        <div class='col-lg-12 divTargetEdit'>
+                                            <button id='btnTargetEdit_@i' type="button" class="btn btn-primary btn-sm btnTargetEdit" target-type="edit">Edit</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot id="tfootTargets">
+                        <tr>
+                            <td>
+                                <div class='row'>
+                                    <div class='col-lg-10' style="padding-right:0px;">
+                                        <input type='hidden' id='hfCnt' value='0' />
+                                        <div class='input-append date' data-date-format='MM yy'>
+                                            <input type='text' id='txtMonth_0' value='' class='form-control monthyearCal txtMonth' maxlength='7' />
+                                            <span class='add-on'></span>
+                                        </div>
+                                    </div>
+                                    <div class='col-lg-2'>
+                                        <span id='spMonth_0' class='text-danger' style='display:none;'></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class='row'>
+                                    <div class='col-lg-10' style="padding-right:0px;">
+                                        <input type='text' id='txtQRFs_0' value='' class='form-control numericInt txtQRFs' maxlength='5' />
+                                    </div>
+                                    <div class='col-lg-2'>
+                                        <span id='spQRFs_0' class='text-danger' style='display:none;'></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class='row'>
+                                    <div class='col-lg-10' style="padding-right:0px;">
+                                        <input type='text' id='txtBookings_0' value='' class='form-control numericInt txtBookings' maxlength='5' />
+                                    </div>
+                                    <div class='col-lg-2'>
+                                        <span id='spBookings_0' class='text-danger' style='display:none;'></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class='row'>
+                                    <div class='col-lg-10' style="padding-right:0px;">
+                                        <input type='text' id='txtIncome_0' value='' class='form-control OnlyNumericOneDigit txtIncome' maxlength='10' />
+                                    </div>
+                                    <div class='col-lg-2'>
+                                        <span id='spIncome_0' class='text-danger' style='display:none;'></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class='row'>
+                                    <div class='col-lg-10' style="padding-right:0px;">
+                                        <input type='text' id='txtPassengers_0' value='' class='form-control numericInt txtPassengers' maxlength='5' />
+                                    </div>
+                                    <div class='col-lg-2'>
+                                        <span id='spPassengers_0' class='text-danger' style='display:none;'></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class='row'>
+                                    <div class='col-lg-12'>
+                                        <button type='button' class='btn btn-primary btn-sm btnTargetAddEdit' target-type="add">Add</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/Agent/Targets.js"></script>

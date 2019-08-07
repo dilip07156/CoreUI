@@ -1,0 +1,967 @@
+﻿@model Voyager.App.ViewModels.OpsPositionAdditionalInfo
+@*<script src="~/lib/glyph-iconset-master/sprite/iconwc.js"></script>*@
+<div class="card">
+    <div class="card-header" id="headingComAttr">
+        <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseComAttr" data-parent="#mainOps"
+                    aria-expanded="true" aria-controls="collapseComAttr">
+                Service Details
+            </button>
+        </h5>
+    </div>
+    <div id="collapseComAttr" class="collapse in card-body" aria-labelledby="headingOne">
+        <div class="row">
+            <!-- KEY-->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        Service
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="File Handler">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-person-2.svg" />
+                                </span>
+                            </div>
+                            @Html.HiddenFor(m => m.FileHandler)
+                            @Html.DropDownListFor(m => m.FileHandlerID, new SelectList(Model.FileHandlerList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control-1 select" })
+                            @Html.ValidationMessageFor(m => m.FileHandlerID, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Position Type">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-inbox-download.svg" />
+                                </span>
+                            </div>
+                            @Html.DropDownListFor(m => m.PositionType, new SelectList(Model.PositionTypeList), "Select", new { @class = "form-control-1" })
+                            @Html.ValidationMessageFor(m => m.PositionType, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Standard Pax">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-inbox-download.svg" />
+                                </span>
+                            </div>
+                            @Html.DropDownListFor(m => m.PaxType, new SelectList(Model.PaxTypeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control-1" })
+                            @Html.ValidationMessageFor(m => m.PaxType, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- START-->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        Start
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Start Date">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-calendar-1.svg" />
+                                </span>
+                            </div>
+                            <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                @Html.TextBoxFor(m => m.StartDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Start Time">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-clock.svg" />
+                                </span>
+                            </div>
+                            @Html.TextBoxFor(m => m.StartTime, new { @class = "form-control-1 time24" })
+                            @Html.ValidationMessageFor(m => m.StartTime, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Start Location">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-pin-location-add.svg" />
+                                </span>
+                            </div>
+                            @Html.DropDownListFor(m => m.StartLocation, new SelectList(Model.LocationList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            @Html.ValidationMessageFor(m => m.StartLocation, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END-->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        End
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="End Date">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-calendar-1.svg" />
+                                </span>
+                            </div>
+                            <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                @Html.TextBoxFor(m => m.EndDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="End Time">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-clock.svg" />
+                                </span>
+                            </div>
+                            @Html.TextBoxFor(m => m.EndTime, new { @class = "form-control-1 time24" })
+                            @Html.ValidationMessageFor(m => m.EndTime, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="End Location">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-pin-location-add.svg" />
+                                </span>
+                            </div>
+                            @Html.DropDownListFor(m => m.EndLocation, new SelectList(Model.LocationList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            @Html.ValidationMessageFor(m => m.EndLocation, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        Schedule
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend " title="Option Date">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-quote-close.svg" />
+                                </span>
+                            </div>
+                            <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                @Html.TextBoxFor(m => m.OptionDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.OptionDate, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Confirm Date">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-store.svg" />
+                                </span>
+                            </div>
+                            <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                @Html.TextBoxFor(m => m.ConfirmDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ConfirmDate, "", new { @class = "error" })
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend" title="Cancellation Date">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img src="~/lib/glyph-iconset-master/svg/si-glyph-circle-error.svg" />
+                                </span>
+                            </div>
+                            <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                @Html.TextBoxFor(m => m.CancellationDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.CancellationDate, "", new { @class = "error" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        @if (Model.ProdType == "HOTEL")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Booking Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Board Basis">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-spoon-fork.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.BoardBasis, new SelectList(Model.BoardBasisList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control-1" })
+                                @Html.ValidationMessageFor(m => m.BoardBasis, "", new { @class = "error" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Breakfast Type">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-tea-cup.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.BreakfastType, new SelectList(Model.BreakfastTypeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control-1" })
+                                @Html.ValidationMessageFor(m => m.BreakfastType, "", new { @class = "error" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Porterage">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-bag-plus.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.Porterage, new SelectList(Model.PaxTypeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header">
+                            Policies and Voucher Advice
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Voucher Note</span>
+                                        @Html.TextAreaFor(m => m.VoucherNote, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">City Tax Advise</span>
+                                        @Html.TextAreaFor(m => m.CityTaxAdvise, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "ATTRACTIONS" || Model.ProdType == "TRAIN")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            @Model.ProdType?.ToLower() Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Ticket Location">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-pin-location-2.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.TicketLocation, new SelectList(Model.TicketLocationList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Train / Entrance Number">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-train.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.TrainNumber, new { @class = "form-control-1", @placeholder = "Train / Entrance Number" })
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.GuidePurchaseTicket, new { @class = "form-check-input" }) Guide Purchase Tickets?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header">
+                            @Model.ProdType?.ToLower() Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Itinerary Note</span>
+                                        @Html.TextAreaFor(m => m.Itinerary, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "BUS" || Model.ProdType == "COACH" || Model.ProdType == "LDC")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Driver Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Name">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-badge-name.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverName, new { @class = "form-control-1", @placeholder = "Driver Name" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Contact">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-old-phone.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverContact, new { @class = "form-control-1", @placeholder = "Driver Contact" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Language">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-louder-speaker.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverLanguages, new { @class = "form-control-1", @placeholder = "Driver Language" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Licence Number">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-document-doc.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverLicenceNumber, new { @class = "form-control-1", @placeholder = "Driver Licence Number" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Number of Driver Rooms">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-house.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.NumberofDriverRooms, new { @class = "form-control-1 numeric", @placeholder = "Number of Driver Rooms", @style = "text-align:left !important;" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Type of Room">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-person.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.TypeofRoom, new SelectList(Model.TypeofRoomList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.MealsIncluded, new { @class = "form-check-input" }) Meals Included</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Vehicle Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend" title="Registration Number">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img src="~/lib/glyph-iconset-master/svg/si-glyph-bus.svg" />
+                                            </span>
+                                        </div>
+                                        @Html.TextBoxFor(m => m.VehicleRegistration, new { @class = "form-control-1", @placeholder = "Registration Number" })
+                                    </div>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend" title="Manufactured Date">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img src="~/lib/glyph-iconset-master/svg/si-glyph-calendar-1.svg" />
+                                            </span>
+                                        </div>
+                                        <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                            @Html.TextBoxFor(m => m.ManufacturedDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                        </div>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend" title="Safety Certificate Date">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img src="~/lib/glyph-iconset-master/svg/si-glyph-calendar-1.svg" />
+                                            </span>
+                                        </div>
+                                        <div class="input-append date form-control-1" data-date-format="dd/mm/yyyy">
+                                            @Html.TextBoxFor(m => m.SafetyCertificateDate, "{0:dd/MM/yyyy}", new { @class = "span3 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                        </div>
+                                    </div>
+                                    @*</div>
+                                        <div class="col-md-6">*@
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Parking, new { @class = "form-check-input" }) Parking</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.CityPermit, new { @class = "form-check-input" }) City permit</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.RoadTolls, new { @class = "form-check-input" }) Road Tolls</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.AC, new { @class = "form-check-input" }) AC</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.WC, new { @class = "form-check-input" }) WC</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Safety, new { @class = "form-check-input" }) Safety</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.GPS, new { @class = "form-check-input" }) GPS</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.AV, new { @class = "form-check-input" }) AV</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Bus / Itinerary Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Itinerary</span>
+                                        @Html.TextAreaFor(m => m.Itinerary, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "GUIDE" || Model.ProdType == "ASSISTANT")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Guide Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Guide Name">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-badge-name.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.GuideName, new { @class = "form-control-1", @placeholder = "Guide Name" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Guide Contact">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-old-phone.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.GuideContact, new { @class = "form-control-1", @placeholder = "Guide Contact" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Guide Inclusions
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Number of Guide Rooms">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-house.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.NumberofDriverRooms, new { @class = "form-control-1 numeric", @placeholder = "Number of Guide Rooms", @style = "text-align:left !important;" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Type of Room">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-person.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.TypeofRoom, new SelectList(Model.TypeofRoomList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.MealsIncluded, new { @class = "form-check-input" }) Meal</label>
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.GuideTickets, new { @class = "form-check-input" }) Requires Ticket?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Guide / Itinerary Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Itinerary Note</span>
+                                        @Html.TextAreaFor(m => m.Itinerary, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "MEAL")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Restaurant Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Floor">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-upstair.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.Floor, new SelectList(Model.FloorList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Coach Parking Available">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-bus.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.CoachParking, new SelectList(Model.PaxTypeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Meal Style">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-spoon-fork.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.MealStyle, new SelectList(Model.MealStyleList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Meal Inclusions
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Meal Courses">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-pizza.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.Courses, new SelectList(Model.MealCoursesList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Tea, new { @class = "form-check-input" }) Tea / Coffee</label>
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Dessert, new { @class = "form-check-input" }) Dessert</label>
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Water, new { @class = "form-check-input" }) Water</label>
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Bread, new { @class = "form-check-input" }) Bread</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Menu / Itinerary Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Menu</span>
+                                        @Html.TextAreaFor(m => m.MealMenu, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "FERRY TRANSFER" || Model.ProdType == "FERRY PASSENGER" || Model.ProdType == "OVERNIGHT FERRY" || Model.ProdType == "SIGHTSEEING - CITYTOUR")
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            @Model.ProdType?.ToLower() Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Itinerary Note</span>
+                                        @Html.TextAreaFor(m => m.Itinerary, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "PRIVATE TRANSFER")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Driver Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Name">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-badge-name.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverName, new { @class = "form-control-1", @placeholder = "Driver Name" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Contact">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-old-phone.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverContact, new { @class = "form-control-1", @placeholder = "Driver Contact" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Language">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-louder-speaker.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverLanguages, new { @class = "form-control-1", @placeholder = "Driver Language" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Driver Licence Number">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-document-doc.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.DriverLicenceNumber, new { @class = "form-control-1", @placeholder = "Driver Licence Number" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Number of Driver Rooms">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-house.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.NumberofDriverRooms, new { @class = "form-control-1 numeric", @placeholder = "Number of Driver Rooms", @style = "text-align:left !important;" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Type of Room">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-person.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.TypeofRoom, new SelectList(Model.TypeofRoomList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="form-check">
+                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.MealsIncluded, new { @class = "form-check-input" }) Meals Included</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Vehicle Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend" title="Registration Number">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img src="~/lib/glyph-iconset-master/svg/si-glyph-bus.svg" />
+                                            </span>
+                                        </div>
+                                        @Html.TextBoxFor(m => m.VehicleRegistration, new { @class = "form-control-1", @placeholder = "Registration Number" })
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Parking, new { @class = "form-check-input" }) Parking</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.CityPermit, new { @class = "form-check-input" }) City permit</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.RoadTolls, new { @class = "form-check-input" }) Road Tolls</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.AC, new { @class = "form-check-input" }) AC</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.WC, new { @class = "form-check-input" }) WC</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.Safety, new { @class = "form-check-input" }) Safety</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <label class="cntrl" data-label="spe-dates">@Html.CheckBoxFor(m => m.GPS, new { @class = "form-check-input" }) GPS</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Private Car / Itinerary Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Itinerary</span>
+                                        @Html.TextAreaFor(m => m.Itinerary, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (Model.ProdType == "DOMESTIC FLIGHT")
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Flight Details
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Ticket Location">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-pin-location-2.svg" />
+                                    </span>
+                                </div>
+                                @Html.DropDownListFor(m => m.TicketLocation, new SelectList(Model.TicketLocationList, "Value", "Value"), "Select", new { @class = "form-control-1" })
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend" title="Flight / Entrance Number">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img src="~/lib/glyph-iconset-master/svg/si-glyph-airplane.svg" />
+                                    </span>
+                                </div>
+                                @Html.TextBoxFor(m => m.FlightNumber, new { @class = "form-control-1", @placeholder = "Flight / Entrance Number" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header">
+                            Flight Information
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Itinerary Note</span>
+                                        @Html.TextAreaFor(m => m.Itinerary, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">Cancellation Policy</span>
+                                        @Html.TextAreaFor(m => m.CancellationPolicy, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For TL</span>
+                                        @Html.TextAreaFor(m => m.TLRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group mb-2">
+                                        <span class="frm-sub-label txt-orange">For Ops</span>
+                                        @Html.TextAreaFor(m => m.OpsRemarks, new { @maxlength = "250", @class = "alphanumeric" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    initUiInputAppendDate();
+    timePickerInitialize();
+</script>

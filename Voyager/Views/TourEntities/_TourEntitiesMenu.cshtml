@@ -1,0 +1,75 @@
+﻿@model Voyager.App.ViewModels.TourEntitiesViewModel
+@{ var j = 0;}
+
+@if (Model.DynamicTourEntity != null && Model.DynamicTourEntity.Where(a => a.ProductType.ToLower() == "assistant" && a.IsTourEntity).ToList().Count > 0)
+{
+    <div class="radio-list-bar chk">
+        <ul class="table-cell" id="chkEntities">
+            @{ var staticres = Model.DynamicTourEntity.Where(a => a.ProductType.ToLower() == "assistant" && a.IsTourEntity && !a.IsOther).ToList();
+            }
+            @if (staticres.Count > 0)
+            {
+                @for (int i = 0; i < staticres.Count; i++)
+                {
+                    { j = j + 1; }
+                    <li>
+                        <label class="chk-cont">
+                            @Html.CheckBoxFor(m => staticres[i].Status, new { @id = "chkDynamic_" + j, data_flag = "static", data_name = staticres[i].ProductName+"_"+j, data_action = staticres[i].PositionID, data_prodid = staticres[i].ProductID })
+                            @staticres[i].ProductName
+                        </label>
+                    </li>  
+                }
+            }
+            @{ var staticothers = Model.DynamicTourEntity.Where(a => a.ProductType.ToLower() == "assistant" && a.IsTourEntity && a.IsOther).ToList();}
+            @if (staticothers.Count > 0)
+            {
+                <li class="other-chk">
+                    <label data-label="date-tange" class="chk-cont"><input type="checkbox" name="entities" id="others" /> Others</label>
+                    <ul class="mlti-lst">
+                        @for (int i = 0; i < staticothers.Count; i++)
+                        {
+                            <li>
+                                <label class="chk-cont">
+                                    @if (staticothers[i].ProductName.ToLower() == "others")
+                                    {
+                                        { j = j + 1; }
+                                        @Html.CheckBoxFor(m => staticothers[i].Status, new { @id = "others-fld", data_flag = "static", data_name = staticothers[i].ProductName + "_" + j, data_action = staticothers[i].PositionID, data_prodid = staticothers[i].ProductID })
+                                        @staticothers[i].ProductName
+                                        <input type="text" class="form-control othrs-fld">
+                                    }
+                                    else
+                                    {
+                                        { j = j + 1; }
+                                        @Html.CheckBoxFor(m => staticothers[i].Status, new { @id = "chkDynamic_" + j, data_flag = "static", data_name = staticothers[i].ProductName + "_" + j, data_action = staticothers[i].PositionID, data_prodid = staticothers[i].ProductID })
+                                        @staticothers[i].ProductName
+                                    }
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </li>
+            }             
+        </ul>
+    </div>
+}
+@{ var dynamicres = Model.DynamicTourEntity != null ? Model.DynamicTourEntity.Where(a => a.IsTourEntity==false).ToList() : new List<VGER_WAPI_CLASSES.DynamicTourEntity>();}
+@if (dynamicres.Count > 0)
+{
+    <div class="radio-list-bar chk divdynamic">
+        <ul class="table-cell" id="chkDynamicEntities">
+            @for (int i = 0; i < dynamicres.Count; i++)
+            {
+                <li>
+                    @{ 
+                        j = j + 1;
+                        var positioname = dynamicres[i].ProductType + "(" + dynamicres[i].CityName + "," + dynamicres[i].StartDay + "," + dynamicres[i].Duration + ")";
+                    }
+                    <label class="chk-cont">
+                        @Html.CheckBoxFor(m => dynamicres[i].Status, new { @class = "chkDynamic", data_flag = "dynamic", @id = "chkDynamic_" + j, data_dur = dynamicres[i].Duration.Replace("D", ""), data_name = positioname + "_" + j, data_action = dynamicres[i].PositionID, data_prodid = dynamicres[i].ProductID })
+                        @positioname
+                    </label>
+                </li>
+            }
+        </ul>
+    </div>
+}

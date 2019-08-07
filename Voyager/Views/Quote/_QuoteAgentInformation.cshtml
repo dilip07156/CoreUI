@@ -1,0 +1,289 @@
+﻿@model Voyager.App.ViewModels.QuoteAgentInfoViewModel
+
+
+@using (Html.BeginForm("QuoteAgentInformation", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmQuoteAgentInformation" }))
+{
+	<div class="btn-cont pull-right">
+		<input type="submit" value="Save" class="btn btn-blue btn-md SaveQuoteAgentInfo">
+	</div>
+	<h3>Agent Information</h3>
+
+	@if (TempData.Keys.Contains("success"))
+	{
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong id="successmsg">Success!</strong> @TempData["success"].ToString()
+		</div>
+	}
+	else if (TempData.Keys.Contains("error"))
+	{
+		<div class="alert alert-danger">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong id="errormsg">Error!</strong> @TempData["error"].ToString()
+		</div>
+	}
+
+	<div>
+        <div class="form-section">
+            @Html.HiddenFor(m => m.Module)
+            @Html.HiddenFor(m => m.PartnerEntityCode)
+            @Html.HiddenFor(m => m.Application)
+            @Html.HiddenFor(m => m.Operation)
+            <div class="form-group-sec">
+                <div class="row ">
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Agent Name </label>
+                        @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control bindAgent", @id = "AgentIdUI" })
+                        @Html.HiddenFor(m => m.AgentId)
+                        @Html.HiddenFor(m => m.QRFID)
+                        @Html.ValidationMessageFor(m => m.AgentName, "", new { @class = "error" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Contact Person </label>
+                        @Html.DropDownListFor(m => m.ContactPerson, new SelectList(Model.ContactPersonList, "VoyagerContact_Id", "FullName"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ContactPerson, "", new { @class = "error" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Mobile No. </label>
+                        @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", @ReadOnly = "true", @style = "background-color: #fff" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Email</label>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @ReadOnly = "true", @style = "background-color: #fff" })
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <h4 class="sub-ttl">Product Information</h4>
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Type </label>
+                        @Html.DropDownListFor(m => m.ProductType, new SelectList(Model.ProductTypeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ProductType, "", new { @class = "error" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Division </label>
+                        @Html.DropDownListFor(m => m.ProductDivisionId, new SelectList(Model.ProductDivisionList, "AttributeValue_Id", "Value"), "Select", new { @id = "ddlProductDivision", @class = "form-control ddlProductDivision" })
+                        @Html.HiddenFor(m => m.ProductDivision, new { @id = "ProductDivision", @class = "clsProductDivision" })
+                        @Html.ValidationMessageFor(m => m.ProductDivisionId, "", new { @class = "error" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Nationality </label>
+                        @Html.DropDownListFor(m => m.Nationality, new SelectList(Model.NationalityList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Nationality, "", new { @class = "error" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Purpose of Travel </label>
+                        @Html.DropDownListFor(m => m.PurposeOfTravel, new SelectList(Model.PurposeOfTravelList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Destination </label>
+                        @Html.DropDownListFor(m => m.Destination, new SelectList(Model.DestinationList, "AttributeValue_Id", "Value", "", "CityName"), "Select", new { @class = "form-control" })
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Client Tour Name </label>
+                        @Html.Hidden("hdnTourName", Model.TourName)
+                        <div class="input-with-txt">
+                            @Html.TextBoxFor(m => m.TourName, new { @class = "form-control ValidateTourName" })
+                            <span id="TourNameValid" class="abslt-right" style="display:none;"><i class="fa-check-square"></i></span>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.TourName, "", new { @class = "error" })
+                        <span class="field-validation-error" id="TourNameInvalid" style="display:none;">Tour Name already exists!!!</span>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Client Tour Code</label>
+                        <div class="input-with-txt">
+                            @Html.TextBoxFor(m => m.TourCode, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TourCode, "", new { @class = "error" })
+                            @*<span class="abslt-right"><i> version: </i> 0 </span>*@
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Priority </label>
+                        @Html.DropDownListFor(m => m.Priority, new SelectList(Model.PriorityList, "Value", "Value"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Priority, "", new { @class = "error" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5 col-sm-6 mobile-12">
+                        <div class="controller">
+                            <label class="frm-sub-label">Approx Pax</label>
+                            <div class="row row-sm">
+                                <div class="col-xs-3">
+                                    <strong>Adult</strong>
+                                    <div class="cust-spinner value">
+                                        <div class="input-group spinner">
+                                            <div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+                                            @Html.TextBoxFor(m => m.ApproxPaxAdult, new { @class = "form-control numeric frm-pax-control", @autocomplete = "off" })
+                                            <div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+                                        </div>
+                                        @Html.ValidationMessageFor(m => m.ApproxPaxAdult, "", new { @class = "error" })
+                                    </div>
+                                </div>
+                                <div class="col-xs-3">
+                                    <strong>Child + Bed</strong>
+                                    <div class="cust-spinner value count-childwithbed">
+                                        <div class="input-group spinner">
+                                            <div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+                                            @Html.TextBoxFor(m => m.ApproxPaxChildWithBed, new { @class = "form-control frm-pax-control numeric txt-childwithbed-no", @ReadOnly = "true" })
+                                            <div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.ApproxPaxChildWithBedAge)
+                                </div>
+                                <div class="col-xs-3">
+                                    <strong>Child - Bed</strong>
+                                    <div class="cust-spinner value count-childwithoutbed">
+                                        <div class="input-group spinner">
+                                            <div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+                                            @Html.TextBoxFor(m => m.ApproxPaxChildWithoutBed, new { @class = "form-control frm-pax-control numeric txt-childwithoutbed-no", @ReadOnly = "true" })
+                                            <div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+                                        </div>
+                                    </div>
+                                    @Html.HiddenFor(m => m.ApproxPaxChildWithoutBedAge)
+                                </div>
+                                <div class="col-xs-3">
+                                    <strong>Infant</strong>
+                                    <div class="cust-spinner value">
+                                        <div class="input-group spinner">
+                                            <div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+                                            @Html.TextBoxFor(m => m.ApproxPaxInfant, new { @class = "form-control frm-pax-control numeric", @autocomplete = "off" })
+                                            <div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-sm multi-child" style="display:none">
+                                <div class="col-xs-3">
+                                </div>
+                                <div class="col-xs-3">
+                                    <div class="row div-childwithbed">
+                                    </div>
+                                </div>
+                                <div class="col-xs-3">
+                                    <div class="row div-childwithoutbed">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-6 mobile-12">
+                        <div class="controller pull-right">
+                            <label class="frm-sub-label">Duration </label>
+                            <strong>No. of Nights</strong>
+                            <div class="cust-spinner value">
+                                <div class="input-group spinner">
+                                    <div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+                                    @Html.TextBoxFor(m => m.Duration, new { @class = "form-control frm-pax-control numeric", @autocomplete = "off" })
+                                    <div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Duration, "", new { @class = "error" })
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <label class="frm-sub-label">Budget Per Person </label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(m => m.BudgetCurrency, new SelectList(Model.BudgetCurrencyList, "CurrencyCode", "CurrencyName"), "Select", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.BudgetCurrency, "", new { @class = "error" })
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.TextBoxFor(m => m.BudgetAmount, new { @class = "form-control numeric" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-3 col-xs-6 mobile-12">
+                        <div class="room-type-sec">
+                            <label class="frm-sub-label">Quote Me For</label>
+                            @*@Html.DropDownListFor(m => m.QuoteRoomType, new SelectList(Model.QuoteRoomTypeList, "AttributeValue_Id", "Value"), new { @class = "form-control multiselect", @multiple = "multiple" })
+                        @Html.ValidationMessageFor(m => m.QuoteRoomType, "", new { @class = "error" })*@
+                            @{
+                        string title = "None Selected";
+                        var RoomList = Model.QuoteRoomTypeList.Where(a => a.IsSelected == true);
+                        if (RoomList.Count() > 0)
+                        {
+                            title = string.Join(", ", Model.QuoteRoomTypeList.Where(a => a.IsSelected == true).Select(a => a.RoomTypeName));
+                        }
+                            }
+                            <input type="button" class="btn btn-default room-type-btn" value="@title" style="width:100%;" />
+                            <div class="room-type-opt-cont collapse">
+                                <h4>
+                                    <span class="txt-blue">Quote Me For</span>
+                                </h4>
+                                <ul>
+                                    @for (int i = 0; i < Model.QuoteRoomTypeList.Count; i++)
+                            {
+                                <li>
+                                    <div></div>
+                                    <div>
+                                        <div class="col-sm-6">
+                                            <a>
+                                                <label class="checkbox">
+                                                    @Html.CheckBoxFor(m => m.QuoteRoomTypeList[i].IsSelected) @Model.QuoteRoomTypeList[i].RoomTypeName
+                                                </label>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            @if (Model.QuoteRoomTypeList[i].IsSelected)
+                                    {
+                                        @Html.TextBoxFor(m => m.QuoteRoomTypeList[i].RoomCount, new { @class = "form-control numeric", @value = "1", @autocomplete = "off" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.QuoteRoomTypeList[i].RoomCount, new { @class = "form-control numeric", @value = "1", @autocomplete = "off", @disabled = "disabled" })
+                    }
+                                            @Html.HiddenFor(m => m.QuoteRoomTypeList[i].RoomTypeID)
+                                            @Html.HiddenFor(m => m.QuoteRoomTypeList[i].RoomTypeName)
+                                        </div>
+                                    </div>
+                                </li>
+                    }
+                                </ul>
+                                <a class="btn-close"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xs-6 mobile-12 pricing-type-sec">
+                        <label class="frm-sub-label">How would you like the Quote </label>
+                        <div class="view-switch">
+                            <div class="sm-toggle-btns no-labels">
+                                <small class="ttl-view" data-switch-value="false" data-switch-set="state">Consolidated Cost</small>
+                                <div class="switch-container">
+                                    <input type="checkbox" id="cbQuotePricingType" data-toggle="toggle" class="toggle-checkbox bootstrap-switch-on switch-state price-switch">
+                                    @Html.HiddenFor(m => m.QuotePricingType)
+                                    @Html.ValidationMessageFor(m => m.QuotePricingType, "", new { @class = "error" })
+                                </div>
+                                <small class="ttl-view disabled" data-switch-value="true" data-switch-set="state">Itemised Costing</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="sub-ttl">Payment Information</h4>
+                <div class="row">
+                    <div class="col-md-6 col-lg-4 mobile-12">
+                        <label class="frm-sub-label">Payment Terms </label>
+                        <label>@Html.RadioButtonFor(m => m.PaymentTerms, "Pre Payment") Pre Payment</label>&nbsp;
+                        <label>@Html.RadioButtonFor(m => m.PaymentTerms, "Credit Limit") Credit Limit</label>&nbsp;
+                        <label>@Html.RadioButtonFor(m => m.PaymentTerms, "As Per Invoice") As Per Invoice</label>
+                        @Html.ValidationMessageFor(m => m.PaymentTerms, "", new { @class = "error" })
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="btn-cont">
+                    <input type="submit" value="Save" class="btn btn-blue btn-md SaveQuoteAgentInfo">
+                </div>
+            </div>
+        </div>
+	</div>
+}
+
+<style>
+	#TourNameValid {
+		color: #019702;
+	}
+</style>

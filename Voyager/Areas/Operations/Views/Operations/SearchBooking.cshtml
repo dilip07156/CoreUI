@@ -1,0 +1,22 @@
+﻿@model Voyager.App.ViewModels.OpsSearchViewModel
+@{
+    ViewData["Title"] = "SearchHotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="ops-page">
+                @Html.Partial("_SearchBookingFilter",Model.OpsSearchFilters)
+
+                @*table section*@
+
+                <br><br>
+
+                <div id="OpsSearchResults">
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

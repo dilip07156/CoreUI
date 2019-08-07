@@ -1,0 +1,604 @@
+﻿@model Voyager.App.ViewModels.ProductsSRPViewModel
+@*<table><tr></tr></table>*@
+<div class="pkg-thumbnail">
+    <table id="ProductSRPCont" class="pkg-listing list-view typ2 dataTable ProductSRPCont">
+        <thead>
+            <tr>
+                <td>
+                    <div class="booking-ctrl pkg-thumbnail" id="ddlFilter">
+                        <div class="rht-sec price-sec large" style="min-width:138px;max-width:138px;">
+                            @Html.CheckBox("chkAllHotels", new { @id = "chkAllHotels" }) Select All
+                        </div><div>
+                            <button type="button" class="btn btn-success btn-md btn-selectall-whitelist-hotel" style="margin: 15px 0px 15px 0px;">Request</button>
+                            <button type="button" class="btn btn-danger btn-md btn-selectall-blacklist-hotel" style="margin: 0px 0px 0px 15px;">Blacklist</button>
+                        </div>
+                    </div>
+                    <div style="padding-bottom:20px;"></div>
+                </td>
+            </tr>
+        </thead>
+        <tbody width="100%">
+            @for (int i = 0; i < Model.ProductSRPDetails.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(Model.ProductSRPDetails[i].VoyagerProduct_Id))
+                {
+                    <tr width="100%" id="tr_@i" class="clstr">
+                        <td width="100%" style="padding-bottom:20px;">
+                            @Html.Hidden("hdnSeq", i)
+                            @Html.HiddenFor(m => m.ProductSRPDetails[i].Placeholder, new { @id = "Placeholder" })
+                            @Html.HiddenFor(m => m.ProductSRPDetails[i].PositionStatus, new { @id = "PositionStatusFull" })
+
+                            <div class="pkg-thumbnail">
+                                <div class="rht-sec price-sec large chkSRPList booking-ctrl" style="min-width:80px;max-width:80px;">
+                                    @Html.CheckBox("chkSRP", new { @id = "chkSRP_" + i, @class = "chkSRP" })
+                                </div>
+                                <div class="lht-sec" style="width:78%;">
+                                    <div class="thumb-wrap">
+                                        <div class="img-sec img-fit">
+                                            <figure>
+                                                @if (string.IsNullOrEmpty(Model.ProductSRPDetails[i].HotelImageURL))
+                                                {
+                                                    <div class="input-group-text" alt="" style="min-height:103px;min-width:150px;margin: 4px 0px 0px 4px;font-style: italic;font-size: 1.3rem;">No Image Available</div>
+                                                }
+                                                else
+                                                {
+                                                    <img src="@Model.ProductSRPDetails[i].HotelImageURL" alt="" style="min-height:103px;min-width:150px;margin: 4px 0px 0px 4px;">
+                                                    @*<div style="background: transparent url('@Model.ProductSRPDetails[i].HotelImageURL') no-repeat scroll center center / cover ; width: 100%; height: 100%;"></div>*@
+                                                }
+                                            </figure>
+                                        </div>
+                                        <div class="img-descr">
+                                            <h3 class="pkg-tl inline-block">@Model.ProductSRPDetails[i].ProdName</h3>
+                                            <ul class="border-list">
+                                                @if (Model.ProductSRPDetails[i].StarRating == "1")
+                                                {
+                                                    <li><img src="~/resources/images/proposal-report/one-star.png"></li>
+                                                }
+                                                else if (Model.ProductSRPDetails[i].StarRating == "2")
+                                                {
+                                                    <li><img src="~/resources/images/proposal-report/two-star.png"></li>
+                                                }
+                                                else if (Model.ProductSRPDetails[i].StarRating == "3")
+                                                {
+                                                    <li><img src="~/resources/images/proposal-report/three-star.png"></li>
+                                                    @*<li><i class="fa-custom-three-star-blue"></i></li>*@
+                                                }
+                                                else if (Model.ProductSRPDetails[i].StarRating == "4")
+                                                {
+                                                    <li><img src="~/resources/images/proposal-report/four-star.png"></li>
+                                                }
+                                                else if (Model.ProductSRPDetails[i].StarRating == "5")
+                                                {
+                                                    <li><img src="~/resources/images/proposal-report/five-star.png"></li>
+                                                }
+                                            </ul>
+                                            @{
+                                                string FullAddress = Model.ProductSRPDetails[i].Address;
+                                                if (!string.IsNullOrEmpty(Model.ProductSRPDetails[i].Street))
+                                                {
+                                                    FullAddress += ", " + Model.ProductSRPDetails[i].Street;
+                                                }
+                                                if (!string.IsNullOrEmpty(Model.ProductSRPDetails[i].CityName) && Model.ProductSRPDetails[i].Placeholder != true)
+                                                {
+                                                    FullAddress += ", " + Model.ProductSRPDetails[i].CityName;
+                                                }
+                                                if (!string.IsNullOrEmpty(Model.ProductSRPDetails[i].CountryName) && Model.ProductSRPDetails[i].Placeholder != true)
+                                                {
+                                                    FullAddress += ", " + Model.ProductSRPDetails[i].CountryName;
+                                                }
+                                            }
+                                            <span class="address">
+                                                @FullAddress
+                                            </span>
+                                            <p class="more">@Model.ProductSRPDetails[i].ProdDesc</p>
+                                            @*<p class="more">@Model.ProductSRPDetails[i].ProdDesc <a href="#" class="info-more"> more info <i class="fa-chevron-circle-right"></i></a></p>*@
+                                            <a href="#" class="view-more-room-types amendment-control" style="display:none;"><i class="fa-play"></i> View More Room Types</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rht-sec price-sec large" style="min-width:180px;max-width:180px;">
+                                    <div class="addnl-info amt-info prod-desc-cont">
+                                        <div class="prod-info-ctrl">
+                                            <label style="display:none;">Total Price</label>
+                                            <span class="price" style="display:none;"><i class="fa-rupee"></i> 2,10,000</span>
+                                            <label class="input-select amendment-control" style="display:none;">
+                                                <input type="checkbox"> Select
+                                            </label>
+                                            <a href="#ViewProductInfo-popup" class="popup-inline view-full-prod-info" style="display:inherit;">View Full Info</a><br />
+                                            @if (Model.PageName == "PrdSupplierMapping")
+                                            {
+                                                @*<div class="card-header" id="headingOne">
+                                                    <h5 class="mb-0">*@
+                                                <a class="lnkSupplierMapping" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    Supplier Mapping
+                                                </a>
+                                                @*</h5>
+                                                    </div>*@
+                                                @*<a style="display:inherit;" class="lnkSupplierMapping">Supplier Mapping</a>*@
+                                            }
+                                            <p class="btn btn-secondary btn-bordered btn-md supplier-panel">Pref. Supplier: @Model.ProductSRPDetails[i].DefaultSupplier</p>
+                                        </div>
+                                        <div class="ops-prod-info" style="display:none;padding: 8px;text-align:left;">
+                                            @if (!string.IsNullOrEmpty(Model.ProductSRPDetails[i].PositionStatus))
+                                            {
+                                                <p class="btn btn-secondary supplier-panel" style="margin-top:0px;font-weight:600;font-size:16px;">
+                                                    @Model.ProductSRPDetails[i].PositionStatus
+                                                </p>
+                                                <h3 style="margin-bottom:5px;">Total: @Model.ProductSRPDetails[i].AmountCurrency @Model.ProductSRPDetails[i].TotalAmount</h3>
+                                                <p>
+                                                    <b><label class="">@Model.ProductSRPDetails[i].SupplierName</label></b><br>
+                                                    <b><label class="">Contact:</label></b> @Model.ProductSRPDetails[i].SupplierContactName<br>
+                                                    <label class="">
+                                                        <i class="fa fa-phone" style="font-size:18px;"></i>
+                                                    </label> : @Model.ProductSRPDetails[i].SupplierContactTel<br />
+                                                    <label class="">
+                                                        <i class="fa fa-envelope-o" style="font-size:18px;"></i>
+                                                    </label> : @Model.ProductSRPDetails[i].SupplierContactEmail
+                                                    @*<b>t:</b> @Model.ProductSRPDetails[i].SupplierContactTel<br>*@
+                                                    @*<b>e:</b> @Model.ProductSRPDetails[i].SupplierContactEmail*@
+                                                </p>
+                                                if (Model.ProductSRPDetails[i].Placeholder == true)
+                                                {
+                                                    <a href="#ChangeSupplier-popup" title="Change Product" class="btn btn-danger btn-sm popup-inline showChangeSupplier" style="width:100%;">Change Product</a>
+                                                }
+                                                else
+                                                {
+                                                    if (Model.ProductSRPDetails[i].PositionStatusSCode?.ToUpper() == "Q" || Model.ProductSRPDetails[i].PositionStatusSCode?.ToUpper() == "P" || Model.ProductSRPDetails[i].PositionStatusSCode?.ToUpper() == "O")
+                                                    {
+                                                        <a href="#ChangeSupplier-popup" title="Change Supplier" class="btn btn-danger btn-sm popup-inline showChangeSupplier" style="width:100%;">Change Supplier</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#" title="Change Supplier" class="btn btn-danger btn-sm" style="width:100%;" disabled="disabled">Change Supplier</a>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                        <div class="booking-ctrl">
+                                            <button type="button" class="btn btn-success btn-md btn-whitelist-hotel" style="margin: 15px 0px 15px 0px;">Request</button>
+                                            <button type="button" class="btn btn-danger btn-md btn-blacklist-hotel" style="margin: 0px 0px 15px 0px;">Blacklist</button>
+                                        </div>
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].ProductType, new { @id = "ProductType" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].ProductType_Id, new { @id = "ProductType_Id" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].VoyagerProduct_Id, new { @id = "VoyagerProductId" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].DefaultSupplierId, new { @id = "DefaultSupplierId" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].DefaultSupplier, new { @id = "DefaultSupplier" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].ProdName, new { @id = "ProdName" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].CityName, new { @id = "CityName" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].StarRating, new { @id = "StarRating" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].BdgPriceCategory, new { @id = "BdgPriceCategory" })
+                                        @Html.HiddenFor(a => a.ProductSRPDetails[i].Location, new { @id = "Location" })
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            @if (Model.PageName == "PrdSupplierMapping")
+                            {
+                                @*<div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
+                                        <div class="card-body card-body1">
+
+                                                <div id="divSupplierMapping_@i" class="divSupplierMapping table-responsive div-pop-sec valign-top-tbl" style="display:none"></div>
+
+                                        </div>
+                                    </div>*@
+
+                                <div id="divSupplierMapping_@i" class="action-popup divSupplierMapping table-responsive div-pop-sec valign-top-tbl collapse" style="display:none"></div>
+                            }
+                            @if (Model.PageName == "hotel")
+                            {
+                                <div class="table-responsive pkg-lists-table" style="display:none;">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Room Type</th>
+                                                <th>Dates</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="bg-yellow">
+                                                <td class="col-room-type">
+                                                    <h5>Standard Double Room A/C</h5>
+                                                    <p>Breakfast not included, taxes included <a href="#" class="link">more</a></p>
+                                                    <span class="num-units"><label>No. of rooms: </label> 20</span>
+                                                </td>
+                                                <td class="col-dates">
+                                                    <ul>
+                                                        <li>
+                                                            <div>
+                                                                <div class="td-pkg-date">01 Apr, Sun</div>
+                                                                <div class="td-pkg-status txt-green"><i class="fa-check"></i> Available</div>
+                                                                <div class="td-pkg-price"><i class="fa-rupee"></i> 3000</div>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div>
+                                                                <div class="td-pkg-date">02 Apr, Sun</div>
+                                                                <div class="td-pkg-status txt-green"><i class="fa-check"></i> Available</div>
+                                                                <div class="td-pkg-price"><i class="fa-rupee"></i> 3000</div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="col-price">
+                                                    <span><i class="fa-rupee"></i> 1,80,000</span>
+                                                    <i class="txt-grey">Inclusive of Taxes</i>
+                                                </td>
+                                                <td class="col-btns">
+                                                    <ul>
+                                                        <li><a href="#" class="btn btn-blue disabled">Change</a></li>
+                                                        <li><a href="#" class="btn btn-secondary btn-upgrade-room">Upgrade</a></li>
+                                                    </ul>
+                                                    <div class="select-options" style="display:none;">
+                                                        <select class="form-control">
+                                                            <option>Main</option>
+                                                            <option>Alternate</option>
+                                                            <option>Additional</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="room-upgraded" style="display:none;">
+                                                <td class="col-room-type">
+                                                    <h5>Superior Double Room A/C</h5>
+                                                    <p>Breakfast not included, taxes included <a href="#" class="link">more</a></p>
+                                                    <span class="num-units"><label>No. of rooms: </label> 20</span>
+                                                </td>
+                                                <td class="col-dates">
+                                                    <ul>
+                                                        <li>
+                                                            <div>
+                                                                <div class="td-pkg-date">01 Apr, Sun</div>
+                                                                <div class="td-pkg-status txt-green"><i class="fa-check"></i> Available</div>
+                                                                <div class="td-pkg-price">
+                                                                    <i class="fa-rupee"></i> 4962
+                                                                    <label>
+                                                                        <input type="checkbox">
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div>
+                                                                <div class="td-pkg-date">02 Apr, Sun</div>
+                                                                <div class="td-pkg-status txt-red"><i class="fa-check"></i> On Request</div>
+                                                                <div class="td-pkg-price">
+                                                                    <i class="fa-rupee"></i> 4962
+                                                                    <label>
+                                                                        <input type="checkbox">
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="col-price">
+                                                    <span><i class="fa-rupee"></i> 2,97,720</span>
+                                                    <i class="txt-grey">Inclusive of Taxes</i>
+                                                </td>
+                                                <td class="col-btns text-center">
+                                                    <label class="input-select">
+                                                        <input type="checkbox" class="select-room"> Select
+                                                    </label>
+                                                    <div class="select-options" style="display:none;">
+                                                        <select class="form-control">
+                                                            <option>Main</option>
+                                                            <option selected>Alternate</option>
+                                                            <option>Additional</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="room-upgraded" style="display:none;">
+                                                <td class="col-room-type">
+                                                    <h5>Suite Double Room A/C</h5>
+                                                    <p>Breakfast not included, taxes included <a href="#" class="link">more</a></p>
+                                                    <span class="num-units"><label>No. of rooms: </label> 20</span>
+                                                </td>
+                                                <td class="col-dates">
+                                                    <ul>
+                                                        <li>
+                                                            <div>
+                                                                <div class="td-pkg-date">01 Apr, Sun</div>
+                                                                <div class="td-pkg-status txt-green"><i class="fa-check"></i> Available</div>
+                                                                <div class="td-pkg-price">
+                                                                    <i class="fa-rupee"></i> 5932
+                                                                    <label>
+                                                                        <input type="checkbox">
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div>
+                                                                <div class="td-pkg-date">02 Apr, Sun</div>
+                                                                <div class="td-pkg-status txt-green"><i class="fa-check"></i> Available</div>
+                                                                <div class="td-pkg-price">
+                                                                    <i class="fa-rupee"></i> 5932
+                                                                    <label>
+                                                                        <input type="checkbox">
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                                <td class="col-price">
+                                                    <span><i class="fa-rupee"></i> 3,55,920</span>
+                                                    <i class="txt-grey">Inclusive of Taxes</i>
+                                                </td>
+                                                <td class="col-btns text-center">
+                                                    <label class="input-select">
+                                                        <input type="checkbox" class="select-room"> Select
+                                                    </label>
+                                                    <div class="select-options" style="display:none;">
+                                                        <select class="form-control">
+                                                            <option>Main</option>
+                                                            <option>Alternate</option>
+                                                            <option selected>Additional</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div id="ChangeSupplier-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+<script src="~/js/Sales/common.js"></script>
+<script>
+    //var pagename = '@Model.PageName';
+    var prodCount = @Model.ProductSRPDetails.Count;
+	$(document).ready(function () {
+
+		//$(document).off("click").click('lnkSupplierMapping');
+
+        //if (pagename != 'hotel') {
+        if (prodCount > 1) {
+			var table = $('.ProductSRPCont').DataTable({
+				"aoColumnDefs": [{
+					'bSortable': false,
+					'aTargets': [0]
+				}],
+                "ordering": false,
+                "aLengthMenu": [10, 25, 50, 100],
+                "iDisplayLength": 10,
+                "searching": false,
+                "oLanguage": {
+                    sLengthMenu: "Show entries _MENU_",
+				},
+				"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-9'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>"
+            });
+        }
+        else {
+            $('.ProductSRPCont').removeClass('dataTable');
+		}
+
+        $('.view-full-prod-info').click(function () {
+            var ProductId = $(this).closest('.prod-desc-cont').find('input#VoyagerProductId').val();
+            var ProductType = $(this).closest('.prod-desc-cont').find('input#ProductType').val();
+            document.location = '/Product/ViewFullProductInfo?ProductId=' + ProductId + '&ProductType=' + ProductType;
+        });
+
+        initializeShowHideDesc();
+        SetPositionStatusColors();
+
+        $(".showChangeSupplier").click(function () {
+            $(".ajaxloader").show();
+            var BookingNumber = $("#BookingNumber").val();
+            var PositionId = $("#Position_Id").val();
+            var IsPlaceholder = $("#Placeholder").val();
+            var PositionStatus = $("#PositionStatusFull").val();
+            var SystemCompanyId = $("#SystemCompany_Id").val();
+
+            $("#ChangeSupplier-popup .popup-in").html('');
+
+            if (IsPlaceholder == 'True') {
+                $.ajax({
+                    type: "GET",
+                    url: "/Operations/ChangeProduct",
+                    data: { BookingNumber: BookingNumber, PositionId: PositionId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    global: false,
+                    success: function (response) {
+                        $("#ChangeSupplier-popup .popup-in").html(response);
+                        $("#ChangeSupplier-popup").show();
+                    },
+                    error: function (response) {
+                        alert(response.statusText);
+                        $(".ajaxloader").hide();
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: "/Operations/ChangeSupplier",
+                    data: { BookingNumber: BookingNumber, PositionId: PositionId, PositionStatus: PositionStatus, SystemCompanyId: SystemCompanyId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    success: function (response) {
+                        $("#ChangeSupplier-popup .popup-in").html(response);
+                        $("#ChangeSupplier-popup").show();
+                    },
+                    error: function (response) {
+                        alert(response.statusText);
+                    }
+                });
+            }
+        });
+    });
+
+	$('body').on('change', '#chkAllHotels', function () {
+
+		var rows, checked;
+		rows = $('#ProductSRPCont').find('tbody tr');
+		checked = $(this).prop('checked');
+		$.each(rows, function () {
+			var checkbox = $($(this).find('td').eq(0)).find('input').prop('checked', checked);
+		});
+	});
+
+    function initializeShowHideDesc() {
+        var showChar = 180;
+        var ellipsestext = "...";
+        var moretext = ' more info <i class="fa-chevron-circle-right"></i>';
+        var lesstext = ' less info <i class="fa-chevron-circle-left"></i>';
+        if ($(this).find('span.morecontent').length < 1) {
+            $('.more').each(function () {
+                var content = $(this).html();
+                if (!content.includes('<span class="moreelipses">') && content.length > showChar) {
+                    var c = content.substr(0, showChar);
+                    var h = content.substr(showChar, content.length - showChar);
+                    var html = c + '<span class="moreelipses">' + ellipsestext + '</span>&nbsp;<span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="#" class="info-more morelink"> more info <i class="fa-chevron-circle-right"></i></a></a></span>';
+                    $(this).html(html);
+                }
+            });
+        }
+
+        $(".morelink").off('click').on('click', function () {
+            if ($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
+        });
+	}
+
+	$(document).off('click', '.lnkSupplierMapping').on('click', '.lnkSupplierMapping', function () {
+	//$('.lnkSupplierMapping').unbind().click(function () {
+
+		var RowNo = $(this).closest('tr').find('input#hdnSeq').val();
+		var ProductId = $(this).closest('tr').find('input#VoyagerProductId').val();
+
+		if ($('#divSupplierMapping_' + RowNo).css('display') == 'none') {
+			$('.divSupplierMapping').hide();
+			$('#divSupplierMapping_' + RowNo).show();
+			$.ajax({
+			type: "POST",
+			url: "/Agent/ViewSupplierMapping",
+			data: { Id: ProductId, PageName: "product", Index: RowNo },
+			success: function (response) {
+
+				$("#divSupplierMapping_" + RowNo).html(response).find('table').attr('id','tblSupplierMapping_' + RowNo);//.replaceWith('tblSupplierMapping_0', 'tblSupplierMapping_' + RowNo);
+				//$("#divSupplierMapping_" + RowNo).html(response);
+
+				//$("#divSupplierMapping_" + RowNo).closest('.tbl-actn-btns').find('.tblSupplierMapping').val();
+				if (RowNo > 0 && table == undefined) {
+
+					var table = $('#tblSupplierMapping_' + RowNo).DataTable({
+						"ordering": false,
+						"aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+						"iDisplayLength": 10,
+						"searching": false,
+						"oLanguage": {
+							sLengthMenu: "Show entries _MENU_",
+						},
+						"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+					});
+				}
+				$('.tbl-actn-btns').css('display', 'none');
+				$(".ajaxloader").hide();
+			},
+			error: function (response) {
+				alert(response);
+				$(".ajaxloader").hide();
+			}
+		});
+		}
+		else {
+			$('.tbl-actn-btns').css('display', 'none');
+			$('#divSupplierMapping_' + RowNo).hide();
+			$(".ajaxloader").hide();
+		}
+	});
+
+	function GetSupplierMapping(Id,Index) {
+
+		$(".ajaxloader").show();
+		var CompanyId = $("#CompanyId").val();
+		$.ajax({
+			type: "GET",
+			url: "/Agent/ViewSupplierMapping",
+			data: { Id: Id, PageName:"product" },
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			global: false,
+			success: function (response) {
+
+				$("#divSupplierMapping_" + Index).html(response).find('table').attr('id', 'tblSupplierMapping_' + Index);
+				$("#divSupplierMapping_" + Index).find('table .btnSave').attr('id', 'btnSave_' + Index);
+				$('.tbl-actn-btns').css('display', 'none');
+				$(".ajaxloader").hide();
+			},
+			failure: function (response) {
+				$(".ajaxloader").hide();
+				alert(response.responseText);
+			},
+			error: function (response) {
+				$(".ajaxloader").hide();
+				alert(response.responseText);
+			}
+		});
+    }
+
+    function SetPositionStatusColors() {
+        //set green color for status : Booked, Confirmation Outstanding
+        $('p.supplier-panel:contains("Booked"),p.supplier-panel:contains("Confirmation Outstanding")').removeClass('btn-secondary').addClass('btn-success');
+
+        //set yellow color for status : Cancellation Pending, Modification, Option
+        $('p.supplier-panel:contains("Cancellation Pending"),p.supplier-panel:contains("Modification"),p.supplier-panel:contains("Option")').removeClass('btn-secondary').addClass('btn-warning');
+
+        //set red color for status : NewBuild, Option Date Expiring
+        $('p.supplier-panel:contains("NewBuild"),p.supplier-panel:contains("Option Date Expiring"),p.supplier-panel:contains("Live"),p.supplier-panel:contains("To Be Placed")').removeClass('btn-secondary').addClass('btn-danger');
+
+        //set default color for status : Cancelled, Rejected
+        $('p.supplier-panel:contains("Cancelled"),p.supplier-panel:contains("Rejected")').removeClass('btn-secondary').addClass('btn-default');
+    }
+</script>
+
+<style>
+    .prod-info-ctrl {
+        display: block;
+    }
+
+    .booking-ctrl {
+        display: none !important;
+    }
+
+    table.ProductSRPCont {
+        display: inline-table !important;
+    }
+
+    .ProductSRPCont td {
+        width: 100% !important;
+    }
+
+    .poslabel {
+        color: #585858;
+    }
+
+    .popup-box.pop-lg {
+        max-width: 1250px;
+    }
+</style>

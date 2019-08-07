@@ -1,0 +1,61 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+
+@Html.HiddenFor(model => model.EnquiryPipeline, new { @id = "EnquiryPipeline" })
+<ul class="sqr-tab-list">
+    <li id="Itinerary">
+        <a id="aItinerary" href="/CostingOfficer/Itinerary?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-itinerary-wht yellow"></i></figure> <strong>Itinerary</strong>
+        </a>
+    </li>
+    <li id="Guesstimate">
+        <a id="aGuesstimate" href="/CostingOfficer/Guesstimate?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-guesstimate-wht sky-blue"></i></figure> <strong>Guesstimate</strong>
+        </a>
+    </li>
+
+    <li id="Commercials">
+        <a id="aCommercials" href="/CostingOfficer/Commercials?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-commercials-wht orange"></i></figure> <strong>Commercials</strong>
+        </a>
+    </li>
+    @*<li>
+            <a href="#">
+                <figure><i class="fa-custom-compare-wht green"></i></figure> <strong>Compare</strong>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <figure><i class="fa-custom-what-if-wht pink"></i></figure> <strong>What-if</strong>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <figure><i class="fa-custom-baseline-wht blue"></i></figure> <strong>Baseline</strong>
+            </a>
+        </li>*@
+
+    <li id="Costsheet">
+        <a id="aCostsheet" href="/CostingOfficer/Costsheet?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-costsheet-wht purple"></i></figure> <strong>Costsheet</strong>
+        </a>
+    </li>
+    @if (Model.EnquiryPipeline != "Costing Approval Pipeline")
+    {
+        <li id="Proposal">
+            <a id="aProposal" href="/CostingOfficer/Proposal?QRFId=@Model.QRFID">
+                <figure><i class="fa-custom-proposal-wht red"></i></figure> <strong>Proposal</strong>
+            </a>
+        </li>
+    }
+</ul>
+
+<script>
+    $(document).ready(function () {
+        var SelectedMenu = '@Model.MenuName'; //$("#hdnSelection").val();
+        $("#" + SelectedMenu).parent().find("li").removeClass("active");
+        $("#" + SelectedMenu).addClass("active");
+        @*if (@Model.QRFID==0) {
+            $("#TourEntities,#aTourEntities,#Accomodation,#aAccomodation,#Meals,#aMeals,#Activities,#aActivities,#Cruise,#aCruise,#Rail,#aRail,#Transfers,#aTransfers,#Bus,#aBus,#IntercityTransfer,#aIntercityTransfer,#Flights,#aFlights,#Others,#aOthers").addClass("disabled");
+        }*@
+    });
+</script>

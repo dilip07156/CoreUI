@@ -1,0 +1,1255 @@
+﻿@model Voyager.App.ViewModels.BookingMaterializationVm
+<h3>Change Booking Materialisation Level</h3>
+<hr />
+<br>
+
+<button title="Close (Esc)" type="button" class="mfp-close"></button>
+<form id="frmRoomChange">
+    <div id="myroomops">
+        <div class="row">
+            <div class="col-md-8">
+
+                <div class="card">
+                    <div class="card-header">
+                        Package Configuration
+                    </div>
+                    @Html.Hidden("NoofRows", Model.roomMaterializationDetails.Count)
+                    @Html.HiddenFor(m => m.bookingNumber)
+                    <div class="card-body">
+                        <div class="alert alert-info" id="showhotelNotSelectError1" style="display:none" role="alert">
+                            BookingRoomsPostion Updated Successfully
+                        </div>
+
+
+                        <div class="table-responsive filter-table custom-mob-tbl">
+                            <table class="table table-striped table" id="tblRoomsData" name="BookingRooms">
+                                <thead>
+                                    <tr>
+                                        <th colspan="6">
+                                            <h5 class="card-title">
+                                                Current Package Configuration
+                                            </h5>
+                                        </th>
+                                        <th colspan="6">
+                                            <h5 class="card-title">New Request</h5>
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="2">Room Type</th>
+                                        <th colspan="2">For</th>
+                                        <th colspan="2">Age</th>
+                                        <th colspan="2">Current</th>
+                                        <th colspan="2">New Level</th>
+                                        <th colspan="2"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @for (int i = 0; i < Model.roomMaterializationDetails.Count; i++)
+                                    {
+
+                                        <tr>
+
+                                            <td colspan="2">
+                                                <input type="hidden" id="hdnSeqNo" value="@i" />
+                                                @*@Model.roomMaterializationDetails[i].RoomType*@
+                                                <span> @Html.DisplayFor(m => m.roomMaterializationDetails[i].RoomType, new { @class = " form-control-1 " })</span>
+                                                @Html.HiddenFor(m => m.roomMaterializationDetails[i].RoomType)
+                                            </td>
+                                            <td colspan="2">
+                                                @*@Model.roomMaterializationDetails[i].For*@
+                                                <span>
+                                                    @Html.DisplayFor(m => m.roomMaterializationDetails[i].For, new { @class = " form-control-1 " })
+                                                </span>
+                                                @Html.HiddenFor(m => m.roomMaterializationDetails[i].For)
+                                            </td>
+                                            <td colspan="2">
+                                                @*@Model.roomMaterializationDetails[i].Age*@
+                                                <span>@Html.DisplayFor(m => m.roomMaterializationDetails[i].Age, new { @class = " form-control-1 " }) </span>
+
+                                                @Html.HiddenFor(m => m.roomMaterializationDetails[i].Age)
+                                            </td>
+                                            <td colspan="2">
+                                                @*@Model.roomMaterializationDetails[i].Current*@
+                                                <span> @Html.DisplayFor(m => m.roomMaterializationDetails[i].Current, new { @class = " form-control-1 " })</span>
+                                                @Html.HiddenFor(m => m.roomMaterializationDetails[i].Current)
+                                            </td>
+                                            <td colspan="2">
+                                                @Html.TextBoxFor(m => m.roomMaterializationDetails[i].NewLevel, new { placeholder = "NewQty", @class = " form-control-1" })
+                                                @Html.HiddenFor(m => m.roomMaterializationDetails[i].NewLevel)
+                                            </td>
+                                            <td colspan="2">
+                                                @Html.HiddenFor(m => m.roomMaterializationDetails[i].BookingRooms_Id)
+                                                <button type="button" class="btn btn-danger btn-sm" id="RemoveRowdetails_@i">Remove</button>
+
+                                            </td>
+                                        </tr>
+
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5">
+                                            @*<select style="width: 156px;">
+                                <option value="TWIN">TWIN</option>
+                                <option value="DOUBLE">DOUBLE</option>
+                                <option value="SINGLE">SINGLE</option>
+                                <option value="TRIPLE">TRIPLE</option>
+                            </select>*@
+                                            @Html.DropDownList("RoomType", new SelectList(Model.RoomsInCostExceptInMaterialization), "Select", new { @class = "  form-control-1", @id = "AddedRoom" })
+
+                                        </td>
+                                        <td colspan="3">
+                                            @*<input type="text" placeholder="Age" />*@
+                                            @Html.TextBox("PassengerAge", null, new { placeholder = "Age", @class = " form-control-1" })
+                                        </td>
+                                        <td colspan="2">
+                                            @*<input type="text" placeholder="New Qty" />*@
+                                            @Html.TextBox("PassengerQty", null, new { placeholder = "NewQty", @class = " form-control-1" })
+                                        </td>
+                                        <td colspan="2">
+                                            <button type="button" class="btn btn-primary btn-sm" id="AddnewRow">Add New</button>
+                                        </td>
+                                    </tr>
+
+                                </tfoot>
+
+                            </table>
+                        </div>
+                        <span class="text-danger" id="ShowErrorForTextBox" style="display:none;font-size:12px !important"></span>
+
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        New Passenger Breakdown
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 table-responsive filter-table custom-mob-tbl">
+                                <table class="table table-striped table" id="tblShowPassengersRoomNo" name="BookingPax">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="6">Passenger</th>
+
+                                            <th colspan="3">Age</th>
+                                            <th colspan="3">Qty</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.personMaterializationDetails.Count; i++)
+                                        {
+                                            <tr>
+                                                <td colspan="6">
+
+                                                    <input type="hidden" id="hdnSeq" value="@i" />
+                                                    @Html.HiddenFor(m => m.personMaterializationDetails[i].BookingPax_ID)
+                                                    @*<input type="hidden" value="@Model.personMaterializationDetails[i].BookingPax_ID" />*@
+                                                    @*@Model.personMaterializationDetails[i].PassengerType*@
+                                                    <span>@Html.DisplayFor(m => m.personMaterializationDetails[i].PassengerType, new { @class = " form-control-1 " })</span>
+                                                    @Html.HiddenFor(m => m.personMaterializationDetails[i].PassengerType)
+                                                </td>
+                                                <td colspan="3">
+                                                    @*@Model.personMaterializationDetails[i].PassengerAge*@
+                                                    <span>@Html.DisplayFor(m => m.personMaterializationDetails[i].PassengerAge, new { @class = " form-control-1 " })</span>
+                                                    @Html.HiddenFor(m => m.personMaterializationDetails[i].PassengerAge)
+                                                </td>
+                                                <td colspan="3">
+                                                    @*@Model.personMaterializationDetails[i].PassengerQty*@
+                                                    <span>
+                                                        @Html.DisplayFor(m => m.personMaterializationDetails[i].PassengerQty, new { @class = " form-control-1 " })
+                                                    </span>
+                                                    @Html.HiddenFor(m => m.personMaterializationDetails[i].PassengerQty)
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br /><br />
+              <div class="row">
+                  <div id="AlertDiv" style="display: none">
+                      <div class="row col-md-12">
+                          <div class="col-md-6">
+                              <p>
+                                  <button type="button" class="btn btn-warning" id="UpdateRoomChangeAllSupliers">Update the Booking and Update All Suppliers</button>
+                                  <br> <small> (This will change the Booking Levels for All Services and contact all suppliers)</small>
+                              </p>
+                              <p>
+                                  <button type="button" class="btn btn-warning" id="UpdateRoomChangeSelectedSupliers">Update the Booking and Update <b>Selected Suppliers</b></button>
+                                  <br>    <small> (This will change the Booking Levels for All Services and contact all suppliers)</small>
+                              </p>
+                          </div>
+                          <div class="col-md-6">
+                              <span class="text-danger" id="showhotelNotSelectError" style="display:none;font-size:12px !important"></span>
+                              <div class="card">
+                                  <div class="card-body">
+                                      <h6 class="card-header">Select Suppliers</h6>
+                                      <div class="table-responsive filter-table custom-mob-tbl">
+                                          <table class="table table-hover table-sm table" id="tblsuppliers" name="Positions">
+                                              <tbody>
+                                                  @Html.Hidden("SuppliersCount", Model.SupplierDetails.Count)
+                                                  @for (int i = 0; i < Model.SupplierDetails.Count; i++)
+                                                  {
+                                                      <tr>
+                                                          <td>
+                                                              @switch (Model.SupplierDetails[i].ProductType.ToUpper())
+                                                              {
+                                                                  case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+                                                                      break;
+                                                                  case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+                                                                      break;
+                                                                  case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+                                                                      break;
+                                                                  case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                      break;
+                                                                  case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                      break;
+                                                                  case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+                                                                      break;
+                                                                  case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+                                                                      break;
+                                                                  case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                      break;
+                                                                  case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                      break;
+                                                                  case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                      break;
+                                                                  case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+                                                                      break;
+                                                                  case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+                                                                      break;
+                                                                  case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+                                                                      break;
+                                                                  case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+                                                                      break;
+                                                                  case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+                                                                      break;
+                                                                  case "VISA": <img src="~/resources/images/common/icons/visa.png">
+                                                                      break;
+                                                                  case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+                                                                      break;
+                                                                  default:
+                                                                      break;
+                                                              } - @Model.SupplierDetails[i].StartDate - @Model.SupplierDetails[i].ProductName - (@Model.SupplierDetails[i].SupplierName)
+                                                          </td>
+                                                          <td>
+                                                              <div class="form-check">
+                                                                  @Html.HiddenFor(m => m.SupplierDetails[i].SupplierName)
+                                                                  @Html.HiddenFor(m => m.SupplierDetails[i].ProductName)
+                                                                  @Html.HiddenFor(m => m.SupplierDetails[i].Position_ID)
+                                                                  @Html.HiddenFor(m => m.SupplierDetails[i].ProductType)
+                                                                  @Html.HiddenFor(m => m.SupplierDetails[i].StartDate)
+                                                                  @*@Html.CheckBox("IsSelected", Model.SupplierDetails[i].IsSelected)*@
+                                                                  <input type="checkbox" class="form-check-input form-control-1" name="SupplierDetails[@i].IsSelected" value="@Model.SupplierDetails[i].IsSelected">
+                                                              </div>
+                                                          </td>
+                                                      </tr>
+
+
+                                                  }
+                                              </tbody>
+                                          </table>
+                                      </div>
+                                     
+
+                                  </div>
+                              </div>
+
+
+
+
+
+                          </div>
+
+                      </div>
+
+                      <br /><br />
+                      @*<div>
+                          <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md  close-popup  pull-right">Close</button>
+
+                      </div>*@
+                  </div>
+                  <div><button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md  close-popup  pull-right">Close</button></div>
+              </div>
+</form>
+
+<script>
+    var positionFormData = {};
+    $(document).ready(function () {
+         
+        //UpdatePassengerNumberAsPerQty();
+        ShowHideAlertSuccessDiv();
+    });
+
+    //$(document).find("#myroomops select, #myroomops input").on('change input', function (e) {
+    //    positionFormData = addChangedValueToList(this, positionFormData);
+    //});
+
+    $("#AddnewRow").click(function () {
+        debugger;
+        let tr = $(this).closest('tr');
+        let a = $("#AddedRoom option:selected").text();
+        let b = tr.find('td:eq(1) input').val();
+        let c = tr.find('td:eq(2) input').val();
+        if (a == "Select" || a == "undefined") {
+
+            $("#ShowErrorForTextBox").show();
+            $("#ShowErrorForTextBox").text('Please Select RoomType');
+        }
+        else if (b == "" || b == "undefined" || b == 0) {
+            if ((a == "CHILDWITHBED" || a == "CHILDWITHOUTBED") && (b == "" || b == "undefined" || b == 0)) {
+                $("#ShowErrorForTextBox").show();
+                $("#ShowErrorForTextBox").text('Please Enter Passenger Age');
+            }
+            else {
+                $("#ShowErrorForTextBox").hide();
+                $("#ShowErrorForTextBox").text('');
+            }
+        }
+        else if (c == "" || c == "undefined" || c == 0) {
+
+            $("#ShowErrorForTextBox").show();
+            $("#ShowErrorForTextBox").text('Qty Of Rooms Cannot be Zero');
+        }
+        else {
+            debugger;
+            $("#ShowErrorForTextBox").hide();
+            $("#ShowErrorForTextBox").text('');
+            var TextPresent = true;
+            if (a == "SINGLE" || a == "TWIN" || a == "DOUBLE" || a == "TRIPLE" || a == "QUAD" || a == "TSU") {
+                $(" #tblRoomsData tbody tr").find("td:first").each(function () {
+                    debugger;
+                    if ($.trim($(this).text()) == a) {
+
+                        TextPresent = false;
+                    }
+                })
+            }
+            else if (a == "INFANT") {
+                $(" #tblRoomsData tbody tr").each(function () {
+                    let CheckRoomType = $(this).find('td:eq(0)');
+                    let CheckAge = $(this).find('td:eq(2)');
+                    if ($.trim(CheckRoomType.text()) == "INFANT" && $.trim(CheckAge.text()) == b) {
+                        TextPresent = false;
+                    }
+                })
+
+            }
+            else {
+
+                $(" #tblRoomsData tbody tr").each(function () {
+                    let CheckRoomType = $(this).find('td:eq(0)');
+                    let CheckAge = $(this).find('td:eq(2)');
+                    if ($.trim(CheckRoomType.text()) == a && ($.trim(CheckRoomType.text()) == "CHILDWITHBED" || $.trim(CheckRoomType.text()) == "CHILDWITHOUTBED") && $.trim(CheckAge.text()) == b) {
+                        TextPresent = false;
+                    }
+                })
+            }
+        }
+            if (TextPresent == false) {
+                $("#ShowErrorForTextBox").show();
+                $("#ShowErrorForTextBox").text('Roomtype Selected Already Present');
+            }
+            else {
+                $("#ShowErrorForTextBox").hide();
+                $("#ShowErrorForTextBox").text('');
+
+                var curRowCnt = $('#tblRoomsData tbody tr').length - 1;
+                var iRowCnt = curRowCnt + 1;
+                var rowToAdd = $("#tblRoomsData tbody tr:last").clone(true);
+                $(rowToAdd).find('td:eq(0)').find('span').text(a).parent().find('input').val(a);
+                $(rowToAdd).find('td:eq(2)').find('span').text(b).parent().find('input').val(b);
+                $(rowToAdd).find('td:eq(3)').find('span').text('').parent().find('input').val('');
+                $(rowToAdd).find('td:eq(4)').find('input').val(c);
+                $(rowToAdd).find('td:eq(5)').find('input').val('');
+
+                //add it to table
+                $("#tblRoomsData tbody").append(rowToAdd);
+                $("#tblRoomsData tbody tr:last").find('input,span,div,small,button,select').each(function (iColCnt) {
+
+                    if (this.id == "hdnSeqNo") this.value = iRowCnt;
+                    if (this.id != undefined && this.id != "") {
+                        this.id = this.id.replace(curRowCnt, iRowCnt);
+                    }
+
+                    if (this.name != undefined && this.name != "") this.name = this.name.replace(curRowCnt, iRowCnt);
+                    if (this.aria_describedby != undefined) {
+                        this.aria_describedby = this.aria_describedby.replace(curRowCnt, iRowCnt);
+                    }
+                    if (this.attributes['data-valmsg-for'] != undefined && this.attributes['data-valmsg-for'] != "") this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRowCnt, iRowCnt);
+                });
+                UpdatePassengerNumberAsPerQty("add", a, b, c);
+                ShowHideAlertSuccessDivOnRowAddRemove();
+            }
+        }
+
+        //var table = $(this).closest('table');
+        //positionFormData = addChangedValueToList(this, positionFormData);
+    );
+
+    $("#tblRoomsData tbody tr input[type='text']").on('blur keyup ', function (e) {
+         
+        if (($(this).val() == 0 || $(this).val() < 0) && !$(this).val() == "") {
+
+            $(this).css('border-color', 'red');
+            $("#ShowErrorForTextBox").show();
+            $("#ShowErrorForTextBox").text('Value  should be greater than Zero and should be a number');
+            return false;
+        }
+        else if (!$.isNumeric($(this).val()) && $(this).val() != "") {
+             
+            var regex = /^\d+$/;
+            if (!regex.test($(this).val())) {
+                $(this).val('');
+                $(this).css('border-color', 'red');
+                $("#ShowErrorForTextBox").show();
+                $("#ShowErrorForTextBox").text('Value  should  be a number');
+                return false;
+            }
+            //else if ($(this).val() == "")
+            //{
+            //    $(this).css('border-color', 'red');
+            //    $("#ShowErrorForTextBox").show();
+            //    $("#ShowErrorForTextBox").text('Value Cannot be Empty');
+            //    return false;
+            //}
+            else {
+                 
+                if ($(this).val() == "") {
+                    $(this).css('border-color', 'red');
+                    $("#ShowErrorForTextBox").show();
+                    $("#ShowErrorForTextBox").text('Value Cannot be Empty');
+                    return false;
+
+                }
+                $(this).css('border-color', '');
+                $("#ShowErrorForTextBox").hide();
+                $("#ShowErrorForTextBox").text('');
+                var tablerow = $(this).closest('tr');
+                var Roomtype = tablerow.find('td:first').find('span').text();
+                var Ageofperson = tablerow.find('td:eq(2)').find('span').text();
+                var RoomQty = tablerow.find('td:eq(4)').find('input').val();
+                 
+                UpdatePassengerNumberAsPerQty("", $.trim(Roomtype), Ageofperson, RoomQty);
+                ShowHideAlertSuccessDiv();
+              //  $(this).find("input[type='text']").val($(this).val());
+                $(this).find("input[type='hidden']").val($(this).val());
+            }
+        }
+
+        else {
+             
+            if ($(this).val() == "") {
+                $(this).css('border-color', 'red');
+                $("#ShowErrorForTextBox").show();
+                $("#ShowErrorForTextBox").text('Value Cannot be Empty');
+                return false;
+
+            }
+            $(this).css('border-color', '');
+            $("#ShowErrorForTextBox").hide();
+            $("#ShowErrorForTextBox").text('');
+           
+            var tablerow = $(this).closest('tr');
+            var Roomtype = tablerow.find('td:first').find('span').text();   
+            var Ageofperson = tablerow.find('td:eq(2)').find('span').text();
+            var RoomQty = tablerow.find('td:eq(4)').find('input').val();
+             
+            UpdatePassengerNumberAsPerQty("", $.trim(Roomtype), Ageofperson, RoomQty);
+            ShowHideAlertSuccessDiv();
+            $(this).siblings('input[type="hidden"]').val($(this).val());
+        }
+
+    });
+
+    $('button[id^="RemoveRowdetails_"]').click(function () {
+         
+        var curRow = 0;
+        var tableRow = $(this).closest('tr');
+        var RoomtypetobeRemoved = tableRow.find('td:first').find('span').text();
+        var AgeofpersontobeRemoved = tableRow.find('td:eq(2)').find('span').text();
+        var RoomQtytobeRemoved = tableRow.find('td:eq(2)').find('input').val();
+        $(this).closest('tr').remove();
+        $('#tblRoomsData tbody tr').each(function (iRowCnt) {
+            $(this).find('input,span,div,small,button,select').each(function (iColCnt) {
+
+                if (this.id != undefined && this.id != "") {
+                    if (this.id == 'hdnSeqNo') { curRow = this.value; this.value = iRowCnt; };
+                    this.id = this.id.replace(curRow, iRowCnt);
+                }
+                if (this.name != undefined && this.name != "") this.name = this.name.replace(curRow, iRowCnt);
+
+                if (this.attributes['data-valmsg-for'] != undefined) this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRow, iRowCnt);
+            });
+        });
+        if (RoomtypetobeRemoved == "SINGLE" || RoomtypetobeRemoved == "DOUBLE" || RoomtypetobeRemoved == "QUAD" || RoomtypetobeRemoved == "TWIN" || RoomtypetobeRemoved == "TRIPLE" || RoomtypetobeRemoved == "TSU") {
+            UpdatePassengerNumberAsPerQty("", RoomtypetobeRemoved, AgeofpersontobeRemoved, RoomQtytobeRemoved);
+        }
+        else {
+
+            UpdatePassengerNumberAsPerQty("remove", $.trim(RoomtypetobeRemoved), AgeofpersontobeRemoved, RoomQtytobeRemoved);
+        }
+        //if (Roomtype == "CHILDWITHBED" || Roomtype == "CHILDWITHOUTBED") {
+
+        //    UpdatePassengerNumberAsPerQty("", Roomtype, Ageofperson, RoomQty);
+        //}
+        //else {
+        //    UpdatePassengerNumberAsPerQty();
+        //}
+        ShowHideAlertSuccessDivOnRowAddRemove();
+        ShowHideAlertSuccessDivOnRowAddRemove1();
+        // positionFormData = addChangedValueToList($(this), positionFormData);
+
+    });
+
+    $("#tblRoomsData tfoot tr input[type='text']").on(' keyup blur ', function (e) {
+
+        var regex = /^\d+$/;
+        if (!regex.test($(this).val())) {
+            $(this).val('');
+            $(this).css('border-color', 'red');
+            $("#ShowErrorForTextBox").show();
+            $("#ShowErrorForTextBox").text('Value  should  be a number');
+            return false;
+        }
+
+        else {
+            $(this).css('border-color', '');
+            $("#ShowErrorForTextBox").hide();
+            $("#ShowErrorForTextBox").text('');
+        }
+    });
+
+    $('#UpdateRoomChangeSelectedSupliers').click(function () {
+         
+        var TextBoxEmpty = CheckIfTextBoxesAreEmpty();
+        var CheckBoxChecked = IfCheckBoxesAreChecked();
+        if ($("#tblRoomsData > tbody > tr ").length > 0) {
+            var tablerow = $("#tblRoomsData tbody tr:first");
+            var input = tablerow.find('td:eq(0)').find('input');
+            positionFormData = addChangedValueToList(input, positionFormData);
+
+        }
+        if ($("#tblShowPassengersRoomNo > tbody > tr ").length > 0) {
+            var tablerow = $("#tblShowPassengersRoomNo tbody tr:first");
+            var input = tablerow.find('td:eq(0)').find('input');
+            positionFormData = addChangedValueToList(input, positionFormData);
+
+        }
+        if ($("#tblsuppliers > tbody > tr ").length > 0) {
+            var tablerow = $("#tblsuppliers tbody tr:first");
+            var input = tablerow.find('td:last').find("input[type='checkbox']");
+            positionFormData = addChangedValueToList(input, positionFormData);
+
+        }
+
+        if (TextBoxEmpty && CheckBoxChecked) {
+            $(".ajaxloader").show();
+            $("#showhotelNotSelectError1").hide();
+            // var model = $("#frmRoomChange").serialize();
+            var BookingNumber = $("#bookingNumber").val();
+            positionFormData['Action'] = "ChangeRoomCount";
+            positionFormData['Module'] = "Booking";
+            positionFormData['ModuleParent'] = "Booking";
+            positionFormData['BookingNumber'] = BookingNumber;
+            
+            $.ajax({
+                type: "POST",
+                url: "/Operations/ManageDataforTemplatebookingRooms",
+                data: { model: positionFormData },
+                dataType: "json",
+                success: function (response) {
+                     
+                    if (response.status == "Success") {
+                        //$("#PassengerSaveSuccess").show();
+                        $(".ajaxloader").hide();
+                        $("#showhotelNotSelectError1").show();
+                    }
+                    else {
+                        //$("#PassengerSaveFailure").show();
+                        $(".ajaxloader").hide();
+                        $("#showhotelNotSelectError1").text('Booking Postions not updated');
+                        $("#showhotelNotSelectError1").show();
+                    }
+
+                },
+
+                error: function (response) {
+                    $("#showhotelNotSelectError").hide();
+                    $("#showhotelNotSelectError").text('');
+                    $(".ajaxloader").hide();
+                    alert(response.responseStatus.status);
+                }
+            });
+        }
+
+    });
+    $('#UpdateRoomChangeAllSupliers').click(function () {
+         
+        var TextBoxEmpty = CheckIfTextBoxesAreEmpty();
+       
+        if ($("#tblRoomsData > tbody > tr ").length > 0) {
+            var tablerow = $("#tblRoomsData tbody tr:first");
+            var input = tablerow.find('td:eq(0)').find('input');
+            positionFormData = addChangedValueToList(input, positionFormData);
+
+        }
+        if ($("#tblShowPassengersRoomNo > tbody > tr ").length > 0) {
+            var tablerow = $("#tblShowPassengersRoomNo tbody tr:first");
+            var input = tablerow.find('td:eq(0)').find('input');
+            positionFormData = addChangedValueToList(input, positionFormData);
+
+        }
+        if ($("#tblsuppliers > tbody > tr ").length > 0) {
+            var tablerow = $("#tblsuppliers tbody tr:first");
+            var input = tablerow.find('td:last').find("input[type='checkbox']");
+            positionFormData = addChangedValueToList(input, positionFormData);
+
+        }
+
+        if (TextBoxEmpty) {
+            $(".ajaxloader").show();
+            $("#showhotelNotSelectError1").hide();
+            // var model = $("#frmRoomChange").serialize();
+            var BookingNumber = $("#bookingNumber").val();
+            positionFormData['Action'] = "ChangeRoomCount";
+            positionFormData['Module'] = "Booking";
+            positionFormData['ModuleParent'] = "Booking";
+            positionFormData['BookingNumber'] = BookingNumber;
+          
+            $.ajax({
+                type: "POST",
+                url: "/Operations/ManageDataforTemplatebookingRooms",
+                data: { model: positionFormData },
+                dataType: "json",
+                success: function (response) {
+                     
+                    if (response.status == "Success") {
+                        debugger;
+                        //$("#PassengerSaveSuccess").show();
+                        $(".ajaxloader").hide();
+                        $("#showhotelNotSelectError1").show();
+                    }
+                    else {
+                        //$("#PassengerSaveFailure").show();
+                        debugger;
+                        $(".ajaxloader").hide();
+                        $("#showhotelNotSelectError1").text('Booking Postions not updated');
+                        $("#showhotelNotSelectError1").show();
+                    }
+
+                },
+
+                error: function (response) {
+                    $("#showhotelNotSelectError").hide();
+                    $("#showhotelNotSelectError").text('');
+                    $(".ajaxloader").hide();
+                    alert(response.responseStatus.status);
+                }
+            });
+        }
+
+    });
+
+    function UpdatePassengerNumberAsPerQty(status = "",Roomtype="",Age= "",Quantity="") {
+         
+        var sumOfPersons = 0;
+        var SumOfChildrensWithoutBed = 0;
+        var SumOfChildrensWithBed = 0;
+        var InitialSumOfChildrens = 0;
+        var CHILDWITHBEDPassAge = 0;
+        var CHILDWITHOutBEDPassAge = 0;
+        var RoomName = Roomtype;
+        var AgeofIndividual = Age;
+        var QuantityOfIndividual = Quantity;
+
+        $("#tblRoomsData tbody tr").each(function () {
+            let RoomTypeIntable = $(this).find('td:eq(0)');
+            let Age = $(this).find('td:eq(3)')
+            let Roomtd = $(this).find('td:eq(4)');
+            let RoomNo = Roomtd.find('input');
+            let CHILDWITHBEDAge = $(this).find('td:eq(2)');
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "SINGLE")) {
+
+                sumOfPersons = sumOfPersons + parseInt($.trim(RoomNo.val())) * 1;
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "DOUBLE")) {
+
+                sumOfPersons = sumOfPersons + parseInt($.trim(RoomNo.val())) * 2;
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "TWIN")) {
+
+                sumOfPersons = sumOfPersons + parseInt($.trim(RoomNo.val())) * 2;
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "TRIPLE")) {
+
+                sumOfPersons = sumOfPersons + parseInt($.trim(RoomNo.val())) * 3;
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "QUAD")) {
+
+                sumOfPersons = sumOfPersons + parseInt($.trim(RoomNo.val())) * 4;
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "TSU")) {
+
+                sumOfPersons = sumOfPersons + parseInt($.trim(RoomNo.val())) * 1;
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "CHILDWITHBED" && Age == null)) {
+
+                SumOfChildrensWithBed = SumOfChildrensWithBed + parseInt($.trim(RoomNo.val())) * 1;
+                if (CHILDWITHBEDAge != null) {
+                    CHILDWITHBEDPassAge = parseInt($.trim(CHILDWITHBEDAge.text()));
+                }
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "CHILDWITHBED") && Age!=null) {
+
+                SumOfChildrensWithBed = SumOfChildrensWithBed + parseInt($.trim(RoomNo.val())) * 1;
+                if (CHILDWITHBEDAge != null) {
+                    CHILDWITHBEDPassAge = parseInt($.trim(CHILDWITHBEDAge.text()));
+                }
+            }
+            if (($.trim(RoomTypeIntable.text()).toUpperCase() == "CHILDWITHOUTBED")) {
+
+                SumOfChildrensWithoutBed = SumOfChildrensWithoutBed + parseInt($.trim(RoomNo.val())) * 1;
+                if (CHILDWITHBEDAge != null) {
+                    CHILDWITHOutBEDPassAge = parseInt($.trim(CHILDWITHBEDAge.text()));
+                }
+            }
+        });
+
+        if (status == "add") {
+             
+            var a = $("#tblRoomsData tfoot tr").find("#AddedRoom").val().toUpperCase();
+            //var addpersontype = true;
+            if (a == "SINGLE" || a == "DOUBLE" || a == "TWIN" || a == "TRIPLE" || a == "QUAD" || a == "TSU") {
+                var addpersontype = true;
+                $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                    var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                    if (PassengerType == "ADULT") {
+
+                        addpersontype = false;
+                    }
+
+
+                })
+                if (addpersontype == false) {
+                    $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                        var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                        if (PassengerType == "ADULT") {
+
+                            //$(this).find('td:last').text(sumOfPersons);
+                            $(this).find('td:eq(2)').find('span').text(sumOfPersons).parent().find('input').val(sumOfPersons);
+                        }
+
+                    })
+                }
+                else {
+                    var Value = "ADULT";
+                    var rowToAdd1 = $("#tblShowPassengersRoomNo tbody tr:last").clone();
+                    //$(rowToAdd1).find('td:eq(0)').text(Value);
+                    //$(rowToAdd1).find('td:eq(1)').text("");
+                    //$(rowToAdd1).find('td:eq(2)').text(sumOfPersons);
+                    $(rowToAdd1).find('td:eq(0)').find('input:eq(1)').val('')
+                    //$(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input').val(Value);
+                    $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input:eq(2)').val(Value);
+                    $(rowToAdd1).find('td:eq(1)').find('span').text("").parent().find('input').val("");
+                    $(rowToAdd1).find('td:eq(2)').find('span').text(sumOfPersons).parent().find('input').val(sumOfPersons);
+
+                    $("#tblShowPassengersRoomNo tbody").append(rowToAdd1);
+                    var curRowCnt = $('#tblShowPassengersRoomNo tbody tr').length - 2;
+                    var iRowCnt = curRowCnt + 1;
+                    $("#tblShowPassengersRoomNo tbody tr:last").find('input,span,div,small,button,select').each(function (iColCnt) {
+                         
+                        if (this.id == "hdnSeq") this.value = iRowCnt;
+
+                        if (this.id != undefined && this.id != "") {
+                            this.id = this.id.replace(curRowCnt, iRowCnt);
+                        }
+
+                        if (this.name != undefined && this.name != "") this.name = this.name.replace(curRowCnt, iRowCnt);
+
+                        if (this.aria_describedby != undefined) {
+                            this.aria_describedby = this.aria_describedby.replace(curRowCnt, iRowCnt);
+                        }
+                        if (this.attributes['data-valmsg-for'] != undefined && this.attributes['data-valmsg-for'] != "") this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRowCnt, iRowCnt);
+                    });
+                }
+
+            }
+            if (a == "CHILDWITHOUTBED") {
+
+                var addpersontype = true;
+                $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                    var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                    var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                    if (PassengerType == "CHILD - BED" && PassengerAge == AgeofIndividual ) {
+
+                        addpersontype = false;
+                    }
+
+
+                })
+                if (addpersontype == false) {
+                    $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                        var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                        var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                        var PassengerQty = $.trim($(this).find('td:eq(2)').text());
+                        if (PassengerType == "CHILD - BED" && PassengerAge == AgeofIndividual) {
+                            var SumOfChildrensWithoutBed = SetQuantityAndAgeForChildrens(a, PassengerAge, PassengerQty);
+                           // $(this).find('td:last').text(SumOfChildrensWithoutBed);
+                            $(this).find('td:eq(2)').find('span').text(SumOfChildrensWithoutBed).parent().find('input').val(SumOfChildrensWithoutBed);
+                        }
+
+                    })
+                }
+                else {
+                    var Value = "CHILD - BED";
+                    var SumOfChildrensWithoutBed = SetQuantityAndAgeForChildrens(a, AgeofIndividual);
+                    var rowToAdd1 = $("#tblShowPassengersRoomNo tbody tr:last").clone();
+                   
+                    //$(rowToAdd1).find('td:eq(0)').text(Value);
+                    //$(rowToAdd1).find('td:eq(1)').text("");
+                    //$(rowToAdd1).find('td:eq(2)').text(SumOfChildrensWithoutBed);
+                    $(rowToAdd1).find('td:eq(0)').find('input:eq(1)').val('')
+                   // $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input').val(Value);
+                    $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input:eq(2)').val(Value);
+                    $(rowToAdd1).find('td:eq(1)').find('span').text(AgeofIndividual).parent().find('input').val(AgeofIndividual);
+                    $(rowToAdd1).find('td:eq(2)').find('span').text(SumOfChildrensWithoutBed).parent().find('input').val(SumOfChildrensWithoutBed);
+
+                    $("#tblShowPassengersRoomNo tbody").append(rowToAdd1);
+                    var curRowCnt = $('#tblShowPassengersRoomNo tbody tr').length - 2;
+                    var iRowCnt = curRowCnt + 1;
+                    $("#tblShowPassengersRoomNo tbody tr:last").find('input,span,div,small,button,select').each(function (iColCnt) {
+                         
+                        if (this.id == "hdnSeq") this.value = iRowCnt;
+
+                        if (this.id != undefined && this.id != "") {
+                            this.id = this.id.replace(curRowCnt, iRowCnt);
+                        }
+
+                        if (this.name != undefined && this.name != "") this.name = this.name.replace(curRowCnt, iRowCnt);
+
+                        if (this.aria_describedby != undefined) {
+                            this.aria_describedby = this.aria_describedby.replace(curRowCnt, iRowCnt);
+                        }
+                        if (this.attributes['data-valmsg-for'] != undefined && this.attributes['data-valmsg-for'] != "") this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRowCnt, iRowCnt);
+                    });
+
+                }
+
+
+
+            }
+            if (a == "CHILDWITHBED") {
+
+                var addpersontype = true;
+                $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                    var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                    var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                    if (PassengerType == "CHILD + BED" && PassengerAge == AgeofIndividual ) {
+
+                        addpersontype = false;
+                    }
+
+
+                })
+                if (addpersontype == false) {
+                    $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                        var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                        var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                        var PassengerQty = $.trim($(this).find('td:eq(2)').text());
+                        if (PassengerType == "CHILD + BED" && PassengerAge == AgeofIndividual ) {
+                            var SumOfChildrensWithBed = SetQuantityAndAgeForChildrens(a, PassengerAge, PassengerQty);
+                           // $(this).find('td:last').text(SumOfChildrensWithBed);
+                            $(this).find('td:eq(2)').find('span').text(SumOfChildrensWithBed).parent().find('input').val(SumOfChildrensWithBed);
+                        }
+
+                    })
+                }
+
+                else {
+                     
+                    var Value = "CHILD + BED";
+                    var SumOfChildrensWithBed = SetQuantityAndAgeForChildrens(a, AgeofIndividual);
+                    var rowToAdd1 = $("#tblShowPassengersRoomNo tbody tr:last").clone();
+                    //$(rowToAdd1).find('td:eq(0)').text(Value);
+                    //$(rowToAdd1).find('td:eq(1)').text("");
+                    //$(rowToAdd1).find('td:eq(2)').text(SumOfChildrensWithBed);
+                    $(rowToAdd1).find('td:eq(0)').find('input:eq(1)').val('')
+                   // $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input').val(Value);
+                    $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input:eq(2)').val(Value);
+                    $(rowToAdd1).find('td:eq(1)').find('span').text(AgeofIndividual).parent().find('input').val(AgeofIndividual);
+                    $(rowToAdd1).find('td:eq(2)').find('span').text(SumOfChildrensWithBed).parent().find('input').val(SumOfChildrensWithBed);
+                    $("#tblShowPassengersRoomNo tbody").append(rowToAdd1);
+                    var curRowCnt = $('#tblShowPassengersRoomNo tbody tr').length - 2;
+                    var iRowCnt = curRowCnt + 1;
+                    $("#tblShowPassengersRoomNo tbody tr:last").find('input,span,div,small,button,select').each(function (iColCnt) {
+                         
+                        if (this.id == "hdnSeq") this.value = iRowCnt;
+
+                        if (this.id != undefined && this.id != "") {
+                            this.id = this.id.replace(curRowCnt, iRowCnt);
+                        }
+
+                        if (this.name != undefined && this.name != "") this.name = this.name.replace(curRowCnt, iRowCnt);
+
+                        if (this.aria_describedby != undefined) {
+                            this.aria_describedby = this.aria_describedby.replace(curRowCnt, iRowCnt);
+                        }
+                        if (this.attributes['data-valmsg-for'] != undefined && this.attributes['data-valmsg-for'] != "") this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRowCnt, iRowCnt);
+                    });
+                }
+
+            }
+           
+            if (a == "INFANT") {
+
+                var addpersontype = true;
+                $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                    var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                    var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                    if (PassengerType == "INFANT" && PassengerAge == AgeofIndividual) {
+
+                        addpersontype = false;
+                    }
+
+
+                })
+                if (addpersontype == false) {
+                    $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                        var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                        var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                        var PassengerQty = $.trim($(this).find('td:eq(2)').text());
+                        if (PassengerType == "INFANT" && PassengerAge == AgeofIndividual) {
+                            var SumOfChildrensWithBed = SetQuantityAndAgeForChildrens(a, PassengerAge, PassengerQty);
+                            // $(this).find('td:last').text(SumOfChildrensWithBed);
+                            $(this).find('td:eq(2)').find('span').text(SumOfChildrensWithBed).parent().find('input').val(SumOfChildrensWithBed);
+                        }
+
+                    })
+                }
+
+                else {
+                     
+                    var Value = "INFANT";
+                    var SumOfChildrensWithBed = SetQuantityAndAgeForChildrens(a, AgeofIndividual);
+                    var rowToAdd1 = $("#tblShowPassengersRoomNo tbody tr:last").clone();
+                    //$(rowToAdd1).find('td:eq(0)').text(Value);
+                    //$(rowToAdd1).find('td:eq(1)').text("");
+                    //$(rowToAdd1).find('td:eq(2)').text(SumOfChildrensWithBed);
+                    $(rowToAdd1).find('td:eq(0)').find('input:eq(1)').val('')
+                    // $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input').val(Value);
+                    $(rowToAdd1).find('td:eq(0)').find('span').text(Value).parent().find('input:eq(2)').val(Value);
+                    $(rowToAdd1).find('td:eq(1)').find('span').text(AgeofIndividual).parent().find('input').val(AgeofIndividual);
+                    $(rowToAdd1).find('td:eq(2)').find('span').text(SumOfChildrensWithBed).parent().find('input').val(SumOfChildrensWithBed);
+                    $("#tblShowPassengersRoomNo tbody").append(rowToAdd1);
+                    var curRowCnt = $('#tblShowPassengersRoomNo tbody tr').length - 2;
+                    var iRowCnt = curRowCnt + 1;
+                    $("#tblShowPassengersRoomNo tbody tr:last").find('input,span,div,small,button,select').each(function (iColCnt) {
+
+                        if (this.id == "hdnSeq") this.value = iRowCnt;
+
+                        if (this.id != undefined && this.id != "") {
+                            this.id = this.id.replace(curRowCnt, iRowCnt);
+                        }
+
+                        if (this.name != undefined && this.name != "") this.name = this.name.replace(curRowCnt, iRowCnt);
+
+                        if (this.aria_describedby != undefined) {
+                            this.aria_describedby = this.aria_describedby.replace(curRowCnt, iRowCnt);
+                        }
+                        if (this.attributes['data-valmsg-for'] != undefined && this.attributes['data-valmsg-for'] != "") this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRowCnt, iRowCnt);
+                    });
+                }
+
+            }
+
+            ShowHideAlertSuccessDivOnRowAddRemove();
+        }
+        if (status == "remove")
+        {
+             
+            $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                 
+                var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                var PassengerCount = $.trim($(this).find('td:eq(2)').text());
+                var IsIDPresent = $(this).find('td:eq(0)').find('input:eq(1)').val();
+                //let PassengerCount = $(this).find('td:last').text();
+                if ((PassengerType == "ADULT")) {
+
+                    if (!isNaN(sumOfPersons)) {
+                        //$(this).find('td:last').text(sumOfPersons);
+                        $(this).find('td:last').find('span').text(sumOfPersons).parent().find('input').val(sumOfPersons);
+                    }
+                    else {
+                        //$(this).find('td:last').text("");
+                        $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                    }
+
+                }
+                else if ((PassengerType == "CHILD + BED") && $.trim(PassengerAge) == $.trim(AgeofIndividual)) {
+                     
+                    if (RoomName == "CHILDWITHBED") {
+                        //if (IsIDPresent == "") {
+                            SumOfChildrensWithBed = 0;
+                        //}
+                        //else {
+                        //    SumOfChildrensWithBed = parseInt(PassengerCount) - parseInt(QuantityOfIndividual);
+                        //}
+                        if (!isNaN(SumOfChildrensWithBed)) {
+                            //$(this).find('td:last').text(SumOfChildrensWithBed);
+                            $(this).find('td:last').find('span').text(SumOfChildrensWithBed).parent().find('input').val(SumOfChildrensWithBed);
+                        }
+                        else {
+
+                            //$(this).find('td:last').text("");
+                            $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                        }
+                    }
+                }
+                else if ((PassengerType == "CHILD - BED") && $.trim(PassengerAge) == $.trim(AgeofIndividual)) {
+                     
+                    if (RoomName == "CHILDWITHOUTBED") {
+                        //if (IsIDPresent == "") {
+                            SumOfChildrensWithBed = 0;
+                        //}
+                        //else {
+                        //    SumOfChildrensWithoutBed = parseInt(PassengerCount) - parseInt(QuantityOfIndividual);
+                        //}
+                        if (!isNaN(SumOfChildrensWithoutBed) ) {
+                            //$(this).find('td:last').text(SumOfChildrensWithoutBed);
+                            $(this).find('td:last').find('span').text(SumOfChildrensWithoutBed).parent().find('input').val(SumOfChildrensWithoutBed);
+                        }
+                        else {
+                            //$(this).find('td:last').text("");
+                            $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                        }
+                    }
+                }
+                else if ((PassengerType == "INFANT") && $.trim(PassengerAge) == $.trim(AgeofIndividual)) {
+                     
+                    if (RoomName == "INFANT") {
+                        //if (IsIDPresent == "") {
+                            SumOfChildrensWithBed = 0;
+                        //}
+                        //else {
+                        //    SumOfChildrensWithoutBed = parseInt(PassengerCount) - parseInt(QuantityOfIndividual);
+                        //}
+                        if (!isNaN(SumOfChildrensWithoutBed)) {
+                            //$(this).find('td:last').text(SumOfChildrensWithoutBed);
+                            $(this).find('td:last').find('span').text(SumOfChildrensWithoutBed).parent().find('input').val(SumOfChildrensWithoutBed);
+                        }
+                        else {
+                            //$(this).find('td:last').text("");
+                            $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                        }
+                    }
+                }
+                else {
+
+                }
+            })
+        }
+        else {
+             
+            $("#tblShowPassengersRoomNo tbody tr").each(function () {
+                 
+                var PassengerType = $.trim($(this).find('td:first').text()).toUpperCase();
+                var PassengerAge = $.trim($(this).find('td:eq(1)').text());
+                //let PassengerCount = $(this).find('td:last').text();
+                if ((PassengerType == "ADULT")) {
+
+                    if (!isNaN(sumOfPersons)) {
+                        //$(this).find('td:last').text(sumOfPersons);
+                        $(this).find('td:last').find('span').text(sumOfPersons).parent().find('input').val(sumOfPersons);
+                    }
+                    else {
+                        //$(this).find('td:last').text("");
+                        $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                    }
+
+                }
+                else if ((PassengerType == "CHILD + BED") && $.trim(PassengerAge) == $.trim(AgeofIndividual) ) {
+                     
+                    if (RoomName == "CHILDWITHBED") {
+                        SumOfChildrensWithBed = QuantityOfIndividual;
+                        if (!isNaN(SumOfChildrensWithBed)) {
+                            //$(this).find('td:last').text(SumOfChildrensWithBed);
+                            $(this).find('td:last').find('span').text(SumOfChildrensWithBed).parent().find('input').val(SumOfChildrensWithBed);
+                        }
+                        else {
+
+                            //$(this).find('td:last').text("");
+                            $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                        }
+                    }
+                }
+                else if ((PassengerType == "CHILD - BED") && $.trim(PassengerAge) == $.trim(AgeofIndividual)) {
+                     
+                    if (RoomName == "CHILDWITHOUTBED") {
+                        SumOfChildrensWithoutBed = QuantityOfIndividual;
+                        if (!isNaN(SumOfChildrensWithoutBed)) {
+                            //$(this).find('td:last').text(SumOfChildrensWithoutBed);
+                            $(this).find('td:last').find('span').text(SumOfChildrensWithoutBed).parent().find('input').val(SumOfChildrensWithoutBed);
+                        }
+                        else {
+                            //$(this).find('td:last').text("");
+                            $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                        }
+                    }
+                }
+                else if ((PassengerType == "INFANT") && $.trim(PassengerAge) == $.trim(AgeofIndividual)) {
+                     
+                    if (RoomName == "INFANT") {
+                        SumOfChildrensWithoutBed = QuantityOfIndividual;
+                        if (!isNaN(SumOfChildrensWithoutBed)) {
+                            //$(this).find('td:last').text(SumOfChildrensWithoutBed);
+                            $(this).find('td:last').find('span').text(SumOfChildrensWithoutBed).parent().find('input').val(SumOfChildrensWithoutBed);
+                        }
+                        else {
+                            //$(this).find('td:last').text("");
+                            $(this).find('td:last').find('span').text("").parent().find('input').val("");
+                        }
+                    }
+                }
+                else {
+
+                }
+            })
+        }
+
+    }
+
+    function ShowHideAlertSuccessDiv() {
+
+        var AreEqual = true;
+        $("#tblRoomsData tbody tr").each(function () {
+            var currentvalue = $.trim($(this).find('td:eq(3)').text());
+            var tdvalue = $(this).find('td:eq(4)');
+            var newvalue = tdvalue.find('input').val();
+            if (currentvalue != newvalue) {
+                AreEqual = false;
+            }
+
+        })
+        if (AreEqual == false) {
+            $("#AlertDiv").show();
+            //$("#SuccessDiv").hide();
+
+        }
+        else {
+            $("#AlertDiv").hide();
+            //$("#SuccessDiv").show();
+        }
+    }
+
+    function ShowHideAlertSuccessDivOnRowAddRemove() {
+        debugger;
+        var rowCountIntable = $('#tblRoomsData tbody tr').length;
+        var OrignalCount = $('#NoofRows').val();
+        if (rowCountIntable != OrignalCount) {
+            $("#AlertDiv").show();
+            $("#SuccessDiv").hide();
+
+        }
+        else {
+            $("#AlertDiv").hide();
+            $("#SuccessDiv").show();
+        }
+    }
+    function ShowHideAlertSuccessDivOnRowAddRemove1() {
+        
+            $("#AlertDiv").show();
+            $("#SuccessDiv").hide();
+       
+    }
+
+    function CheckIfTextBoxesAreEmpty() {
+        var IsTextBoxEmpty = true
+        $("#tblRoomsData tbody tr").each(function () {
+            if ($(this).find('td:eq(4)').find('input').val() == 0 || $(this).find('td:eq(4)').find('input').val() == '') {
+                IsTextBoxEmpty = false;
+
+            }
+
+        })
+        return IsTextBoxEmpty;
+    }
+
+    function IfCheckBoxesAreChecked() {
+        var IsanyChecked = true;
+        if (!$("#tblsuppliers input:checkbox:checked").length > 0 && $("#SuppliersCount").val() > 0) {
+            IsanyChecked = false;
+            $("#showhotelNotSelectError").show();
+             $("#showhotelNotSelectError").text('Please Select Atleast One Hotel');
+
+        }
+        if (IsanyChecked) {
+            $("#showhotelNotSelectError").hide();
+             $("#showhotelNotSelectError").text('');
+        }
+        return IsanyChecked;
+    }
+    function SetQuantityAndAgeForChildrens(childType = "", childAge = "",ChildQty = "") {
+         
+        var ChildRoomType = childType;
+        var ChildRoomAge = childAge;
+        if (ChildQty != null && ChildQty !="") {
+            var ChildQuantity = parseInt(ChildQty);
+        }
+        else {
+            ChildQuantity = 0;
+        }
+        var SumofChildNo = 0;
+        $("#tblRoomsData tbody tr").each(function () {
+            let RoomTypeIntable = $(this).find('td:eq(0)');
+            let RoomNme = RoomTypeIntable.find('span').text();
+            let Ageobj = $(this).find('td:eq(2)');
+            let Age = Ageobj.find('span').text();
+            let qty = parseInt($(this).find('td:eq(4)').find('input').val());
+            if (RoomNme == ChildRoomType && ChildRoomAge == Age) {
+
+                SumofChildNo = qty + ChildQuantity;
+
+            }
+
+
+        })
+        return SumofChildNo;
+
+    }
+    $(".mfp-close,.close-popup").click(
+        function () {
+            debugger;
+            var bookingnumber = $("#bookingNumber").val();
+            var redirectURL = '@Url.Action("ViewBookingSummary", "Operations")';
+            redirectURL += "?BookingNumber=" + bookingnumber;
+            window.location.href = redirectURL;
+
+        }
+    )
+</script>
+
+
+
+
+
+
+
+
+

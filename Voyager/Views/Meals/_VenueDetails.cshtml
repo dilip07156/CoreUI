@@ -1,0 +1,155 @@
+﻿@using Voyager.App.ViewModels
+@model VenueDetails
+<!-- Action Popup : Starts -->
+<!-- Popup : Start -->
+<style>
+    .btn-pop-closepopup {
+        float: right;
+    }
+</style>
+<div class="action-popup table-responsive div-pop-sec valign-top-tbl">
+    <a href="#" class="btn-pop-closepopup" style="display:none;"><i class="fa-custom-close lg"></i></a>
+    <h3 class="text-left">
+        <span class="headertextposition" style="text-transform: capitalize;">
+            @Html.DisplayFor(m => m.MealType, new { @id = "PositionType" })
+        </span>
+        <label class="chk-cont AddEditSH" id="lblApplyAcrossDays">
+            @Html.CheckBoxFor(m => m.ApplyAcrossDays, new { @id = "chkApplyAcrossDays", name = "aply-type" }) Apply across days
+        </label>
+    </h3>
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+
+    <table class="table table-bordered tbl-theme-03 top-align scroller">
+        <thead>
+            <tr>
+                <th class="col-md-2">Venue</th>
+                <th class="col-md-2">Services</th>
+                <th class="col-md-1">Keep As</th>
+                <th class="notes col-md-1"><span>Remarks</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="VenueRow_0" class="MealProductRangeRow">
+                <td class="text-left">
+                    <div class="form-control">
+                        <label class="frm-sub-label txt-orange">City Name</label>
+                        @Html.TextBoxFor(m => m.CityName, new { @class = "form-control bindCity", @id = "txtCityNameUI" })
+                        @Html.HiddenFor(m => m.CityID, new { @id = "txtCityName" })
+                        <label class="text-danger" id="lblcitynm"></label>
+                    </div>
+                    <div class="form-control">
+                        @Html.HiddenFor(m => m.QRFID, new { @id = "hfQRFId" })
+                        @Html.HiddenFor(m => m.PositionId, new { @id = "hfPositionId" })
+                        @Html.HiddenFor(m => m.PositionSequence, new { @id = "hfPositionSeq" })
+
+                        @Html.HiddenFor(m => m.DayID, new { @id = "hfDayID" })
+                        <input type="hidden" id="hfindex" />
+                        <label class="frm-sub-label txt-orange">Product Name</label>
+                        @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control bindprodmeals", @id = "txtVenueNameUI" })
+                        <label class="text-danger" id="lblveneuenm"></label>
+                        @Html.HiddenFor(m => m.ProductId, new { @id = "txtVenueName", @class = "clsProductID" })
+                        @Html.HiddenFor(m => m.ProductType, new { @id = "txtVenueName_Type" })
+                        @Html.HiddenFor(m => m.ProductTypeId, new { @id = "txtVenueName_TypeID" })
+                        @Html.HiddenFor(m => m.PlaceHolder, new { @id = "txtVenueName_PlaceHolder" })
+                        @Html.HiddenFor(m => m.SupplierId, new { @id = "hfSupplierId" })
+                        @Html.HiddenFor(m => m.SupplierName, new { @id = "hfSupplierName" })
+                        @Html.HiddenFor(m => m.RoutingDaysID, new { @id = "hfRoutingDaysID" })
+                        @Html.HiddenFor(m => m.QuoteRoomPassanger, new { @id = "hfQuoteRmPasList" })
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="frm-sub-label txt-orange">Start Time</label>
+                                @Html.TextBoxFor(m => m.StartTime, new { @class = "form-control time24", @id = "StartTimeUI", @placeholder = "00.00" })
+                                <label class="text-danger" id="lblStartTime"></label>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="frm-sub-label txt-orange">End Time</label>
+                                @Html.TextBoxFor(m => m.EndTime, new { @class = "form-control time24", @id = "EndTimeUI", @placeholder = "00.00" })
+                                <label class="text-danger" id="lblEndTime"></label>
+                            </div>
+                        </div>                         
+                    </div>
+                    <div class="form-group">
+                        <label class="frm-sub-label txt-orange">Meal Type</label>
+                        @Html.DropDownListFor(m => m.BudgetCategory, new SelectList(Model.ProdCategoryList, "ProductCategoryId", "ProductCategoryName"), "Select Meal Type", new { @class = "form-control", @id = "ddlMealType" })
+                        <label class="text-danger" id="lblmealtype"></label>
+                    </div>
+                    <div class="form-group">
+                        @{
+                            var TransportationList = new List<SelectListItem>();
+
+                            TransportationList.Add(new SelectListItem { Text = "Through Coach", Value = "Through Coach" });
+                            TransportationList.Add(new SelectListItem { Text = "With Transfer", Value = "With Transfer" });
+                            TransportationList.Add(new SelectListItem { Text = "Without Transfer", Value = "Without Transfer" });
+                            TransportationList.Add(new SelectListItem { Text = "Not Decided", Value = "Not Decided" });
+                        }
+                        <label class="frm-sub-label txt-orange">Transportation</label>
+                        @Html.DropDownListFor(m => m.TransferDetails, TransportationList, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.TransferDetails, "", new { @class = "error" })
+                    </div>
+                    @*@Html.Partial("_PositionTransportOptions", new ProdTransferDetails { TransferDetails = Model.TransferDetails, Index = 0 })
+                        @Html.HiddenFor(m => m.TransferDetails, new { @id = "hdnTransferDetails" })*@
+                </td>
+                @{
+                    Model.MealProductRange[0].PositionRoomsData.RowNo = 0;
+                    Model.MealProductRange[0].PositionRoomsData.PositionType = "MealProductRange[";
+                }
+                @Html.Partial("_PositionRoomDetails", Model.MealProductRange[0].PositionRoomsData)
+                <td id="divRoomDetails" class="divRoomDetails" style="display:none;"></td>
+
+                <td>
+                    @{
+                        var keepasList = new List<SelectListItem>();
+                        keepasList.Add(new SelectListItem { Text = "Included", Value = "Included" });
+                        keepasList.Add(new SelectListItem { Text = "Optional", Value = "Optional" });
+                        keepasList.Add(new SelectListItem { Text = "Supplement", Value = "Supplement" });
+                    }
+
+                    @Html.DropDownListFor(m => m.KeepAs, keepasList, new { @class = "form-control", @id = "ddlKeepAs" })
+
+                </td>
+                <td>
+                    <div class="price-foc-sec">
+                        <div class="tool-tip info Prices">
+                            <span class="msg txt-green" style="display:none;">Prices Added</span>
+                            <span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+                            <a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+                            <div id="divPrices" class="tooltip-cont type03">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="tool-tip info FOC">
+                            <span class="msg txt-green" style="display:none;">FOC Added</span>
+                            <span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+                            <a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+                            <div id="divFOC" class="tooltip-cont type03">
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="row row-sm">
+                        <div class="col-md-12">
+                            <span class="frm-sub-label txt-orange">For TL</span>
+                            @Html.TextAreaFor(m => m.TLRemarks, new { @id = "txtVTLRemarks", @maxlength = "250", @class = "alphanumeric" })
+                        </div>
+                    </div>
+                    <div class="row row-sm">
+                        <div class="col-md-12">
+                            <span class="frm-sub-label txt-orange">For OPS</span>
+                            @Html.TextAreaFor(m => m.OPSRemarks, new { @id = "txtVOPSRemarks", @maxlength = "250", @class = "alphanumeric" })
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="action align-right top-gap-md">
+        <a class="btn btn-primary VenueContinue" id="aContinue">Continue</a>
+    </div>
+</div>
+<script src="~/js/Sales/Meals/MealVenue.js"></script>

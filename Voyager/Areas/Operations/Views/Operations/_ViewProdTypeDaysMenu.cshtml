@@ -1,0 +1,35 @@
+﻿@model Voyager.App.ViewModels.OpsProdTypeDaysMenuVM
+
+<div id="wrapper">
+    <span class="arrow scroller-left">&lt;</span>
+    <span class="arrow scroller-right">&gt;</span>
+    <!-- Unordered list representing the tabs -->
+    <ul class="sqr-tab-list" id="ulOpsBookingDaysMenu">
+        @*@{
+                @for (int i = Model.DaysList.Count+1; i < 25; i++)
+                {
+                    Model.DaysList.Add(new VGER_WAPI_CLASSES.AttributeValues() {Value="Day "+i, CityName="Test Test" });
+                }
+            }*@
+        @for (int i = 0; i < Model.DaysList.Count; i++)
+        {
+            <li data-id="@i" class='@(Model.DayName ==Model.DaysList[i].Value?"active":"")'>
+                <a href="#">
+                    <strong>
+                        <span id="spDayName">@Model.DaysList[i].Value</span> : <br>
+                        @if (string.IsNullOrWhiteSpace(Model.DaysList[i].CityName))
+                        {
+                            <span>&nbsp;</span>
+                        }
+                        else
+                        {
+                            @Model.DaysList[i].CityName
+                        }
+                    </strong>
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+<link href="~/resources/css/Operations/OPSDaysMenu.css" rel="stylesheet" />
+<script src="~/js/Operations/OPSDaysMenu.js"></script>

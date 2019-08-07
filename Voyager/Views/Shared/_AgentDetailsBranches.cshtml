@@ -1,0 +1,162 @@
+﻿<style>
+	.leftalign {
+		text-align: left !important;
+	}
+</style>
+
+@model Voyager.App.ViewModels.AgentDetails
+
+<div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+	@Html.HiddenFor(x => x.CompanyId, new { @id = "ParentCompanyId", @class = "clsParentCompanyId" })
+	@Html.HiddenFor(x => x.Issupplier, new { @id = "Issupplier", @class = "clsIssupplier" })
+	@Html.HiddenFor(x => x.IsForSalesAgent, new { @id = "IsForSalesAgent", @class = "clsIsForSalesAgent" })
+	@Html.HiddenFor(x => x.ProductSupplierId, new { @id = "ProductSupplierId", @class = "clsProductSupplierId" })
+	@if (Model.Branches.Count > 0)
+	{
+		<div class="tbl-actn-btns"><h4>Branches</h4></div>
+		<table class="table" id="tblBranches">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Code</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@for (int i = 0; i < Model.Branches.Count; i++)
+				{
+					<tr>
+						@Html.HiddenFor(x => x.Branches[i].ParentCompanyId, new { @id = "eslectedCompanyId", @class = "clsSelectedCompanyId" })
+						@Html.HiddenFor(x => x.Branches[i].BranchCompanyId, new { @id = "CompanyId", @class = "clsCompanyId" })
+						<td class="leftalign">@Model.Branches[i].BranchCompanyName</td>
+						<td class="leftalign">@Model.Branches[i].BranchCompanyCode</td>
+						<td style="text-align:center">
+							@if (Model.IsForSalesAgent == true)
+							{
+								<button class="btn btn-primary btn-sm btnViewNewAgentSales">View</button>
+								<button type="button" class="btn btn-primary btn-sm btnDeleteAgentSales" id="btnDeleteAgentSales">Delete</button>
+							}
+							else
+							{
+								<a href="#addNewDetails-popup" class="popup-inline btn btn-primary btn-sm btnViewNewBranch">View</a>
+								<button type="button" class="btn btn-primary btn-sm btnDeleteBranch" id="btnDeleteBranch">Delete</button>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+	<div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+		<div>
+			<input type="button" class="btn btn-primary addEditNewBranch" value="Add New Branch" /><br /><br />
+			<div id="divBranch" style="display:none"></div>
+		</div>
+	</div>
+</div>
+<div id="addNewDetails-popup"></div>
+
+<script>
+	$(".addEditNewBranch").click(function () {
+		if ($('#divBranch').css('display') === 'none') {
+
+			$('#divBranch').show();
+			var ParentCompanyId = $("#ParentCompanyId").val();
+			var Issupplier = $("#Issupplier").val();
+			var IsForSalesAgent = $("#IsForSalesAgent").val();
+			var ProductSupplierId = $("#ProductSupplierId").val();
+			var CompanyId = $(this).parents('tr').find('.clsCompanyId').val();
+			$.ajax({
+				type: "POST",
+				url: "/Agent/AddNewBranch",
+				data: { ParentCompanyId: ParentCompanyId, CompanyId: CompanyId, Issupplier: Issupplier, IsForSalesAgent: IsForSalesAgent, ProductSupplierId: ProductSupplierId },
+				success: function (response) {
+
+					$("#divBranch").html(response);
+					$('.mfp-close').hide();
+					$(".ajaxloader").hide();
+				},
+				error: function (response) {
+					alert(response);
+				}
+			});
+		}
+		else {
+			//$('#divBranch').hide();
+			alert('Please enter the Branch details.');
+		}
+	});
+
+	$('#tblBranches').on('click', '.btnViewNewBranch', function () {
+		 
+		var CompanyId = $(this).parents('tr').find('.clsCompanyId').val();
+		var Issupplier = $("#Issupplier").val();
+		if (Issupplier == "True")
+			window.location.href = "/Supplier/SupplierDetail?CompanyId=" + CompanyId;
+		else
+			window.location.href = "/Agent/AgentDetail?CompanyId=" + CompanyId;
+	});
+
+	$('#tblBranches').on('click', '.btnViewNewAgentSales', function (e) {
+		var CompanyId = $(this).parents('tr').find('.clsSelectedCompanyId').val();
+		var url = "/Agent/AgentDetail?CompanyId=" + CompanyId;
+		window.open(url, '_blank');
+	});
+
+	$('#tblBranches').on('click', '.btnDeleteBranch', function () {
+		$(".ajaxloader").show();
+		var ParentCompanyId = $("#ParentCompanyId").val();
+		var BranchCompanyId = $(this).parents('tr').find('.clsCompanyId').val();
+		$.ajax({
+			type: "POST",
+			url: "/Agent/DeleteBranch",
+			data: { ParentCompanyId: ParentCompanyId, CompanyId: BranchCompanyId },
+			//global: false,
+			success: function (response) {
+				if (response.status == "error") {
+					var text = response.responseText;
+					var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong>' + text + '</div>';
+					$("#messagealert").html(successmsg);
+				}
+				else {
+					GetBranches();
+					alert("Branch details deleted successfully.");
+				}
+				$(".ajaxloader").hide();
+			},
+			error: function () {
+				$(".ajaxloader").hide();
+			}
+		});
+
+	});
+
+	$('#tblBranches').on('click', '.btnDeleteAgentSales', function () {
+
+		var ParentCompanyId = $("#ParentCompanyId").val();
+		var ProductSupplierId = $("#ProductSupplierId").val();
+		var ProductSupplierSalesAgent_Id = $(this).parents('tr').find('.clsCompanyId').val();
+
+		$.ajax({
+			type: "POST",
+			url: "/Supplier/DeleteProductSalesAgent",
+			data: { CompanyId: ParentCompanyId, ProductSupplier_Id: ProductSupplierId, ProductSupplierSalesAgent_Id: ProductSupplierSalesAgent_Id },
+			global: false,
+			success: function (response) {
+
+				if (response.status == "error") {
+					var text = response.responseText;
+					var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong>' + text + '</div>';
+					$("#messagealert").html(successmsg);
+				}
+				else
+					GetProductSalesAgents();
+				$(".ajaxloader").hide();
+			},
+			error: function () {
+				$(".ajaxloader").hide();
+			}
+		});
+
+	});
+</script>

@@ -1,0 +1,60 @@
+@media (max-width: 1199px){
+    .tl.lg  {font-size: 45px;}
+    
+    .listing-table tr th    {font-size: 13px;}
+    .listing-table tr  .status  .tblcell-box strong {font-size: 13px;}
+    .listing-table tr .client-detail .name  {font-size: 13px;}
+    .listing-table tr .tour-info .ttl   {font-size: 13px;}
+    .listing-table tr .client-detail p  {font-size: 11px; line-height: 17px;}
+    .listing-table tr .client-detail .passenger-type    {font-size: 10px;}
+    .listing-table tr .enquiry-info span    {font-size: 13px;}
+    .listing-table tr .tour-info >span  {font-size: 11px; line-height: 17px;}
+    .listing-table tr .tour-info ul li  {font-size: 11px;}
+    .listing-table tr th.sm-txt {font-size: 11px;}
+    .contact-detail ul li   {font-size: 11px;}
+    .call-visit-time .ttl   {font-size: 10px;}
+    .listing-table tr .enquiry-info .ttl    {font-size: 10px;}
+    .listing-table tr  .whom  .tblcell-box span{font-size: 11px;}
+    .listing-table tr    .date-time .ttl    {font-size: 10px;}
+    .listing-table tr    .date-time .date   {font-size: 10px;}
+    .listing-table tr .past-client-info .new-client {font-size: 11px;}
+    .listing-table tr .past-client-info .client-status  {font-size: 11px;}
+    .client-detail .key-info ul li  {font-size: 11px;} 
+}
+
+@media (max-width: 991px){
+    .left-content   {padding-top: 0px;}
+    .tl.lg  {font-size: 40px;}
+}
+
+@media (max-width: 767px){
+    .login > .header .logo  {padding: 10px 0;}
+    .login > .header .logo img  {width: 110px;}
+    .bgcontent  {padding-top: 90px; padding-bottom: 25px;}
+    .left-content   {text-align: center; padding-bottom: 20px;}
+    .tl.lg  {font-size:35px;}
+    .cont   {padding-top: 15px; line-height: 23px;}
+    .action-box {width: 420px; max-width: 100%; margin: 0 auto;}
+    .action-box {min-height: 100px;}
+    .action-box {padding: 30px 15px 15px;}
+    .action-box .head-tl    {margin-bottom: 15px;}
+    .actn-list > li + li    {margin-top: 15px;}
+    .action-box .btn-wrap   {margin-top: 25px;}
+    .action-box .txt-cont   {margin-top: 0px;}
+    
+    
+    .products-contracting   {width: 100%;}
+    .profile-status ul li   {width: 50%; padding-bottom: 10px;}
+    .profile-status {padding-bottom: 0px;}
+    .enquiry-period {width: 100%; float: none;}
+    .enquiry-action {width: auto; padding-top: 15px; float: none; display: inline-block;}
+    .enquiry-period-action  {text-align: center; float: none;}
+    
+    
+}
+@media (max-width: 479px){
+    .action-box {width: 100%}
+    .action-box .head-tl    {font-size: 20px;}
+    .tl.lg  {font-size: 26px;}
+    .add-to-menu.products-contracting .detail-container .form-sec .mobile-xs-12 {width: 100%;}
+}

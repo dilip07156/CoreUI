@@ -1,0 +1,194 @@
+﻿@model Voyager.App.ViewModels.ConsolidatedSummaryViewModel
+<div class="wrapper">
+    <div class="main-content form-theme-04">
+        <div class="">
+            <div class="pg-container">               
+                        @if (Model.HeaderList.Count > 0)
+                        {                          
+                            <div class="custom-mob-tbl table-responsive mrgn-tp20">                               
+                                <table class="table ">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" class="col-md1">Package Price</th>
+                                            <th rowspan="2" class="col-md1">FOC</th>
+
+                                            @for (int i = 0; i < Model.HeaderList.Count; i++)
+                                            {                                             
+                                                <th>@Model.HeaderList[i].DisplayRoomName</th>
+                                            }
+
+                                        </tr>
+                                        <tr>
+                                            @for (int i = 0; i < Model.HeaderList.Count; i++)
+                                            {
+                                                <th class="col-md1">@Model.HeaderList[i].QRFCurrency</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.QRFPackagePriceList.Count; i++)
+                                        {
+                                            <tr>
+                                                <td>@Model.QRFPackagePriceList[i].PaxSlab Passengers</td>
+                                                <td class="text-center">
+                                                    @for (int p = 0; p < Model.QRFPkgPositionTotalCost.Count; p++)
+                                                    {
+                                                        @if (Model.QRFPackagePriceList[i].PaxSlabId == Model.QRFPkgPositionTotalCost[p].PaxSlabId)
+                                                        {
+                                                            @Model.QRFPkgPositionTotalCost[p].focValue
+                                                        }
+                                                    }
+                                                </td>
+                                                @for (int j = 0; j < Model.HeaderList.Count; j++)
+                                                {
+                                                    <td class="text-center">
+                                                        @for (int z = 0; z < Model.QRFPackagePriceDataList.Count; z++)
+                                                        {
+                                                            @if (Model.QRFPackagePriceList[i].PaxSlabId == Model.QRFPackagePriceDataList[z].PaxSlabId)
+                                                            {
+                                                                @if (Model.QRFPackagePriceDataList[z].RoomName == Model.HeaderList[j].RoomName && Model.QRFPackagePriceDataList[z].Age == Model.HeaderList[j].Age)
+                                                                {
+                                                                    @Model.QRFPackagePriceDataList[z].SellPrice.ToString("0.00")
+                                                                }
+                                                            }
+                                                        }
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                        @if (Model.QRFNonPkgSupplementPositions.Count > 0)
+                                        {
+                                            <tr class="light-blue-bg">
+                                                <td colspan="@(Model.HeaderList.Count+2)"><h5><b>Supplements</b></h5></td>
+                                            </tr>
+                                            @for (int i = 0; i < Model.QRFNonPkgSupplementPositions.Count; i++)
+                                            {
+                                                @*<tr>
+                                                    <td colspan="@(Model.HeaderList.Count+2)"><b>@Model.QRFNonPkgSupplementPositions[i].ProductName (@Model.QRFNonPkgSupplementPositions[i].PositionType)</b></td>
+                                                </tr>*@
+                                                @for (int j = 0; j < Model.QRFNonPkgPriceSupplementPaxSlabs.Count; j++)
+                                                {
+                                                    <tr>
+                                                        @*<td>@Model.QRFNonPkgPriceSupplementPaxSlabs[j].PaxSlab Passengers</td>*@
+                                                        <td><b>@Model.QRFNonPkgSupplementPositions[i].ProductName (@Model.QRFNonPkgSupplementPositions[i].PositionType)</b></td>
+                                                        <td class="text-center">
+                                                            @*@for (int p = 0; p < Model.QRFNonPkgPositionTotalCost.Count; p++)
+                                                            {
+                                                                @if (Model.QRFNonPkgPriceSupplementPaxSlabs[j].PaxSlabId == Model.QRFNonPkgPositionTotalCost[p].PaxSlabId)
+                                                                {
+                                                                    @if (@Model.QRFNonPkgSupplementPositions[i].PositionId == Model.QRFNonPkgPositionTotalCost[p].PositionId)
+                                                                        {
+                                                                    //@Model.QRFNonPkgPositionTotalCost[p].TotalSellPriceForFOC
+                                                                    //@Model.QRFPkgPositionTotalCost[p].focValue
+                                                                    //}
+                                                                }
+                                                            }*@
+                                                        </td>
+                                                        @for (int k = 0; k < Model.HeaderList.Count; k++)
+                                                        {
+                                                            <td class="text-center">
+                                                                @for (int p = 0; p < Model.QRFNonPackagePriceSupplementList.Count; p++)
+                                                                {
+                                                                    @if (Model.QRFNonPkgPriceSupplementPaxSlabs[j].PaxSlabId == Model.QRFNonPackagePriceSupplementList[p].PaxSlabId)
+                                                                    {
+                                                                        @if (@Model.QRFNonPkgSupplementPositions[i].PositionId == Model.QRFNonPackagePriceSupplementList[p].PositionId)
+                                                                        {
+                                                                            @if (Model.QRFNonPackagePriceSupplementList[p].RoomName == "ADULT")
+                                                                            {
+                                                                                @if (Model.QRFNonPackagePriceSupplementList[p].RoomName == Model.HeaderList[k].Type)
+                                                                                {
+                                                                                    @Model.QRFNonPackagePriceSupplementList[p].SellPrice.ToString("0.00")
+
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @if (Model.QRFNonPackagePriceSupplementList[p].RoomName == Model.HeaderList[k].RoomName && Model.QRFNonPackagePriceSupplementList[p].Age == Model.HeaderList[k].Age)
+                                                                                {
+                                                                                    @Model.QRFNonPackagePriceSupplementList[p].SellPrice.ToString("0.00")
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+
+                                        @if (Model.QRFNonPkgOptionalPositions.Count > 0)
+                                        {
+                                            <tr class="light-blue-bg">
+                                                <td colspan="@(Model.HeaderList.Count+2)"><h5><b>Optionals</b></h5></td>
+                                            </tr>
+                                            @for (int i = 0; i < Model.QRFNonPkgOptionalPositions.Count; i++)
+                                            {
+                                                @*<tr>
+                                                    <td colspan="@(Model.HeaderList.Count+2)"><b>@Model.QRFNonPkgOptionalPositions[i].ProductName (@Model.QRFNonPkgOptionalPositions[i].PositionType)</b></td>
+                                                </tr>*@
+                                                @for (int j = 0; j < Model.QRFNonPkgPriceOptionalPaxSlabs.Count; j++)
+                                                {
+                                                    <tr>
+                                                        @*<td>@Model.QRFNonPkgPriceOptionalPaxSlabs[j].PaxSlab Passengers</td>*@
+                                                        <td><b>@Model.QRFNonPkgOptionalPositions[i].ProductName (@Model.QRFNonPkgOptionalPositions[i].PositionType)</b></td>
+                                                        <td class="text-center">
+                                                            @*@for (int p = 0; p < Model.QRFNonPkgPositionTotalCost.Count; p++)
+                                                            {
+                                                                @if (Model.QRFNonPkgPriceOptionalPaxSlabs[j].PaxSlabId == Model.QRFNonPkgPositionTotalCost[p].PaxSlabId)
+                                                                {
+                                                                    @if (@Model.QRFNonPkgOptionalPositions[i].PositionId == Model.QRFNonPkgPositionTotalCost[p].PositionId)
+                                                                        {
+                                                                    //@Model.QRFNonPkgPositionTotalCost[p].TotalSellPriceForFOC
+                                                                    //@Model.QRFPkgPositionTotalCost[p].focValue
+                                                                    //}
+                                                                }
+                                                            }*@
+                                                        </td>
+                                                        @for (int k = 0; k < Model.HeaderList.Count; k++)
+                                                        {
+                                                            <td class="text-center">
+                                                                @for (int p = 0; p < Model.QRFNonPackagePriceOptionalList.Count; p++)
+                                                                {
+                                                                    @if (Model.QRFNonPkgPriceOptionalPaxSlabs[j].PaxSlabId == Model.QRFNonPackagePriceOptionalList[p].PaxSlabId)
+                                                                    {
+                                                                        @if (@Model.QRFNonPkgOptionalPositions[i].PositionId == Model.QRFNonPackagePriceOptionalList[p].PositionId)
+                                                                        {
+                                                                            @if (Model.QRFNonPackagePriceOptionalList[p].RoomName == "ADULT")
+                                                                            {
+                                                                                @if (Model.QRFNonPackagePriceOptionalList[p].RoomName == Model.HeaderList[k].Type)
+                                                                                {
+                                                                                    @Model.QRFNonPackagePriceOptionalList[p].SellPrice.ToString("0.00")
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @if (Model.QRFNonPackagePriceOptionalList[p].RoomName == Model.HeaderList[k].RoomName && Model.QRFNonPackagePriceOptionalList[p].Age == Model.HeaderList[k].Age)
+                                                                                {
+                                                                                    @Model.QRFNonPackagePriceOptionalList[p].SellPrice.ToString("0.00")
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <label class="SHProposalDoc">No Content</label>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+

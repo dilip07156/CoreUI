@@ -1,0 +1,575 @@
+﻿@model Voyager.App.ViewModels.HotelsViewBookingViewModel
+@{
+    ViewData["Title"] = "ViewHotelsByBooking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="listing-content">
+                    @*<div class="enquiry-ttl-due-section btm-border">
+                            <h1>Hotels Department</h1>
+                        </div>*@
+                    @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+                </div>
+
+                <br />
+                <div id="divHotelRoute">
+                    @Html.HiddenFor(a => a.Bookings.BookingNumber, new { @id = "BookingNumber" })
+                    <ul class="sqr-tab-list" id="ulHotelRouts">
+                        @for (int i = 0; i < Model.Bookings.Positions.Count; i++)
+                        {
+                            string PositionDay = "Day " + ((Model.Bookings.Positions[i].STARTDATE - Model.Bookings.STARTDATE).Value.Days + 1).ToString();
+                            <li data-id="@i">
+                                <a href="#"><strong>@PositionDay : <br /> @Model.Bookings.Positions[i].City</strong> </a>
+                            </li>
+                        }
+                    </ul>
+                    @for (int i = 0; i < Model.Bookings.Positions.Count; i++)
+                    {
+                        int? starrating = 0;
+                        if (Model.Bookings.Positions[i].HotelStarRating != null && Model.Bookings.Positions[i].HotelStarRating > 0)
+                        {
+                            starrating = Model.Bookings.Positions[i].HotelStarRating;
+                        }
+                        <div class="tab-domestic-sec routehotelinfo" data-id="@i">
+                            <div class="sqr-tab-data">
+                                <h3>Hotel Additional Info</h3>
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].City_Id, new { @id = "ProdCityId" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].City, new { @id = "ProdCityName" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].Country, new { @id = "ProdCountryName" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].HotelStarRating, new { @id = "HotelStarRating" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].Attributes.BdgPriceCategory, new { @id = "BdgPriceCategory" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].Attributes.Location, new { @id = "ProdLocation" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].Attributes.ChainId, new { @id = "ProdChainId" })
+                                @Html.HiddenFor(a => a.Bookings.Positions[i].Attributes.Chain, new { @id = "ProdChain" })
+                                <table class="table table-bordered tbl-theme-02">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Check In</th>
+                                            <th>Check Out Date</th>
+                                            <th>Nights</th>
+                                            <th>Nationality</th>
+                                            <th>Board Basis</th>
+                                            <th>Stars</th>
+                                            <th>Location</th>
+                                            <th>Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>@Model.Bookings.Positions[i].STATUS</td>
+                                            <td>@Convert.ToDateTime(Model.Bookings.Positions[i].STARTDATE).ToString("MMMM dd")</td>
+                                            <td>@Convert.ToDateTime(Model.Bookings.Positions[i].ENDDATE).ToString("MMMM dd")</td>
+                                            <td>@Model.Bookings.Positions[i].DURATION</td>
+                                            <td>@Model.Bookings.GuestDetails.Nationality_Name</td>
+                                            <td>@Model.Bookings.Positions[i].HOTELMEALPLAN</td>
+                                            <td>
+                                                @if (starrating == 1)
+                                                {
+                                                    <img src="~/resources/images/proposal-report/one-star.png">
+                                                }
+                                                else if (starrating == 2)
+                                                {
+                                                    <img src="~/resources/images/proposal-report/two-star.png">
+                                                }
+                                                else if (starrating == 3)
+                                                {
+                                                    <img src="~/resources/images/proposal-report/three-star.png">
+                                                }
+                                                else if (starrating == 4)
+                                                {
+                                                    <img src="~/resources/images/proposal-report/four-star.png">
+                                                }
+                                                else if (starrating == 5)
+                                                {
+                                                    <img src="~/resources/images/proposal-report/five-star.png">
+                                                }
+                                            </td>
+                                            @if (Model.Bookings.Positions[i].Attributes != null)
+                                            {
+                                                <td>
+                                                    <span>@Model.Bookings.Positions[i].Attributes.Location</span>
+                                                </td>
+                                                <td>
+                                                    <span>@Model.Bookings.Positions[i].Attributes.BdgPriceCategory</span>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                                <td></td>
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <hr>
+                                <br>
+                                <div class="row similar-hotel-cont">
+                                    @Html.HiddenFor(a => a.Bookings.Positions[i].Position_Id, new { @class = "BookingPositionId" })
+                                    @Html.HiddenFor(a => a.Bookings.Positions[i].Product_Id, new { @class = "BookingProductId" })
+                                    <div class="col-lg-8">
+                                        <h3>Currently Selected Product</h3>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <a href="#SimilarHotels-popup" class="btn btn-success btn-md popup-inline clsSimilarHotel">Create Hotel Request Mailing</a>
+                                    </div>
+                                </div>
+                                @{ var srpVM = Model.SRPViewModelList.Where(a => a.PositionId == Model.Bookings.Positions[i].Position_Id).FirstOrDefault();
+                                    if (srpVM != null)
+                                    {
+                                        @Html.Partial("~/Areas/Product/Views/ProductSRP/_ProductInfo.cshtml", srpVM.ProductsSRPViewModel)
+
+                                        @if (Model.Bookings.Positions[i].BookingRoomsAndPrices.Count > 0)
+                                        {
+                                            <div class="pkg-lists-table">
+                                                <table class="tbl-theme-02">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30%">Category</th>
+                                                            <th width="70%">Rooms / Budget</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="bg-yellow">
+                                                            <td>
+                                                                <b>@Model.Bookings.Positions[i].BookingRoomsAndPrices[0].CategoryName Room</b>
+                                                            </td>
+                                                            <td class="col-dates">
+                                                                <ul>
+                                                                    @for (int j = 0; j < Model.Bookings.Positions[i].BookingRoomsAndPrices.Count; j++)
+                                                                    {
+                                                                        <li>
+                                                                            <div>
+                                                                                <div class="td-pkg-price" style="width:5%;">@Model.Bookings.Positions[i].BookingRoomsAndPrices[j].Req_Count</div>
+                                                                                <div class="td-pkg-price" style="width:10%;">@Model.Bookings.Positions[i].BookingRoomsAndPrices[j].RoomName</div>
+                                                                                <div class="td-pkg-price" style="width:10%;">@Model.Bookings.Positions[i].BookingRoomsAndPrices[j].PersonType</div>
+                                                                                <div class="td-pkg-price" style="width:10%;">@Model.Bookings.Positions[i].BookingRoomsAndPrices[j].BudgetPrice (@Model.Bookings.Positions[i].BookingRoomsAndPrices[j].BuyCurrency_Name)</div>
+                                                                                <div class="td-pkg-price" style="width:10%;">@Model.Bookings.Positions[i].BookingRoomsAndPrices[j].ChargeBasis</div>
+                                                                            </div>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        }
+                                    }
+                                }
+                                <hr>
+                                <h3>Request Status</h3>
+                                <p>Current Status of Hotel Requests</p>
+
+                                <label id="ddlFilter" class="col-sm-3">
+                                    <label>Status</label>
+                                    @Html.DropDownList("FilterStatus", new SelectList(Model.Status.Where(x => x.Attribute_Id == Model.Bookings.Positions[i].Position_Id), "AttributeName", "AttributeName"), "All", new { @class = "form-control form-control-sm filter ddlStatus" })
+                                </label>
+                                <div class="custom-mob-tbl table-responsive valign-top-tbl" style="width:100%">
+                                    <table class="table table-bordered tbl-theme-02 tblBooking" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:42px">Sent</th>
+                                                <th style="width:55px"><u>Hotel</u></th>
+                                                <th style="width:49px">Supplier</th>
+                                                <th style="width:49px">Contact</th>
+                                                <th style="width:48px"><u>Status</u></th>
+                                                <th style="width:27px"><u>Twin Rate</u></th>
+                                                <th style="width:86px">Actions</th>
+                                                <th class="nocontent"></th>
+                                                <th class="nocontent"></th>
+                                                <th style="width:52px">Select Hotel</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.Bookings.Positions[i].AlternateServices.Count > 0)
+                                            {
+                                                @for (int j = 0; j < Model.Bookings.Positions[i].AlternateServices.Count; j++)
+                                                {
+                                                    string viewurl = "";
+
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(a => a.Bookings.Positions[i].AlternateServices[j].AlternateServies_Id, new { @class = "AlternateServicesId" })
+                                                            @Html.HiddenFor(x => x.Bookings.Positions[i].AlternateServices[j].Availability_Status, new { @class = "clsAvailabilityStatus" })
+                                                            @if (Model.Bookings.Positions[i].AlternateServices[j].Requested_On != null)
+                                                            {
+                                                                <span>@Convert.ToDateTime(Model.Bookings.Positions[i].AlternateServices[j].Requested_On).ToString("dd/MM/yyyy")</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @Model.Bookings.Positions[i].AlternateServices[j].Product_Name
+                                                        </td>
+                                                        @if (Model.Bookings.Positions[i].AlternateServices[j].SupplierInfo != null)
+                                                        {
+                                                            <td>@Model.Bookings.Positions[i].AlternateServices[j].SupplierInfo.Name</td>
+                                                            <td class="wrap-email-tbl-cell"><p>@Model.Bookings.Positions[i].AlternateServices[j].SupplierInfo.Contact_Email</p></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                            <td></td>
+                                                        }
+                                                        <td>
+                                                            @Model.Bookings.Positions[i].AlternateServices[j].Availability_Status
+                                                        </td>
+                                                        <td>
+                                                            @{
+                                                                if (!string.IsNullOrEmpty(Model.Bookings.Positions[i].AlternateServices[j].PPTwin_Rate.ToString()))
+                                                                {
+                                                                    var twinroom = Model.Bookings.Positions[i].AlternateServices[j]?.Request_RoomsAndPrices?.Where(a => a.RoomName == "TWIN").FirstOrDefault();
+                                                                    if (twinroom != null && twinroom.BuyPrice != null && Convert.ToInt32(twinroom.BuyPrice) != 0 && !string.IsNullOrEmpty(twinroom.BuyCurrency_Name))
+                                                                    {
+                                                                        <span>@Model.Bookings.Positions[i].AlternateServices[j].PPTwin_Rate (@twinroom.BuyCurrency_Name)</span>
+                                                                    }
+                                                                }
+                                                            }
+                                                        </td>
+                                                        <td style="text-align:right">
+                                                            @if (Model.Bookings.Positions[i].AlternateServices[j].Availability_Status == "AVAILABLE")
+                                                            {
+                                                                viewurl = "/Hotels/HotelAvailabilityRequest?bn={{bn}}&pid={{pid}}&asid={{asid}}&st=pending&om=v&clr=ui&pagename=view";
+                                                                viewurl = viewurl.Replace("{{bn}}", Model.Bookings.BookingNumber);
+                                                                viewurl = viewurl.Replace("{{pid}}", Model.Bookings.Positions[i].Position_Id);
+                                                                viewurl = viewurl.Replace("{{asid}}", Model.Bookings.Positions[i].AlternateServices[j].AlternateServies_Id);
+                                                                @*<a class="btn btn-primary btn-md" href="@viewurl">View</a>*@
+                                                                @Html.Hidden("hdnViewRequestURL", viewurl)
+                                                                <a href="#ViewHotelRequest-popup" class="btn btn-success btn-sm popup-inline ViewHotelRequest">View</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-primary btn-sm disabled">View</button>
+                                                            }
+                                                        </td>
+                                                        <td style="text-align:right">
+                                                            @if (Model.Bookings.Positions[i].AlternateServices[j].Availability_Status == "PENDING")
+                                                            {
+                                                                viewurl = "/Hotels/HotelAvailabilityRequest?bn={{bn}}&pid={{pid}}&asid={{asid}}&st=pending&om=e&clr=ui&pagename=amend";
+                                                                viewurl = viewurl.Replace("{{bn}}", Model.Bookings.BookingNumber);
+                                                                viewurl = viewurl.Replace("{{pid}}", Model.Bookings.Positions[i].Position_Id);
+                                                                viewurl = viewurl.Replace("{{asid}}", Model.Bookings.Positions[i].AlternateServices[j].AlternateServies_Id);
+                                                                @Html.Hidden("hdnViewRequestURL", viewurl)
+                                                                <a href="#ViewHotelRequest-popup" class="btn btn-warning btn-sm popup-inline ViewHotelRequest">Amend</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-warning btn-sm disabled">Amend</button>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (Model.Bookings.Positions[i].AlternateServices[j].Availability_Status == "PENDING" && Model.Bookings.Positions[i].AlternateServices[j].Request_Status == "Sent")
+                                                            {
+                                                                <button type="button" class="btn btn-danger btn-sm remind-supplier">Remind</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-danger btn-sm disabled">Remind</button>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (Model.Bookings.Positions[i].AlternateServices[j].Availability_Status == "AVAILABLE") //|| Model.Bookings.Positions[i].AlternateServices[j].Availability_Status == "WAITLIST"
+                                                            {
+                                                                viewurl = "/Hotels/_ActivateHotelRequest?bn={{bn}}&pid={{pid}}&asid={{asid}}";
+                                                                viewurl = viewurl.Replace("{{bn}}", Model.Bookings.BookingNumber);
+                                                                viewurl = viewurl.Replace("{{pid}}", Model.Bookings.Positions[i].Position_Id);
+                                                                viewurl = viewurl.Replace("{{asid}}", Model.Bookings.Positions[i].AlternateServices[j].AlternateServies_Id);
+                                                                @Html.Hidden("hdnViewRequestURL", viewurl)
+                                                                <a href="#ViewHotelRequest-popup" class="btn btn-success btn-sm popup-inline ActivateHotelRequest">Make Active</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-success btn-sm disabled">Make Active</button>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td style="text-align:right;">No Data Available</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_HotelMailingRequestPopup")
+
+        <div id="ViewHotelRequest-popup" style="display:none">
+            <div class="popup-box pop-lg" style="max-width:98%;">
+                <div class="popup-in">
+                </div>
+                <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            </div>
+        </div>
+
+        <div id="ViewProductInfo-popup" style="display:none">
+            <div class="popup-box pop-lg form-theme-04 form" style="max-width:98%;">
+                <div class="popup-in">
+                </div>
+                <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $("#ulHotelRouts li").click(function (e) {
+            e.preventDefault();
+            $("#divHotelRoute .routehotelinfo").hide();
+            $("#ulHotelRouts").find("li").removeClass("active");
+            $(this).addClass("active");
+            $("#divHotelRoute").find("[data-id=" + $(this).attr("data-id") + "]").show();
+        });
+
+        $(".clsSimilarHotel").click(function () {
+            var thisparam = this;
+            var PositionId = $(this).closest('.similar-hotel-cont').find(".BookingPositionId").val();
+            var BookingNumber = $('#BookingNumber').val();
+
+            $('#HotelsFilterSection').load('/Product/_ProductSearchView', function () {
+                var CityId = $(thisparam).closest('.routehotelinfo').find('#ProdCityId').val();
+                var CityName = $(thisparam).closest('.routehotelinfo').find('#ProdCityName').val();
+                var CountryName = $(thisparam).closest('.routehotelinfo').find('#ProdCountryName').val();
+                var StarRating = $(thisparam).closest('.routehotelinfo').find('#HotelStarRating').val();
+                var Category = $(thisparam).closest('.routehotelinfo').find('#BdgPriceCategory').val();
+                var Location = $(thisparam).closest('.routehotelinfo').find('#ProdLocation').val();
+                var ChainId = $(thisparam).closest('.routehotelinfo').find('#ProdChainId').val();
+                var Chain = $(thisparam).closest('.routehotelinfo').find('#ProdChain').val();
+
+                $("#HotelsFilterSection #CityID").val(CityId);
+                $("#HotelsFilterSection #CityIDUI").val(CityName + ', ' + CountryName);
+                $("#HotelsFilterSection #StarRating").val(StarRating);
+                $("#HotelsFilterSection #BudgetCategoryID").val(Category);
+                $("#HotelsFilterSection #LocationID").val(Location);
+                $("#HotelsFilterSection #ChainID").val(ChainId);
+                $("#HotelsFilterSection #ChainIDUI").val(Chain);
+                $("#HotelsFilterSection #ProductTypeID").val('fae6d072-f7fb-46f7-aedf-509be71664a7');
+                $("#HotelsFilterSection #ProductTypeID").change();
+            });
+
+            $.ajax({
+                type: "GET",
+                url: "/Hotels/GetSimilarHotels",
+                data: { BookingNumber: BookingNumber, PositionId: PositionId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#SimilarHotels-popup .popup-in").html(response);
+                    $("#SimilarHotels-popup").show();
+                },
+                error: function (response) {
+                    $(".ajaxloader").hide();
+                    alert(response.statusText);
+                }
+            });
+        });
+
+        $('.ViewHotelRequest').click(function () {
+            var thisparam = this;
+            var ViewRequestURL = $(this).closest('td').find("#hdnViewRequestURL").val();
+
+            $.ajax({
+                type: "GET",
+                url: ViewRequestURL,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+				success: function (response) {
+					 
+                    $("#ViewHotelRequest-popup .popup-in").html(response);
+                    $("#ViewHotelRequest-popup").show();
+                    bindViewProdInfo();
+                    $('#tblmails_length .form-control').removeAttr("disabled");
+                },
+                error: function (response) {
+                    $(".ajaxloader").hide();
+                    alert(response.statusText);
+                }
+            });
+        });
+
+        $('.ActivateHotelRequest').click(function () {
+            var thisparam = this;
+            var ViewRequestURL = $(this).closest('td').find("#hdnViewRequestURL").val();
+
+            $.ajax({
+                type: "GET",
+                url: ViewRequestURL,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#ViewHotelRequest-popup .popup-in").html(response);
+                    $("#ViewHotelRequest-popup").show();
+                    bindViewProdInfo();
+                },
+                error: function (response) {
+                    $(".ajaxloader").hide();
+                    alert(response.statusText);
+                }
+            });
+        });
+
+        $('.remind-supplier').click(function () {
+            var BookingNumber = $('#BookingNumber').val();
+            var PositionId = $(this).closest('.tab-domestic-sec').find('.BookingPositionId').val();
+            var AltSvcId = $(this).closest('tr').find('.AlternateServicesId').val();
+
+            $.ajax({
+                type: "GET",
+                url: "/Hotels/RemindSupplier",
+                data: { BookingNumber: BookingNumber, PositionId: PositionId, AltSvcId: AltSvcId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response != undefined && response != null && response.status != undefined && response.status != null) {
+                        if (response.status == "success") {
+                            alert('Remind mail sent successfully.');
+                        }
+                        else {
+                            alert('Error Occurred : ' + response.msg);
+                        }
+                    }
+                    else {
+                        alert('Unable to send Remind mail.');
+                    }
+                },
+                error: function (response) {
+                    $(".ajaxloader").hide();
+                    alert(response.statusText + '\nUnable to send Remind mail.');
+                }
+            });
+        });
+
+        $('#ViewHotelRequest-popup, #ViewProductInfo-popup').on('click', '.mfp-close,.close-popup', function () {
+            $(this).closest('.popup-box').find('.popup-in').empty();
+        });
+
+        $('#ulHotelRouts > li')[0].click();
+        $('.amendment-control').hide();
+        bindViewProdInfo();
+
+        $('.tblBooking').DataTable({
+            "order": [],
+            "ordering": true,
+            "aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+            "iDisplayLength": 10,
+            "searching": true,
+            "bFilter": true,
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": [0, 2, 3, 6, 7] }
+            ],
+            "dom": "<'row'<'col-sm-2'l><'col-sm-3'f><'col-sm-4'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+            initComplete: function () {
+                this.api().columns(4).every(function () {
+                    var column = this;
+                    var select =
+                        $(".ddlStatus").on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+                });
+            }
+        });
+
+        $('.tblBooking thead tr th').each(function () {
+            var value = $(this).html();
+            if (value == "Actions") { //true
+                $(this).attr("colspan", 3);
+                $(this).nextAll(".nocontent").remove(); // removes extra td
+            }
+        });
+    });
+
+    function bindViewProdInfo() {
+        $('.view-full-prod-info').off('click').on('click', function () {
+            var ProductId = $(this).closest('.prod-desc-cont').find('input#VoyagerProductId').val();
+            //$("#ViewHotelRequest-popup .popup-in").load("/Product/_Accomodation", { ProductId: ProductId });
+
+            $.ajax({
+                type: "GET",
+                url: "/Product/_Accomodation",
+                data: { ProductId: ProductId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    //response.find('')
+                    $("#ViewProductInfo-popup .popup-in").html(response);
+                    $("#ViewProductInfo-popup").show();
+                },
+                error: function (response) {
+                    $(".ajaxloader").hide();
+                    alert(response.statusText);
+                }
+            });
+        });
+    }
+</script>
+
+<style>
+    table {
+        margin: 0 auto;
+        width: 100%;
+        clear: both;
+        border-collapse: collapse;
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+
+    .products-contracting {
+        width: 100%;
+    }
+
+    /*.amendment-control {
+        display: none;
+    }*/
+
+    #ulHotelRouts > li {
+        display: inline-block;
+    }
+
+    .wrap-email-tbl-cell {
+        word-wrap: break-word;
+        max-width: 150px;
+    }
+
+    .clsSimilarHotel {
+        float: right;
+    }
+
+    #back-link {
+        display: none;
+    }
+</style>

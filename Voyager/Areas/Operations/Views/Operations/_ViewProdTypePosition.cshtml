@@ -1,0 +1,449 @@
+﻿@model Voyager.App.ViewModels.OpsProdTypeVM
+
+<link href="~/resources/css/ops-position-view.css" rel="stylesheet" />
+
+<div class="tab-domestic-sec" style="margin-left:-1px;">
+    <div class="sqr-tab-data" style="padding:0px">
+        <form action="/" method="post" class="form-theme-04" id="frmProdTypePos">
+            @Html.HiddenFor(a => a.BookingNumber)
+            @Html.HiddenFor(a => a.Position_Id)
+            @Html.HiddenFor(a => a.ProductType)
+            @Html.HiddenFor(a => a.DayName)
+            @Html.HiddenFor(a => a.ProductId)
+            @Html.HiddenFor(a => a.PositionStatus)
+            @Html.HiddenFor(a => a.ChargeBasis)
+            @Html.HiddenFor(a => a.IsRealSupplier)
+            @Html.HiddenFor(a => a.SystemCompany_Id)
+
+            <div id="mySidebar" class="col-md-2 sidebar list-group list-group-flush" style="width:0px;">
+                <div class="schedule-container" style="margin-top:0px">
+                    <div class="collapse-block">
+                        @{string DayTimeImage = "fa-custom-early-morning", ProdTypeImage = ""; int index = 0; }
+                        <div class="collapse-container" style="display:none;">
+                            <ul class="schedule-list">
+                                @for (int i = index; i < Model.TimeSlabsList.Count; i++)
+                                {
+                                    if (Model.TimeSlabsList[i].StartTime == "06:00")
+                                    {
+                                        DayTimeImage = "fa-custom-morning";
+                                    }
+
+                                    if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                    {
+                                        <li class="free">
+                                            <i class="@DayTimeImage darkgrey"></i>
+                                            <div><span class="sch-time">@Model.TimeSlabsList[i].StartTime</span><span class="sch-txt">Free</span></div>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrEmpty(Model.TimeSlabsList[i].ProductType) && Model.ProductType.Contains(Model.TimeSlabsList[i].ProductType?.ToUpper()) && Model.Position_Id != Model.TimeSlabsList[i].PositionId)
+                                        {
+                                            <li class="process">
+                                                @if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                                {
+                                                    <i class="@DayTimeImage darkgrey"></i>
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw(ProdTypeImage)
+                                                }
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="sch-time">@Model.TimeSlabsList[i].StartTime</span>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <span class="sch-txt" onclick="loadSelectedPosition('@Model.TimeSlabsList[i].PositionId')">
+                                                            <a>@Model.TimeSlabsList[i].ProductName</a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="process">
+                                                @if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                                {
+                                                    <i class="@DayTimeImage darkgrey"></i>
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw(ProdTypeImage)
+                                                }
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="sch-time">@Model.TimeSlabsList[i].StartTime</span>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <span class="sch-txt">@Model.TimeSlabsList[i].ProductName</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                    if (Model.TimeSlabsList[i].StartTime == "06:30")
+                                    {
+                                        index = i + 1;
+                                        break;
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="lnk-dotted"><a href="#" class="collapse-link collapsed"><i class="fa fa-angle-up"></i> Options </a> </div>
+                    </div>
+                    <div class="collapse-block">
+                        <ul class="schedule-list">
+                            @for (int i = index; i < Model.TimeSlabsList.Count; i++)
+                            {
+                                if (Model.TimeSlabsList[i].StartTime == "12:00")
+                                {
+                                    DayTimeImage = "fa-custom-afternoon";
+                                }
+                                else if (Model.TimeSlabsList[i].StartTime == "16:00")
+                                {
+                                    DayTimeImage = "fa-custom-evening";
+                                }
+                                else if (Model.TimeSlabsList[i].StartTime == "20:00")
+                                {
+                                    DayTimeImage = "fa-custom-night";
+                                }
+
+                                if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId) && string.IsNullOrEmpty(Model.TimeSlabsList[i].ProductName))
+                                {
+                                    <li class="free">
+                                        <i class="@DayTimeImage darkgrey"></i>
+                                        <div><span class="sch-time">@Model.TimeSlabsList[i].StartTime</span><span class="sch-txt">Free</span></div>
+                                    </li>
+                                }
+                                else
+                                {
+                                    switch (Model.TimeSlabsList[i].ProductType?.ToUpper())
+                                    {
+                                        case "HOTEL":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-hotel-blue\"></i>";
+                                            break;
+                                        case "MEAL":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-meals-blue\"></i>";
+                                            break;
+                                        case "ATTRACTIONS":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-activities-blue\"></i>";
+                                            break;
+                                        case "LDC":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-bus-dark-blue\"></i>";
+                                            break;
+                                        case "COACH":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-bus-dark-blue\"></i>";
+                                            break;
+                                        case "OVERNIGHT FERRY":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-cruise-blue\"></i>";
+                                            break;
+                                        case "TRAIN":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-rail-blue\"></i>";
+                                            break;
+                                        case "PRIVATE TRANSFER":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                            break;
+                                        case "SCHEDULED TRANSFER":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                            break;
+                                        case "FERRY TRANSFER":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                            break;
+                                        case "FERRY PASSENGER":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                            break;
+                                        case "DOMESTIC FLIGHT":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-flights-blue\"></i>";
+                                            break;
+                                        case "SIGHTSEEING - CITYTOUR":
+                                            ProdTypeImage = "<i class=\"fa fa-custom-tour-entities-black\"></i>";
+                                            break;
+                                        case "GUIDE":
+                                            ProdTypeImage = "<i><img src=\"/resources/images/common/icons/local-guide.png\" /></i>";
+                                            break;
+                                        case "ASSISTANT":
+                                            ProdTypeImage = "<i><img src=\"/resources/images/common/icons/fa-custom-tour-entities-black.png\" /></i>";
+                                            break;
+                                        case "VISA":
+                                            ProdTypeImage = "<i><img src=\"/resources/images/common/icons/visa.png\"></i>";
+                                            break;
+                                        case "INSURANCE":
+                                            ProdTypeImage = "<i><img src=\"/resources/images/common/icons/insurance.png\"></i>";
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (!string.IsNullOrEmpty(Model.TimeSlabsList[i].ProductType) && Model.ProductType.Contains(Model.TimeSlabsList[i].ProductType?.ToUpper()) && !string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId) && Model.Position_Id != Model.TimeSlabsList[i].PositionId)
+                                    {
+                                        <li class="process">
+                                            @if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                            {
+                                                <i class="@DayTimeImage darkgrey"></i>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(ProdTypeImage)
+                                            }
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="sch-time">@Model.TimeSlabsList[i].StartTime</span>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <span class="sch-txt" onclick="loadSelectedPosition('@Model.TimeSlabsList[i].PositionId')">
+                                                        <a>@Model.TimeSlabsList[i].ProductName</a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="process">
+                                            @if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                            {
+                                                <i class="@DayTimeImage darkgrey"></i>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(ProdTypeImage)
+                                            }
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <span class="sch-time">@Model.TimeSlabsList[i].StartTime</span>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <span class="sch-txt">@Model.TimeSlabsList[i].ProductName</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                }
+                                if (Model.TimeSlabsList[i].StartTime == "21:30")
+                                {
+                                    index = i + 1;
+                                    break;
+                                }
+                            }
+                        </ul>
+                        <div class="collapse-container" style="display:none;">
+                            <ul class="schedule-list">
+                                @for (int i = index; i < Model.TimeSlabsList.Count; i++)
+                                {
+                                    if (Model.TimeSlabsList[i].StartTime == "00:00")
+                                    {
+                                        DayTimeImage = "fa-custom-late-night";
+                                    }
+
+                                    if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                    {
+                                        <li class="free">
+                                            <i class="@DayTimeImage darkgrey"></i>
+                                            <div><span class="sch-time">@Model.TimeSlabsList[i].StartTime</span><span class="sch-txt">Free</span></div>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        @switch (Model.TimeSlabsList[i].ProductType?.ToUpper())
+                                        {
+                                            case "HOTEL":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-hotel-blue\"></i>";
+                                                break;
+                                            case "MEAL":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-meals-blue\"></i>";
+                                                break;
+                                            case "ATTRACTIONS":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-activities-blue\"></i>";
+                                                break;
+                                            case "LDC":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-bus-dark-blue\"></i>";
+                                                break;
+                                            case "COACH":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-bus-dark-blue\"></i>";
+                                                break;
+                                            case "OVERNIGHT FERRY":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-cruise-blue\"></i>";
+                                                break;
+                                            case "TRAIN":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-rail-blue\"></i>";
+                                                break;
+                                            case "PRIVATE TRANSFER":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                                break;
+                                            case "SCHEDULED TRANSFER":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                                break;
+                                            case "FERRY TRANSFER":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                                break;
+                                            case "FERRY PASSENGER":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-car-blue\"></i>";
+                                                break;
+                                            case "DOMESTIC FLIGHT":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-flights-blue\"></i>";
+                                                break;
+                                            case "SIGHTSEEING - CITYTOUR":
+                                                ProdTypeImage = "<i class=\"fa fa-custom-tour-entities-black\"></i>";
+                                                break;
+                                            case "GUIDE":
+                                                ProdTypeImage = "<i><img src=\"/resources/images/common/icons/local-guide.png\" /></i>";
+                                                break;
+                                            case "ASSISTANT":
+                                                ProdTypeImage = "<i><img src=\"/resources/images/common/icons/fa-custom-tour-entities-black.png\" /></i>";
+                                                break;
+                                            case "VISA":
+                                                ProdTypeImage = "<i><img src=\"/resources/images/common/icons/visa.png\"></i>";
+                                                break;
+                                            case "INSURANCE":
+                                                ProdTypeImage = "<i><img src=\"/resources/images/common/icons/insurance.png\"></i>";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        if (!string.IsNullOrEmpty(Model.TimeSlabsList[i].ProductType) && Model.ProductType.Contains(Model.TimeSlabsList[i].ProductType?.ToUpper()) && Model.Position_Id != Model.TimeSlabsList[i].PositionId)
+                                        {
+                                            <li class="process">
+                                                @if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                                {
+                                                    <i class="@DayTimeImage darkgrey"></i>
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw(ProdTypeImage)
+                                                }
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="sch-time">@Model.TimeSlabsList[i].StartTime</span>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <span class="sch-txt" onclick="loadSelectedPosition('@Model.TimeSlabsList[i].PositionId')">
+                                                            <a>@Model.TimeSlabsList[i].ProductName</a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="process">
+                                                @if (string.IsNullOrEmpty(Model.TimeSlabsList[i].PositionId))
+                                                {
+                                                    <i class="@DayTimeImage darkgrey"></i>
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw(ProdTypeImage)
+                                                }
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <span class="sch-time">@Model.TimeSlabsList[i].StartTime</span>
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <span class="sch-txt">@Model.TimeSlabsList[i].ProductName</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="lnk-dotted"><a href="#" class="collapse-link collapsed"><i class="fa fa-angle-up"></i> Options </a> </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mainOps">
+                @if (!string.IsNullOrWhiteSpace(Model.Position_Id))
+                {
+                    <div>
+                        <button type="button" class="btn btn-success" onclick="openCloseNav()">Schedule</button>
+                        <button type="button" class="btn btn-success" id="btnUpdatePosition">Update</button>
+                        <a href="#Confirm-popup" title="Book" class="btn btn-success popup-inline" id="btnConfirmBookPosition" style="display:none;">Book</a>
+                        <a href="#Confirm-popup" title="Raise Voucher" class="btn btn-success popup-inline" id="btnRaiseVoucher" style="display:none;">Raise Voucher</a>
+                        <a href="" id="aFilePath" class="btn btn-primary btn-sm" style="display:none;">File Download</a>
+                        <a href="#CancelPosition-popup" title="Delete" class="btn btn-danger popup-inline showCancelPosition" style="display:none;">Cancel</a>
+                        <a href="#ConfirmSupplier-popup" title="Confirm" class="btn btn-success popup-inline btnSupplierConfirmed" style="display:none;">Supplier Confirmed</a>
+                        <a href="#ContactSupplier-popup" title="Contact" class="btn btn-success popup-inline showContactSupplier" style="display:none;">Contact Supplier</a>
+                        <button type="button" class="btn btn-success communitrail" href="#modelcommunitrail">View Comms Log</button>
+                        <button type="button" class="btn btn-success">View Alternate Service Requests</button>
+                    </div>
+
+                    @Html.Partial("~/Areas/Product/Views/ProductSRP/_ProductInfo.cshtml", Model.ProdTypePositions.ProductsSRP)
+
+                    @Html.Partial("_PositionCommonAttribute", Model.ProdTypePositions.ProductAdditionalInfo)
+
+                    @Html.Partial("_PositionRoomRates", Model.ProdTypePositions.RoomsAndRates)
+                    @*<div class="accordion" id="accordionExample">*@
+                    <div id="divPosFOCMain">
+                        @Html.Partial("_OpsPositionFOC", Model.ProdTypePositions.SuppFOC)
+                    </div>
+                    @*@Html.Partial("_PositionAlternateHotel", Model.ProdTypePositions.AlternateServices)*@
+                    @Html.Partial("_PositionFinancial", Model.ProdTypePositions.Financials)
+                    @*</div>*@
+                }
+                else
+                {
+                    <h3>There are no items to display for this service.</h3>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Communication Trail Popup Start-->
+<div id="modelcommunitrail-popup"></div>
+<!--Communication Trail Popup End-->
+
+<div id="CancelPosition-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+
+<div id="ContactSupplier-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+
+<div id="ConfirmSupplier-popup" class="popup-box pop-md form-theme-04 form mfp-hide">
+    <div class="popup-in">
+        <h3 class="pop-tl" id="headerConfirm">Supplier Confirmation</h3>
+        @if (Model.PositionStatus == "K")
+        {
+            <p id="pConfirmMsg">Please confirm that the Supplier has accepted the BOOKING for this service?</p>
+        }
+        else if (Model.PositionStatus == "M")
+        {
+            <p id="pConfirmMsg">Please confirm that the Supplier has accepted the AMENDMENT for this service?</p>
+        }
+        else if (Model.PositionStatus == "!")
+        {
+            <p id="pConfirmMsg">Please confirm that the Supplier has accepted the CANCELLATION for this service?</p>
+        }
+        <div class="form-group">
+            <label for="SuppConfirmNumber">Supplier Confirmation Number</label>
+            <input class="form-control-1" id="SuppConfirmNumber" type="text">
+            <span class="error field-validation-error" id="SuppConfirmNumber-error" style="display:none;">*</span>
+        </div>
+        <p>The Supplier Confirmation Number will be displayed on Booking Vouchers and Itinerary</p>
+        <button title="Close (Esc)" type="button" class="mfp-close confirm-close-popup"></button>
+        <div class="btn-cont text-center">
+            <a href="#" class="btn btn-default btn-md close-popup">Cancel</a>
+            <button class="btn btn-blue btn-md" id="confirmOk" onclick="ConfirmSupplier()">Ok</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Operations/OPSProdTypePos.js"></script>
+
+<style>
+    .schedule-list li > i {
+        max-height: initial !important;
+    }
+</style>

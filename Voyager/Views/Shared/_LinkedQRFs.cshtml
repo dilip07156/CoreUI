@@ -1,0 +1,206 @@
+﻿@model List<VGER_WAPI_CLASSES.LinkedQRFsData>
+
+<h3>QRF Versions</h3>
+<div class="custom-mob-tbl table-responsive">
+
+    @*<label style="font-weight:bold">Version: <span id="newVersionId"></span></label>*@
+    <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+    @{
+        var UserRole = "";
+        @foreach (string ur in ViewBag.UserRoles)
+        {
+            UserRole = UserRole + ur;
+        }
+    }
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th><span>QRF ID</span></th>
+                <th><span>Created On</span></th>
+                <th><span>Client Details</span></th>
+                <th><span>Duration</span></th>
+                <th><span>Tour Name</span></th>
+                <th><span>Pipeline</span></th>
+                <th><span>Parent Tour</span></th>
+            </tr>
+        </thead>
+        <tbody class="row-grid-sm document-list">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var days = Convert.ToInt16(@Model[i].Duration) + 1;
+
+
+                @if (@Model[i].QRFID == @ViewBag.CuttentQRFID)
+                {
+                    <tr style="background-color:#ECECEC">
+                        <td class="text-center">
+                            @Html.RadioButton("SelectedVersion", @Model[i].QRFID, new { @checked = "checked" })
+                        </td>
+                        <td>
+                            @if (Model[i].CurrentPipeline == "Quote Pipeline" || Model[i].CurrentPipeline == "Agent Approval Pipeline" || Model[i].CurrentPipeline == "Amendment Pipeline" || Model[i].CurrentPipeline == "Handover Pipeline")
+                            {
+                                if (@UserRole.Contains("Sales Officer"))
+                                {
+                                    if (Model[i].CurrentPipeline == "Quote Pipeline")
+                                    {
+                                        <a href="/Quote/NewQuote?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                    else if (Model[i].CurrentPipeline == "Agent Approval Pipeline")
+                                    {
+                                        <a href="/AgentApproval/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                    else if (Model[i].CurrentPipeline == "Amendment Pipeline")
+                                    {
+                                        <a href="/Quote/NewQuote?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                    else if (Model[i].CurrentPipeline == "Handover Pipeline")
+                                    {
+                                        <a href="/Handover/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                            else if (Model[i].CurrentPipeline == "Costing Pipeline")
+                            {
+                                if (@UserRole.Contains("Costing Officer"))
+                                {
+                                    <a href="/CostingOfficer/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                            else if (Model[i].CurrentPipeline == "Costing Approval Pipeline")
+                            {
+                                if (@UserRole.Contains("Product Accountant"))
+                                {
+                                    <a href="/CostingOfficer/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                        </td>
+                        <td class="text-center">
+                            @Convert.ToDateTime(@Model[i].CreateDate).ToString("dd MMM yyyy")
+                        </td>
+                        <td>
+                            @Model[i].AgentName
+                        </td>
+                        <td>
+                            @Model[i].Duration N / @days D
+                        </td>
+                        <td>
+                            @Model[i].TourName
+                        </td>
+                        <td>
+                            @Model[i].CurrentPipeline
+                        </td>
+                        <td>
+                            @Model[i].Parent_QRFID
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td class="text-center">
+                            @Html.RadioButton("SelectedVersion", @Model[i].QRFID)
+                        </td>
+                        <td>
+                            @if (Model[i].CurrentPipeline == "Quote Pipeline" || Model[i].CurrentPipeline == "Agent Approval Pipeline" || Model[i].CurrentPipeline == "Amendment Pipeline" || Model[i].CurrentPipeline == "Handover Pipeline")
+                            {
+                                if (@UserRole.Contains("Sales Officer"))
+                                {
+                                    if (Model[i].CurrentPipeline == "Quote Pipeline")
+                                    {
+                                        <a href="/Quote/NewQuote?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                    else if (Model[i].CurrentPipeline == "Agent Approval Pipeline")
+                                    {
+                                        <a href="/AgentApproval/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                    else if (Model[i].CurrentPipeline == "Amendment Pipeline")
+                                    {
+                                        <a href="/Quote/NewQuote?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                    else if (Model[i].CurrentPipeline == "Handover Pipeline")
+                                    {
+                                        <a href="/Handover/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                    }
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                            else if (Model[i].CurrentPipeline == "Costing Pipeline")
+                            {
+                                if (@UserRole.Contains("Costing Officer"))
+                                {
+                                    <a href="/CostingOfficer/Itinerary?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                            else if (Model[i].CurrentPipeline == "Costing Approval Pipeline")
+                            {
+                                if (@UserRole.Contains("Product Accountant"))
+                                {
+                                    <a href="/Quote/NewQuote?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                            else if (Model[i].CurrentPipeline == "Handover Pipeline")
+                            {
+                                if (@UserRole.Contains("Sales Officer"))
+                                {
+                                    <a href="/Quote/NewQuote?QRFId=@Model[i].QRFID"> <strong>@Model[i].QRFID</strong> </a>
+                                }
+                                else
+                                {
+                                    @Model[i].QRFID
+                                }
+                            }
+                        </td>
+                        <td class="text-center">
+                            @Convert.ToDateTime(@Model[i].CreateDate).ToString("dd MMM yyyy")
+                        </td>
+                        <td>
+                            @Model[i].AgentName
+                        </td>
+                        <td>
+                            @Model[i].Duration N / @days D
+                        </td>
+                        <td>
+                            @Model[i].TourName
+                        </td>
+                        <td>
+                            @Model[i].CurrentPipeline
+                        </td>
+                        <td>
+                            @Model[i].Parent_QRFID
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+@*<div class="btn-cont">
+        <button title="Save" type="button" class="btn btn-blue btn-md" onclick="changeCurrentVersion();">View</button>
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+    </div>*@

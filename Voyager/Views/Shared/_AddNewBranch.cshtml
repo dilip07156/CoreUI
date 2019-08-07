@@ -1,0 +1,140 @@
+﻿<style>
+    .leftalign {
+        text-align: left !important;
+    }
+</style>
+
+@model Voyager.App.ViewModels.Branches
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02", id = "frmAddNewBranch" }))
+{
+    <div class="custom-mob-tbl table-responsive">
+        <div id="messagealert">
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-sm"><span>Name</span></th>
+                    <th class="col-sm"><span>Code</span></th>
+                </tr>
+            </thead>
+            <tbody class="row-grid-sm document-list">
+                <tr>
+                    @Html.HiddenFor(x => x.ParentCompanyId, new { @id = "ParentCompanyId", @class = "ParentCompanyId" })
+                    @Html.HiddenFor(x => x.Issupplier, new { @id = "Issupplier", @class = "Issupplier" })
+                    @Html.HiddenFor(x => x.IsForSalesAgent, new { @id = "IsForSalesAgent", @class = "IsForSalesAgent" })
+                    @Html.HiddenFor(x => x.ProductSupplierId, new { @id = "ProductSupplierId", @class = "ProductSupplierId" })
+                    <td>
+                        @Html.TextBoxFor(m => m.BranchCompanyName, new { @class = "form-control bindAgent leftalign", @id = "AgentIdUI" })
+                        @Html.HiddenFor(m => m.BranchCompanyId, new { @id = "AgentId" })
+                        @Html.ValidationMessageFor(m => m.BranchCompanyName, "", new { @class = "error" })
+                    </td>
+                    <td class="time">
+                        @Html.TextBoxFor(x => x.BranchCompanyCode, new { @class = "form-control leftalign", id = "AgentIdCode", @readonly = "readonly" })
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    <div class="btn-cont text-center">
+        @if (Model.IsForSalesAgent == true)
+        {
+            <button id="btnForSalesAgentSave" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+        }
+        else
+        {
+            <button id="btnNewBranchSave" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+        }
+        @*<button id="btnReset" type="button" class="btn btn-blue btn-md">Reset</button>*@
+    </div>
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".bindAgent").on("keyup", function (event) {
+             
+            var parentCompanyId = $("#ParentCompanyId").val();
+            var issupplier = $("#Issupplier").val();
+            var isForSalesAgent = $("#IsForSalesAgent").val();
+            if (isForSalesAgent == "True") {
+                issupplier = "False"
+            }
+            InitializeAutoComplete('/Quote/GetAgentNameFrommCompanies', this, 3, { term: this.value, companyId: parentCompanyId, issupplier: issupplier }, 'agent');
+        });
+    });
+
+    $("#btnNewBranchSave").click(function () {
+        $(".ajaxloader").show();
+        var data = {
+            ParentCompanyId: $("#ParentCompanyId").val(),
+            BranchCompanyId: $("#AgentId").val(),
+            BranchCompanyName: $("#AgentIdUI").val(),
+            BranchCompanyCode: $("#AgentIdCode").val()         
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Agent/SaveNewBranch",
+            data: data,
+            global: false,
+            success: function (response) {                 
+                if (response.status == "error") {
+                    var text = response.responseText;
+                    //$("#messagealert").html(response.responseText);
+                    //$("#errmsg").show();
+                    var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong>' + text + '</div>';
+                    // $('#frmAddNewBranch .table').before(successmsg);
+                    $("#messagealert").html(successmsg);
+                }
+                else {
+                    GetBranches();
+                    alert(response.responseText);                    
+                }
+                    
+                $(".ajaxloader").hide();
+            },
+            error: function () {
+                $(".ajaxloader").hide();
+            }
+        });
+
+    });
+
+    $("#btnForSalesAgentSave").click(function () {
+        $(".ajaxloader").show();
+        var data = {
+            ParentCompanyId: $("#ParentCompanyId").val(),
+            BranchCompanyId: $("#AgentId").val(),
+            BranchCompanyName: $("#AgentIdUI").val(),
+            BranchCompanyCode: $("#AgentIdCode").val(),
+            ProductSupplierId: $("#ProductSupplierId").val(),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Supplier/SaveProductSalesAgent",
+            data: data,
+            global: false,
+            success: function (response) {
+                 
+                if (response.status == "error") {
+                    var text = response.responseText;
+                    //$("#messagealert").html(response.responseText);
+                    //$("#errmsg").show();
+                    var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong>' + text + '</div>';
+                    // $('#frmAddNewBranch .table').before(successmsg);
+                    $("#messagealert").html(successmsg);
+                }
+                else
+                    GetProductSalesAgents();
+                $(".ajaxloader").hide();
+            },
+            error: function () {
+                $(".ajaxloader").hide();
+            }
+        });
+
+    });
+</script>

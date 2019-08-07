@@ -1,0 +1,314 @@
+﻿@model Voyager.App.ViewModels.OpsPosFOCViewModel
+
+<style>
+    .leftalign {
+        text-align: left !important;
+    }
+</style>
+
+<div id="frmOpsPosFOC">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" data-parent="#mainOps"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    Free of Charge
+                </button>
+            </h5>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
+            <div class="card-body custom-mob-tbl">
+                <div id="message"></div>
+                <div class="table-responsive filter-table custom-mob-tbl">
+                    <table class="table tblOpsPosFOC" id="tblOpsPosFOC" name="TableOpsPosFOC">
+                        <thead>
+                            <tr class="text-center">
+                                <th>Buy</th>
+                                <th>Room</th>
+                                <th>Get Free</th>
+                                <th>Room</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="clsBody">
+                            @{
+                                int i = 0;
+                            }
+                            @for (i = 0; i < Model.lstPosFOC.Count - 1; i++)
+                            {
+                                <tr id="PosFOC_@i" class="PosFOC">
+                                    <td class="text-center">
+                                        @Html.HiddenFor(x => x.lstPosFOC[i].PositionFOC_Id)
+                                        @Html.HiddenFor(x => x.lstPosFOC[i].IsDeleted, new { @class = "clsIsDeleted", @id = "IsDeleted_" + (i) })
+                                        @Html.Hidden("hdnSeqNo", i)
+                                        @Html.HiddenFor(x => x.lstPosFOC[i].PositionFOC_Id)
+                                        @Html.TextBoxFor(x => x.lstPosFOC[i].BuyQuantity, new { @class = "form-control-1 clsBuyQuantity numeric leftalign", @id = "BuyQuantity_" + (i) })
+                                        @Html.ValidationMessageFor(x => x.lstPosFOC[i].BuyQuantity, "", new { @class = "text-danger leftalign" })
+                                    </td>
+                                    <td>
+                                        @Html.HiddenFor(x => x.lstPosFOC[i].BuyRoomShortCode, new { @id = "BuyBookingRooms_" + (i), @class = "clsBuyBookingRooms" })
+                                        @Html.DropDownListFor(x => x.lstPosFOC[i].BuyBookingRoomsId, new SelectList(Model.lstBookingRooms, "VoyagerProductRange_Id", "ProductRangeName"), "Select", new { @class = "form-control-1 leftalign ddlBuyBookingRoomsID select", @id = "BuyBookingRoomsID_" + (i) })
+                                        @Html.ValidationMessageFor(x => x.lstPosFOC[i].BuyBookingRoomsId, "", new { @class = "text-danger leftalign" })
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.TextBoxFor(x => x.lstPosFOC[i].GetQuantity, new { @class = "form-control-1 clsGetQuantity numeric leftalign", @id = "GetQuantity_" + (i) })
+                                        @Html.ValidationMessageFor(x => x.lstPosFOC[i].GetQuantity, "", new { @class = "text-danger leftalign" })
+                                    </td>
+                                    <td>
+                                        @Html.HiddenFor(x => x.lstPosFOC[i].GetRoomShortCode, new { @id = "GetBookingRooms_" + (i), @class = "clsGetBookingRooms" })
+                                        @Html.DropDownListFor(x => x.lstPosFOC[i].GetBookingRoomsId, new SelectList(Model.lstBookingRooms, "VoyagerProductRange_Id", "ProductRangeName"), "Select", new { @class = "form-control-1 leftalign ddlGetBookingRoomsID select", @id = "GetBookingRoomsID_" + (i) })
+                                        @Html.ValidationMessageFor(x => x.lstPosFOC[i].GetBookingRoomsId, "", new { @class = "text-danger leftalign" })
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm  btn-danger btnDeleteFOC" id="btnDeleteFOC">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+
+                            <tr class="text-center">
+                                <td class="text-center">
+                                    @Html.Hidden("hdnSeqNo", i)
+                                    @Html.HiddenFor(x => x.Booking_Id)
+                                    @Html.HiddenFor(x => x.BookingNo)
+                                    @Html.HiddenFor(x => x.Position_Id)
+                                    @Html.Hidden("IsDeleted_" + (i), "False")
+                                    @Html.HiddenFor(x => x.lstPosFOC[i].PositionFOC_Id)
+                                    @Html.TextBoxFor(x => x.lstPosFOC[i].BuyQuantity, new { @class = "form-control-1 clsBuyQuantity numeric leftalign", @id = "BuyQuantity_" + (i) })
+                                    @Html.ValidationMessageFor(x => x.lstPosFOC[i].BuyQuantity, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.lstPosFOC[i].BuyBookingRoomsId, new SelectList(Model.lstBookingRooms, "VoyagerProductRange_Id", "ProductRangeName"), "Select", new { @class = "form-control-1 leftalign ddlBuyBookingRoomsID select", @id = "BuyBookingRoomsID_" + (i) })
+                                    @Html.HiddenFor(x => x.lstPosFOC[i].BuyRoomShortCode, new { @id = "BuyBookingRooms_" + (i), @class = "clsBuyBookingRooms" })
+                                    @Html.ValidationMessageFor(x => x.lstPosFOC[i].BuyBookingRoomsId, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td class="text-center">
+                                    @Html.TextBoxFor(x => x.lstPosFOC[i].GetQuantity, new { @class = "form-control-1 clsGetQuantity numeric leftalign", @id = "GetQuantity_" + (i) })
+                                    @Html.ValidationMessageFor(x => x.lstPosFOC[i].GetQuantity, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(x => x.lstPosFOC[i].GetBookingRoomsId, new SelectList(Model.lstBookingRooms, "VoyagerProductRange_Id", "ProductRangeName"), "Select", new { @class = "form-control-1 leftalign ddlGetBookingRoomsID select", @id = "GetBookingRoomsID_" + (i) })
+                                    @Html.HiddenFor(x => x.lstPosFOC[i].GetRoomShortCode, new { @id = "GetBookingRooms_" + (i), @class = "clsGetBookingRooms" })
+                                    @Html.ValidationMessageFor(x => x.lstPosFOC[i].GetBookingRoomsId, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm  btn-warning btnAddNewFOC" id="btnAddNewFOC">Add New FoC Policy</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#frmOpsPosFOC').on('click', '.btnAddNewFOC', function () {
+            //if ($('#frmOpsPosFOC').valid()) {
+            addNewRow(this);
+            //}
+            return false;
+        });
+
+        $('#btnSaveFOC').click(function () {
+            var flag = ValidateFocTable();
+            if (flag) {
+                $(".ajaxloader").show();
+                //var model = $('#frmOpsPosFOC').serialize();
+                var model = $("#frmOpsPosFOC").find("select, input").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/Operations/SetOpsPosFOCDetails",
+                    data: model,
+                    global: false,
+                    success: function (response) {
+                        if (response.status == "Failure") {
+                            //var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> ' + response.responseText + '</div>';
+                            $("#frmOpsPosFOC #message").hide();
+                            $("#frmOpsPosFOC #message").text(response.responseText);
+                            $("#frmOpsPosFOC #message").show();
+                        }
+                        else {
+                            GetPosFOCData();
+                        }
+                        $(".ajaxloader").hide();
+                    },
+                    error: function (response) {
+                        var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> ' + response.responseText + '</div>';
+                        $("#frmtabDestination #message").before(successmsg);
+                        $(".ajaxloader").hide();
+                    }
+                });
+            }
+            else
+                return false;
+        });
+
+        $('#frmOpsPosFOC').on('click', '.btnDeleteFOC', function () {
+            if (confirm("Are you sure you want to delete this row?")) {
+                var index = $(this).closest('tr').find('#hdnSeqNo').val();
+                removeRow(this, index);
+            }
+            return false;
+        });
+
+        function removeRow(thisparam, rowIndex) {
+            $(thisparam).closest('tr').hide();
+            $(thisparam).closest('tr').find('.clsIsDeleted').val("True");
+            $(thisparam).closest('tr').find('.clsIsDeleted').text("True");
+            //var arr = table.row(rowIndex).data();
+            //arr[3] = "True";
+        }
+
+        function GetPosFOCData() {
+            var bn = $("#BookingNumber").val();
+            var pid = $('#PositionId').val();
+            var ptype = $('#ProductType').val();
+            var day = $('#DayName').val();
+            $.ajax({
+                type: "GET",
+                url: "/Operations/GetOpsPositionFOC",
+                data: { BookingNumber: bn, ProductType: ptype, PositionId: pid, DayName: day },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $('#divPosFOCMain').html(response);
+                    $('#collapseOne').addClass('collapse in');
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+        }
+    });
+
+    function addNewRow(thisparam) {
+         
+        var lastHdnSeq = $('#tblOpsPosFOC > tbody > tr:last').find('#hdnSeqNo').val();
+        var flag = ValidateFocTableRow(thisparam, lastHdnSeq);
+
+        if (!flag) {
+            return false;
+        }
+
+        var index = $(thisparam).closest('tr').find('#hdnSeqNo').val();     //Get Row Index from hidden field
+        var clonedRow = $(thisparam).closest('tr').clone();                 //Clone row to append
+
+        //Append cloned row after current row
+        $(thisparam).closest('tr').after(clonedRow);
+        clonedRow.find('.clsBuyQuantity').val('');
+        clonedRow.find('.clsGetQuantity').val('');
+        clonedRow.find('.ddlBuyBookingRoomsID').val('');
+        clonedRow.find('.ddlGetBookingRoomsID').val('');
+        clonedRow.find('input[name*="PositionFOC_Id"]').val(NewGuid());
+        $(thisparam).closest('tr').find('.clsBuyQuantity').siblings("span").text("");
+        $(thisparam).closest('tr').find('.clsGetQuantity').siblings("span").text("");
+        $(thisparam).closest('tr').find('.ddlBuyBookingRoomsID').siblings("span").text("");
+        $(thisparam).closest('tr').find('.ddlGetBookingRoomsID').siblings("span").text("");
+        clonedRow.find('.clsBuyQuantity').siblings("span").text("");
+        clonedRow.find('.clsGetQuantity').siblings("span").text("");
+        clonedRow.find('.ddlBuyBookingRoomsID').siblings("span").text("");
+        clonedRow.find('.ddlGetBookingRoomsID').siblings("span").text("");
+
+        $(thisparam).closest("tr").find(".btnAddNewFOC").remove();
+
+        $('#tblOpsPosFOC > tbody > tr').each(function (iRowCnt) {
+            if (iRowCnt > index) {
+                var thisRow = this;
+                var curRow = $(this).find('#hdnSeqNo').val();
+                this.id = this.id.replace(curRow, iRowCnt);
+                $(this).find('input,select,span,textarea,td,ul,div').each(function (iColCnt) {
+                    if (this.id != undefined) {
+                        this.id = this.id.replace(curRow, iRowCnt);
+                        if (this.id == 'hdnSeqNo') this.value = iRowCnt;
+                    }
+                    if (this.name != undefined) this.name = this.name.replace(curRow, iRowCnt);
+                    if (this.attributes['data-valmsg-for'] != undefined) this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(curRow, iRowCnt);
+                });
+            }
+        });
+
+        //Rebind form validation to enable new rows validation
+        var form = $("#frmProdTypePos");
+        form.removeData('validator');
+        form.removeData('unobtrusiveValidation');
+        $.validator.unobtrusive.parse(form);
+        return true;
+    }
+
+    function ValidateFocTableRow(thisparam, lastHdnSeq) {
+        var currentRow = $(thisparam).closest('tr');
+        var flag = true;
+        $('#tblOpsPosFOC > tbody > tr').each(function (i) {
+            var curRow = $(this);
+            var hdn = curRow.find('#hdnSeqNo').val();
+
+            if ($(curRow.find("[id*='BuyQuantity']")).val() == "") {
+                $(curRow.find("[id*='BuyQuantity']")).siblings("span").text("*");
+                flag = false;
+            }
+            else {
+                if ($(curRow.find("[id*='BuyQuantity']")).siblings("span").text() != "Duplicate Record") {
+                    $(curRow.find("[id*='BuyQuantity']")).siblings("span").text("");
+                }
+            }
+            if ($(curRow.find("[id*='BuyBookingRoomsID']")).val() == "") {
+                $(curRow.find("[id*='BuyBookingRoomsID']")).siblings("span").text("*");
+                flag = false;
+            }
+            else {
+                if ($(curRow.find("[id*='BuyBookingRoomsID']")).siblings("span").text() != "Duplicate Record") {
+                    $(curRow.find("[id*='BuyBookingRoomsID']")).siblings("span").text("");
+                }
+            }
+            if ($(curRow.find("[id*='GetQuantity']")).val() == "") {
+                $(curRow.find("[id*='GetQuantity']")).siblings("span").text("*");
+                flag = false;
+            }
+            else {
+                if ($(curRow.find("[id*='GetQuantity']")).siblings("span").text() != "Duplicate Record") {
+                    $(curRow.find("[id*='GetQuantity']")).siblings("span").text("");
+                }
+            }
+            if ($(curRow.find("[id*='GetBookingRoomsID']")).val() == "") {
+                $(curRow.find("[id*='GetBookingRoomsID']")).siblings("span").text("*");
+                flag = false;
+            }
+            else {
+                if ($(curRow.find("[id*='GetBookingRoomsID']")).siblings("span").text() != "Duplicate Record") {
+                    $(curRow.find("[id*='GetBookingRoomsID']")).siblings("span").text("");
+                }
+            }
+
+            if (hdn != lastHdnSeq) {
+                if (($("#BuyQuantity_" + hdn).val() != undefined && $("#BuyQuantity_" + lastHdnSeq).val() != undefined && $("#BuyQuantity_" + hdn).val() == $("#BuyQuantity_" + lastHdnSeq).val() && $("#IsDeleted_" + hdn).val() == "False") &&
+                    ($("#GetQuantity_" + hdn).val() != undefined && $("#GetQuantity_" + lastHdnSeq).val() != undefined && $("#GetQuantity_" + hdn).val() == $("#GetQuantity_" + lastHdnSeq).val() && $("#IsDeleted_" + hdn).val() == "False") &&
+                    ($("#BuyBookingRoomsID_" + hdn).val() != undefined && $("#BuyBookingRoomsID_" + lastHdnSeq).val() != undefined && $("#BuyBookingRoomsID_" + hdn).val() == $("#BuyBookingRoomsID_" + lastHdnSeq).val() && $("#IsDeleted_" + hdn).val() == "False") &&
+                    ($("#GetBookingRoomsID_" + hdn).val() != undefined && $("#GetBookingRoomsID_" + lastHdnSeq).val() != undefined && $("#GetBookingRoomsID_" + hdn).val() == $("#GetBookingRoomsID_" + lastHdnSeq).val() && $("#IsDeleted_" + hdn).val() == "False")) {
+                    currentRow.find('.clsBuyQuantity').siblings("span").text("Duplicate Record");
+                    currentRow.find('.clsGetQuantity').siblings("span").text("Duplicate Record");
+                    currentRow.find('.ddlBuyBookingRoomsID').siblings("span").text("Duplicate Record");
+                    currentRow.find('.ddlGetBookingRoomsID').siblings("span").text("Duplicate Record");
+                    flag = false;
+                }
+            }
+        });
+        return flag;
+    }
+
+    function ValidateFocTable() {
+        var lastHdnSeq = $('#tblOpsPosFOC > tbody > tr:nth-last-child(2)').find('#hdnSeqNo').val();
+        var flag = true;
+        $('#tblOpsPosFOC > tbody > tr').each(function () {
+            var hdn = $(this).find('#hdnSeqNo').val();
+            if ($("#BuyQuantity_" + hdn).val() == "" && $("#BuyBookingRoomsID_" + hdn).val() == "" && $("#GetQuantity_" + hdn).val() == "" && $("#GetBookingRoomsID_" + hdn).val() == "") {
+                flag = true;
+            }
+            else {
+                flag = ValidateFocTableRow($(this).find('#hdnSeqNo'), lastHdnSeq);
+            }
+        });
+        return flag;
+    }
+</script>

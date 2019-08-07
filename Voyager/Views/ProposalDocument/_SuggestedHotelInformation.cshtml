@@ -1,0 +1,367 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" height="1288" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentHeader.cshtml", Model.COHeaderViewModel)*@
+        <tr>
+            <td>
+                <table width="773" border="0" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="776" class="main-title">Suggested Hotel Information</td>
+                    </tr>
+                    <tr class="container">
+                        <td height="25" valign="top"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" valign="top" height="1081">
+                @for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+                {
+                    @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].Hotel.Count; j++)
+                    {
+                        <table width="773" border="0" align="center" cellpadding="0" cellspacing="0" class="inner-hdr">
+                            <tr>
+                                <td align="left" valign="top">
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td width="59%" align="left" valign="top" class="itinerary-details">
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td align="left" valign="top">
+                                                            <table border="0" align="left" cellpadding="0" cellspacing="0">
+                                                                <tr>
+                                                                    <td class="blue-b15"><strong>@Model.Itinerary.ItineraryDays[i].Hotel[j].Location</strong></td>
+                                                                    <td width="36"></td>
+                                                                    <td class="blue-b15"></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="5" align="right" valign="top"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" valign="top">
+                                                            <table border="0" cellspacing="0" cellpadding="0">
+                                                                <tr>
+                                                                    <td align="left" class="itinerary-black"><strong>@Model.Itinerary.ItineraryDays[i].Hotel[j].HotelName</strong></td>
+                                                                    <td width="7" align="left"></td>
+                                                                    <td align="left">
+                                                                        @if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 1)
+                                                                        {
+                                                                            <img src="@Model.URLinitial/resources/images/proposal-report/one-star.png">
+                                                                        }
+                                                                        else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 2)
+                                                                        {
+                                                                            <img src="@Model.URLinitial/resources/images/proposal-report/two-star.png">
+                                                                        }
+                                                                        else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 3)
+                                                                        {
+                                                                            <img src="@Model.URLinitial/resources/images/proposal-report/three-star.png">
+                                                                        }
+                                                                        else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 4)
+                                                                        {
+                                                                            <img src="@Model.URLinitial/resources/images/proposal-report/four-star.png">
+                                                                        }
+                                                                        else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 5)
+                                                                        {
+                                                                            <img src="@Model.URLinitial/resources/images/proposal-report/five-star.png">
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" valign="top">
+                                                            <p>
+                                                                @Model.Itinerary.ItineraryDays[i].Hotel[j].ProdDesc
+                                                            </p>
+                                                            <p>
+                                                                @{string night = "Nights";}
+                                                                @if (@Model.Itinerary.ItineraryDays[i].Hotel[j].Duration == 1)
+                                                                {
+                                                                    night = "Night";
+                                                                }
+                                                                <b>@Model.Itinerary.ItineraryDays[i].Hotel[j].ProdCategory Room Or Similar</b> (@Model.Itinerary.ItineraryDays[i].Hotel[j].Duration @night)<br>
+                                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[j].FullAddress))
+                                                                {
+                                                                    @Model.Itinerary.ItineraryDays[i].Hotel[j].FullAddress<br>
+                                                                }
+                                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[j].Telephone))
+                                                                {
+                                                                    <span>Tel: @Model.Itinerary.ItineraryDays[i].Hotel[j].Telephone</span>
+                                                                }
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="10" align="left" valign="top"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" valign="top">
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                <tr>
+                                                                    <td height="23" align="left" valign="top">
+                                                                        <table width="410" border="0" cellspacing="0" cellpadding="0">
+                                                                            @if (Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities != null)
+                                                                            {
+                                                                                string image1 = "", image2 = "";
+                                                                                for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities.Count; k = k + 2)
+                                                                                {
+                                                                                    image1 = Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities[k].FacilityDescription.Trim().Replace('/', '-') + ".png";
+                                                                                    if (k < Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities.Count - 1)
+                                                                                    {
+                                                                                        image2 = Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities[k + 1].FacilityDescription.Trim().Replace('/', '-') + ".png";
+                                                                                    }
+                                                                                    if (k == 0)
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td width="71" valign="top"><span class="itinerary14">Facilities:</span></td>
+                                                                                            <td width="42" height="35" align="center" valign="top"><img src="@Model.URLinitial/resources/images/proposal-report/@image1" alt="" /></td>
+                                                                                            <td width="126" height="35" align="left" valign="top" class="gray">@Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities[k].FacilityDescription.Trim()</td>
+                                                                                            @if (k < Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities.Count - 1)
+                                                                                            {
+                                                                                                <td width="35" height="35" align="center" valign="top"><img src="@Model.URLinitial/resources/images/proposal-report/@image2" alt="" /></td>
+                                                                                                <td width="136" height="35" align="left" valign="top" class="gray">@Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities[k + 1].FacilityDescription.Trim()</td>
+                                                                                            }
+                                                                                        </tr>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td align="center" valign="top">&nbsp;</td>
+                                                                                            <td height="35" align="center" valign="top"><img src="@Model.URLinitial/resources/images/proposal-report/@image1" alt="" /></td>
+                                                                                            <td height="35" align="left" valign="top" class="gray">@Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities[k].FacilityDescription.Trim()</td>
+                                                                                            @if (k < Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities.Count - 1)
+                                                                                            {
+                                                                                                <td height="35" align="center" valign="top"><img src="@Model.URLinitial/resources/images/proposal-report/@image2" alt="" /></td>
+                                                                                                <td height="35" align="left" valign="top" class="gray">@Model.Itinerary.ItineraryDays[i].Hotel[j].ProdFacilities[k + 1].FacilityDescription.Trim()</td>
+                                                                                            }
+                                                                                        </tr>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr> </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                @if (Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count > 0)
+                                                {
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <td align="left" valign="top">
+                                                                <p>
+                                                                    <strong>
+                                                                        Suggested Hotels for @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotelsParameter.City,
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotelsParameter.Country
+                                                                        (@Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotelsParameter.StarRating)
+                                                                    </strong>
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" valign="top">
+                                                                <p>
+                                                                    <strong> Category:</strong> @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotelsParameter.BdgCategary
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" valign="top">
+                                                                <p>
+                                                                    <strong> Location:</strong> @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotelsParameter.Location
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+
+                                                    </table>
+                                                    <table>
+                                                        @for (int a = 0; a < Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count; a++)
+                                                        {
+                                                            <tr class="tr-avoid-break">
+                                                                <td>
+                                                                    <p style="text-align:left">
+                                                                        <img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" />
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Product_Name
+                                                                        (@Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].City,
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Country)
+                                                                    </p>
+
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        @*@for (int a = 0; a < Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count; a = a + 2)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <p style="text-align:left">
+                                                                            <img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" /> @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Product_Name
+                                                                        </p>
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (a < Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count - 1)
+                                                                        {
+                                                                            <p style="text-align:left">
+                                                                                <img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" /> @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a + 1].Product_Name
+                                                                            </p>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }*@
+                                                        @*@{
+                                                            Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels = Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Where(a => a.IsBlackListed == false).ToList();
+                                                            int hotelcount = 0;
+                                                            if (Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count % 2 == 0)
+                                                            {
+                                                                hotelcount = Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count / 2;
+                                                            }
+                                                            else
+                                                            {
+                                                                hotelcount = (Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count / 2) + 1;
+                                                            }
+                                                        }
+                                                        <tr>
+                                                            <td style="vertical-align:top">
+                                                                @for (int a = 0; a < hotelcount; a++)
+                                                                {
+                                                                    <p style="text-align:left">
+                                                                        <img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" />
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Product_Name
+                                                                        (@Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].City,
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Country)
+                                                                    </p>
+                                                                }
+
+                                                            </td>
+                                                            <td style="vertical-align:top">
+                                                                @for (int a = hotelcount; a < Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels.Count; a++)
+                                                                {
+                                                                    <p style="text-align:left">
+                                                                        <img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="" />
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Product_Name
+                                                                        (@Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].City,
+                                                                        @Model.Itinerary.ItineraryDays[i].Hotel[j].AlternateHotels[a].Country)
+                                                                    </p>
+                                                                }
+                                                            </td>
+                                                        </tr>*@
+                                                    </table>
+                                                            }
+                                            </td>
+                                            <td width="2%">&nbsp;</td>
+                                            <td width="39%" align="right" valign="top">
+                                                <table width="100" border="0" cellspacing="0" cellpadding="0">
+                                                    <tbody>
+                                                        @if (Model.Itinerary.ItineraryDays[i].Hotel[j].ProdResources != null && Model.Itinerary.ItineraryDays[i].Hotel[j].ProdResources.Count > 0)
+                                                        {
+                                                            string imagePath = "";
+                                                            string resPath = Model.Itinerary.ItineraryDays[i].Hotel[j].ProdResources.Where(a => a.ResourceType == "Image").OrderBy(a => a.OrderNr).ToList()[0].ImageSRC;
+                                                            if (!string.IsNullOrEmpty(resPath) && resPath.ToLower().StartsWith("http"))
+                                                            {
+                                                                imagePath = resPath;
+                                                            }
+                                                            else
+                                                            {
+                                                                imagePath = Model.CountryImageInitial + resPath;
+                                                            }
+                                                            <tr>
+                                                                <td align="right">
+                                                                    <img src="@imagePath" alt="" width="285" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        @*else
+                                                        {
+                                                            var genericImage = Model.GenericImages.Where(a => a.ImageSubType == "Hotel").FirstOrDefault();
+                                                            if (genericImage != null)
+                                                            {
+                                                                <tr>
+                                                                    <td align="right">
+                                                                        <img src="@Model.CountryImageInitial@genericImage.ImageURL" alt="" width="285" height="177" />
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }*@
+                                                        <tr>
+                                                            <td height="8"></td>
+                                                        </tr>
+                                                        @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[j].HotelMapURL))
+                                                        {
+                                                            <tr>
+                                                                <td align="right">
+                                                                    <div class="map-of-hotel">
+                                                                        @*@Html.HiddenFor(a => a.Itinerary.ItineraryDays[i].Hotel[j].Lat)
+                                                                            @Html.HiddenFor(a => a.Itinerary.ItineraryDays[i].Hotel[j].Long)*@
+                                                                        <div id="MapHotel_@i@j" class="map-hotel" style="width: 284px; height: 191px">
+                                                                            <img src="@Model.URLinitial@Model.Itinerary.ItineraryDays[i].Hotel[j].HotelMapURL" class="map-bdr" style="width: 284px; height: 191px" />
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" align="left" valign="top" class="itinerary-details"></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                                                            }
+                                                            }
+                <table width="773" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><span class="itinerary-details"><strong>Note :</strong></span> All accommodation and services are on request and will be confirmed once you book with Cox and Kings. We reserve the right to provide you accommodation of a similar category which may or may not be listed herein. Gradings are based on universally accepted hotel guides.</td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentFooter.cshtml", Model.COHeaderViewModel)*@
+    </table>
+</div>
+<script>
+                //$(document).ready(function () {
+                //    initializeHotelMaps();
+                //});
+
+                //function initializeHotelMaps() {
+                //    var lat, longg, mapCont, zoneLatLong, mapOptions, hotelmap, markerHotels;
+
+                //    $('.map-of-hotel').each(function (index) {
+                //        lat = $(this).find('input[type="hidden"][id*="__Lat"]').val();
+                //        longg = $(this).find('input[type="hidden"][id*="__Long"]').val();
+                //        if (lat == null || lat == "") lat = '15.8700';
+                //        if (longg == null || longg == "") longg = '100.9925';
+
+                //        mapCont = $(this).find('.map-hotel')[0];
+                //        zoneLatLong = new google.maps.LatLng(lat, longg);
+                //        mapOptions = {
+                //            center: zoneLatLong,
+                //            zoom: 15,
+                //            scaleControl: true
+                //        };
+                //        hotelmap = new google.maps.Map(mapCont, mapOptions);
+                //        markerHotels = new google.maps.Marker({
+                //            map: hotelmap,
+                //            position: zoneLatLong,
+                //            icon: "http://maps.google.com/mapfiles/ms/micons/red-dot.png"
+                //        });
+                //    });
+                //}
+</script>
+<style>
+    .tr-avoid-break {
+        page-break-inside: avoid;
+    }
+</style>

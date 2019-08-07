@@ -1,0 +1,354 @@
+﻿@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.2/css/bootstrap.min.css">*@
+
+<style>
+	.popup-box.pop-lg1 {
+		max-width: 1300px;
+	}
+</style>
+
+<link href="~/css/Settings.css" rel="stylesheet" />
+<br />
+<div class="wrapper settings-page">
+	<div class="main-content form-theme-04">
+		<div class="container">
+			<h1>System Settings</h1>
+			<hr>
+			<div class="row">
+				<div class="col-3">
+					<div class="card">
+						<div class="card-header">
+							Core System Settings
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Main Application and Business Unit Configuration</h5>
+						</div>
+						<div class="card-body">
+							<div class="list-group">
+								<a href="#" class="list-group-item list-group-item-action">Core Application Settings</a>
+								<a href="#" class="list-group-item list-group-item-action">Tenants</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+					<div class="card">
+						<div class="card-header">
+							Geography Masters
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Controlling Geographic Information</h5>
+						</div>
+						<div class="card-body">
+							<div class="list-group">
+								<a href="#" class="list-group-item list-group-item-action">Country & City Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Pickup Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Itinerary Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Business Regions</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+					<div class="card">
+						<div class="card-header">
+							User and Role Management
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Access and Authorisation</h5>
+						</div>
+						<div class="card-body">
+                            <div class="list-group">
+                                @*<a href="#" class="list-group-item list-group-item-action">Role Manager</a>*@
+                                <a href="#" class="list-group-item list-group-item-action">User Manager</a>
+                                <a href="#" class="list-group-item list-group-item-action disabled">Login Audit</a>
+                                <a href="#action-popup" class="popup-inline list-group-item list-group-item-action lnkSalesPipelineRoles">Sales Pipeline Roles</a>
+                                <a href="#artifacts-popup" class="popup-inline list-group-item list-group-item-action artifacts">Mis Artifacts</a>
+                            </div>
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+
+					<div class="card">
+						<div class="card-header">
+							Finance
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Financial Settings</h5>
+						</div>
+						<div class="card-body">
+							<div class="list-group">
+								<a href="#" class="list-group-item list-group-item-action">Currency Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Exchange Rate Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Finance Periods</a>
+								<a href="#" class="list-group-item list-group-item-action">Taxation</a>
+								<a href="#" class="list-group-item list-group-item-action">Payment Methods</a>
+								<a href="#" class="list-group-item list-group-item-action">Transaction Types</a>
+								<a href="#" class="list-group-item list-group-item-action">Tax Masters and Exclusions</a>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-3">
+					<div class="card">
+						<div class="card-header">
+							System Masters
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Confirguration and Lookup Masters</h5>
+						</div>
+						<div class="card-body">
+							<div class="list-group">
+								<a href="#" class="list-group-item list-group-item-action">Status</a>
+								<a href="#" class="list-group-item list-group-item-action">Product Type</a>
+								<a href="#" class="list-group-item list-group-item-action">Person Type</a>
+								<a href="#" class="list-group-item list-group-item-action">Reason Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Pattern Masters</a>
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+					<div class="card">
+						<div class="card-header">
+							Templates and Layouts
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Configuring Document Templates, System Layouts and Start Pages</h5>
+						</div>
+						<div class="card-body">
+							<div class="list-group">
+								<a href="#" class="list-group-item list-group-item-action">Templates</a>
+								<a href="#" class="list-group-item list-group-item-action">UserDashboards</a>
+								<a href="#" class="list-group-item list-group-item-action">Itinerary Masters</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+					<div class="card">
+						<div class="card-header">
+							Product Masters
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Configuring Product Properties</h5>
+						</div>
+						<div class="card-body">
+							<div class="list-group">
+								<a href="#" class="list-group-item list-group-item-action">Master Categories</a>
+								<a href="#" class="list-group-item list-group-item-action">Classification Attributes</a>
+								<a href="#" class="list-group-item list-group-item-action">Facility Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Meal / Menu Masters</a>
+								<a href="#" class="list-group-item list-group-item-action">Rooming Masters</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-header">
+                            Integration Platform
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Integration</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                <a href="#out-bound-integration-popup" class="popup-inline list-group-item list-group-item-action" onclick="javascript: ViewOutBoundIntegrationCredentials();">Out Bound Integration Credentials</a>
+                                <a href="#integration-popup" class="popup-inline list-group-item list-group-item-action" onclick="javascript: ViewIntegrationCredentials();">In Bound Integration Credentials</a>
+                                <a href="#integration-platform-popup" class="popup-inline list-group-item list-group-item-action" onclick="javascript: ViewIntegrationPlatform();">Platform</a>
+                                <a href="#integration-Application-Mapping-popup" class="popup-inline list-group-item list-group-item-action" onclick="javascript: ViewIntegrationApplicationMapping();">Integration Mapping</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="action-popup" style="display:none">
+	<div class="popup-box pop-lg1 form-theme-04 form">
+		<button title="Close (Esc)" type="button" class="mfp-close"></button>
+		<div class="popup-in displaySalesPipelineRoles">
+		</div>
+	</div>
+</div>
+
+<div id="integration-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayIntegrationCredentials">
+        </div>
+    </div>
+</div>
+
+<div id="out-bound-integration-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayOutBoundIntegrationCredentials">
+        </div>
+    </div>
+</div>
+
+<div id="integration-platform-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayIntegrationPlatform">
+        </div>
+    </div>
+</div>
+
+<div id="integration-Application-Mapping-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayIntegrationApplicationMapping">
+        </div>
+    </div>
+</div>
+
+<div id="artifacts-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayinartifacts">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		//$(".lnkSalesPipelineRoles").click(function () {
+		//	$.ajax({
+		//		type: "GET",
+		//		url: "/UserAndRoleMgmt/ViewSalesPipelineRoles",
+		//		dataType: "html",
+		//		success: function (response) {
+		//			$(".displaySalesPipelineRoles").html(response.replace("action-popup ", ""));
+		//			$("#action-popup").show();
+		//		},
+		//		error: function (response) {
+		//			alert(response.statusText);
+		//		}
+		//	});
+		//});
+
+		$(".lnkSalesPipelineRoles").click(function () {
+			 
+			ViewSalesPipelineRoles("","");
+        });
+
+        $(".artifacts").click(function () {
+            
+            $.ajax({
+                type: "GET",
+                url: "/UserAndRoleMgmt/GetMisArtifactsData",
+                dataType: "html",
+                success: function (response) {
+                   
+                    $(".displayinartifacts").html(response.replace("action-popup ", ""));
+                  $("#artifacts-popup").show()
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+        });
+	});
+	function ViewSalesPipelineRoles(message,tab) {
+		$.ajax({
+			type: "GET",
+			url: "/UserAndRoleMgmt/ViewSalesPipelineRoles",
+			data: { tabName: tab },
+			dataType: "html",		
+			success: function (response) {
+				 
+				$(".displaySalesPipelineRoles").html(response.replace("action-popup ", ""));
+				$("#action-popup").show();
+				if (message != null && message != "" && tab == "sales") {				
+					//var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! ' + message + ' </strong></div>';
+					//$("#frmtabSalesOffice #errmsg").text(message).show();
+					$("#frmtabSalesOffice .error2").hide();
+					$("#frmtabSalesOffice #successmsg2").text(message);
+					$("#frmtabSalesOffice .success2").show();
+				}	
+				if (message != null && message != "" && tab == "destination") {
+					//var successmsg = '<div class="alert alert-success" id="errmsg1"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! ' + message + ' </strong></div>';
+					//$("#frmtabDestination #errmsg").text(message).show();
+					$("#frmtabDestination .error1").hide();
+					$("#frmtabDestination #successmsg1").text(message);
+					$("#frmtabDestination .success1").show();
+				}
+			},
+			error: function (response) {
+				alert(response.statusText);
+			}
+		});
+    }
+
+    function ViewIntegrationCredentials() {
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationCredentials",
+            //data: { tabName: tab },
+            dataType: "html",
+            success: function (response) {
+                $(".displayIntegrationCredentials").html(response.replace("action-popup ", ""));
+                $("#integration-popup").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    }
+
+    function ViewOutBoundIntegrationCredentials() {
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewOutBoundIntegrationCredentials",
+            dataType: "html",
+            success: function (response) {
+                $(".displayOutBoundIntegrationCredentials").html(response.replace("action-popup ", ""));
+                $("#out-bound-integration-popup").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    }
+
+    function ViewIntegrationPlatform() {
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationPlatform",
+            //data: { tabName: tab },
+            dataType: "html",
+            success: function (response) {
+                $(".displayIntegrationPlatform").html(response.replace("action-popup ", ""));
+                $("#integration-platform-popup").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    }
+
+    function ViewIntegrationApplicationMapping() {
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationApplicationMapping",
+            dataType: "html",
+            success: function (response) {
+                $(".displayIntegrationApplicationMapping").html(response.replace("action-popup ", ""));
+                $("#integration-Application-Mapping-popup").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    }
+    
+</script>

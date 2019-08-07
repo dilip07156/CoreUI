@@ -1,0 +1,164 @@
+﻿@model Voyager.App.ViewModels.OpsProductListViewModel
+
+@if (Model.OpsProductList.Count > 0)
+{
+    @Html.HiddenFor(m => m.ServiceType)
+    <div class="listing-table">
+        <div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+            <table class="table table-bordered tbl-theme-02 dataTables" id="tblQuoteList">
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>Name</th>
+                        <th>Supplier</th>
+                        <th>Range</th>
+                        <th>Rate</th>
+                        <th>Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.OpsProductList.Count; i++)
+                    {
+                        <tr id="trProductList_@i">
+                            <td width="10%">@Model.OpsProductList[i].CityName</td>
+                            <td width="20%">@Model.OpsProductList[i].ProductName</td>
+                            @*<td width="20%">
+                                    <div class="form-group-sm">
+                                            <select class="form-control" id="exampleFormControlSelect1" style="width: 10rem;">
+                                                <option selected="true">Apni Kitchens</option>
+                                                <option>Dropdown</option>
+                                                <option>Values </option>
+                                                <option>Come from </option>
+                                                <option>Product Suppliers</option>
+                                            </select>
+                                        </div>
+                                    @Model.OpsProductList[i].DefaultSupplier
+                                </td>*@
+                            <td width="20%">
+                                @Html.HiddenFor(m => m.OpsProductList[i].ProductId, new { @class = "clsProductId" })
+                                @Html.HiddenFor(m => m.OpsProductList[i].DefaultSupplier, new { @id = "ddlActiveSupplier" })
+                                @Html.DropDownListFor(m => m.OpsProductList[i].DefaultSupplierId, new List<SelectListItem> { new SelectListItem { Text = @Model.OpsProductList[i].DefaultSupplier, Value = @Model.OpsProductList[i].DefaultSupplierId } }, new { @id = "ddlActiveSupplierID", @class = "form-control ddlSupplier selectDDL", @onClick = "GetProductSupplier(this)" })
+                            </td>
+                            <td width="15%">
+                                @{
+                                    string ProductCat = "";
+                                    @for (int j = 0; j < Model.OpsProductList[i].ProductRangeContract.Count; j++)
+                                    {
+                                        if (ProductCat != Model.OpsProductList[i].ProductRangeContract[j].ProductCategory)
+                                        {
+                                            if (j != 0)
+                                            {
+                                                <hr />
+                                            }
+                                        }
+                                        <span>(@Model.OpsProductList[i].ProductRangeContract[j].ProductCategory) @Model.OpsProductList[i].ProductRangeContract[j].ProductRange</span>
+                                        ProductCat = Model.OpsProductList[i].ProductRangeContract[j].ProductCategory;
+                                    }
+                                }
+                            </td>
+                            <td width="15%">
+                                @{
+                                    ProductCat = "";
+                                    @for (int j = 0; j < Model.OpsProductList[i].ProductRangeContract.Count; j++)
+                                    {
+                                        if (ProductCat != Model.OpsProductList[i].ProductRangeContract[j].ProductCategory)
+                                        {
+                                            if (j != 0)
+                                            {
+                                                <hr />
+                                            }
+                                        }
+                                        <div class="divContractPrice">
+                                            @Html.HiddenFor(m => m.OpsProductList[i].ProductRangeContract[j].ProductRangeId, new { @class = "clsRangeId" })
+                                            <span class="spnContractPrice">
+                                                @if (!String.IsNullOrEmpty(Model.OpsProductList[i].ProductRangeContract[j].ContractId))
+                                                {
+                                                    <span> @Model.OpsProductList[i].ProductRangeContract[j].ContractCurrency @Model.OpsProductList[i].ProductRangeContract[j].ContractPrice</span>
+                                                }
+                                                else
+                                                {
+                                                    <lable>No Contract</lable>
+                                                }
+                                            </span><br>
+                                        </div>
+                                        ProductCat = Model.OpsProductList[i].ProductRangeContract[j].ProductCategory;
+                                    }
+                                }
+                            </td>
+                            <td width="10%">
+                                @{
+                                    string ProductType = this.ViewData.ContainsKey("ProductType") ? Convert.ToString(this.ViewData["ProductType"]) : string.Empty;
+                                    @if (@ProductType == "hotel" || @ProductType == "apartments" || @ProductType == "overnight ferry")
+                                    {
+                                        ProductCat = "";
+                                        @for (int j = 0; j < Model.OpsProductList[i].ProductRangeContract.Count; j++)
+                                        {
+                                            if (ProductCat != Model.OpsProductList[i].ProductRangeContract[j].ProductCategory)
+                                            {
+                                                if (j != 0)
+                                                {
+                                                    <hr />
+                                                }
+                                                    <span id="tdProductRangeContract_@j">
+                                                        @Html.HiddenFor(m => m.OpsProductList[i].ProductRangeContract[j].ProductCategoryId, new { @class = "clsProductCategoryId" })
+                                                        @Html.HiddenFor(m => m.OpsProductList[i].ProductRangeContract[j].ProductRangeId, new { @class = "clsProductRangeId" })
+
+                                                        @if (Model.ServiceType == "AddPosition")
+                                                        {
+                                                            <a href="#Confirm-popup" title="Add Position" class="popup-inline btnAddPosition">Add Position</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="#Confirm-popup" title="Switch Product" class="popup-inline" onclick="showSwitchProdPopup(this);" id="">Switch</a>
+                                                        }
+                                                    </span>
+                                            }
+                                            else
+                                            {
+                                                <br />
+                                            }
+                                            ProductCat = Model.OpsProductList[i].ProductRangeContract[j].ProductCategory;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @for (int j = 0; j < Model.OpsProductList[i].ProductRangeContract.Count; j++)
+                                        {
+                                            <span id="tdProductRangeContract_@j">
+                                                @Html.HiddenFor(m => m.OpsProductList[i].ProductRangeContract[j].ProductCategoryId, new { @class = "clsProductCategoryId" })
+                                                @Html.HiddenFor(m => m.OpsProductList[i].ProductRangeContract[j].ProductRangeId, new { @class = "clsProductRangeId" })
+
+                                                @if (Model.ServiceType == "AddPosition")
+                                                {
+                                                    <a href="#Confirm-popup" title="Add Position" class="popup-inline btnAddPosition">Add Position</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="#Confirm-popup" title="Switch Product" class="popup-inline" onclick="showSwitchProdPopup(this);" id="">Switch</a>
+                                                }
+                                            </span>
+                                        }
+                                    }
+                                }
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col-md-12">
+
+        <lable>No Products found!!!</lable>
+    </div>
+}
+@Html.Hidden("hdnswitchCurrentRow")
+@Html.Hidden("hdnswitchCurrenttd")
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script src="~/js/Operations/OpsProductList.js"></script>

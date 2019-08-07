@@ -1,0 +1,147 @@
+﻿
+@model Voyager.App.ViewModels.ContactAndStaffDetails
+
+<div class="popup-box pop-lg form-theme-04 form">
+    <div class="popup-in">
+        <form id="frmEmergency">
+            <div class="custom-mob-tbl table-responsive">
+                <div id="message"></div>
+                @Html.HiddenFor(x => x.EmergencyContact_Id, new { @id = "EmergencyContact_Id" })
+                @Html.HiddenFor(x => x.Company_Id)
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-sm"><span>Country</span></th>
+                            <th class="col-sm"><span>Contact Person</span></th>
+                            <th class="col-sm"><span>Emergency Number</span></th>
+                            <th class="col-sm"><span>Is Default</span></th>
+                            <th class="col-sm"><span>Business Type</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        <tr>
+                            <td width="25%">
+                                @Html.DropDownListFor(m => m.Country_Id, new SelectList(Model.CountryList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCountry", @class = "form-control leftalign" })
+                                @Html.HiddenFor(m => m.Country, new { @id = "ddlCountryName" })
+                                <span class="field-validation-valid text-danger" id="spanCountry" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td width="25%">
+                                @*@Html.TextBoxFor(x => x.ContactName, new { @class = "form-control leftalign" })*@
+                                @Html.DropDownListFor(m => m.Contact_Id, new SelectList(Model.ContactList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlContact", @class = "form-control leftalign" })
+                                @Html.HiddenFor(m => m.ContactName, new { @id = "ddlContactName" })
+                                <span class="field-validation-valid text-danger" id="spanContact" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td width="20%">
+                                @Html.TextBoxFor(x => x.EmergencyNo, new { @id = "EmergencyNo", @class = "form-control leftalign numericWithSpecChar" })
+                                <span class="field-validation-valid text-danger" id="spanEmergencyNo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td width="10%">
+                                @Html.CheckBoxFor(x => x.Default, new { @class = "form-control leftalign" })
+                            </td>
+                            <td width="20%">
+                                @Html.DropDownListFor(m => m.BusiType, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="FIT", Value = "FIT" },
+                                                 new SelectListItem{ Text="GROUPS", Value ="GROUPS" },
+                                                 new SelectListItem{ Text="BOTH", Value ="BOTH" }
+                                                 }, new { @id = "BusiType", @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanBusiType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <button id="btnSaveEmergencyContact" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+                <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ddlCountry").on("change", function () {
+            var countryName = $(this).find("option:selected").text();
+            $("#ddlCountryName").val(countryName);
+        });
+
+        $("#ddlContact").on("change", function () {
+            var contactName = $(this).find("option:selected").text();
+            $("#ddlContactName").val(contactName);
+        });
+
+        $("#btnSaveEmergencyContact").on("click", function () {
+             
+
+            var IsValidFlag = true;
+            var country = $("#ddlCountry").find("option:selected").val();
+            if (country == '') {
+                $("#spanCountry").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var contact = $("#ddlContact").find("option:selected").val();
+            if (contact == '') {
+                $("#spanContact").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var eno = $("#EmergencyNo").val();
+            if (eno == '') {
+                $("#spanEmergencyNo").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var type = $("#BusiType").val();
+            if (type == '') {
+                $("#spanBusiType").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            if (!IsValidFlag)
+                return false;
+
+            $(".ajaxloader").show();
+            var model = $("#frmEmergency").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/Agent/SaveEmergencyContact",
+                data: model,
+                global: false,
+                success: function (response) {
+                     
+                    $("#Contacts").click();
+                    if (response.status == "error") {
+                        var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! ' + response.responseText + '</strong></div>';
+                        $("#frmEmergency #message").html(successmsg);
+                    }
+                    else {
+                        $("#frmEmergency #EmergencyContact_Id").val(response.emergencyContactId);
+                        var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! ' + response.responseText + '</strong></div>';
+                        $("#frmEmergency #message").html(successmsg);
+                        $("#spanCountry").text("");
+                        $("#spanContact").text("");
+                        $("#spanEmergencyNo").text("");
+                        $("#spanBusiType").text("");
+                    }
+                    $(".ajaxloader").hide();
+                },
+                error: function () {
+                    $(".ajaxloader").hide();
+                }
+            });
+        });
+
+    });
+</script>

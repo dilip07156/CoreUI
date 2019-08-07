@@ -1,0 +1,609 @@
+﻿@model Voyager.App.ViewModels.Contacts
+<style>
+    .modal-lg {
+        width: 1200px !important;
+    }
+
+    .leftalign {
+        text-align: left;
+    }
+
+    .hide-inactive-rows1, .hide-inactive-rows2, .hide-inactive-rows3 {
+        display: none;
+        text-decoration: line-through;
+    }
+
+    .popup-box {
+        background: #f4f7f8;
+        padding: 20px 30px;
+        text-align: left;
+        margin: 40px auto;
+        position: relative;
+        max-width: 1170px;
+    }
+
+    .staff-details {
+        min-height: 1px !important;
+        padding-right: 15px !important;
+        padding-left: 15px !important;
+    }
+</style>
+
+
+<div class="row">
+    <br />
+    <div class="staff-details">
+        <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+            @Html.HiddenFor(x => x.Company_Id, new { @id = "CompanyId", @class = "CompanyId" })
+            @Html.HiddenFor(x => x.Company_Name, new { @id = "CompanyName", @class = "CompanyName" })
+            @Html.HiddenFor(x => x.defaultContactId, new { @id = "hdnContactStaffId", @class = "defaultContactId" })
+            <div class="tbl-actn-btns"><h4>Staff</h4></div>
+            @if (@Model.CommonContacts.Count > 0)
+            {
+                <div id="table1">
+                    <table class="table table-striped ">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Job Title</th>
+                                <th class="col-md-2">First Name</th>
+                                <th class="col-md-2">Last Name</th>
+                                <th class="col-md-2">Email Address</th>
+                                <th class="col-md-2">Cellphone</th>
+                                <th class="col-md-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyStaff">
+                            @for (int i = 0; i < Model.CommonContacts.Count; i++)
+                            {
+                                string display = "hide-inactive-rows1";
+                                @if (Model.CommonContacts[i].Status == " " || string.IsNullOrEmpty(Model.CommonContacts[i].Status))
+                                {
+                                    display = "show-inactive-rows1";
+                                }
+                                <tr class="@display">
+                                    @Html.HiddenFor(x => x.CommonContacts[i].Company_Id, new { @id = "CCompanyId", @class = "clsCCompanyId" })
+                                    @Html.HiddenFor(x => x.CommonContacts[i].Contact_Id, new { @id = "CContactId", @class = "clsCContactId" })
+                                    @Html.HiddenFor(x => x.CommonContacts[i].Company_Name, new { @id = "CCompanyName", @class = "clsCCompanytName" })
+                                    @Html.HiddenFor(x => x.CommonContacts[i].ActualCompany_Name_AsShared)
+                                    <td class="leftalign">@Model.CommonContacts[i].TITLE</td>
+                                    <td class="leftalign">@Model.CommonContacts[i].FIRSTNAME</td>
+                                    <td class="leftalign">@Model.CommonContacts[i].LastNAME</td>
+                                    <td class="leftalign">@Model.CommonContacts[i].MAIL</td>
+                                    <td class="leftalign">@Model.CommonContacts[i].MOBILE</td>
+                                    @*
+                                    <td class="leftalign staff-status">@Model.CommonContacts[i].Status</td>*@
+                                    <td style="text-align:center">
+                                        @*<button type="button" class="btn btn-primary btn-sm">View</button>*@
+                                        <a href="#action-popup" class="popup-inline btn btn-primary btn-sm ViewCommonContact">View</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <br />
+                <h4 class="alert alert-info">No Records Found</h4>
+            }
+        </div><br />
+    </div>
+
+    <div class="col-lg-3">
+        @*<button type="button" class="btn btn-primary">Add New Contact</button>*@
+        <a href="#action-popup" class="popup-inline btn btn-primary btn-sm ViewCommonContact">Add New Contact</a>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+            <label class="form-check-label" for="defaultCheck1">
+                Show Inactive Contacts
+            </label>
+        </div>
+    </div>
+    <br /><br />
+    <div class="col-md-12">
+        <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+            <br />
+            <div class="tbl-actn-btns"><h4>Shared Contacts</h4></div>
+            @if (@Model.SharedContacts.Count > 0)
+            {
+                <div id="table2">
+                    <table class="table table-striped ">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2 ">Job Title</th>
+                                <th class="col-md-2">First Name</th>
+                                <th class="col-md-2">Last Name</th>
+                                <th class="col-md-2">Email Address</th>
+                                <th class="col-md-2">Cellphone</th>
+                                <th class="col-md-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.SharedContacts.Count; i++)
+                            {
+                                string display = "hide-inactive-rows2";
+                                @if (Model.SharedContacts[i].Status == " " || string.IsNullOrEmpty(Model.SharedContacts[i].Status))
+                                {
+                                    display = "show-inactive-rows2";
+                                }
+                                <tr class="@display">
+                                    @Html.HiddenFor(x => x.SharedContacts[i].Company_Id, new { @id = "SCompanyId", @class = "clsSCompanyId" })
+                                    @Html.HiddenFor(x => x.SharedContacts[i].Contact_Id, new { @id = "SContactId", @class = "clsSContactId" })
+                                    <td class="leftalign">@Model.SharedContacts[i].TITLE</td>
+                                    <td class="leftalign">@Model.SharedContacts[i].FIRSTNAME</td>
+                                    <td class="leftalign">@Model.SharedContacts[i].LastNAME</td>
+                                    <td class="leftalign">@Model.SharedContacts[i].MAIL</td>
+                                    <td class="leftalign">@Model.SharedContacts[i].MOBILE</td>
+                                    @*
+                                        <td class="leftalign contact-status">@Model.SharedContacts[i].Status</td>*@
+                                    <td style="text-align:center">
+                                        <button type="button" class="btn btn-primary btn-sm btnEditSContact" id="btnEditSContact">Edit</button>&nbsp;
+                                        @if (Model.SharedContacts[i].Status != "X")
+                                        {
+                                            <button type="button" class="btn btn-primary btn-sm btnDeleteSContact" id="btnDeleteSContact">Delete</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <br />
+                <h4 class="alert alert-info">No Records Found</h4>
+            }
+            <br />
+        </div>
+    </div>
+    <div class="col-lg-2">
+        <div class="form-group">
+            <label for="inputCity">Company</label>
+            @Html.DropDownListFor(m => m.CompanyName, new SelectList(Model.BranchesList, "Company_Id", "Company_Name"), "Select", new { @id = "ddlBranches", @class = "form-control leftalign" })
+            @*@Html.HiddenFor(m => m.Country, new { @id = "ddlCountryName" })*@
+            <span class="field-validation-valid text-danger" id="spanCompanyName" data-valmsg-for="" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="col-lg-2">
+        <div class="form-group">
+            <label for="inputCity">Contact</label>
+            @*<select type="text" class="form-control" id="inputCity">
+                    <option selected>Choose...</option>
+                    <option>...</option>
+                </select>*@
+            @Html.DropDownListFor(m => m.ContactName, new SelectList(Model.ContactsList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlContacts", @class = "form-control leftalign" })
+            @Html.HiddenFor(m => m.ContactId, new { @id = "ContactId" })
+            @Html.HiddenFor(m => m.ContactDetailId, new { @id = "ContactDetailId" })
+            <span class="field-validation-valid text-danger" id="spanContact" data-valmsg-for="" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="col-lg-2">
+        <div class="form-group">
+            <label for="inputCity">Level</label>
+            @*<select type="text" class="form-control" id="inputCity">
+                    <option selected>Choose...</option>
+                    <option>...</option>
+                </select>*@
+            @Html.DropDownListFor(m => m.Level, new List<SelectListItem>
+                            {
+                            new SelectListItem{ Text="Select", Value = "" },
+                            new SelectListItem{ Text="Primary", Value = "1" },
+                            new SelectListItem{ Text="Secondary", Value ="2" },
+                            }, new { @id = "ddlLevel", @class = "form-control" })
+            <span class="field-validation-valid text-danger" id="spanLevel" data-valmsg-for="" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="col-lg-2 sharedContSection">
+        <div class="form-group">
+            <label for="inputCity">Status</label>
+            @Html.DropDownListFor(m => m.Status, new SelectList(Model.StatusList, "Status", "Description"), new { @id = "ddlStatus", @class = "form-control leftalign" })
+            <span class="field-validation-valid text-danger" id="spanStatus" data-valmsg-for="" data-valmsg-replace="true"></span>
+        </div>
+    </div>
+    <div class="col-lg-2">
+        <br>
+        <button type="button" class="btn btn-primary btn-sm" id="btnAddSharedContact">Add</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btnUpdateSharedContact" style="display:none">Save</button>
+    </div>
+    <br /><br />
+    <div class="col-md-12">
+        <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+            <br />
+            <div class="tbl-actn-btns"><h4>Emergency Contacts</h4></div>
+            @if (@Model.EmergencyContacts.Count > 0)
+            {
+                <div id="table3">
+                    <table class="table table-striped ">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Country</th>
+                                <th class="col-md-2">Contact Person</th>
+                                <th class="col-md-2">Emergency Number</th>
+                                <th class="col-md-2">Is Default</th>
+                                <th class="col-md-2">Business Type</th>
+                                <th class="col-md-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.EmergencyContacts.Count; i++)
+                            {
+                                string display = "hide-inactive-rows3";
+                                @if (Model.EmergencyContacts[i].Status == " " || string.IsNullOrEmpty(Model.EmergencyContacts[i].Status))
+                                {
+                                    display = "show-inactive-rows3";
+                                }
+                                <tr class="@display">
+                                    @Html.HiddenFor(x => x.EmergencyContacts[i].Company_Id, new { @id = "ECompanyId", @class = "clsECompanyId" })
+                                    @Html.HiddenFor(x => x.EmergencyContacts[i].Contact_Id, new { @id = "EContactId", @class = "clsEContactId" })
+                                    @Html.HiddenFor(x => x.EmergencyContacts[i].EmergencyContact_Id, new { @id = "EEmergencyContactId", @class = "clsEmergencyContactId" })
+                                    @Html.HiddenFor(x => x.EmergencyContacts[i].Status, new { @id = "Status", @class = "clsStatus" })
+                                    <td class="leftalign">@Model.EmergencyContacts[i].Country</td>
+                                    <td class="leftalign">@Model.EmergencyContacts[i].ContactName</td>
+                                    <td class="leftalign">@Model.EmergencyContacts[i].EmergencyNo</td>
+                                    <td class="leftalign">
+                                        @Model.EmergencyContacts[i].Default
+                                        @*<span class="glyphicon glyphicon-ok"></span>*@
+                                    </td>
+                                    <td class="leftalign">@Model.EmergencyContacts[i].BusiType</td>
+                                    <td style="text-align:center">
+                                        @*<button type="button" class="btn btn-primary btn-sm">Edit</button>*@
+                                        <a href="#addNewDetails-popup" class="popup-inline btn btn-primary btn-sm ViewEmergencyContact">Edit</a>
+                                        @if (@Model.EmergencyContacts[i].Status == " ")
+                                        {
+                                            <button type="button" class="btn btn-primary btn-sm btnDeleteEContact" id="btnDeleteEContact">Delete</button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-primary btn-sm btnDeleteEContact" id="btnDeleteEContact">Activate</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <br />
+                <h4 class="alert alert-info">No Records Found</h4>
+            }
+            <br />
+        </div>
+    </div>
+    <div class="">
+        <div class="col-lg-3">
+            @*<button type="button" class="btn btn-primary">Add New Emergency Contact</button>*@
+            <a href="#addNewDetails-popup" class="popup-inline btn btn-primary btn-sm ViewEmergencyContact">Add New Emergency Contact</a>
+        </div>
+    </div>
+</div>
+
+<div id="action-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close" onclick="clearContactId()"></button>
+        <div class="popup-in displayCommonContact">
+        </div>
+    </div>
+</div>
+
+<div id="addNewDetails-popup"></div>
+
+<script type="text/javascript">
+    $(".ViewCommonContact").click(function () {
+        var companyId = $("#CompanyId").val();
+        var contactId = $(this).parents('tr').find('.clsCContactId').val();
+        var companyName = $(this).parents('tr').find('.clsCCompanytName').val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/ViewContactDetails",
+            data: { CompanyId: companyId, CompanyName: companyName, ContactId: contactId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+
+                $(".displayCommonContact").html(response.replace("action-popup ", ""));
+                $("#action-popup").show();
+
+                //$("#addNewDetails-popup").html(response);
+                if (contactId != null && contactId != '') {
+                    $(".btnCreateUser,.btnSendReset,.btnRemoveUser,.btnSaveSystem").removeAttr("disabled");
+                }
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $(".ViewEmergencyContact").click(function () {
+
+        var companyId = $("#CompanyId").val();
+        var emergencyContactId = $(this).parents('tr').find('.clsEmergencyContactId').val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/ViewEmergencyContacts",
+            data: { CompanyId: companyId, EmergencyContactId: emergencyContactId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+
+                $("#addNewDetails-popup").html(response);
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $("#ddlBranches").on("change", function () {
+        var companyId = $("#CompanyId").val();
+        var branchcompanyId = $(this).find("option:selected").val();
+        $.ajax({
+            type: "POST",
+            url: "/Agent/PopulateContactsByCompanyId",
+            data: { CompanyId: companyId, BranchCompanyId: branchcompanyId },
+            success: function (result) {
+                $("#ddlContacts").empty();
+                $("#ddlContacts").append($("<option></option>").val(null).html("Select"));
+                if (result.response.length > 0) {
+                    $.each(result.response, function (key, value) {
+                        $("#ddlContacts").append($("<option></option>").val
+                            (value.attribute_Id).html(value.attributeName));
+                    });
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+
+    $("#btnAddSharedContact").click(function () {
+        var IsValidFlag = true;
+        var branch = $("#ddlBranches").find("option:selected").val();
+        if (branch == '') {
+            $("#spanCompanyName").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var contact = $("#ddlContacts").find("option:selected").val();
+        if (contact == '') {
+            $("#spanContact").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var level = $("#ddlLevel").find("option:selected").val();
+        if (branch == '') {
+            $("#spanLevel").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var status = $(".sharedContSection #ddlStatus").find("option:selected").val();
+        if (status == '') {
+            $("#spanStatus").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        if (!IsValidFlag)
+            return false;
+
+        var currentcompanyId = $("#CompanyId").val();
+        var currentcompanyname = $("#CompanyName").val();
+        var selectedcompanyId = $("#ddlBranches").find("option:selected").val();
+        var selectedcompanyName = $("#ddlBranches").find("option:selected").text();
+        var selectedcontactId = $("#ddlContacts").find("option:selected").val();
+        var selecteddefault = $("#ddlLevel").find("option:selected").val();
+        var SelectedStatus = $(".sharedContSection #ddlStatus").find("option:selected").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Agent/AddSharedContact",
+            data: { CompanyId: currentcompanyId, CompanyName: currentcompanyname, SelectedCompanyId: selectedcompanyId, SelectedCompanyName: selectedcompanyName, SelectedContactId: selectedcontactId, SelectedDefault: selecteddefault, SelectedStatus: SelectedStatus },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#Contacts").click();
+                alert("Shared Contact details added successfully.");
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $(".btnEditSContact").on("click", function () {
+        var currentcompanyId = $("#CompanyId").val();
+        var selectedcompanyId = $(this).parents('tr').find(".clsSCompanyId").val();
+        var selectedcompanyName = $("#ddlBranches").find("option:selected").text();
+        var selectedContactId = $(this).parents('tr').find(".clsSContactId").val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/GetSharedContactDetails",
+            data: { CompanyId: currentcompanyId, SelectedcompanyId: selectedcompanyId, SelectedcompanyName: selectedcompanyName, SelectedContactId: selectedContactId },
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+
+                //$("#ddlBranches option").each(function () {
+                //    if ($(this).text() == response.actualCompanyName) {
+                //        $(this).attr('selected', 'selected');
+                //    }
+                //});
+                $("#ddlBranches").empty();
+                $("#ddlBranches").append(
+                    $('<option></option>').val(response.companyId).html(response.actualCompanyName)
+                );
+                $("#ContactId").val(response.actualContactId);
+                $("#ContactDetailId").val(response.contactdetailId);
+                $("#ddlContacts").empty();
+                $("#ddlContacts").append(
+                    $('<option></option>').val(response.contactName).html(response.contactName)
+                );
+                $("#ddlLevel").val(response.def);
+                $(".sharedContSection #ddlStatus").val(response.status);
+
+
+
+                $("#ddlBranches").prop("disabled", "disabled");
+                $("#ddlContacts").prop("disabled", "disabled");
+
+                $("#btnAddSharedContact").hide();
+                $("#btnUpdateSharedContact").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $("#btnUpdateSharedContact").click(function () {
+        var currentcompanyId = $("#CompanyId").val();
+        var selectedcontactId = $("#ContactId").val();
+        var currentcontactdetailId = $("#ContactDetailId").val();
+        var selecteddefault = $("#ddlLevel").find("option:selected").val();
+        var SelectedStatus = $(".sharedContSection #ddlStatus").find("option:selected").val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/UpdateSharedContactDetails",
+            data: { CompanyId: currentcompanyId, SelectedDefault: selecteddefault, SelectedContactId: selectedcontactId, currentcontactdetailId: currentcontactdetailId, SelectedStatus: SelectedStatus },
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $("#Contacts").click();
+                alert("Shared Contact details updated successfully.");
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $(".btnDeleteSContact").on("click", function () {
+        var currentcompanyId = $("#CompanyId").val();
+        var selectedContactId = $(this).parents('tr').find(".clsSContactId").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Agent/RemoveSharedContactDetails",
+            data: { CompanyId: currentcompanyId, SelectedContactId: selectedContactId },
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $("#Contacts").click();
+                alert("Shared Contact details deleted successfully.");
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $(".btnDeleteEContact").on("click", function () {
+        var currentcompanyId = $("#CompanyId").val();
+        var emergencyContactId = $(this).parents('tr').find('.clsEmergencyContactId').val();
+        var status = $(this).parents('tr').find('.clsStatus').val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/RemoveEmergencyContact",
+            data: { CompanyId: currentcompanyId, SelectedEmergencyContactId: emergencyContactId, Status: status },
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                $("#Contacts").click();
+                alert("Emergency Contact details deleted successfully.");
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $("#defaultCheck1").on("click", function () {
+        if (this.checked == true) {
+            $('#table3').show();
+            $('.hide-inactive-rows3').show();
+            $('#table2').show();
+            $('.hide-inactive-rows2').show();
+            $('#table1').show();
+            $('.hide-inactive-rows1').show();
+        }
+        else {
+            var rows1 = $('.show-inactive-rows1');
+            if (rows1.length < 1) {
+                $('#table1').hide();
+            }
+            else {
+                $('.hide-inactive-rows1').hide();
+            }
+
+            var rows2 = $('.show-inactive-rows2');
+            if (rows2.length < 1) {
+                $('#table2').hide();
+            }
+            else {
+                $('.hide-inactive-rows2').hide();
+            }
+
+            var rows3 = $('.show-inactive-rows3');
+            if (rows3.length < 1) {
+                $('#table3').hide();
+            }
+            else {
+                $('.hide-inactive-rows3').hide();
+            }
+        }
+    });
+
+    function clearContactId() {
+        $("#hdnContactStaffId").val('');
+        $("#hdnContactId").val('');
+    }
+
+    $(document).ready(function () {
+
+        if ($("#hdnContactStaffId").val() != null && $("#hdnContactStaffId").val() != "") {
+            $("#tbodyStaff .show-inactive-rows1").each(function (index) {
+                if ($(this).find('.clsCContactId').val() == $("#hdnContactStaffId").val()) {
+                    $(this).find('.ViewCommonContact').trigger('click');
+                    return false;
+                }
+            });
+        }
+
+        var chkinactive = $("#defaultCheck1")[0];
+        if (chkinactive.checked == true) {
+            $('#table2').show();
+            $('#table3').show();
+            $('.hide-inactive-rows').show();
+        }
+        else {
+            var rows2 = $('.show-inactive-rows2');
+            if (rows2.length < 1) {
+                $('#table2').hide();
+            }
+            else {
+                $('.hide-inactive-rows').hide();
+            }
+
+            var rows3 = $('.show-inactive-rows3');
+            if (rows3.length < 1) {
+                $('#table3').hide();
+            }
+            else {
+                $('.hide-inactive-rows').hide();
+            }
+        }
+    });
+</script>

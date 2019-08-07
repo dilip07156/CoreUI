@@ -1,0 +1,136 @@
+﻿@model Voyager.App.ViewModels.BookingDocDownloadViewModel
+
+<style>
+    .modal-dialog {
+        width: 50% !important;
+        margin: 30px auto;
+    }
+</style>
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        @if (Model.Type == "Itinerary")
+            {
+            <div id="docItinerary">
+                <div class="modal-header">
+                    <button type="button" class="close close-popup" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Itinerary Download</h4>
+                </div>
+                <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+                <div class="alert alert-danger" id="ErrorAlert" style="display:none"></div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Document Type</th>
+                                <th>Document Reference</th>
+                                <th>Created On</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                @Html.HiddenFor(x => x.DocumentId, new { @id= "docId", @class="docId" })
+                                <td id="bookingId" style="display:none"></td>
+                                <td id="bookingNumber" style="display:none"></td>
+                                <td id="itineraryDocId" class="itineraryDocId" style="display:none"></td>
+                                <td>Skeleton Itinerary</td>
+                                <td id="itineraryDocPath">@Model.FilePath</td>
+                                <td id="itineraryDocDate">@Model.FileCreationDate</td>
+                                <td><button type="button" class="btn btn-primary btn-md btnGenerate">Generate New</button></td>
+                                <td><a class="btn btn-primary btn-md btnDownload">Download</a></td>
+
+                            </tr>
+                            <tr>
+                                @Html.HiddenFor(x => x.FinalItineraryDocumentId, new { @id = "finaldocId", @class = "finaldocId" })
+                                <td id="finalItineraryDocId" class="finalItineraryDocId" style="display:none"></td>
+                                <td>Final Itinerary</td>
+                                <td id="finalItineraryDocPath">@Model.FinalItineraryFilePath</td>
+                                <td id="finalItineraryDocDate">@Model.FinalItineraryFileCreationDate</td>
+                                <td><button type="button" class="btn btn-primary btn-md btnGenerateFinal">Generate New</button></td>
+                                <td><a class="btn btn-primary btn-md btnDownloadFinal">Download</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        @if (Model.Type == "Vouchers")
+            {
+            <div id="docVoucher">
+                <div class="modal-header">
+                    <button type="button" class="close close-popup" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Voucher Download</h4>
+                </div>
+                <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+                <div class="alert alert-danger" id="ErrorAlert" style="display:none"></div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Document Type</th>
+                                <th>Document Reference</th>
+                                <th>Created On</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="bookingId" style="display:none"></td>
+                                <td id="bookingNumber" style="display:none"></td>
+                                <td id="voucherDocId" style="display:none"></td>
+                                <td id="voucherfullpath" style="display:none"></td>
+                                <td>Vouchers</td>
+                                <td id="voucherDocPath">@Model.FilePath</td>
+                                <td id="voucherDocDate">@Model.FileCreationDate</td>
+                                <td><a class="btn btn-primary btn-md btnGenerate">Generate Zip File</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        @if (Model.Type == "Invoice")
+        {
+            <div id="docInvoice">
+                <div class="modal-header">
+                    <button type="button" class="close close-popup" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Invoices Download</h4>
+                </div>
+                <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+                <div class="alert alert-danger" id="ErrorAlert" style="display:none"></div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Document Type</th>
+                                <th>Document Reference</th>
+                                <th>Created On</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="bookingId" style="display:none"></td>
+                                <td id="bookingNumber" style="display:none"></td>
+                                <td id="invoiceDocId" style="display:none"></td>
+                                <td id="invoicefullpath" style="display:none"></td>
+                                <td>Proforma Invoice</td>
+                                <td id="invoiceDocPath">@Model.FilePath</td>
+                                <td id="invoiceDocDate">@Model.FileCreationDate</td>
+                                <td><a class="btn btn-primary btn-md btnGenerate">Generate Proforma Invoice</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default close-popup" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Booking/documentdownload.js"></script>
+

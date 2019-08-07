@@ -1,0 +1,33 @@
+﻿@model Voyager.App.ViewModels.ProductsPDPViewModel
+@{
+    ViewData["Title"] = "Accomodation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04 form">
+        <div class="container">
+            <div class="pg-container accommodation">
+                @*<div class="listing-content">
+                        <div class="enquiry-ttl-due-section btm-border">
+                            <h1>Costing Officer</h1>
+                        </div>
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel)
+                    </div>*@
+                <div class="sqr-tab-cont">
+                    @*@Html.Partial("_QRFAmendmentMenu", Model.MenuViewModel)*@
+                    <div class="sqr-tab-data">
+                        <div id="ProductContainer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#ProductContainer').load("/Product/_Accomodation", { ProductId: '@Model.Products.VoyagerProduct_Id' });
+    });
+</script>

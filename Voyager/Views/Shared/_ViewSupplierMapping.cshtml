@@ -1,0 +1,421 @@
+﻿@model Voyager.App.ViewModels.AgentDetails
+
+<form id="frmSupplierMapping">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+				<div class="tbl-actn-btns"><h4>Supplier Mapping</h4></div><br />
+				<div id="message"></div>
+				<table class="table tblSupplierMapping" id="tblSupplierMapping_@Model.Index" style="background-color:white">
+					<thead>
+						<tr class="form-group">
+							<th class="col-md-3">Application</th>
+							<th class="col-md-3">Code</th>
+							<th class="col-md-3">Name</th>
+							<th style="display:none"></th>
+							<th class="col-md-2" style="text-align:center"></th>
+						</tr>
+					</thead>
+					<tbody>
+						@{
+							int i = 0;
+						}
+						@for (i = 0; i < Model.SupplierMappingList.Count - 1; i++)
+						{
+							<tr id="SupplierMapping_@i" class="SupplierMapping">
+								@Html.Hidden("hdnSeqNo", i)
+								@Html.HiddenFor(x => x.CompanyId)
+								@Html.HiddenFor(x => x.PageName)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].Application_Id)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].Application)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].PartnerEntityCode)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].PartnerEntityName)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].CreateUser)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].CreateDate)
+								@Html.HiddenFor(x => x.SupplierMappingList[i].IsDeleted, new { @class = "clsIsDeleted" })
+								<td class="text-left">@Model.SupplierMappingList[i].Application</td>
+								<td class="text-left">@Model.SupplierMappingList[i].PartnerEntityCode</td>
+								<td class="text-left">@Model.SupplierMappingList[i].PartnerEntityName</td>
+								<td class="text-left clsIsDeleted" style="display:none">@Model.SupplierMappingList[i].IsDeleted</td>							
+								<td class="text-center">
+									<div class="icon-squre-cont btnRemove" id="btnRemove"><a class="icon-squre-red"><i class="fa fa-times"></i></a></div>
+								</td>
+							</tr>
+						}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td>
+								@Html.HiddenFor(x => x.PageName)
+								@Html.HiddenFor(x => x.CompanyId)
+								@Html.Hidden("hdnSeqNo", i)
+								@Html.DropDownListFor(x => x.SupplierMappingList[i].Application_Id, new SelectList(Model.ApplicationList, "Attribute_Id", "AttributeName"), "Select", new { @class = "form-control leftalign ddlApplicationID select", @id = "ddlApplicationID_" + (i) })
+								@Html.HiddenFor(x => x.SupplierMappingList[i].Application, new { @id = "ddlApplication_" + (i), @class = "ddlApplication" })
+								@Html.ValidationMessageFor(x => x.SupplierMappingList[i].Application_Id, "", new { @class = "text-danger leftalign" })
+							</td>
+							<td>
+								@Html.TextBoxFor(x => x.SupplierMappingList[i].PartnerEntityCode, new { @class = "form-control leftalign ApplicationCode", @id = "ApplicationCode_" + (i) })
+								@Html.ValidationMessageFor(x => x.SupplierMappingList[i].PartnerEntityCode, "", new { @class = "text-danger leftalign" })
+							</td>
+							<td>
+								@Html.TextBoxFor(x => x.SupplierMappingList[i].PartnerEntityName, new { @class = "form-control leftalign ApplicationName", @id = "ApplicationName_" + (i) })
+								@Html.ValidationMessageFor(x => x.SupplierMappingList[i].PartnerEntityName, "", new { @class = "text-danger leftalign" })
+							</td>
+							<td style="display:none"></td>
+							<td class="text-center">
+								<div class="icon-squre-cont btnAdd" id="btnAdd"><a class="icon-squre-green"><i class="fa fa-plus"></i></a></div>
+							</td>
+						</tr>
+						<tr>
+							<td style="display:none"></td>
+							<td style="display:none"></td>
+							<td style="display:none"></td>
+							<td style="display:none"></td>
+							<td colspan="5" align="right" style="padding-right: 4%;">
+								<button type="button" class="btn btn-primary btn-md btnSave" id="btnSave_@Model.Index">SAVE</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</form>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+
+
+	if (@Model.Index == 0) {
+
+		var table = $('#tblSupplierMapping_' + @Model.Index).DataTable({
+		"ordering": false,
+		"aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+		"iDisplayLength": 10,
+		"searching": false,
+		"oLanguage": {
+			sLengthMenu: "Show entries _MENU_",
+		},
+		"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+	});
+	};
+
+	$(document).off('click', '#btnSave_@Model.Index').on('click','#btnSave_@Model.Index', function () {
+	//$('#btnSave_@Model.Index').on('click',function () {
+
+		var flag = true;
+		$('#tblSupplierMapping_@Model.Index > tfoot > tr:not(:last)').each(function () {
+
+			var hdn = $(this).find('#hdnSeqNo').val();
+			if ($("#ddlApplicationID_" + hdn).val() == "" && $("#ApplicationCode_" + hdn).val() == "" && $("#ApplicationName_" + hdn).val() == "") {
+				flag = true;
+			}
+			else {
+				// Mandatory Field Validations
+				if ($("#ddlApplicationID_" + hdn).val() == "") {
+					$("#ddlApplicationID_" + hdn).siblings("span").text("*");
+					flag = false;
+				}
+				else {
+					if ($("#ddlApplicationID_" + hdn).siblings("span").text() != "Duplicate Record") {
+						$("#ddlApplicationID_" + hdn).siblings("span").text("");
+					}
+				}
+
+				if ($("#ApplicationCode_" + hdn).val() == "") {
+					$("#ApplicationCode_" + hdn).siblings("span").text("*");
+					flag = false;
+				}
+				else {
+					if ($("#ApplicationCode_" + hdn).siblings("span").text() != "Duplicate Record") {
+						$("#ApplicationCode_" + hdn).siblings("span").text("");
+					}
+				}
+
+				if ($("#ApplicationName_" + hdn).val() == "") {
+					$("#ApplicationName_" + hdn).siblings("span").text("*");
+					flag = false;
+				}
+				else {
+					if ($("#ApplicationName_" + hdn).siblings("span").text() != "Duplicate Record") {
+						$("#ApplicationName_" + hdn).siblings("span").text("");
+					}
+				}
+			}
+
+			if (flag) {
+				var lastHdnSeq = $('#tblSupplierMapping_@Model.Index > tfoot > tr:nth-last-child(2)').find('#hdnSeqNo').val();
+
+				$('#tblSupplierMapping_@Model.Index > tfoot > tr:not(:last)').each(function (iRowCount) {
+					if (iRowCount > 0 && hdn != lastHdnSeq) {
+						if ($("#ddlApplicationID_" + hdn).val() != undefined && $("#ddlApplicationID_" + lastHdnSeq).val() != undefined && ($("#ddlApplicationID_" + hdn).val() == $("#ddlApplicationID_" + lastHdnSeq).val()) &&
+							$("#ApplicationCode_" + hdn).val() != undefined && $("#ApplicationCode_" + lastHdnSeq).val() != undefined && ($("#ApplicationCode_" + hdn).val() == $("#ApplicationCode_" + lastHdnSeq).val()) &&
+							$("#ApplicationName_" + hdn).val() != undefined && $("#ApplicationName_" + lastHdnSeq).val() != undefined && ($("#ApplicationName_" + hdn).val() == $("#ApplicationName_" + lastHdnSeq).val())) {
+							$("#ddlApplicationID_" + lastHdnSeq).siblings("span").text("Duplicate Record");
+							$("#ApplicationCode_" + lastHdnSeq).siblings("span").text("Duplicate Record");
+							$("#ApplicationName_" + lastHdnSeq).siblings("span").text("Duplicate Record");
+							flag = false;
+						}
+					}
+				});
+			}
+
+			if (flag) {
+
+				//table.rows().every(function (iRowCount) {
+				$('#tblSupplierMapping_@Model.Index').DataTable().rows().every(function (iRowCount) {
+					var data = this.data();
+					var del = data[3];
+					if (($("#ddlApplicationID_" + hdn + " option:selected").text() == data[0]) && ($("#ApplicationCode_" + hdn).val() == data[1]) && ($("#ApplicationName_" + hdn).val() == data[2]) && del == 'False') {
+						$("#ddlApplicationID_" + hdn).siblings("span").text("Duplicate Record");
+						$("#ApplicationCode_" + hdn).siblings("span").text("Duplicate Record");
+						$("#ApplicationName_" + hdn).siblings("span").text("Duplicate Record");
+						flag = false;
+					}
+				});
+			}
+
+			//if (flag) {
+			//
+				@*if ($('#tblSupplierMapping_' + @Model.Index) != undefined) {
+					$('#tblSupplierMapping_' + @Model.Index).destroy();
+				}
+				var table = $('#tblSupplierMapping_' + @Model.Index).DataTable({
+		"ordering": false,
+		"aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+		"iDisplayLength": 10,
+		"searching": false,
+		"oLanguage": {
+			sLengthMenu: "Show entries _MENU_",
+		},
+		"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+	});*@
+				//$('#tblSupplierMapping_@Model.Index').DataTable().rows().every(function (iRowCount) {
+
+				@*var table = $('#tblSupplierMapping_@Model.Index').DataTable();
+				table.rows().every(function (iRowCount) {
+
+					var data = this.data();
+					var del = data[3];
+					if (($("#ddlApplicationID_" + hdn + " option:selected").text() == data[0]) && ($("#ApplicationCode_" + hdn).val() == data[1]) && ($("#ApplicationName_" + hdn).val() == data[2]) && del == 'False') {
+						$("#ddlApplicationID_" + hdn).siblings("span").text("Duplicate Record");
+						$("#ApplicationCode_" + hdn).siblings("span").text("Duplicate Record");
+						$("#ApplicationName_" + hdn).siblings("span").text("Duplicate Record");
+						flag = false;
+					}
+				});*@
+			//}
+		});
+
+		if (flag) {
+			$(".ajaxloader").show();
+			if (table != undefined || table != null) {
+				table.destroy();
+			}
+
+			var model = $('#frmSupplierMapping').serialize();
+			var params = $("#tblSupplierMapping_@Model.Index :input").serialize();
+			var ind = @Model.Index;
+			$.ajax({
+				type: "POST",
+				url: "/Agent/SaveSupplierMapping",
+				data: params,
+				global: false,
+				success: function (response) {
+
+					if (response.status == "Failure") {
+						var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! ' + response.responseText + '</strong></div>';
+						$("#frmSupplierMapping #message").html(successmsg);
+						$(".ajaxloader").hide();
+					}
+					else {
+
+						GetSupplierMapping(response.id,ind);
+
+						var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! ' + response.responseText + '</strong></div>';
+						$("#frmSupplierMapping #message").html(successmsg);
+						//if (table == undefined || table == null) {
+						//	var table = $('#tblSupplierMapping_' + ind).DataTable({
+						//		"ordering": false,
+						//		"aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+						//		"iDisplayLength": 10,
+						//		"searching": false,
+						//		"oLanguage": {
+						//			sLengthMenu: "Show entries _MENU_",
+						//		},
+						//		"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+						//	});
+						//}
+					}
+				},
+				error: function (response) {
+					var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> ' + response.responseText + '</div>';
+					$("#frmSupplierMapping #message").before(successmsg);
+					$(".ajaxloader").hide();
+					if (table != undefined || table != null) {
+						var table = $('#tblSupplierMapping_' + ind).DataTable({
+						"ordering": false,
+						"aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+						"iDisplayLength": 10,
+						"searching": false,
+						"oLanguage": {
+							sLengthMenu: "Show entries _MENU_",
+						},
+						"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+					});
+				}
+				}
+			});
+		}
+	});
+
+	$(document).off('click', '#tblSupplierMapping_@Model.Index .btnAdd').on('click', '#tblSupplierMapping_@Model.Index .btnAdd', function () {
+		//$('#frmSupplierMapping').on('click', '.btnAdd', function () {
+
+		addNewRow(this,@Model.Index);
+	});
+
+	$(document).off('click', '#tblSupplierMapping_@Model.Index .btnRemove').on('click','#tblSupplierMapping_@Model.Index .btnRemove', function () {
+	//$('#frmSupplierMapping').on('click', '.btnRemove', function () {
+
+		if (confirm("Are you sure you want to delete this row?")) {
+			var index = $(this).closest('tr').find('#hdnSeqNo').val();
+			removeRow(this, index);
+		}
+		return false;
+	});
+
+	function addNewRow(thisparam, index) {
+		 
+		var flag = true;
+		$('#tblSupplierMapping_' + index + ' > tfoot > tr:not(:last)').each(function () {
+
+			var hdn = $(this).find('#hdnSeqNo').val();
+			if ($("#ddlApplicationID_" + hdn).val() == "") {
+				$("#ddlApplicationID_" + hdn).siblings("span").text("*");
+				flag = false;
+			}
+			else {
+				if ($("#ddlApplicationID_" + hdn).siblings("span").text() != "Duplicate Record") { 
+					$("#ddlApplicationID_" + hdn).siblings("span").text("");
+				}
+			}
+
+			if ($("#ApplicationCode_" + hdn).val() == "") {
+				$("#ApplicationCode_" + hdn).siblings("span").text("*");
+				flag = false;
+			}
+			else {
+				if ($("#ApplicationCode_" + hdn).siblings("span").text() != "Duplicate Record") {
+					$("#ApplicationCode_" + hdn).siblings("span").text("");
+				}
+			}
+
+			if ($("#ApplicationName_" + hdn).val() == "" && $("#ApplicationName_" + hdn).siblings("span").text("") != "Duplicate Record") {
+				$("#ApplicationName_" + hdn).siblings("span").text("*");
+				flag = false;
+			}
+			else {
+				if ($("#ApplicationName_" + hdn).siblings("span").text() != "Duplicate Record") { 
+					$("#ApplicationName_" + hdn).siblings("span").text("");
+				}
+			}
+
+			if (flag) {
+
+				var lastHdnSeq = $('#tblSupplierMapping_' + index + ' > tfoot > tr:nth-last-child(2)').find('#hdnSeqNo').val();
+
+				$('#tblSupplierMapping_' + index + ' > tfoot > tr:not(:last)').each(function (iRowCount) {
+
+					if (iRowCount > 0 && hdn != lastHdnSeq) {
+						 
+						if ($("#ddlApplicationID_" + hdn).val() != undefined && $("#ddlApplicationID_" + lastHdnSeq).val() != undefined && ($("#ddlApplicationID_" + hdn).val() == $("#ddlApplicationID_" + lastHdnSeq).val()) &&
+							$("#ApplicationCode_" + hdn).val() != undefined && $("#ApplicationCode_" + lastHdnSeq).val() != undefined && ($("#ApplicationCode_" + hdn).val() == $("#ApplicationCode_" + lastHdnSeq).val()) &&
+							$("#ApplicationName_" + hdn).val() != undefined && $("#ApplicationName_" + lastHdnSeq).val() != undefined && ($("#ApplicationName_" + hdn).val() == $("#ApplicationName_" + lastHdnSeq).val())) {
+							$("#ddlApplicationID_" + lastHdnSeq).siblings("span").text("Duplicate Record");
+							$("#ApplicationCode_" + lastHdnSeq).siblings("span").text("Duplicate Record");
+							$("#ApplicationName_" + lastHdnSeq).siblings("span").text("Duplicate Record");
+							flag = false;
+						}
+					}
+				});
+			}
+			 
+			if (flag) {
+
+				//table.rows().every(function (iRowCount) {
+				$('#tblSupplierMapping_' + index).DataTable().rows().every(function (iRowCount) {
+					var data = this.data();
+					var del = data[3];
+					if (($("#ddlApplicationID_" + hdn + " option:selected").text() == data[0]) && ($("#ApplicationCode_" + hdn).val() == data[1]) && ($("#ApplicationName_" + hdn).val() == data[2]) && del == 'False') {
+						$("#ddlApplicationID_" + hdn).siblings("span").text("Duplicate Record");
+						$("#ApplicationCode_" + hdn).siblings("span").text("Duplicate Record");
+						$("#ApplicationName_" + hdn).siblings("span").text("Duplicate Record");
+						flag = false;
+					}
+				});
+			}
+		});
+
+		if (!flag) {
+			return false;
+		}
+
+		var index = $(thisparam).closest('tr').find('#hdnSeqNo').val();     //Get Row Index from hidden field
+		var clonedRow = $(thisparam).closest('tr').clone();                 //Clone row to append
+		 
+
+		var ind = Number(index) + 1;
+		// set blank values to cloned row
+		clonedRow.find('#hdnSeqNo').val(ind);
+		clonedRow.find('.ApplicationCode').val('');
+		clonedRow.find('.ApplicationName').val('');
+		clonedRow.find('.ddlApplicationID').siblings("span").text("");
+		clonedRow.find('.ApplicationCode').siblings("span").text("");
+		clonedRow.find('.ApplicationName').siblings("span").text("");
+		$(thisparam).closest('tr').find('.ddlApplicationID').siblings("span").text("");
+		$(thisparam).closest('tr').find('.ApplicationCode').siblings("span").text("");
+		$(thisparam).closest('tr').find('.ApplicationName').siblings("span").text("");
+
+		//Append cloned row after current row
+		$(thisparam).closest('tr').after(clonedRow);
+		$(thisparam).closest("tr").find(".btnAdd").remove();
+
+		$('.tblSupplierMapping > tfoot > tr:not(:last)').each(function (iRowCnt) {
+
+			var curRow = $(this).find('#hdnSeqNo').val();
+			var row = Number(curRow) - 1;
+			$(this).find('input,select,span,textarea,td,ul,div').each(function (iColCnt) {
+				if (this.id != undefined) {
+					this.id = this.id.replace(row, curRow);
+					if (this.id == 'hdnSeqNo') this.value = curRow;
+				}
+				if (this.name != undefined) this.name = this.name.replace(row, curRow);
+				if (this.attributes['data-valmsg-for'] != undefined) this.attributes['data-valmsg-for'].nodeValue = this.attributes['data-valmsg-for'].nodeValue.replace(row, curRow);
+			});
+		});
+
+		//Rebind form validation to enable new rows validation
+		var form = $("#frmSupplierMapping");
+		form.removeData('validator');
+		form.removeData('unobtrusiveValidation');
+		$.validator.unobtrusive.parse(form);
+	}
+
+	function removeRow(thisparam, rowIndex) {
+		$(thisparam).closest('tr').hide();
+		$(thisparam).closest('tr').find('.clsIsDeleted').val("True");
+		$(thisparam).closest('tr').find('.clsIsDeleted').text("True");
+		var arr = table.row(rowIndex).data();
+		arr[3] = "True";
+	}
+
+</script>
+
+<style>
+	#tblSupplierMapping tr td.dataTables_empty {
+		display: none;
+	}
+</style>

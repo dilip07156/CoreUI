@@ -1,0 +1,117 @@
+﻿@model Voyager.App.ViewModels.PositionFOCViewModel
+
+
+<h4>Enter Purchase FOC</h4>
+<form id="frmPositionFOC">
+    <div class="row">
+        <div class="col-md-3">
+            <label class="main-lbl" style="width:auto;">
+                Standard FOC&nbsp;&nbsp;
+                @Html.CheckBoxFor(m => m.StandardFoc, new { @class = "StandardPriceFOC" })
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label class="main-lbl" style="margin-top: 3px;width:auto;">Date Range</label>
+            @Html.DropDownList("FilterDateRange", new SelectList(Model.PositionFOCData.Select(a => a.Period.ToUpper() == "ALL" ? a.Period : Convert.ToDateTime(a.Period).ToString("dd/MM/yyyy")).Distinct()), new { @class = "form-control FilterDateRange" })
+        </div>
+        <div class="col-md-3">
+            <label class="main-lbl" style="margin-top: 3px;width:auto;">Pax Slab</label>
+            @Html.DropDownList("FilterPaxSlab", new SelectList(Model.PositionFOCData.Select(a => a.PaxSlab).Distinct()), new { @class = "form-control FilterPaxSlab" })
+        </div>
+    </div>
+    <br />
+    <div class="custom-mob-tbl">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>City</th>
+                    <th>Product Name</th>
+                    <th>Pax Slab</th>
+                    <th>Type</th>
+                    <th>Service</th>
+                    <th class="col-sm2">FOC Qty.</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @for (int i = 0; i < Model.PositionFOCData.Count; i++)
+                {
+                    string RowClass = "";
+                    if (Model.PositionFOCData[i].Period.ToString().ToUpper() == "ALL")
+                    { RowClass = "StandardRow"; }
+                    else
+                    { RowClass = "DetailedRow"; }
+                    <tr class="@RowClass">
+                        <td class="text-center">
+                            @Html.HiddenFor(m => m.PositionFOCData[i].PositionFOCId)
+                            @Html.HiddenFor(m => m.PositionFOCData[i].Period, new { @class = "DateRange" })
+                            @Html.HiddenFor(m => m.PositionFOCData[i].ProductRangeId)
+                            @Html.HiddenFor(m => m.PositionFOCData[i].PaxSlab, new { @class = "PaxSlab" })
+                            @Html.HiddenFor(m => m.PositionFOCData[i].PositionId)
+                            @{
+                                string Period = "";
+                                Period = Model.PositionFOCData[i].Period.ToUpper() == "ALL" ? Model.PositionFOCData[i].Period : Convert.ToDateTime(Model.PositionFOCData[i].Period).ToString("dd/MM/yyyy");
+                            }
+                            <span class="spanDateRange">@Period</span>
+                        </td>
+                        <td class="text-center">@Model.PositionFOCData[i].CityName</td>
+                        <td class="text-center">@Model.PositionFOCData[i].ProductName</td>
+                        <td class="text-center">@Model.PositionFOCData[i].PaxSlab</td>
+                        <td class="text-center">@Model.PositionFOCData[i].Type</td>
+                        <td class="text-center">@Model.PositionFOCData[i].ProductRange</td>
+                        <td>
+                            @Html.TextBoxFor(m => m.PositionFOCData[i].FOCQty, new { @class = "form-control filled txt-red numericInt", @placeholder = "" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="btn-cont right">
+        <ul>
+            <li><a class="btn btn-md btn-primary btn-cancel">Cancel</a></li>
+            <li><a class="btn btn-md btn-blue btn-save SavePositionFOC">Save</a></li>
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+    <a href="#" class="btn-close"></a>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".StandardPriceFOC").click(function () {
+            if ($(this).is(":checked")) {
+                $(".FilterDateRange").val("ALL");
+                $(".FilterPaxSlab").val("ALL");
+            }
+        });
+
+        $(".SavePositionFOC").click(function () {
+            var current = $(this);
+            var model = current.parents("#frmPositionFOC").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/Position/SetPositionFOC",
+                data: model,
+                //contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response == 'success')
+                        QRFPricesAfterSave(current, 'success');
+                    else
+                        QRFPricesAfterSave(current, 'failure');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+      //  PopulatePriceRows($(document.activeElement.nextElementSibling).find('.StandardPriceFOC')[0]);
+    });
+</script>
+

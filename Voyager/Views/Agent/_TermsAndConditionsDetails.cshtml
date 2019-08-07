@@ -1,0 +1,231 @@
+﻿@model Voyager.App.ViewModels.TermsAndConditionsDetails
+
+<style>
+    .leftalign {
+        text-align: left !important;
+    }
+
+    .summary-tbl.custom-mob-tbl .table > tbody > tr > td {
+        text-align: left;
+        width: 85px;
+    }
+
+    .popup-box.pop-md {
+        width: 1200px !important;
+    }
+
+    .popup-box {
+        background: #f4f7f8;
+        padding: 20px 30px;
+        text-align: left;
+        margin: 40px auto;
+        position: relative;
+        max-width: 1000px;
+    }
+</style>
+
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { role = "form", id = "frmTermsAndConditions" }))
+{
+    @Html.HiddenFor(x => x.Company_Id, new { @id = "CompanyId", @class = "CompanyId" })
+    <div class="row">
+        <br />
+        <div class="col-md-12">
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <div class="tbl-actn-btns"><h4>Terms and Conditions</h4></div>
+                <div>
+                    @if (Model.CompanyTerms.Count > 0)
+                {
+                        <div id="table1">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="col-lg-2">Document Type</th>
+                                        <th class="col-lg-2">Business Type</th>
+                                        <th class="col-lg-2">Section</th>
+                                        <th class="col-lg-2">Sub Section</th>
+                                        <th class="col-lg-2">Condition</th>
+                                        <th class="col-lg-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.CompanyTerms.Count; i++)
+                            {
+                                    <tr>
+                                        @Html.HiddenFor(x => x.CompanyTerms[i].TermsAndConditions_Id, new { @id= "TermsAndConditions_Id", @class= "clsTermsAndConditions_Id" })
+                                        <td>@Model.CompanyTerms[i].OrderNr</td>
+                                        <td>@Model.CompanyTerms[i].DocumentType</td>
+                                        <td>@Model.CompanyTerms[i].BusinessType</td>
+                                        <td>@Model.CompanyTerms[i].Section</td>
+                                        <td>@Model.CompanyTerms[i].SubSection</td>
+                                        <td>@Model.CompanyTerms[i].TermsDescription</td>
+                                        <td>
+                                            <a href="#action-popup1" class="popup-inline btn btn-primary btn-sm btnAddEditCompanyTerms">Edit</a>&nbsp;
+                                            <button type="button" class="btn btn-primary btn-sm btnDeleteCompanyTerms">Delete</button>
+                                        </td>
+                                    </tr>
+                            }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <br />
+                        <h4 class="alert alert-info">No Records Found</h4>
+                    }
+                </div><br />
+                <div class="row">
+                    <div class="col-lg-3">
+                        <a href="#action-popup1" class="popup-inline btn btn-primary btnAddEditCompanyTerms">Add New Condition</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="col-md-12">
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <br />
+                <div class="tbl-actn-btns"><h4>Payment Details</h4></div>
+                <div>
+                    @if (Model.PaymentDetails.Count > 0)
+                {
+                        <div id="table2">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="col-lg-8">Payment Details</th>
+                                        <th class="col-lg-2">Currency</th>
+                                        <th class="col-lg-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.PaymentDetails.Count; i++)
+                    {
+                                    <tr>
+                                        @Html.HiddenFor(x => x.PaymentDetails[i].PaymentDetails_Id, new { @id = "PaymentDetails_Id", @class = "clsPaymentDetails_Id" })
+                                        <td>@Model.PaymentDetails[i].PaymentDetails</td>
+                                        <td>@Model.PaymentDetails[i].Currency</td>
+                                        <td>
+                                            @*<button type="button" class="btn btn-primary btn-sm btnEditPaymentDtls">Edit</button> &nbsp;*@
+                                            <a href="#addNewDetails-popup" class="popup-inline btn btn-primary btn-sm btnAddEditPaymentBank">Edit</a>&nbsp;
+                                            <button type="button" class="btn btn-primary btn-sm btnDeletePaymentDtls">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <br />
+                        <h4 class="alert alert-info">No Records Found</h4>
+                    }
+                </div><br />
+                <div class="row">
+                    <div class="col-lg-3">
+                        @*<button type="button" class="btn btn-primary">Add New Payment Bank</button>*@
+                        <a href="#addNewDetails-popup" class="popup-inline btn btn-primary btnAddEditPaymentBank">Add New Payment Bank</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div id="addNewDetails-popup"></div>
+<div id="action-popup1"></div>
+
+<script type="text/javascript">
+
+    $(".btnAddEditCompanyTerms").click(function () {
+        var companyId = $("#CompanyId").val();
+        var termscondId = $(this).parents('tr').find('.clsTermsAndConditions_Id').val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/ViewConditions",
+            data: { CompanyId: companyId, TermsAndConditionsId: termscondId },
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                 
+                $("#action-popup1").html(response);
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $(".btnAddEditPaymentBank").click(function () {
+         
+        var companyId = $("#CompanyId").val();
+        var paymentId = $(this).parents('tr').find('.clsPaymentDetails_Id').val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/ViewPaymentDetails",
+            data: { CompanyId: companyId, PaymentDetailsId: paymentId },
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                 
+                $("#addNewDetails-popup").html(response);
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $('#table1').on('click', '.btnDeleteCompanyTerms', function () {
+        $(".ajaxloader").show();
+         
+        var companyId = $("#CompanyId").val();
+        var termscondId = $(this).parents('tr').find('.clsTermsAndConditions_Id').val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Agent/RemoveCondition",
+            data: { CompanyId: companyId, TermsAndConditionId: termscondId },
+            success: function (response) {
+                $("#Terms").click();
+                $(".ajaxloader").hide();
+            },
+            error: function () {
+                $(".ajaxloader").hide();
+            }
+        });
+
+    });
+
+    $('#table2').on('click', '.btnDeletePaymentDtls', function () {
+        $(".ajaxloader").show();
+         
+        var companyId = $("#CompanyId").val();
+        var paymentId = $(this).parents('tr').find('.clsPaymentDetails_Id').val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Agent/RemovePaymentDetail",
+            data: { CompanyId: companyId, PaymentDetailsId: paymentId },
+            global: false,
+            success: function (response) {
+                $("#Terms").click();
+                $(".ajaxloader").hide();
+            },
+            error: function () {
+                $(".ajaxloader").hide();
+            }
+        });
+
+    });
+
+</script>
+
+
+
+
+
+
+
+

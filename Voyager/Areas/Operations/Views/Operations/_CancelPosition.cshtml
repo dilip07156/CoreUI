@@ -1,0 +1,149 @@
+﻿@model Voyager.App.ViewModels.OpsCancelBooking
+
+<style>
+	.popup-box.pop-lg {
+		max-width: 80% !important;
+	}
+</style>
+
+<form action="/" method="post" class="form-theme-04" id="frmCancelPosition">
+	<h3>Cancel Position</h3>
+	<button title="Close (Esc)" type="button" class="mfp-close"></button>
+	<br />
+	<div class="modal-body" id="cancelPositionSection">
+		@Html.HiddenFor(x => x.PositionId, new { @id = "Position_Id" })
+		@Html.HiddenFor(x => x.Placeholder, new { @id = "Placeholder" })
+		@Html.HiddenFor(x => x.PositionStatusFull, new { @id = "PositionStatusFull" })
+		@Html.HiddenFor(x => x.SystemCompany_Id, new { @id = "SystemCompany_Id" })
+		<div class="row">
+			<div class="col-12">
+				<div class="alert alert-success" id="SuccessAlert" style="display:none">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+					<div id="SuccessMessage"></div>
+				</div>
+				<div class="alert alert-danger" id="ErrorAlert" style="display:none">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+					<div id="ErrorMessage"></div>
+				</div>
+				<div class="alert alert-danger" role="alert">
+					Please take care when proceeding as this action cannot be reversed.
+				</div>
+			</div>
+		</div>
+		<br />
+
+		<!-- UI to be diplayed If INCLUDED IN PACKAGE -->
+		@*<div class="row">
+			<div class="col-12">*@
+		@if (Model.PosType?.ToLower() == "core")
+			{
+			<div class="card" id="pkgService">
+				<div class="card-header">
+					<h3 class="blue-captns">Package Service</h3>
+				</div><br />
+				<div class="card-body">
+					<h4 class="semi-bold" style="color:red">Warning</h4><br />
+					<p>
+						You are about to cancel a Service that is contained within a Package Price that
+						has been agreed with the Customer. Cancelling the Position can generate a
+						<b>Package Refund</b> on the Sales Invoice.
+					</p>
+					<p>Please choose from one of the below options.</p><br />
+					<div class="form-group">
+						<label>Enter the Reason for the Cancellation</label>
+						@Html.DropDownListFor(m => m.CancelReason, new SelectList(Model.CancellationList, "AttributeName", "AttributeName"), "Select", new { @id = "ddlCancellation", @class = "form-control clsddlCancellation" })
+						@Html.ValidationMessageFor(m => m.CancelReason, "", new { @class = "error" })
+					</div><br />
+
+					<a href="#Confirm-popup" class="popup-inline btn btn-danger btnCancel">Cancel Position and Generate Package Refund</a>
+					<a href="#Confirm-popup" class="popup-inline btn btn-danger btnCancel">Cancel Position and Recalculate Package Price</a>
+					<a href="#Confirm-popup" class="popup-inline btn btn-warning btnMaintain">Maintain Package Component and Change Product</a>
+				</div>
+			</div>
+		}
+		@*</form>*@
+		@*<form action="/" method="post" class="form-theme-04" id="frmCancelPositionNonPkgPrice">*@
+		<!-- UI to be diplayed If NOT IN PACKAGE -->
+		@if (Model.PosType?.ToLower() == "noncore")
+			{
+			<br>
+			<div class="card" id="nonPkgService">
+				<div class="card-header">
+					<h3 class="blue-captns">Non Package Service</h3>
+				</div><br />
+				<div class="card-body">
+					<h4 class="semi-bold" style="color:red">Warning</h4><br />
+					<p>
+						You are about to cancel a Service that is contained on an agreed
+						quotation with the Customer.
+					</p>
+					<p>This will have no impact on the Final Sales Invoice.</p><br />
+					<div class="form-group">
+						<label>Enter the Reason for the	Cancellation</label>
+						@Html.DropDownListFor(m => m.CancelReason, new SelectList(Model.CancellationList, "AttributeName", "AttributeName"), "Select", new { @id = "ddlCancellation", @class = "form-control clsddlCancellation" })
+						@Html.ValidationMessageFor(m => m.CancelReason, "", new { @class = "error" })
+					</div>
+					<a href="#Confirm-popup" class="popup-inline btn btn-danger btnCancel">Cancel Position</a>
+				</div>
+			</div>
+		}
+
+	</div>
+	<div class="modal-footer">
+		<button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+	</div>
+
+	<div id="CancelPosition-popup" style="display:none">
+		<div class="popup-box pop-lg form-theme-04 form">
+			<div class="popup-in">
+
+			</div>
+		</div>
+	</div>
+
+	<div id="ChangeSupplier-popup" style="display:none">
+		<div class="popup-box pop-lg form-theme-04 form">
+			<div class="popup-in">
+
+			</div>
+		</div>
+	</div>
+
+	@*<div class="mfp-hide popup-box pop-md" id="alertPopup1">
+			<div class="popup-in">
+				<h4 class="semi-bold">Are you sure you wish to proceed?</h4>
+				<button title="Close (Esc)" type="button" class="mfp-close"></button>
+				<div class="btn-cont text-center">
+					<a href="#CancelPosition-popup" class="popup-inline btn btn-blue btn-md btnRecalculatePkgPrice" onclick="CancelPosition()">Ok</a>
+				</div>
+			</div>
+		</div>
+		<div class="mfp-hide popup-box pop-md" id="alertPopup2">
+			<div class="popup-in">
+				<h4 class="semi-bold">Are you sure you wish to proceed?</h4>
+				<button title="Close (Esc)" type="button" class="mfp-close"></button>
+				<div class="btn-cont text-center">
+					<a href="#CancelPosition-popup" class="popup-inline btn btn-blue btn-md btnRecalculatePkgPrice" onclick="CancelPosition()">Ok</a>
+				</div>
+			</div>
+		</div>
+		<div class="mfp-hide popup-box pop-md" id="alertPopup3">
+			<div class="popup-in">
+				<h4 class="semi-bold">Are you sure you wish to proceed?</h4>
+				<button title="Close (Esc)" type="button" class="mfp-close"></button>
+				<div class="btn-cont text-center">
+					<a href="#" class="popup-inline btn btn-blue btn-md btnChangeProduct">Ok</a>
+				</div>
+			</div>
+		</div>
+		<div class="mfp-hide popup-box pop-md" id="alertPopup4">
+			<div class="popup-in">
+				<h4 class="semi-bold">Are you sure you wish to proceed?</h4>
+				<button title="Close (Esc)" type="button" class="mfp-close"></button>
+				<div class="btn-cont text-center">
+					<a href="#CancelPosition-popup" class="popup-inline btn btn-blue btn-md btnCancelPosition" onclick="CancelPosition()">Ok</a>
+				</div>
+			</div>
+		</div>*@
+</form>
+<script src="~/js/Operations/CancelPosition.js"></script>

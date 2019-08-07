@@ -1,0 +1,349 @@
+﻿@model Voyager.App.ViewModels.IntegrationPlatformViewModel
+
+<style>
+    .btn-pop-closepopup {
+        float: right;
+    }
+    .popup-box .custom-mob-tbl .table .form-control {
+        padding-right: 0px;
+    }
+</style>
+<form id="frmPlatformURL">
+    <div class="action-popup table-responsive div-pop-sec valign-top-tbl" style="display:block;">
+        <a href="#" class="btn-pop-closepopup" style="display:block;" onclick="closePlatformURL()"><i class="fa-custom-close lg"></i></a>
+        <h3 class="text-left">
+            <span class="headertextposition" style="text-transform: capitalize;">
+                Platform URL
+            </span>
+        </h3>
+        <div style="display:none;text-align:left;" id="divURLSuccessError">
+            <a class="close" title="close">×</a>
+            <strong id="stURLMsg"></strong> <label id="lblURLmsg"></label>
+        </div>
+        @Html.HiddenFor(m => m.ActionId, new { @id = "txtActionId" })
+        @Html.HiddenFor(m => m.Module, new { @id = "txtModule" })
+        @Html.HiddenFor(m => m.Application_Id, new { @id = "txtApplication_Id" })
+        @Html.HiddenFor(m => m.ActionName, new { @id = "txtActionName" })
+        @Html.HiddenFor(m => m.ModuleName, new { @id = "txtModuleName" })
+        @Html.HiddenFor(m => m.ApplicationName, new { @id = "txtApplicationName" })
+        @Html.HiddenFor(m=>m.TypeName,new { @id="txtTypeName"})
+
+        <table class="table table-bordered tbl-theme-03 top-align scroller" id="tblPlatformURL">
+            <tbody  id="tNewConfig">
+                @for (int i = 0; i < Model.Configurations.Count(); i++)
+                {
+                <tr id="ConfigItem_@i" class="trNewConfigAdd">
+
+                    <td class="text-left col-xs-1">
+                        <div class="form-control">
+                            <input type="hidden" id="hdnSeqNo" value="@i" />
+                            <label class="frm-sub-label txt-orange">Type</label>
+                            @Html.HiddenFor(m => Model.Configurations[i].ConfigId, new { @id = "Configid_" + i })
+                            @Html.DropDownListFor(m => Model.Configurations[i].PlatformTypeName, new SelectList(new List<string>() { "ADDRESS", "MASTERS", "PICKLIST", "FIELD" }), "Select", new { @class = "form-control filter", @id = "platformType_" + i })
+                            <span class="text-danger" id="lblType"></span>
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-1">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">Bound Type</label>
+                            @Html.DropDownListFor(m => Model.Configurations[i].BoundType, new SelectList(new List<string>() { "INBOUND", "OUTBOUND" }), "Select", new { @class = "form-control filter", @id = "boundType_" + i })
+                            <span class="text-danger" id="lblType"></span>
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-2">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">URL</label>
+                            @Html.TextBoxFor(m => Model.Configurations[i].URL, new { @class = "form-control bindURL", @id = "txtURL_" + i, @placeholder = "URL" })
+                            <span class="text-danger" id="lblURL"></span>
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-2">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">Application Field Name</label>
+                            @Html.TextBoxFor(m => Model.Configurations[i].ApplicationFieldName, new { @class = "form-control bindAppFieldName", @id = "txtApplicationFieldName_" + i, @placeholder = "Application Field Name" })
+                            <span class="text-danger" id="lblApplicationFieldName"></span>
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-2">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">System Field Name</label>
+                            @Html.TextBoxFor(m => Model.Configurations[i].SystemFieldName, new { @class = "form-control bindSysFieldName", @id = "txtSystemFieldName_" + i, @placeholder = "System Field Name" })
+                            <span class="text-danger" id="lblSystemFieldName"></span>
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-1">
+                        <div class="form-control">
+                            <label class="frm-sub-label txt-orange">Entity Name</label>
+                            @Html.TextBoxFor(m => Model.Configurations[i].EntityName, new { @class = "form-control bindSysFieldName", @id = "txtEntityName_" + i, @placeholder = "Entity Name" })
+                            <span class="text-danger" id="lblSystemFieldName"></span>
+                        </div>
+                    </td>
+                    <td class="text-left col-xs-1">
+                        <div class="action align-center top-gap-md">
+                            <button type="button" class="icon-squre-green btnAddNewDt" title="Add" id="btnAddNewConfig_@i" style='@(i != (Model.Configurations.Count()-1) ? "display: none" : "") width:27px'><i class="fa fa-plus"></i></button>
+                            <button type="button" class="icon-squre-red btnRemove" title="Delete" style="width:27px" id="btnRemove_@i"><i class="fa fa-times"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="action align-right top-gap-md">
+            <button type="button" class="btn btn-success VenueContinue" onclick="AddIntegrationPlatformConfig()">Save</button>
+            <button type="button" class="btn btn-primary" onclick="closePlatformURL()">Close</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    
+    function AddIntegrationPlatformConfig() {
+
+        $(".ajaxloader").show();
+
+        if (validateIntegartionPlatformConfig(true)) {
+
+            var configurations = new Array();
+
+            $('#tNewConfig .trNewConfigAdd').each(function (iRowCnt) {
+                var data = {
+                    URL: "",
+                    SystemFieldName: "",
+                    ApplicationFieldName: "",
+                    PlatformTypeName: "",
+                    BoundType: "",
+                    EntityName: "",
+                    ConfigId: "",
+                    TypeName:"",
+                }
+                if (this.id != undefined && this.id != "") {
+                    data.URL = $("#txtURL_" + iRowCnt).val();
+                    data.SystemFieldName = $("#txtSystemFieldName_" + iRowCnt).val();
+                    data.EntityName = $("#txtEntityName_" + iRowCnt).val();
+                    data.ApplicationFieldName = $("#txtApplicationFieldName_" + iRowCnt).val();
+                    data.PlatformTypeName = $("#platformType_" + iRowCnt).val();
+                    data.BoundType = $("#boundType_" + iRowCnt).val();
+                    data.ConfigId = $("#Configid_" + iRowCnt).val();
+                }
+
+                configurations.push(data);
+            });
+
+            var model = {
+                Application_Id: $("#txtApplication_Id").val(),
+                ApplicationName: $("#txtApplicationName").val(),
+                Module: $("#txtModule").val(),
+                ModuleName: $("#txtModuleName").val(),
+                ActionId: $("#txtActionId").val(),
+                ActionName: $("#txtActionName").val(),
+                TypeName: $("#txtTypeName").val(),
+                configurations: configurations
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/SaveIntegrationPlatformConfig",
+                data: model,
+                success: function (response) {
+                    if (response.status != undefined) {
+                        $("#divURLSuccessError").removeAttr('class');
+                        response.status.toLocaleLowerCase() == "alert" ? $("#divURLSuccessError").addClass("alert alert-info") : $("#divURLSuccessError").addClass("alert alert-danger");
+                        $("#divURLSuccessError").show();
+                        $("#lblURLmsg").text(response.responseText);
+                        $("#stURLMsg").text(response.status + "! ");
+                    }
+                    else {
+                        //$(".displayIntegrationPlatformURL").html(response.replace("action-popup ", ""));
+                        if (response.responseStatus.status == "Failure") {
+                            $("#divURLSuccessError").removeAttr('class');
+                            $("#divURLSuccessError").show();
+                            $("#divURLSuccessError").addClass("alert alert-danger");
+                            $("#lblURLmsg").text("Unable to save due to duplicate entry");
+                            $("#stURLMsg").text("Failure! ");
+                        }
+                        else {
+                            $("#divURLSuccessError").removeAttr('class');
+                            $("#divURLSuccessError").show();
+                            $("#divURLSuccessError").addClass("alert alert-success");
+                            $("#lblURLmsg").text("Integration Platform URL saved successfully.");
+                            $("#stURLMsg").text("Success! ");
+                        }
+                    }
+                    $(".ajaxloader").hide();
+                    setTimeout(() => {
+                        $("#divURLSuccessError").hide();
+                    }, 5000);
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+
+    }
+
+    function validateIntegartionPlatformConfig(value) {
+        var flag = true;
+        //var typeAddress = $("#PlatformType :selected").text();
+        //if (value && (typeAddress == "" || typeAddress == "Select")) {
+        //    $("#PlatformType").siblings("span").text("The PlatformType field is required.");
+        //    flag = false;
+        //}
+        //else
+        //    $("#PlatformType").siblings("span").text("");
+        var cntNewDeptDt = $("input[id^='txtURL_").length;
+
+        for (var i = 0; i < cntNewDeptDt; i++) {
+            var boundType = $("#boundType_" + i + " :selected").text();
+            if (value && (boundType == "" || boundType == "Select" || boundType == 'undefined')) {
+                $("#boundType_" + i).siblings("span").text("The Bound Type field is required.");
+                flag = false;
+            }
+            else { 
+                $("#boundType_" + i).siblings("span").text("");
+            }
+
+            var platformType = $("#platformType_" + i + " :selected").text();
+            if (value && (platformType == "" || platformType == "Select" || platformType == 'undefined')) {
+                $("#platformType_" + i).siblings("span").text("The Type field is required.");
+                flag = false;
+            }
+            else {
+                $("#platformType_" + i).siblings("span").text("");
+            }
+
+            var URL = $("#txtURL_" + i).val();
+            var pattern = /\/[a-zA-Z0-9-\.]+\.[a-z]{2,4}/; //     /^(http|https)?:\/\/[a-zA-Z0-9-\.]+\.[a-z]{2,4}/;
+
+            if (value && ((URL == "" || URL == 'undefined') && (platformType == "ADDRESS" || platformType == "Select"))) {
+                $("#txtURL_" + i).siblings("span").text("The URL field is required.");
+                flag = false;
+            }
+            else {
+                $("#txtURL_" + i).siblings("span").text("");
+            }
+            var AppFieldName = $("#txtApplicationFieldName_" + i).val();
+            var SysFieldName = $("#txtSystemFieldName_" + i).val();
+            var EntityName = $("#txtEntityName_" + i).val();
+
+            if (value && (AppFieldName == "") && platformType != "ADDRESS") {
+                $("#txtApplicationFieldName_" + i).siblings("span").text("The Application field is required.");
+                flag = false;
+            }
+            else {
+                $("#txtApplicationFieldName_" + i).siblings("span").text("");
+            }
+
+            if (value && (SysFieldName == "") && platformType != "ADDRESS") {
+                $("#txtSystemFieldName_" + i).siblings("span").text("The System field is required.");
+                flag = false;
+            }
+            else {
+                $("#txtSystemFieldName_" + i).siblings("span").text("");
+            }
+
+            if (value && (EntityName == "") && (platformType == "MASTERS" || platformType == "PICKLIST")) {
+                $("#txtEntityName_" + i).siblings("span").text("The Entity field is required.");
+                flag = false;
+            }
+            else {
+                $("#txtEntityName_" + i).siblings("span").text("");
+            }
+        }
+
+        if (!flag && value) {
+            $(".ajaxloader").hide();
+            return false;
+        }
+
+        $(".ajaxloader").hide();
+        return true;
+    }
+
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divURLSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblURLmsg").text("");
+        curdiv.find("#stURLMsg").text("");
+    });
+
+    //Add new config button
+    $('#tNewConfig').on('click', '.btnAddNewDt', function () {
+        
+        $(".ajaxloader").show();
+        if (validateIntegartionPlatformConfig(true)) {
+            var thisparam = this;
+            var curRowCnt = parseInt($(thisparam).attr("id").replace("btnAddNewConfig_", ""));
+            var iRowCnt = $("input[id^='txtURL_").length;
+            var clonedRow = $(thisparam).closest("tr").clone();
+            $(thisparam).closest("tr").after(clonedRow);
+
+            $(".trNewConfigAdd:last").find('input,span,div,small,button,tr,select').each(function (iColCnt) {
+                if (this.id == "hdnSeqNo") this.value = iRowCnt;
+
+                if (this.id != undefined && this.id != "") {
+                    this.id = this.id.replace(curRowCnt, iRowCnt);
+                }
+
+                if (this.name != undefined && this.name != "")
+                    this.name = this.name.replace(curRowCnt, iRowCnt);
+            });
+            $("#txtURL_" + iRowCnt).val('');
+            $("#txtApplicationFieldName_" + iRowCnt).val('');
+            $("#txtSystemFieldName_" + iRowCnt).val('');
+            $("#txtEntityName_" + iRowCnt).val('');
+            $("#Configid_" + iRowCnt).val('');
+            $("#platformType_" + iRowCnt).val("");
+            $("#boundType_" + iRowCnt).val("");
+            $('#btnAddNewConfig_' + curRowCnt).css("display", "none");
+        }
+        $(".ajaxloader").hide();
+        
+    });
+
+    //remove new config button
+    $("#tNewConfig").on('click', '.btnRemove', function () {
+         
+        $(".ajaxloader").show();
+        var removeBtnCnt = $(".btnRemove").length;
+
+        if (removeBtnCnt > 1) {
+            $(this).closest('tr').remove();
+            var curRow = 0;
+
+            $('#tNewConfig .trNewConfigAdd').each(function (iRowCnt) {
+                $(this).find('input,span,div,small,button,tr,select').each(function (iColCnt) {
+                    if (this.id != undefined && this.id != "") {
+                        if (this.id == 'hdnSeqNo') { curRow = this.value; this.value = iRowCnt; };
+                        this.id = this.id.replace(curRow, iRowCnt);
+                    }
+                    if (this.name != undefined && this.name != "") this.name = this.name.replace(curRow, iRowCnt);
+                });
+            });
+
+            var cnt = $("input[id^='txtURL_").length - 1;
+            $('#tNewConfig .trNewConfigAdd:last').find(".btnAddNewDt").css("display", "");
+            //$('#tNewConfig .trNewConfigAdd:last:last').find(".divAddButton").html('<button type="button" class="btn btn-success btn-md btnAddNewDt" id="btnAddNewDt_' + cnt.toString() + '">[+]</button>');
+        }
+        else {
+            $("#divURLSuccessError").removeAttr('class');
+            $("#divURLSuccessError").show();
+            $("#divURLSuccessError").addClass("alert alert-danger");
+            $("#lblURLmsg").text("Integration Platform URL at 1st row can not be delete.");
+            $("#stURLMsg").text("Error! ");
+            setTimeout(() => {
+                $("#divURLSuccessError").hide();
+            }, 5000);
+        }
+        $(".ajaxloader").hide();
+    });
+
+</script>

@@ -1,0 +1,214 @@
+﻿@model Voyager.App.ViewModels.ItineraryViewModel
+
+<style>
+    .filter-links li .compare-dropdown {
+        padding-bottom: 5px !important;
+    }
+
+    .summary-prices .summary-tour-info {
+        width: 39%;
+        margin-bottom: 0px;
+        position: relative;
+    }
+
+    .filter-links {
+        float: left;
+        width: 100%;
+        background: #f6f4f3;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 10px #e8e7e7;
+        margin-bottom: 0px;
+    }
+
+    .rightfilter {
+        width: 100%;
+        float: left;
+    }
+
+    .costing-officers .collapse-container{
+        display:none;
+    }
+</style>
+<script src="~/js/Costing/PricingSummary.js"></script>
+
+@if (Model.MainTourList.Count > 0 || Model.QRFNonPkgSupplementPositions.Count > 0 || Model.QRFNonPkgOptionalPositions.Count > 0)
+{
+    <ul class="filter-links rightfilter">
+        <li>
+            <a>Departure Dates <i class="fa fa-angle-down"></i></a>
+            <div class="compare-dropdown">
+                @Html.DropDownListFor(m => m.DepartureDate, new SelectList(Model.DepartureDatesList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+            </div>
+        </li>
+        <li>
+            <a>Pax Slabs <i class="fa fa-angle-down"></i></a>
+            <div class="compare-dropdown">
+                @Html.DropDownListFor(m => m.PaxSlab, new SelectList(Model.PaxSlabList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+            </div>
+        </li>
+    </ul>
+
+    <div class="clear"></div>
+    <div class="summary-tour-info rightfilter">
+        <div class="simple-tab-data">
+            <div style="width:40%;">
+                <div id="HeadersTab" class="radio-list-bar  js-tab theme-blue">
+                    <ul class="table-cell">
+                        <li class="active" id="HeaderMainTour">
+                            <label class="cntrl" data-label="main-tour" style="cursor:pointer;">Main Tour</label>
+                        </li>
+                        <li id="HeaderSupplement">
+                            <label class="cntr" data-label="supplement" style="cursor:pointer;">Supplement</label>
+                        </li>
+                        <li id="HeaderOptional">
+                            <label class="cntr" data-label="supplement" style="cursor:pointer;">Optional</label>
+                        </li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+                <div id="PricingSummaryTab">
+                    <ul>
+                        <li>
+                            @if (Model.MainTourList.Count > 0)
+                            {
+                                <div id="MainTour" class="tab-main-tour-sec radio-list-data  summary-tour-info-cont">
+                                    <div class="custom-mob-tbl table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="col-sm-1">FOR</th>
+                                                    @if (Model.MainTourList.Count > 0)
+                                                    {
+                                                        <th class="col-sm-1">PRICE (@Model.MainTourList[0].QRFCurrency)</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.MainTourList.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Model.MainTourList[i].DisplayRoomName
+                                                        </td>
+                                                        <td style="text-align:center">
+                                                            @Model.MainTourList[i].SellPrice.ToString("0.00")
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                        </li>
+                        <li>
+                            @if (Model.SupplementList.Count > 0)
+                            {
+                                <div id="Supplement" class="tab-supplement-sec  radio-list-data  summary-tour-info-cont">
+                                    <ul class="filter-links">
+                                        <li>
+                                            <a href="#">Product <i class="fa fa-angle-down"></i></a>
+                                            <div class="compare-dropdown">
+                                                @Html.DropDownListFor(m => m.SupplementProduct, new SelectList(Model.SupplementProductList, "Attribute_Id", "AttributeName"), new { @id = "ddlSupplement", @class = "form-control filter" })
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="custom-mob-tbl table-responsive">
+                                        <table class="table SupplementTable">
+                                            @for (int i = 0; i < Model.QRFNonPkgSupplementPositions.Count; i++)
+                                            {
+                                                @Html.HiddenFor(x => x.QRFNonPkgSupplementPositions[i].PositionType, new { @id = "PositionType" })
+                                                string classname = "";
+                                                if (!string.IsNullOrEmpty(Model.QRFNonPkgSupplementPositions[i].PositionType))
+                                                {
+                                                    classname = Model.QRFNonPkgSupplementPositions[i].PositionType.Replace(' ', '-');
+                                                }
+                                                <thead class="@classname">
+                                                    <tr>
+                                                        <th colspan="2"><b>@Model.QRFNonPkgSupplementPositions[i].ProductName (@Model.QRFNonPkgSupplementPositions[i].PositionType)</b></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="col-sm-1">FOR</th>
+                                                        @if (Model.SupplementList.Count > 0)
+                                                        {
+                                                            <th class="col-sm-1">PRICE (@Model.SupplementList[0].QRFCurrency)</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="@classname">
+                                                    @for (int j = 0; j < Model.SupplementList.Count; j++)
+                                                    {
+                                                        @if (Model.QRFNonPkgSupplementPositions[i].PositionId == Model.SupplementList[j].PositionId)
+                                                        {
+                                                            <tr>
+                                                                <td>@Model.SupplementList[j].RoomName</td>
+                                                                <td style="text-align:center">@Model.SupplementList[j].SellPrice.ToString("0.00")</td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            }
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                        </li>
+                        <li>
+                            @if (Model.OptionalList.Count > 0)
+                            {
+                                <div id="Optional" class="tab-optional-sec  radio-list-data  summary-tour-info-cont">
+                                    <ul class="filter-links">
+                                        <li>
+                                            <a href="#">Product <i class="fa fa-angle-down"></i></a>
+                                            <div class="compare-dropdown">
+                                                @Html.DropDownListFor(m => m.OptionalProduct, new SelectList(Model.OptionalProductList, "Attribute_Id", "AttributeName"), new { @id = "ddlOptional", @class = "form-control filter" })
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="custom-mob-tbl table-responsive">
+                                        <table class="table OptionalTable">
+                                            @for (int i = 0; i < Model.QRFNonPkgOptionalPositions.Count; i++)
+                                            {
+                                                @Html.HiddenFor(x => x.QRFNonPkgOptionalPositions[i].PositionType, new { @id = "PositionType" })
+                                                string classname = "";
+                                                if (!string.IsNullOrEmpty(Model.QRFNonPkgOptionalPositions[i].PositionType))
+                                                {
+                                                    classname = Model.QRFNonPkgOptionalPositions[i].PositionType.Replace(' ', '-');
+                                                }
+                                                <thead class="@classname">
+                                                    <tr>
+                                                        <th colspan="2"><b>@Model.QRFNonPkgOptionalPositions[i].ProductName (@Model.QRFNonPkgOptionalPositions[i].PositionType)</b></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="col-sm-1">FOR</th>
+                                                        @if (Model.OptionalList.Count > 0)
+                                                        {
+                                                            <th class="col-sm-1">PRICE (@Model.OptionalList[0].QRFCurrency)</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="@classname">
+                                                    @for (int j = 0; j < Model.OptionalList.Count; j++)
+                                                    {
+                                                        @if (Model.QRFNonPkgOptionalPositions[i].PositionId == Model.OptionalList[j].PositionId)
+                                                        {
+                                                            <tr>
+                                                                <td>@Model.OptionalList[j].RoomName</td>
+                                                                <td style="text-align:center">@Model.OptionalList[j].SellPrice.ToString("0.00")</td>
+                                                            </tr>
+
+                                                        }
+                                                    }
+                                                </tbody>
+                                            }
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}

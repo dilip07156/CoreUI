@@ -1,0 +1,63 @@
+﻿@model Voyager.App.ViewModels.OpsCancelBooking
+
+<style>
+	.btn-cont {
+		text-align: left !important;
+	}
+
+	/*.popup-box.pop-lg {
+		max-width: 80% !important;
+	}*/
+</style>
+
+<h3>Shift Booking</h3>
+
+<button title="Close (Esc)" type="button" class="mfp-close"></button>
+
+
+<div class="modal-body" id="shiftBookingSection">
+
+	<form action="/" method="post" class="form-theme-04" id="frmShiftBooking">
+		<div class="alert alert-success" id="SuccessAlert" style="display:none">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<div id="SuccessMessage"></div>
+		</div>
+		<div class="alert alert-danger" id="ErrorAlert" style="display:none">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<div id="ErrorMessage"></div>
+		</div>
+
+		<div class="alert alert-danger" role="alert">
+			Please take care when proceeding as this action cannot be reversed
+		</div>
+
+		<div class="card col-md-3">
+			<div class="card-header">New Date</div>
+			<div class="card-body">
+				<div class="form-group">
+					<label>Please select the new start date for the booking</label>
+					<div class="input-append date" data-date-format="dd/mm/yyyy">
+						@Html.TextBoxFor(x => x.ShiftBookingDate, "{0:dd/MM/yyyy}", new { @class = "span3 form-control-1 alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy", @id= "ShiftBookingDate" })
+						@Html.ValidationMessageFor(x => x.ShiftBookingDate, "", new { @class = "text-danger leftalign" })
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="divSupplierList">
+			@Html.Partial("_CancelBookingSupplierList", Model)
+		</div>
+	</form>
+</div>
+
+<script src="~/js/Operations/ShiftBooking.js"></script>
+
+<style>
+	.popup-box.form-theme-04 .input-append.date .ui-datepicker-trigger {
+		top: 20%;
+	}
+
+	.popup-box.pop-lg {
+		max-width: 80% !important;
+	}
+</style>

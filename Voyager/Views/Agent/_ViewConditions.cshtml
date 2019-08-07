@@ -1,0 +1,177 @@
+﻿@model Voyager.App.ViewModels.ConditionsAndPaymentDetails
+
+<style>
+    .popup-box.pop-md {
+        width: 750px !important;
+    }
+</style>
+
+<div class="popup-box pop-md form-theme-04 form">
+    <div class="popup-in">
+        <form id="frmConditions">
+            <div class="custom-mob-tbl table-responsive">
+                <div id="message"></div>
+                @Html.HiddenFor(x => x.TermsAndConditions_Id, new { @id = "TermsAndConditions_Id" })
+                @Html.HiddenFor(x => x.Company_Id)
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-1"><span>Order No</span></th>
+                            <th class="col-sm-2"><span>Document Type</span></th>
+                            <th class="col-sm-2"><span>Business Type</span></th>
+                            <th class="col-sm-2"><span>Section</span></th>
+                            <th class="col-sm-2"><span>Sub Section</span></th>
+                            <th class="col-sm-3"><span>Condition</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        <tr>
+                            <td>
+                                @Html.TextBoxFor(x => x.OrderNr, new { @id = "OrderNr", @class = "form-control leftalign numericInt" })
+                                <span class="field-validation-valid text-danger" id="spanOrderNo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.DocumentType, new SelectList(Model.DocumentTypeList, "AttributeName", "AttributeName"), "Select", new { @id = "ddlDocType", @class = "form-control leftalign" })
+                                @*@Html.HiddenFor(x => x.Currency, new { @id = "Currency" })*@
+                                <span class="field-validation-valid text-danger" id="spanDocType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.BusinessType, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="FIT", Value = "F" },
+                                                 new SelectListItem{ Text="GROUPS", Value ="G" },
+                                                 new SelectListItem{ Text="BOTH", Value ="B" }
+                                                 }, new { @id = "ddlBusiType", @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanBusiType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.Section, new SelectList(Model.SectionList, "AttributeName", "AttributeName"), "Select", new { @id = "ddlSection", @class = "form-control leftalign" })
+                                @*@Html.HiddenFor(x => x.Currency, new { @id = "Currency" })*@
+                                <span class="field-validation-valid text-danger" id="spanSection" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.SubSection, new SelectList(Model.SubSectionList, "AttributeName", "AttributeName"), "Select", new { @id = "ddlSubSection", @class = "form-control leftalign" })
+                                @*@Html.HiddenFor(x => x.Currency, new { @id = "Currency" })*@
+                                @*<span class="field-validation-valid text-danger" id="spanSubsection" data-valmsg-for="" data-valmsg-replace="true"></span>*@
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(x => x.TermsDescription, new { @id = "TermsDescription", @class = "form-control leftalign" })
+                                <span class="field-validation-valid text-danger" id="spanDesc" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button title="Close (Esc)" type="button" class="mfp-close"></button>
+                <div class="btn-cont text-center">
+                    <button id="btnSaveConditions" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+                    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#btnSaveConditions").on("click", function () {
+
+            var IsValidFlag = true;
+
+            var OrderNr = $("#OrderNr").val();
+            if (OrderNr == '') {
+                $("#spanOrderNo").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var ddlDocType = $("#ddlDocType").find("option:selected").val();
+            if (ddlDocType == '') {
+                $("#spanDocType").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var ddlBusiType = $("#ddlBusiType").find("option:selected").val();
+            if (ddlBusiType == '') {
+                $("#spanBusiType").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var ddlSection = $("#ddlSection").find("option:selected").val();
+            if (ddlSection == '') {
+                $("#spanSection").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            //var ddlSubSection = $("#ddlSubSection").find("option:selected").val();
+            //if (ddlSubSection == '') {
+            //    $("#spanSubsection").text("*");
+            //    IsValidFlag = false;
+            //}
+            //else
+            //    $(this).siblings("span").text("");
+
+            var TermsDescription = $("#TermsDescription").val();
+            if (TermsDescription == '') {
+                $("#spanDesc").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            if (!IsValidFlag)
+                return false;
+
+
+            $(".ajaxloader").show();
+            var model = $("#frmConditions").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/Agent/SaveConditions",
+                data: model,
+                global: false,
+                success: function (response) {
+                    $("#Terms").click();
+                    if (response.status == "error1") {
+                        var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! Duplicate Record </strong></div>';
+                        $("#frmConditions #message").html(successmsg);
+                    }
+                    else if (response.status == "error") {
+                        var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong></div>';
+                        $("#frmConditions #message").html(successmsg);
+                    }
+                    else {
+                        $("#frmConditions #TermsAndConditions_Id").val(response.termscondId);
+                        var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! Details saved successfully.</strong></div>';
+                        $("#frmConditions #message").html(successmsg);
+                        $("#spanOrderNo").text("");
+                        $("#spanDocType").text("");
+                        $("#spanSection").text("");
+                        $("#spanSubsection").text("");
+                        $("#spanDesc").text("");
+                        $("#spanBusiType").text("");
+                    }
+                    $(".ajaxloader").hide();
+                },
+                error: function () {
+                    $(".ajaxloader").hide();
+                }
+            });
+
+
+        });
+    });
+</script>
+
+
+

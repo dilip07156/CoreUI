@@ -1,0 +1,161 @@
+﻿@model Voyager.App.ViewModels.ActivateHotelViewModel
+
+@{
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="switch-hotel-section">
+    <div class="pg-container">
+        <div class="listing-content" id="header-section">
+            <div class="enquiry-ttl-due-section btm-border">
+                <div class="enquiry-ttl-due-section">
+                    <h1>Switching Hotel</h1>
+                </div>
+            </div>
+        </div>
+
+        <div id="body-section">
+            <div class="body-content">
+                @Html.HiddenFor(a => a.BookingNumber)
+                @Html.HiddenFor(a => a.PositionId)
+                @Html.HiddenFor(a => a.AltSvcId)
+                @Html.Partial("~/Areas/Hotels/Views/Booking/_HotelReservationReqDetails.cshtml", Model.ReservationRequestDetails)
+
+                <h3>Current Service</h3>
+                <p>The Current Hotel Service is set as</p>
+                <table class="table table-bordered tbl-theme-02">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Rooms</th>
+                            <th>Twin Rate</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.PositionProductDetails.ProductName, @Model.PositionProductDetails.ProductCity, @Model.PositionProductDetails.ProductCountry</td>
+                            <td>@Model.PositionProductDetails.PositionRooms</td>
+                            <td>@Model.PositionProductDetails.PositionTwinRate</td>
+                            <td>@Model.PositionProductDetails.PositionStatus</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                @Html.Partial("~/Areas/Product/Views/ProductSRP/_ProductInfo.cshtml", Model.PosProductSRPViewModel)
+
+                <h3>Switch to</h3>
+                <p>
+                    You are switching the hotel for service on <b>@Model.ReservationRequestDetails.Check_In</b> in <b>
+                        @Model.PositionProductDetails.ProductCity, @Model.PositionProductDetails.ProductCountry
+                    </b> to
+                </p>
+                @Html.Partial("~/Areas/Product/Views/ProductSRP/_ProductInfo.cshtml", Model.AltProductSRPViewModel)
+
+                <div class="row">
+                    <div class="col-lg-3">
+                        <label class="frm-sub-label">Option Date</label>
+                        <div class="input-append date" data-date-format="dd/MMM/yyyy">
+                            @Html.TextBoxFor(m => m.UpdateReqDetails.OptionDate, "{0:dd/MMM/yyyy}", new { @class = "span2 form-control", @size = "16", @placeholder = "dd/mmm/yyyy", @id = "txtOptionDate" })
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="frm-sub-label">Cancellation Deadline</label>
+                        @Html.TextBoxFor(m => m.UpdateReqDetails.CancellationDeadline, new { @class = "form-control numericInt", @id = "txtCancellationDeadline" })
+                    </div>
+                </div>
+                <br>
+                <h3>Rates</h3>
+                <hr>
+                <table class="table table-bordered tbl-theme-02">
+                    <thead>
+                        <tr>
+                            <th>Room</th>
+                            <th>Quantity</th>
+                            <th>Currency</th>
+                            <th>Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.RoomRateDetails.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Model.RoomRateDetails[i].RoomName (@Model.RoomRateDetails[i].PersonType)
+                                </td>
+                                <td>@Model.RoomRateDetails[i].Quantity</td>
+                                <td>
+                                    @Model.RoomRateDetails[i].CurrencyCode
+                                </td>
+                                <td>
+                                    @Model.RoomRateDetails[i].RoomRate
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tbody></tbody>
+                </table>
+                <br>
+                <table class="table">
+                    <thead>
+                    <th colspan="4">Please select from one of the below options</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><button type="button" class="btn btn-success" id="ConfirmWithSupp">Confirm Booking with Supplier</button></td>
+                            <td><button type="button" class="btn btn-warning" id="ProvisionalWithSupp">Provisionally Book with Supplier</button></td>
+                            <td><button type="button" class="btn btn-info" id="SwitchWithoutReservation">Switch Product, without Reservation</button></td>
+                            <td><button type="button" class="btn btn-primary btn-md close-popup">Close</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.switch-hotel-section .amendment-control, .switch-hotel-section .rht-sec.price-sec').hide();
+
+        $('#ConfirmWithSupp').click(function () {
+            SwitchProduct('A', this);
+        });
+        $('#ProvisionalWithSupp').click(function () {
+            SwitchProduct('B', this);
+        });
+        $('#SwitchWithoutReservation').click(function () {
+            SwitchProduct('C', this);
+        });
+
+        $('.switch-hotel-section').on('click', '.mfp-close,.close-popup', function () {
+            window.location.reload(true);
+        });
+    });
+
+    function SwitchProduct(switchType, thisparam) {
+        var bookingNumber = $('#BookingNumber').val();
+        var positionId = $(thisparam).closest('.switch-hotel-section').find('#PositionId').val();
+        var altSvcId = $(thisparam).closest('.switch-hotel-section').find('#AltSvcId').val();
+         
+        $.ajax({
+            type: "POST",
+            url: "/Hotels/SwitchProduct",
+            data: { BookingNumber: bookingNumber, PositionId: positionId, AltSvcId: altSvcId, SwitchType: switchType, OptionDate: $("#txtOptionDate").val(), CancellationDeadline: $("#txtCancellationDeadline").val() },
+            dataType: "json",
+            success: function (response) {
+                if (response.status == 'success') {
+                    alert(response.message);
+                    window.location.reload(true);
+                }
+                else {
+                    alert(response.message);
+                }
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.statusText);
+            }
+        });
+    }
+</script>
+<script src="~/resources/js/main.js"></script>

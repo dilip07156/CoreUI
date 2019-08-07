@@ -1,0 +1,31 @@
+﻿@model Voyager.App.ViewModels.SalesDashboardViewModel
+<!-- Bootstrap Select Css -->
+<script src="~/MISResources/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+<form>
+    <!--Filters-->
+    @Html.Partial("_SalesDashboardFilter", Model.SalesDashboardFilters)
+    <!--Filters-->
+    <!-- Widgets -->
+    <div id="SalesDashboardResults">
+    </div>
+    <!-- #END# Widgets -->
+</form>
+
+<style>
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+        width: auto;
+    }
+
+    a:hover, a:focus, .btn:focus {
+        outline: 0;
+        text-decoration: none;
+    }
+
+    .filter-option {
+        color: #555 !important;
+    }
+</style>

@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model Voyager.App.ViewModels.AgentDetails
+
+@Html.HiddenFor(x => x.CompanyId, new { @id = "Company_Id" })
+<div class="btn-cont-rgt" style="text-align:right">
+	<button id="btnUpdateSystemOptions" type="button" class="btn btn-blue btn-md btnUpdateSystemOptions">Update</button>
+</div><br />
+<form id="frmSystemOptions">
+	<div id="message"></div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+				<div class="tbl-actn-btns"><h4>Only to be seen by System Administrators</h4></div><br />
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="inputCity">Contact By</label>
+						@Html.DropDownListFor(m => m.ContactBy, new List<SelectListItem>
+												 {
+												new SelectListItem{ Text="Select", Value = "" },
+												 new SelectListItem{ Text="API", Value ="API" },
+												 new SelectListItem{ Text="Email", Value = "Email" }
+												 }, new { @id = "ddlContactBy", @class = "form-control" })
+					</div>
+					<div class="input-group mb-3">
+						<label>
+							@Html.CheckBoxFor(x => x.ISUSER, new { id = "ISUSER" }) Is System User
+						</label>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="inputAddress">Create User</label>
+						@Html.TextBoxFor(x => x.CreateUser, new { @class = "form-control leftalign", @disabled = "disabled" })
+					</div>
+
+					<div class="form-group">
+						<label for="inputAddress">Create Date</label>
+						@Html.TextBoxFor(x => x.CreateDate, new { @class = "form-control leftalign", @disabled = "disabled" })
+					</div>
+
+
+					<div class="form-group">
+						<label for="inputAddress">Edit User</label>
+						@Html.TextBoxFor(x => x.EditUser, new { @class = "form-control leftalign", @disabled = "disabled" })
+					</div>
+
+					<div class="form-group">
+						<label for="inputAddress">Edit Date</label>
+						@Html.TextBoxFor(x => x.EditDate, new { @class = "form-control leftalign", @disabled = "disabled" })
+					</div>
+				</div>
+				<br />
+			</div>
+		</div>
+	</div>
+</form>
+
+@if (ViewBag.IsAdmin == true)
+{
+	<div id="SupplierMappingSection"></div>
+}
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		var isAdmin = "@ViewBag.IsAdmin";
+		if (isAdmin == "True") {
+			GetSupplierMapping();
+		}
+	});
+
+	$("#btnUpdateSystemOptions").on("click", function () {
+		$(".ajaxloader").show();
+		var companyId = $("#Company_Id").val();
+		var contactBy = $("#ddlContactBy").find("option:selected").text();
+		var isUser = $('#ISUSER').is(":checked");
+		$.ajax({
+			type: "POST",
+			url: "/Agent/UpdateSystemOptionsDetails",
+			data: { CompanyId: companyId, ContactBy: contactBy, IsSystemUser: isUser },
+			global: false,
+			success: function (response) {
+				if (response.status == "error") {
+					var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong></div>';
+					$("#frmSystemOptions #message").html(successmsg);
+				}
+				else {
+					var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! Details updated successfully.</strong></div>';
+					$("#frmSystemOptions #message").html(successmsg);
+				}
+				$(".ajaxloader").hide();
+			},
+			error: function () {
+				$(".ajaxloader").hide();
+			}
+		});
+	});
+
+	function GetSupplierMapping() {
+		 
+		$(".ajaxloader").show();
+		var CompanyId = $("#CompanyId").val();
+		$.ajax({
+			type: "GET",
+			url: "/Agent/ViewSupplierMapping",
+			data: { Id: CompanyId },
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			global: false,
+			success: function (response) {
+				 
+				$("#SupplierMappingSection").html(response);
+				$(".ajaxloader").hide();
+			},
+			failure: function (response) {
+				$(".ajaxloader").hide();
+				alert(response.responseText);
+			},
+			error: function (response) {
+				$(".ajaxloader").hide();
+				alert(response.responseText);
+			}
+		});
+	}
+</script>
+

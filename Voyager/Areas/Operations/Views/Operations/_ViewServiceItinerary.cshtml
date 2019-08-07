@@ -1,0 +1,189 @@
+﻿@model VGER_WAPI_CLASSES.OpsItineraryDetails
+
+<style>
+    .tdbadge {
+        text-align: -moz-center !important;
+    }
+    .badge {
+        padding: 0.75rem !important;
+        width: -moz-fit-content !important;
+    }
+</style>
+
+@if (Model.OpsItinenraryDays?.Count > 0)
+{
+    <!-- STANDARD ITINERARY CONTROL / Hidden Columns-->
+    <div class="filter-links">
+        <div class="row padTBL-12">
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.Days, new SelectList(Model.Days), "Day", new { @id = "ddlDays", @class = "form-control ddlItineraryFilter" })
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.ServiceType, new SelectList(Model.ServiceType), "Service Type", new { @id = "ddlServiceType", @class = "form-control ddlItineraryFilter" })
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownListFor(m => m.BookingStaus, new SelectList(Model.BookingStaus), "By Booking Status", new { @id = "ddlBookingStaus", @class = "form-control ddlItineraryFilter" })
+            </div>
+            <div class="col-md-3">
+                <a href="#AddService-popup" class="btn btn-sm btn-primary popup-inline showAddService">Add New Service</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive filter-table custom-mob-tbl" id="divBookingItinerary">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th class="col-lg-1">Place of Service</th>
+                    <th>Type</th>
+                    <th>Itinerary</th>
+                    <th>Supplier</th>
+                    <th>Alloc</th>
+                    <th>Status</th>
+                    <th>No.of Pax</th>
+                    <th>Price</th>
+                    <th class="action">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyOpsItinerary">
+                @for (int i = 0; i < Model.OpsItinenraryDays.Count; i++)
+                {
+                    <tr class="tbl-sub-heading trDayHeader" trDayName="@Model.OpsItinenraryDays[i].DayName">
+                        <td>@Model.OpsItinenraryDays[i].DayName</td>
+                        <td>@Model.OpsItinenraryDays[i].CityNames</td>
+                        <td></td>
+                        <td colspan="3">@Model.OpsItinenraryDays[i].ItineraryDesc</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    for (int j = 0; j < Model.OpsItinenraryDays[i].OpsItineraryDayDetails.Count; j++)
+                    {
+                        <tr trProdType="@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].ProductType"
+                            trPosStatus="@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].Status"
+                            trDayName="@Model.OpsItinenraryDays[i].DayName">
+                            <td>
+                                @Html.HiddenFor(m => m.OpsItinenraryDays[i].OpsItineraryDayDetails[j].PositionId, new { @id = "hfPositionId" })
+                                @Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].STARTDateLongFormat
+                                <br />
+                                @Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].STARTDayOfWeek
+                            </td>
+                            <td>
+                                @Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].STARTTIME -
+                                @Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].ENDTIME
+                            </td>
+                            <td class="type">
+                                @switch (@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].ProductType)
+                                {
+                                    case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+                                        break;
+                                    case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+                                        break;
+                                    case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+                                        break;
+                                    case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+                                        break;
+                                    case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+                                        break;
+                                    case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+                                        break;
+                                    case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+                                        break;
+                                    case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                        break;
+                                    case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                        break;
+                                    case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                        break;
+                                    case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+                                        break;
+                                    case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+                                        break;
+                                    case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+                                        break;
+                                    case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+                                        break;
+                                    case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+                                        break;
+                                    case "VISA": <img src="~/resources/images/common/icons/visa.png">
+                                        break;
+                                    case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            </td>
+                            <td>@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].ProductName</td>
+                            <td>@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].Supplier</td>
+                            <td>@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].Allocation</td>
+                            <td>
+                                @switch (@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].Status)
+                                {
+                                    case "K":
+                                    case "B":
+                                    case "I":
+                                    case "L":
+                                        <span class="badge badge-success">@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].StatusDescription</span>
+                                        break;
+                                    case "M":
+                                    case "O":
+                                        <span class="badge badge-warning">@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].StatusDescription</span>
+                                        break;
+                                    case "Q":
+                                    case "N":
+                                    case "P":
+                                    case "£":
+                                    case "E":
+                                        <span class="badge bg-danger">@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].StatusDescription</span>
+                                        break;
+                                    default:
+                                        <span>@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].StatusDescription</span>
+                                        break;
+                                }
+                            </td>
+                            <td>  @Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].NoOfPax</td>
+                            <td>PACKAGE</td>
+                            <td>
+                                <a href="#" title="Edit" class="icon-squre-dark-blue btnOpsRedirect"
+                                   ProdType="@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].ProductType"
+                                   PosId="@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].PositionId"><i class="fa fa-pencil"></i></a>
+
+                                <a href="#CancelPosition-popup" title="Delete" class="icon-squre-red popup-inline showCancelPosition" PosId="@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[j].PositionId"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    }
+                    <tr trDayName="@Model.OpsItinenraryDays[i].DayName" class="trDayFooter">
+                        <td class="no-side-border"></td>
+                        <td colspan="8" class="no-side-border txt-semibold"></td>
+                        <td class="no-side-border">
+                            <a href="#AddService-popup" data-value="@Convert.ToDateTime(@Model.OpsItinenraryDays[i].OpsItineraryDayDetails[0].STARTDATE).ToString("dd/MM/yyyy")" class="btn btn-sm btn-primary popup-inline showAddService">Add Service</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div style="text-align:center;">Itinerary details not avaliable.</div>
+}
+
+<div id="AddService-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+
+<div id="CancelPosition-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+           
+        </div>
+    </div>
+</div> 
+<script src="~/js/Operations/OPSServiceItinerary.js"></script>

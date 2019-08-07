@@ -1,0 +1,146 @@
+﻿@model Voyager.App.ViewModels.HotelsDeptViewModel
+@{
+    ViewData["Title"] = "SearchHotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="head-ttl">
+                <h2 class="pg-ttl pull-left">Hotels Department</h2>
+                <div class="clearfix"></div>
+            </div>
+
+            <ul class="sqr-tab-list" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+                        <figure>
+                            <i class="fa-custom-quote"></i>
+                        </figure> <strong>Booking based</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+                        <figure>
+                            <i class="fa-custom-flights"></i>
+                        </figure> <strong>Destination Based</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">
+                        <figure>
+                            <i class="fa-custom-more"></i>
+                        </figure> <strong>Series Based</strong>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content sqr-tab-data" id="myTabContent">
+                <div class="tab-pane" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="pg-container">
+                        @Html.Partial("_SearchHotelsFilter", Model.HotelsDeptSearchFilters)
+                        <br>
+                        <h3>Search Results</h3>
+                        <br>
+                        <div id="HotelsSearchResult">
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    Destination Based Search Logic will go here
+                </div>
+                <div class="tab-pane" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                    Series Based Search Logic will go here
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#home-tab').click(); 
+
+        $('#btnSearch').click(function () {
+            var flag = true;
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            var fromDT = $('#From').val();
+            var toDT = $('#To').val();
+
+            if ((fromDT != "" || toDT != "") && $("#DateType").val() == "") {
+                $("#spanDateType").text("*");
+                flag = false;
+            }
+
+            if ($("#DateType").val() != "") {         
+                if (fromDT == "" && toDT == "") {
+                    $("#spanFrom").text("*");
+                    $("#spanTo").text("*");
+                    flag = false;
+                }
+
+                if ((fromDT != "" || toDT == "") || (fromDT == "" || toDT != "")) {
+                    if (fromDT != "" && !ValidateDateddmmyyyy(fromDT)) {
+                        $("#spanFrom").text("From Date should be in dd/MM/yyyy format");
+                        flag = false;
+                    }
+                    if (toDT != "" && !ValidateDateddmmyyyy(toDT)) {
+                        $("#spanTo").text("To Date should be in dd/MM/yyyy format");
+                        flag = false;
+                    }
+                }
+                if (fromDT != "" && toDT != "") {
+                    var from = fromDT.split('/');
+                    var to = toDT.split('/');
+                    if (Date.parse(from[2] + "/" + from[1] + "/" + from[0]) > Date.parse(to[2] + "/" + to[1] + "/" + to[0])) {
+                        $("#spanFrom").text("From Date should be less than To Date");
+                        flag = false;
+                    }
+                }
+            }
+
+            if (flag == false) { 
+                return false;
+            } else {
+                $("#spanFrom, #spanTo, #spanDateType").text("");
+                SearchBookings();
+                return true;;
+            }
+        });
+
+        $('#btnReset').click(function () {
+            $("#AgentName").val("");
+            $("#CNKReferenceNo").val("");
+            $("#DateType").val("");
+            $("#BookingStatus").val("");
+            $("#AgentCode").val("");
+            $("#AgentTour").val("");
+            $("#From").val("");
+            $("#To").val("");
+            $('.gridresults').html("");
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+        });
+    });
+
+    $(document).on('change', '#DateType', function () {
+        var ddlDateType = $("#DateType").val();
+        if (ddlDateType == "") {
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            $('#From, #To').val('');
+        }
+    });
+
+    function SearchBookings() {
+        $('#HotelsSearchResult').load("/Hotels/_HotelsResult");
+    }
+</script>
+
+<style>
+    .products-contracting {
+        width: 100%;
+    }
+</style>

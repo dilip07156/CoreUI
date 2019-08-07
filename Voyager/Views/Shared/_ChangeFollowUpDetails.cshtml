@@ -1,0 +1,132 @@
+﻿@model Voyager.App.ViewModels.COHeaderViewModel
+<h3>Update Follow Up</h3>
+<div class="form-section frmChangeFollowUp">
+    <div class="form-group-sec">
+        <div class="row ">
+            <div class="col-sm-6 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Costing Officer </label>
+                <div class="input-append date" data-date-format="dd/MMM/yyyy">
+                    @Html.TextBoxFor(m => m.FollowUpCostingOfficer, new { @class = "span2 form-control", @size = "16", @placeholder = "dd/MMM/yyyy" })
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12 mobile-12">
+                <label class="frm-sub-label">With Client </label>
+                <div class="input-append date" data-date-format="dd/MMM/yyyy">
+                    @Html.TextBoxFor(m => m.WithClient, new { @class = "span2 form-control", @size = "16", @placeholder = "dd/MMM/yyyy" })
+                </div>
+            </div>
+            @*<div class="col-sm-6 col-xs-12 mobile-12">
+                    <label class="frm-sub-label">With Client </label>
+                    <div class="input-append date" data-date-format="dd/MMM/yyyy">
+                        @Model.WithClient
+                        @Html.TextBoxFor(m => m.WithClient, "{0:dd/MMM/yyyy}", new { @class = "span2 form-control", @size = "16", @placeholder = "dd/MMM/yyyy" })
+                    </div>
+                </div>*@
+        </div>
+    </div>
+</div>
+<button title="Close (Esc)" type="button" class="mfp-close close-popup changeUserClose"></button>
+<div class="btn-cont">
+    <button title="Save" type="button" class="btn btn-blue btn-md" id="btnUpdate">Update</button>
+    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".close-popup").click(function () {
+            location.reload();
+        });
+
+        $('.input-append').find('input.span2').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showOn: "both",
+            firstDay: 0, // Start with Monday
+            dayNamesMin: "Sun Mon Tue Wed Thu Fri Sat".split(" "),
+            dateFormat: "dd/M/yy"
+        });
+
+        //function UpdateFollowUp() {
+        //     
+        //    var QRFId = $("#QRFId").val();
+        //    var costingofficer = $(this).parents('div').find('#FollowUpCostingOfficer').val();
+        //    var withclient = $(this).parents('div').find('#WithClient').val();
+
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/Account/UpdateFollowUp",
+        //        data: { QRFId: QRFId, CostingOfficer: costingofficer, WithClient: withclient },
+        //        //global: false,
+        //        //contentType: "application/json; charset=utf-8",
+        //        //dataType: "json",
+        //        success: function (response) {
+        //            $('.alert').remove();
+        //            if (response.status == 'Success') {
+        //                var successmsg = '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success!</strong> Users updated Successfully.</div>';
+        //                $('.frmChangeUser').before(successmsg);
+        //            }
+        //            else {
+        //                var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> Users not updated. </div>';
+        //                $('.frmChangeUser').before(successmsg);
+        //            }
+        //        },
+        //        failure: function (response) {
+        //            alert(response.responseText);
+        //            $('.alert').remove();
+        //            var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> Users not updated. </div>';
+        //            $('.frmChangeUser').before(successmsg);
+        //        },
+        //        error: function (response) {
+        //            alert(response.responseText);
+        //            $('.alert').remove();
+        //            var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> Users not updated. </div>';
+        //            $('.frmChangeUser').before(successmsg);
+        //        }
+        //    });
+
+        //}
+
+        $("#btnUpdate").click(function () {
+             
+            var QRFId = $("#QRFId").val();
+            var costingofficer = $(this).parents('div').find('#FollowUpCostingOfficer').val();
+            var withclient = $(this).parents('div').find('#WithClient').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Account/UpdateFollowUp",
+                data: { QRFId: QRFId, CostingOfficer: costingofficer, WithClient: withclient },
+                //global: false,
+                //contentType: "application/json; charset=utf-8",
+                //dataType: "json",
+                success: function (response) {
+                     
+                    $('.alert').remove();
+                    if (response.status == 'success') {
+                        var successmsg = '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success!</strong>' + response.responseText + '</div>';
+                        $('.frmChangeFollowUp').before(successmsg);
+                    }
+                    else {
+                        var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong>' + response.responseText + '</div>';
+                        $('.frmChangeFollowUp').before(successmsg);
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $('.alert').remove();
+                    var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong>' + response.responseText +'</div>';
+                    $('.frmChangeFollowUp').before(successmsg);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $('.alert').remove();
+                    var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong>' + response.responseText +'</div>';
+                    $('.frmChangeFollowUp').before(successmsg);
+                }
+            });
+
+        });
+    });
+
+
+</script>

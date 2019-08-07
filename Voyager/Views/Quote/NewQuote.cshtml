@@ -1,0 +1,97 @@
+﻿@model Voyager.App.ViewModels.NewQuoteViewModel
+<body class="inner-pg logged-in" data-responsejs='{"create":[{"prop":"width", "prefix":"min-device-width-", "lazy":false, "breakpoints":[0, 320, 481, 641, 767, 961, 1025, 1281] }]}'>
+    <!-- Wrapper ::Starts -->
+    <div class="wrapper">
+        <!-- Main Content :: Starts -->
+        <div class="main-content form-theme-04 form">
+            <div class="container">
+                <div class="pg-container">
+                    <div class="head-ttl">
+                        <h2 class="pg-ttl pull-left">Create Quote</h2>
+                        @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                        <div class="clearfix"></div>
+                    </div>
+                    @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_SalesMenu", Model.mdlMenuViewModel)
+                        <div class="sqr-tab-data">
+                            <h3><i class="fa-custom-quote-icon"></i> Quote</h3>
+
+                            @*else if (TempData.Keys.Contains("marginsuccess"))
+            {
+                <div class="alert alert-success">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                    <strong>Success!</strong> @TempData["marginsuccess"].ToString()
+                </div>
+                TempData.Remove("marginsuccess");
+                <script>
+                    if (@Model.QRFID > 0) {
+                        window.setTimeout(function () { window.location.href = "/Accomodation/Accomodation?QRFId="+@Model.QRFID }, 1000);
+
+                }
+                </script>
+            }*@
+                            @*window.location.href = "/Accomodation/Accomodation?QRFId="+@Model.QRFID;*@
+
+                            <div class="simple-tab-cont">
+                                @Html.HiddenFor(m => m.QRFID)
+                                @*<label id="lblQRFId" class="frm-sub-label" style="display:none;"></label>*@
+                                <ul class="simple-tab-list">
+                                    <li id="AgentInformation"><a id="aAgentInformation" href="#" class="active"> Agent Information </a></li>
+                                    <li id="DateRange"><a id="aDateRange" href="#"> Date Range </a></li>
+                                    <li id="PaxRange"><a id="aPaxRange" href="#"> Pax Range </a></li>
+                                    <li id="FOC"><a id="aFOC" href="#"> FOC </a></li>
+                                    <li id="Routing"><a id="aRouting" href="#"> Routing </a></li>
+                                    <li id="Margins"><a id="aMargins" href="#"> Margins </a></li>
+                                </ul>
+                                <div id="QuoteTabsCont">
+                                    <div class="simple-tab-data" id="QuoteAgentInformation">@Html.Partial("_QuoteAgentInformation", Model.mdlQuoteAgentInfoViewModel)</div>
+                                    <div class="simple-tab-data" id="QuoteDateRange" style="display:none;"></div>
+                                    <div class="simple-tab-data" id="QuotePaxRange" style="display:none;"></div>
+                                    <div class="simple-tab-data" id="QuoteFOC" style="display:none;"></div>
+                                    <div class="simple-tab-data" id="QuoteRouting" style="display:none;"></div>
+                                    <div class="simple-tab-data" id="QuoteMargins" style="display:none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAlert" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="modelHeader"></h4>
+                </div>
+                <div class="modal-body">
+                    <p id="modelBody"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="~/js/Sales/SalesNewQuote.js"></script>
+<script>
+    $(document).ready(function () { 
+        LoadNewQuoteScript('@Model.QRFID');
+
+        var NewQuoteSaved = '@TempData["QuoteSaved"]';
+        if (NewQuoteSaved == 'True') {
+            $("#DateRange").click();
+        }
+        else {
+            SetChildControlValues('@Model.mdlQuoteAgentInfoViewModel.ApproxPaxChildWithBed', '@Model.mdlQuoteAgentInfoViewModel.ApproxPaxChildWithBedAge', '@Model.mdlQuoteAgentInfoViewModel.ApproxPaxChildWithoutBed', '@Model.mdlQuoteAgentInfoViewModel.ApproxPaxChildWithoutBedAge');
+            SetSelectedQuoteRoomValues(@Html.Raw(Json.Serialize(Model.mdlQuoteAgentInfoViewModel.QuoteRoomType)));
+            SetQuotePricingType('@Model.mdlQuoteAgentInfoViewModel.QuotePricingType');
+            SetDefaultValues();
+        }
+    });
+</script>

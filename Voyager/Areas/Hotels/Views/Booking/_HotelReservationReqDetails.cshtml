@@ -1,0 +1,57 @@
+﻿@model VGER_WAPI_CLASSES.ReservationRequestDetails
+
+<div style="padding-bottom: 10px;">
+    <h3>Reservation Request</h3>
+    <p>Details of our reservation requirement can be found below</p>
+    <table class="table table-bordered tbl-theme-02">
+        <thead>
+            <tr>
+                <th>Check In</th>
+                <th>Check Out Date</th>
+                <th>Nights</th>
+                <th>Nationality</th>
+                <th>Board Basis</th>
+                <th>Stars</th>
+                <th>Location</th>
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.Check_In</td>
+                <td>@Model.Check_Out_Date</td>
+                <td>@Model.Nights</td>
+                <td>@Model.Nationality</td>
+                <td>@Model.Board_Basis</td>
+                <td>
+                    @if (Model.Stars == 1)
+                    {
+                        <img src="~/resources/images/proposal-report/one-star.png">
+                    }
+                    else if (Model.Stars == 2)
+                    {
+                        <img src="~/resources/images/proposal-report/two-star.png">
+                    }
+                    else if (Model.Stars == 3)
+                    {
+                        <img src="~/resources/images/proposal-report/three-star.png">
+                    }
+                    else if (Model.Stars == 4)
+                    {
+                        <img src="~/resources/images/proposal-report/four-star.png">
+                    }
+                    else if (Model.Stars == 5)
+                    {
+                        <img src="~/resources/images/proposal-report/five-star.png">
+                    }
+                </td>
+                <td>
+                    <span>@Model.Location</span>
+                </td>
+                <td>
+                    <span>@Model.Category</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

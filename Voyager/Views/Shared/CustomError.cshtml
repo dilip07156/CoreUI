@@ -1,0 +1,33 @@
+﻿
+@if (@ViewData["IsAjaxRequest"].ToString() == "true")
+{
+    {
+        Layout = null;
+    }
+}
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <br />
+                <br />
+                <H1 style="color:red">Error Occurred!!!</H1>
+
+                <br />
+                @ViewData["HandleException"]
+            </div>
+        </div>
+    </div>
+</div>
+<a href="#" class="btn-close"></a>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".btn-close").click(function () {
+            location.reload();
+        });
+    });
+</script>
+

@@ -1,0 +1,641 @@
+﻿@model Voyager.App.ViewModels.DetailedInfoViewModel
+
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="sqr-tab-cont">
+                    <!-- Tab Data : Starts -->
+                    <div class="sqr-tab-data costing-officers">
+                        <div class="ttl-sec tbl-style">
+                            <div class="ttl">
+                                @*<i class="fa-custom-cost-sheet-black"></i> Costsheet -*@ <span class="txt-green">Detailed Info</span>
+                            </div>
+                        </div>
+                        <div class="sqr-tab-data costing-officers">
+                            <!-- Form : Starts -->
+                            <form>
+                                <div class="simple-tab-cont">
+                                    <ul class="simple-tab-list type02 ChkProductTypeList">
+                                        <li><a href="#"> <span class="chk-cont"><label><input type="checkbox" name="chkShowAll" class="chkShowAll"> Show all</label></span> </a></li>
+                                        <li><a href="#"> <span class="chk-cont"><label><input type="checkbox" name="chkSummary" class="chkSummary" checked> Summary</label></span> </a></li>
+                                        
+                                        @for (int i = 0; i < Model.ProductTypeList.Count; i++)
+                                        {
+                                            @Html.HiddenFor(x => x.ProductTypeList[i].Prodtype, new { @id = "ProdType" })
+                                            <li>
+                                                <span class="chk-cont">
+                                                        @Html.CheckBoxFor(m => m.ProductTypeList[i].IsProdtype, new { @id = "chkItem_" + i, @class = "chkIsProdType", @value = Model.ProductTypeList[i].Prodtype })
+                                                        @Model.ProductTypeList[i].Prodtype
+                                                </span>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <div class="simple-tab-data">
+                                       
+                                        <ul class="border-list">
+                                            <li>
+                                                <h3><i class="fa-custom-cost-sheet-black"></i> Cost Sheet </h3>
+                                            </li>
+                                            <li>
+                                                <ul class="btn-tab-list">
+                                                    <li><a href="#" class="active">Buying Price</a></li>
+                                                    <li><a href="#">Selling Price</a></li>
+                                                </ul>
+                                                <ul class="inline-radio-list inline-block">
+                                                    <li><strong class="table-cell">Display According to: </strong></li>
+                                                    <li><label><input type="radio" name="display" checked> Service-Wise</label></li>
+                                                    <li><label><input type="radio" name="display"> Supplier-Wise</label></li>
+                                                    <li><label><input type="radio" name="display"> Slab-Wise</label></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <!-- Filter Section :: Start -->
+                                        <div class="fliter-sec">
+                                            <div class="fliter-sec-head">
+                                                <h6>Compare by:</h6>
+                                            </div>
+                                            <div class="filter-mob-toggle">FILTERS:</div>
+                                            <div class="filter-pannel result-filter fltr-cont">
+                                                <ul>
+                                                    <li class="fltr-stps-col">
+                                                        <div class="filter-tl">Date Band <i class="arrow"></i></div>
+                                                        <div class="filter-inner-list">
+                                                            @Html.DropDownListFor(m => m.DepartureDate, new SelectList(Model.DepartureDatesList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                                                        </div>
+                                                    </li>
+                                                    <li class="fltr-departure-col">
+                                                        <div class="filter-tl align-center">Pax Slab <i class="arrow"></i></div>
+                                                        <div class="filter-inner-list">
+                                                            @Html.DropDownListFor(m => m.PaxSlab, new SelectList(Model.PaxSlabList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                                                        </div>
+                                                    </li>
+                                                    <li class="fltr-airln-col">
+                                                        <div class="filter-tl">Products <i class="arrow"></i> </div>
+                                                        <div class="filter-inner-list">
+                                                            @Html.DropDownListFor(m => m.ProductName, new SelectList(Model.ProductNameList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                                                        </div>
+                                                    </li>
+                                                    <li class="fltr-hub-col">
+                                                        <div class="filter-tl">Supplier <i class="arrow"></i> </div>
+                                                        <div class="filter-inner-list">
+                                                            @Html.DropDownListFor(m => m.Supplier, new SelectList(Model.SupplierList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <a href="#" class="rst-btn"><i class="fa fa-undo"></i> CLEAR FILTERS</a>
+                                            </div>
+                                        </div>
+                                        <!-- Filter Section :: End -->
+
+
+                                        @for (int i = 0; i < Model.ProductTypeList.Count; i++)
+                                        {
+                                            string classname = "";
+                                            @if (!string.IsNullOrEmpty(Model.ProductTypeList[i].Prodtype))
+                                            {
+                                                classname = Model.ProductTypeList[i].Prodtype.Replace(' ', '-');
+                                            }
+
+                                            @Html.HiddenFor(x => x.ProductTypeList[i].Prodtype, new { @id = "ProdType" })
+
+                                            <div class="radio-list-bar type02 @classname" style="display:none">
+                                                <a href="#" class="down-arrow"><i class="fa fa-chevron-down"></i> </a>
+                                                <span class="table-cell ProductType">
+                                                    <h5>@Model.ProductTypeList[i].Prodtype</h5>
+                                                </span>
+                                            </div>
+                                        }
+                                        <div id="summarySection">
+                                            <div class="radio-list-bar type02">
+                                                <a href="#" class="down-arrow"><i class="fa fa-chevron-down"></i> </a>
+                                                <span class="table-cell"><h5>Summary</h5> </span>
+                                            </div>
+                                            <div class="tab-foc-sec summ-tbl-md radio-list-data" style="display:block">
+                                                <form>
+                                                    <div class="tbl-cont">
+                                                        <div class="custom-mob-tbl table-responsive">
+                                                            <table class="table center-align top-align tbl-lg table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="col-xxs" rowspan="2"><span>Services</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Curr</span></th>
+                                                                        <th colspan="6" class="col-xs"><span>Cost (Per Person)</span></th>
+                                                                    </tr>
+                                                                    <tr class="sub-hdng">
+                                                                        <th class="col-xs"><span>SGL</span></th>
+                                                                        <th class="col-xs"><span>TWIN</span></th>
+                                                                        <th class="col-xs"><span>TRPL</span></th>
+                                                                        <th class="col-xs"><span>CWB</span></th>
+                                                                        <th class="col-xs"><span>CNB</span></th>
+                                                                        <th class="col-xs"><span>Infant</span></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="row-grid-sm document-list">
+                                                                    <tr>
+                                                                        <td class="text-left" rowspan="2"><label>Accomodation</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="light-blue-bg"><span>USD</span></td>
+                                                                        <td class="light-blue-bg"><span>105</span></td>
+                                                                        <td class="light-blue-bg"><span>60</span></td>
+                                                                        <td class="light-blue-bg"><span>60</span></td>
+                                                                        <td class="light-blue-bg"><span>45</span></td>
+                                                                        <td class="light-blue-bg"><span>15</span></td>
+                                                                        <td class="light-blue-bg"><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="light-pink-bg">
+                                                                        <td class="text-left"><label>Meals</label></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>04</span></td>
+                                                                        <td><span>04</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="light-blue-bg">
+                                                                        <td class="text-left" rowspan="2"><label>Transfer</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>975</span></td>
+                                                                        <td><span>900</span></td>
+                                                                        <td><span>120</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="light-blue-bg"><span>USD</span></td>
+                                                                        <td class="light-blue-bg"><span>110</span></td>
+                                                                        <td class="light-blue-bg"><span>110</span></td>
+                                                                        <td class="light-blue-bg"><span>110</span></td>
+                                                                        <td class="light-blue-bg"><span>70</span></td>
+                                                                        <td class="light-blue-bg"><span>70</span></td>
+                                                                        <td class="light-blue-bg"><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td class="text-left" rowspan="2"><label>Total</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>1235</span></td>
+                                                                        <td><span>1220</span></td>
+                                                                        <td><span>1220</span></td>
+                                                                        <td><span>990</span></td>
+                                                                        <td><span>905</span></td>
+                                                                        <td><span>120</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>220</span></td>
+                                                                        <td><span>165</span></td>
+                                                                        <td><span>165</span></td>
+                                                                        <td><span>119</span></td>
+                                                                        <td><span>89</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <br /><br /><br />
+                                        <div id="hotelSection" style="display:none">
+                                            <div class="radio-list-bar type02">
+                                                <a href="#" class="down-arrow"><i class="fa fa-chevron-down"></i> </a>
+                                                <span class="table-cell">
+                                                    <h5>Accomodation</h5>
+                                                </span>
+                                            </div>
+                                            <div class="tab-foc-sec radio-list-data" style="display:block">
+                                                <form>
+                                                    <div class="tbl-cont">
+                                                        <div class="custom-mob-tbl table-responsive">
+                                                            <table class="table center-align top-align tbl-lg table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="col-xxs" rowspan="2"><span>Day</span></th>
+                                                                        <th class="col-sm" rowspan="2"><span>Date</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>DOW</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>City</span></th>
+                                                                        <th class="col-sm" rowspan="2"><span>Hotel</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Supplier</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Curr</span></th>
+                                                                        <th colspan="6" class="col-xs"><span>Cost (Per Person)</span></th>
+                                                                    </tr>
+                                                                    <tr class="sub-hdng">
+                                                                        <th class="col-xs"><span>SGL</span></th>
+                                                                        <th class="col-xs"><span>TWIN</span></th>
+                                                                        <th class="col-xs"><span>TRPL</span></th>
+                                                                        <th class="col-xs"><span>CWB</span></th>
+                                                                        <th class="col-xs"><span>CNB</span></th>
+                                                                        <th class="col-xs"><span>Infant</span></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="row-grid-sm document-list">
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td class="text-left"><span> Prince Palace (3*) </span> <span class="sub-tl">Standard Room (CP)</span></td>
+                                                                        <td><span> Cox & Kings</span></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td class="text-left"><span> Prince Palace (3*) </span> <span class="sub-tl">Standard Room (CP)</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td class="text-left"><span> Golden Beach Hotel (4*) </span> <span class="sub-tl">Standard Room (CP)</span></td>
+                                                                        <td><span> Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>15 Dec 17</label> </td>
+                                                                        <td><span> Tue</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td class="text-left"><span> Golden Beach Hotel (4*) </span> <span class="sub-tl">Standard Room (CP)</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td colspan="6" rowspan="2" class="text-left"><label>Total</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>105</span></td>
+                                                                        <td><span>60</span></td>
+                                                                        <td><span>60</span></td>
+                                                                        <td><span>45</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div id="transferSection" style="display:none">
+                                            <div class="radio-list-bar type02">
+                                                <a href="#" class="down-arrow"><i class="fa fa-chevron-down"></i> </a>
+                                                <span class="table-cell"><h5>Transfers</h5> </span>
+                                            </div>
+                                            <div class="tab-foc-sec radio-list-data" style="display:block">
+                                                <form>
+                                                    <div class="tbl-cont">
+                                                        <div class="custom-mob-tbl table-responsive">
+                                                            <table class="table center-align top-align tbl-lg table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="col-xxs" rowspan="2"><span>Day</span></th>
+                                                                        <th class="col-sm" rowspan="2"><span>Date</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>DOW</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>City</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Type</span></th>
+                                                                        <th class="col-sm" rowspan="2"><span>Description</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Basic</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Supplier</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Curr</span></th>
+                                                                        <th colspan="3" class="col-xs"><span>Cost (Per Person)</span></th>
+                                                                    </tr>
+                                                                    <tr class="sub-hdng">
+                                                                        <th class="col-xs"><span>Adult</span></th>
+                                                                        <th class="col-xs"><span>Child</span></th>
+                                                                        <th class="col-xs"><span>Infant</span></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="row-grid-sm document-list">
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td><span><i class="fa-custom-flights-blue"></i></span></td>
+                                                                        <td class="text-left"><span>AIR : Mumbai - Bangkok</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Cox & Kings</span></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>900</span></td>
+                                                                        <td><span>120</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td><span><i class="fa-custom-car-blue"></i></span></td>
+                                                                        <td class="text-left"><span>Transfer from Airport to Hotel</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>10</span></td>
+                                                                        <td><span>10</span></td>
+                                                                        <td><span>10</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td><span><i class="fa-custom-activities-blue"></i></span></td>
+                                                                        <td class="text-left"><span>Half-day City tour of Bangkok</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>2</label></td>
+                                                                        <td> <label>15 Dec 17</label> </td>
+                                                                        <td><span> Tue</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td><span><i class="fa-custom-activities-blue"></i></span></td>
+                                                                        <td class="text-left"><span>Safari World</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>10</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>3</label></td>
+                                                                        <td> <label>16 Dec 17</label> </td>
+                                                                        <td><span> Wed</span></td>
+                                                                        <td><span> Pattaya</span></td>
+                                                                        <td><span><i class="fa-custom-car-blue"></i></span></td>
+                                                                        <td class="text-left"><span>Inter-city : Bangkok - Pattaya</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>40</span></td>
+                                                                        <td><span>25</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><label>4</label></td>
+                                                                        <td> <label>17 Dec 17</label> </td>
+                                                                        <td><span> Wed</span></td>
+                                                                        <td><span> Pattaya</span></td>
+                                                                        <td><span><i class="fa-custom-cruise-blue"></i></span></td>
+                                                                        <td class="text-left"><span>Corel Island with Speedboat</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>25</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td colspan="8" rowspan="2" class="text-left"><label>Total</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>900</span></td>
+                                                                        <td><span>120</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>110</span></td>
+                                                                        <td><span>70</span></td>
+                                                                        <td><span>0</span></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <div id="mealSection" style="display:none">
+                                            <div class="radio-list-bar type02">
+                                                <a href="#" class="down-arrow"><i class="fa fa-chevron-down"></i> </a>
+                                                <span class="table-cell"><h5>Meals</h5> </span>
+                                            </div>
+                                            <div class="tab-foc-sec radio-list-data" style="display:block">
+                                                <form>
+                                                    <div class="tbl-cont">
+                                                        <div class="custom-mob-tbl table-responsive">
+                                                            <table class="table center-align top-align tbl-lg table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="col-xxs" rowspan="2"><span>Day</span></th>
+                                                                        <th class="col-sm" rowspan="2"><span>Date</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>DOW</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>City</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Type</span></th>
+                                                                        <th class="col-sm" rowspan="2"><span>Description</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Basic</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Supplier</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Curr</span></th>
+                                                                        <th colspan="3" class="col-xs"><span>Cost (Per Person)</span></th>
+                                                                    </tr>
+                                                                    <tr class="sub-hdng">
+                                                                        <th class="col-xs"><span>Adult</span></th>
+                                                                        <th class="col-xs"><span>Child</span></th>
+                                                                        <th class="col-xs"><span>Infant</span></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="row-grid-sm document-list">
+                                                                    <tr>
+                                                                        <td><label>1</label></td>
+                                                                        <td> <label>14 Dec 17</label> </td>
+                                                                        <td><span> Mon</span></td>
+                                                                        <td><span> Bangkok</span></td>
+                                                                        <td><span><i class="fa-custom-meals-blue"></i></span></td>
+                                                                        <td class="text-left"><span>Alibaba Restaurant</span></td>
+                                                                        <td><span>Per Person</span></td>
+                                                                        <td><span>Karey Tours</span></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>04</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td colspan="8" class="text-left"><label>Total</label></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>04</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        @*<div class="radio-list-bar type02">
+                                                <a href="#" class="down-arrow"><i class="fa fa-chevron-down"></i> </a>
+                                                <span class="table-cell"><h5>Summary</h5> </span>
+                                            </div>
+                                            <div class="tab-foc-sec summ-tbl-md radio-list-data" style="display:block">
+                                                <form>
+                                                    <div class="tbl-cont">
+                                                        <div class="custom-mob-tbl table-responsive">
+                                                            <table class="table center-align top-align tbl-lg table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="col-xxs" rowspan="2"><span>Services</span></th>
+                                                                        <th class="col-xs" rowspan="2"><span>Curr</span></th>
+                                                                        <th colspan="6" class="col-xs"><span>Cost (Per Person)</span></th>
+                                                                    </tr>
+                                                                    <tr class="sub-hdng">
+                                                                        <th class="col-xs"><span>SGL</span></th>
+                                                                        <th class="col-xs"><span>TWIN</span></th>
+                                                                        <th class="col-xs"><span>TRPL</span></th>
+                                                                        <th class="col-xs"><span>CWB</span></th>
+                                                                        <th class="col-xs"><span>CNB</span></th>
+                                                                        <th class="col-xs"><span>Infant</span></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="row-grid-sm document-list">
+                                                                    <tr>
+                                                                        <td class="text-left" rowspan="2"><label>Accomodation</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>35</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>20</span></td>
+                                                                        <td><span>15</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="light-blue-bg"><span>USD</span></td>
+                                                                        <td class="light-blue-bg"><span>105</span></td>
+                                                                        <td class="light-blue-bg"><span>60</span></td>
+                                                                        <td class="light-blue-bg"><span>60</span></td>
+                                                                        <td class="light-blue-bg"><span>45</span></td>
+                                                                        <td class="light-blue-bg"><span>15</span></td>
+                                                                        <td class="light-blue-bg"><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="light-pink-bg">
+                                                                        <td class="text-left"><label>Meals</label></td>
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>05</span></td>
+                                                                        <td><span>04</span></td>
+                                                                        <td><span>04</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="light-blue-bg">
+                                                                        <td class="text-left" rowspan="2"><label>Transfer</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>1200</span></td>
+                                                                        <td><span>975</span></td>
+                                                                        <td><span>900</span></td>
+                                                                        <td><span>120</span></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="light-blue-bg"><span>USD</span></td>
+                                                                        <td class="light-blue-bg"><span>110</span></td>
+                                                                        <td class="light-blue-bg"><span>110</span></td>
+                                                                        <td class="light-blue-bg"><span>110</span></td>
+                                                                        <td class="light-blue-bg"><span>70</span></td>
+                                                                        <td class="light-blue-bg"><span>70</span></td>
+                                                                        <td class="light-blue-bg"><span>00</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td class="text-left" rowspan="2"><label>Total</label></td>
+                                                                        <td><span>GBP</span></td>
+                                                                        <td><span>1235</span></td>
+                                                                        <td><span>1220</span></td>
+                                                                        <td><span>1220</span></td>
+                                                                        <td><span>990</span></td>
+                                                                        <td><span>905</span></td>
+                                                                        <td><span>120</span></td>
+                                                                    </tr>
+                                                                    <tr class="col-total">
+                                                                        <td><span>USD</span></td>
+                                                                        <td><span>220</span></td>
+                                                                        <td><span>165</span></td>
+                                                                        <td><span>165</span></td>
+                                                                        <td><span>119</span></td>
+                                                                        <td><span>89</span></td>
+                                                                        <td><span>00</span></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>*@
+                                    </div>
+                                    @*<div class="btn-cont">
+                                            <a href="#" class="btn btn-blue btn-md">Continue</a>
+                                        </div>*@
+                                </div>
+                            </form>
+                            <!-- Form : Ends -->
+                        </div>
+                    </div>
+                    <!-- Tab Data : Ends -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wrapper ::Ends -->
+<script src="~/js/Costing/DetailedInfo.js"></script>

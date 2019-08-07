@@ -1,0 +1,124 @@
+﻿<style>
+	.products-contracting {
+		width: 100%;
+	}
+
+	.add-to-menu.products-contracting .detail-container .form-sec {
+		padding: 0 0px;
+	}
+
+		.add-to-menu.products-contracting .detail-container .form-sec .btn-md {
+			min-width: 100px;
+		}
+
+	.top-margin {
+		margin-top: 20px;
+	}
+
+	.popup-box.pop-lg1 {
+		max-width: 1000px;
+	}
+
+</style>
+
+@model Voyager.App.ViewModels.AgentSearchViewModel
+<div class="wrapper">
+	<div class="main-content form form-theme-04">
+		<div class="container">
+			<div class="add-to-menu products-contracting">
+				<div class="collapse-block">
+					<div class="collapse-link heading collapsed">
+						<a href="javascript:void(0)" class="">SEARCH <i class="fa arrow"></i></a>
+					</div>
+					<div class="collapse-container frmAgent" style="display: block;">
+						<div class="detail-container">
+							<div class="row" style="margin:0px 0px 10px 0px">
+								<div class="col-md-12">
+									<div class="row form-sec no-space">
+										<div class="col-md-6 mobile-xs-12">
+											<label>Agent Name</label>
+											@Html.TextBoxFor(m => m.AgentName, new { @class = "form-control bindAgent AgentIdUI", @id = "AgentIdUI" })
+											@*@Html.HiddenFor(m => m.AgentId)
+											@Html.ValidationMessageFor(m => m.AgentName, "", new { @class = "error" })*@
+										</div>
+										<div class="col-md-6 mobile-xs-12">
+											<label>Country</label>
+											@Html.DropDownListFor(m => m.Country, new SelectList(Model.CountryList, "Attribute_Id", "AttributeName"), "Select", new { @id="ddlCountry", @class = "ddlCountry form-control" })
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="row form-sec no-space">
+										<div class="col-md-6 mobile-xs-12">
+											<label>CNK Reference No.</label>
+											@Html.TextBoxFor(m => m.CNKReferenceNo, new { @class = "form-control CNKReferenceNo", @id= "CNKReferenceNo" })
+										</div>
+										<div class="col-md-6 mobile-xs-12">
+											<label>Status</label>
+											@Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                        {
+                                        new SelectListItem{ Text="Active", Value = "Active",Selected=true },
+                                        new SelectListItem{ Text="Inactive", Value ="Inactive" }
+                                        }, new { @class = "form-control Status" })
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6 text-left top-margin">
+									<a href="#action-popup" class="popup-inline btn btn-blue btn-md btnCreateNewAgent" id="btnCreateNewAgent">Create New Agent</a>
+								</div>
+								<div class="col-md-6 text-right top-margin">
+									<input type="button" value="Search" id="btnSearch" class="btn btn-blue btn-md" />
+									<input type="button" value="Reset" id="btnAgentReset" class="btn btn-blue btn-md" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>			
+		</div>		
+		<div id="SearchResult"></div>
+		</div>
+	</div>
+<div id="action-popup" style="display:none">
+	<div class="popup-box pop-lg1 form-theme-04 form">
+		<button title="Close (Esc)" type="button" class="mfp-close"></button>
+		<div class="popup-in displayNewAgent">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+	});
+
+	$('#btnAgentReset').click(function () {
+		$("#AgentIdUI").val("");
+		$("#CNKReferenceNo").val("");
+		$("#ddlCountry").val("");
+		$("#Status").val("Active");
+		$('.gridresults').html("");
+	});
+
+	$("#btnCreateNewAgent").click(function () {
+		$.ajax({
+			type: "GET",
+			url: "/Agent/CreateNewAgent",
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (response) {
+				$(".displayNewAgent").html(response.replace("action-popup ", ""));
+				$("#action-popup").show();
+			},
+			error: function (response) {
+				alert(response.statusText);
+			}
+		});
+	});
+
+	$('#btnSearch').click(function () {		
+		$('#SearchResult').load("/Agent/_AgentPipeline");
+	});	
+	
+
+</script>

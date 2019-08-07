@@ -1,0 +1,47 @@
+﻿
+@model Voyager.App.ViewModels.OriginalItineraryDetails
+
+@Html.HiddenFor(x => x.BookingNumber, new { @id = "BookingNumber" })
+@Html.HiddenFor(x => x.PositionId, new { @id = "PositionId" })
+@Html.HiddenFor(x => x.ItineraryId, new { @id = "ItineraryId" })
+@Html.HiddenFor(x => x.ItineraryDaysId, new { @id = "ItineraryDaysId" })
+
+<div class="popup-box pop-md form-theme-04 form">
+	<div class="popup-in">
+		<div class="custom-mob-tbl table-responsive">		
+			<div class="alert alert-success" id="SuccessAlert" style="display:none">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+				<div id="SuccessMessage"></div>			
+			</div>
+			<div class="alert alert-danger" id="ErrorAlert" style="display:none">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+				<div id="ErrorMessage"></div>
+			</div>
+			<table class="table">
+				<thead>
+					<tr>
+						<th class="col-sm"><span>TL Remarks</span></th>
+						<th class="col-sm"><span>OPSRemarks</span></th>
+					</tr>
+				</thead>
+				<tbody class="row-grid-sm document-list">
+					<tr>
+						<td>
+							@Html.TextAreaFor(x => x.TLRemarks, new { @id = "TLRemarks", @rows = 7 })
+						</td>
+						<td>
+							@Html.TextAreaFor(x => x.OPSRemarks, new { @id = "OPSRemarks", @rows = 7 })
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+		<div class="btn-cont text-center">
+			<button id="remarksSave" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+			<button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+		</div>
+	</div>
+</div>
+
+<script src="~/js/Sales/Remarks.js"></script>

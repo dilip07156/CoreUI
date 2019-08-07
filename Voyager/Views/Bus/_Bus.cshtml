@@ -1,0 +1,238 @@
+﻿@model Voyager.App.ViewModels.BusViewModel
+@using (Html.BeginForm("Bus", "Bus", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmBus" }))
+{
+	<div class="btn-cont pull-right AddEditSH">
+		<ul>
+			<li><input type="button" value="Save" class="btn btn-blue btn-md bussave"></li>
+		</ul>
+	</div>
+
+	<h3><i class="fa-custom-bus-black"></i> Bus</h3>
+	@if (TempData.Keys.Contains("success"))
+	{
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Success!</strong> @TempData["success"].ToString()
+		</div>
+	}
+	else if (TempData.Keys.Contains("error"))
+	{
+		<div class="alert alert-danger">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Error!</strong> @TempData["error"].ToString()
+		</div>
+	}
+
+	<div class="simple-tab-cont">
+		<div class="simple-tab-data">
+			@Html.HiddenFor(m => m.Location)
+			@Html.HiddenFor(m => m.LocationId)
+			@Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+			@Html.HiddenFor(m => m.SaveType, new { @id = "hfSavetype" })
+			<div style="display:block">
+				<div class="custom-mob-tbl table-responsive valign-top-tbl top-gap-md">
+					<table class="table text-center" id="tblBus">
+						<thead>
+							<tr>
+								<th class="col-md-2"><span>From</span></th>
+								<th class="col-md-2"><span>To</span></th>
+								<th class="col-md-2"><span>Product</span></th>
+								<th class="col-md-2"><span>Services</span></th>
+								<th class="col-md-1"><span>Keep As</span></th>
+								<th class="col-md-1"><span>Remarks</span></th>
+								<th class="col-md-1 AddEditSH">&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.BusDetails != null && Model.BusDetails.Count > 0)
+							{
+								@for (int i = 0; i < Model.BusDetails.Count; i++)
+								{
+									<tr id="BusRow_@i" class="BusRow">
+										<td>
+											<div class="form-group-cont collapse-block">
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Day</label>
+													@*@Html.DropDownListFor(m => m.BusDetails[i].DayID, new SelectList(Model.BusDetails[i].DayList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select", @id = "ddlDayID_" + i })*@
+
+													<select name="@Html.NameFor(m =>m.BusDetails[i].DayID)" id="ddlDayID_@i" class="form-control select ddlday">
+														<option value="">Select</option>
+														@foreach (var item in Model.BusDetails[i].DayList)
+														{
+															<option value="@item.AttributeValue_Id" cityname="@item.CityName"
+																	cityid="@item.CityId"
+																	selected="@(Model != null && item.AttributeValue_Id == Model.BusDetails[i].DayID)">
+																@item.Value
+															</option>
+														}
+													</select>
+													@Html.ValidationMessageFor(m => m.BusDetails[i].DayID, "", new { @class = "text-danger" })
+													@Html.HiddenFor(m => m.BusDetails[i].DayName, new { @id = "ddlDay_" + i })
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Bus Type</label>
+													@{
+														var ProductType = new List<SelectListItem>();
+														ProductType.Add(new SelectListItem { Text = "Select", Value = "" });
+														ProductType.Add(new SelectListItem { Text = "Long Distance Coach", Value = "LDC" });
+														ProductType.Add(new SelectListItem { Text = "Coach", Value = "Coach" });
+													}
+													@Html.DropDownListFor(m => m.BusDetails[i].ProductType, ProductType, new { @class = "form-control", @id = "ddlbustype_" + i })
+													@Html.ValidationMessageFor(m => m.BusDetails[i].ProductType, "", new { @class = "text-danger" })
+													@Html.Hidden("hdnSeqNo", i)
+													@Html.HiddenFor(m => m.BusDetails[i].BusID, new { @id = "hfBusID_" + i })
+													@Html.HiddenFor(m => m.BusDetails[i].IsDeleted, new { @id = "hfIsDeleted_" + i })
+													@Html.HiddenFor(m => m.BusDetails[i].SupplierID, new { @id = "hfSupplierID_" + i })
+													@Html.HiddenFor(m => m.BusDetails[i].SupplierName, new { @id = "hfSupplierName_" + i })
+													@Html.HiddenFor(m => m.BusDetails[i].BusSequence, new { @id = "hfBusSequence_" + i })
+													@Html.HiddenFor(m => m.BusDetails[i].ForPositionId, new { @id = "hfForPositionId_" + i })
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">From City</label>
+													@Html.TextBoxFor(m => m.BusDetails[i].FromCity, new { @class = "form-control bindCity fromcityUI", @id = "FromCityUI_" + i })
+													@Html.ValidationMessageFor(m => m.BusDetails[i].FromCity, "", new { @class = "text-danger" })
+													@Html.HiddenFor(m => m.BusDetails[i].FromCityID, new { @id = "FromCity_" + i, @class = "fromcity" })
+												</div>
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Duration</label>
+													@Html.DropDownListFor(m => m.BusDetails[i].Duration, new SelectList(Model.BusDetails[i].DurationList, "Value", "Value"), new { @class = "form-control ddlDuration", @id = "ddlDuration_" + i })
+													@Html.ValidationMessageFor(m => m.BusDetails[i].Duration, "", new { @class = "text-danger" })
+												</div>
+												<div class="collapse-container">
+													<div class="form-group">
+														<label class="frm-sub-label txt-orange">PickUp Location</label>
+														@Html.TextBoxFor(m => m.BusDetails[i].FromPickUpLoc, new { @class = "form-control bindPickUpLoc", @id = "FromPickUpLocUI_" + i })
+														@Html.ValidationMessageFor(m => m.BusDetails[i].FromPickUpLoc, "", new { @class = "text-danger" })
+														@Html.HiddenFor(m => m.BusDetails[i].FromPickUpLocID, new { @id = "FromPickUpLoc_" + i })
+													</div>
+													<div class="form-group">
+														<label class="frm-sub-label txt-orange">PickUp Time</label>
+														@Html.TextBoxFor(m => m.BusDetails[i].StartTime, new { @class = "form-control time24", @id = "FromPickUpTimeUI_" + i, @placeholder = "00.00" })
+														@Html.ValidationMessageFor(m => m.BusDetails[i].StartTime, "", new { @class = "text-danger" })
+													</div>
+												</div>
+												<div class="lnk-dotted"><a href="#" class="collapse-link"><i class="fa fa-angle-up"></i> Options </a> </div>
+											</div>
+										</td>
+
+										<td>
+											<div class="form-group-cont collapse-block">
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">To City</label>
+													@Html.TextBoxFor(m => m.BusDetails[i].ToCity, new { @class = "form-control bindCity tocityUI", @id = "ToCityUI_" + i })
+													@Html.ValidationMessageFor(m => m.BusDetails[i].ToCity, "", new { @class = "text-danger" })
+													@Html.HiddenFor(m => m.BusDetails[i].ToCityID, new { @id = "ToCity_" + i, @class = "tocity" })
+												</div>
+												<div class="collapse-container">
+													<div class="form-group">
+														<label class="frm-sub-label txt-orange">DropOff Location</label>
+														@Html.TextBoxFor(m => m.BusDetails[i].ToDropOffLoc, new { @class = "form-control bindPickUpLoc", @id = "ToDropOffLocUI_" + i })
+														@Html.ValidationMessageFor(m => m.BusDetails[i].ToDropOffLoc, "", new { @class = "text-danger" })
+														@Html.HiddenFor(m => m.BusDetails[i].ToDropOffLocID, new { @id = "ToDropOffLoc_" + i })
+													</div>
+													<div class="form-group">
+														<label class="frm-sub-label txt-orange">DropOff Time</label>
+														@Html.TextBoxFor(m => m.BusDetails[i].EndTime, new { @class = "form-control time24", @id = "ToDropOffTimeUI_" + i, @placeholder = "00.00" })
+														@Html.ValidationMessageFor(m => m.BusDetails[i].EndTime, "", new { @class = "text-danger" })
+													</div>
+												</div>
+												<div class="lnk-dotted"><a href="#" class="collapse-link"><i class="fa fa-angle-up"></i> Options </a> </div>
+											</div>
+										</td>
+										<td>
+											<div class="form-group">
+												<label class="frm-sub-label txt-orange">Product Name</label>
+												@Html.TextBoxFor(m => m.BusDetails[i].ProductName, new { @class = "form-control bindpositionprod", @id = "ProductNameUI_" + i })
+												@Html.ValidationMessageFor(m => m.BusDetails[i].ProductName, "", new { @class = "text-danger" })
+												@Html.HiddenFor(m => m.BusDetails[i].ProductID, new { @id = "ProductName_" + i })
+												@Html.HiddenFor(m => m.BusDetails[i].ProductTypeID, new { @id = "ProductName_" + i + "TypeID" })
+											</div>
+											<div class="form-group">
+												<label class="frm-sub-label txt-orange">Bus Category</label>
+												@Html.DropDownListFor(m => m.BusDetails[i].BudgetCategory, new SelectList(Model.BusDetails[i].ProdCategoryList, "ProductCategoryId", "ProductCategoryName"), "Select", new { @class = "form-control bindProductRange", @id = "ddlCategoryID_" + i })
+												@Html.ValidationMessageFor(m => m.BusDetails[i].BudgetCategory, "", new { @class = "text-danger" })
+												@Html.HiddenFor(m => m.BusDetails[i].BudgetCategoryId, new { @id = "ddlCategory_" + i })
+											</div>
+											@*Note:- If you change the below checkboxes text then change in WAPI project also ProposalRepository.cs->GetProposal Function*@
+											<div class="form-group">
+												<label class="chk-cont" style="padding-left:0px;">
+													@Html.CheckBoxFor(m => m.BusDetails[i].IsCityPermit, new { @id = "IsCityPermit_" + i })
+													Excludes City Permit
+												</label>
+											</div>
+											<div class="form-group">
+												<label class="chk-cont" style="padding-left:0px;">
+													@Html.CheckBoxFor(m => m.BusDetails[i].IsParkingCharges, new { @id = "IsParkingCharges_" + i })
+													Excludes Parking Charges
+												</label>
+											</div>
+											<div class="form-group">
+												<label class="chk-cont" style="padding-left:0px;">
+													@Html.CheckBoxFor(m => m.BusDetails[i].IsRoadTolls, new { @id = "IsRoadTolls_" + i })
+													Excludes Road Tolls
+												</label>
+											</div>
+										</td>
+										@{
+											Model.BusDetails[i].PositionRoomsData.RowNo = i;
+											Model.BusDetails[i].PositionRoomsData.PositionType = "BusDetails[";
+										}
+										@Html.Partial("_PositionRoomDetails", Model.BusDetails[i].PositionRoomsData)
+										<td>
+											@{
+												var keepasList = new List<SelectListItem>();
+												keepasList.Add(new SelectListItem { Text = "Included", Value = "Included" });
+												keepasList.Add(new SelectListItem { Text = "Optional", Value = "Optional" });
+												keepasList.Add(new SelectListItem { Text = "Supplement", Value = "Supplement" });
+											}
+											@Html.DropDownListFor(m => m.BusDetails[i].KeepAs, keepasList, new { @class = "form-control", @id = "ddlKeepAs_" + i })
+											@Html.ValidationMessageFor(m => m.BusDetails[i].KeepAs, "", new { @class = "text-danger" })
+										</td>
+
+										<td class="text-center" id="tdPriceFoc">
+											<div class="price-foc-sec">
+												<div class="tool-tip info Prices">
+													<span class="msg txt-green" style="display:none;">Prices Added</span>
+													<span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+													<a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+													<div id="divPrices_@i" class="tooltip-cont type03">
+													</div>
+												</div>
+												<hr>
+												<div class="tool-tip info FOC">
+													<span class="msg txt-green" style="display:none;">FOC Added</span>
+													<span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+													<a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+													<div id="divFOC_@i" class="tooltip-cont type03">
+													</div>
+												</div>
+												<hr>
+											</div>
+											<span class="frm-sub-label txt-orange">For TL</span>
+											@Html.TextAreaFor(m => m.BusDetails[i].TLRemarks, new { @id = "txtTLRemarks_" + i, @maxlength = "250", @class = "alphanumeric", @rows = "7" })
+										</td>
+
+										<td class="AddEditSH">
+											<div class="icon-squre-cont" style="margin:8px 0px 8px 0px;">
+												<a href="#" class="icon-squre-green"><i class="fa fa-plus"></i></a>
+												<a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+											</div>
+											<br />
+											<div>
+												<span class="frm-sub-label txt-orange">For OPS</span>
+												@Html.TextAreaFor(m => m.BusDetails[i].OPSRemarks, new { @id = "txtOPSRemarks_" + i, @maxlength = "250", @class = "alphanumeric", @rows = "10" })
+											</div>
+										</td>
+									</tr>
+												}}
+						</tbody>
+					</table>
+				</div>
+				<div class="btn-cont top-gap-md">
+					<input type="button" value="Save" class="btn btn-blue btn-md bussave">
+				</div>
+			</div>
+		</div>
+	</div>
+												}
+<script src="~/js/Sales/Bus.js"></script>

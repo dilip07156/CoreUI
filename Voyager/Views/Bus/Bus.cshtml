@@ -1,0 +1,32 @@
+﻿@model Voyager.App.ViewModels.BusViewModel
+
+<body class="inner-pg logged-in" data-responsejs='{"create":[{"prop":"width", "prefix":"min-device-width-", "lazy":false, "breakpoints":[0, 320, 481, 641, 767, 961, 1025, 1281] }]}'>
+    <!-- Wrapper ::Starts -->
+    <div class="wrapper">
+        <!-- Main Content :: Starts -->
+        <div class="main-content form-theme-04 form">
+            <div class="container">
+                <div class="pg-container a">
+                    <div class="head-ttl">
+                        <h2 class="pg-ttl pull-left">Bus</h2>
+                        @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                        <div class="clearfix"></div>
+                    </div>
+                    @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data">
+                            <input type="hidden" id="SaveType" value="full" />
+                            @Html.Partial("_Bus", Model)
+                        </div>
+                    </div>
+                    @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="~/js/Sales/PositionRooms.js"></script>
+<script src="~/js/Sales/common.js"></script> 

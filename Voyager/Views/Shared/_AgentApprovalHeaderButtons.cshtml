@@ -1,0 +1,67 @@
+﻿@model Voyager.App.ViewModels.AgentApprovalHeaderButtons 
+
+<div class="enquiry-ttl-due-section">
+    <div class="btn-cont pull-right">
+        <ul>
+            <li><input type="button" value="Communication Trail" class="btn btn-blue btn-md communitrail" href="#modelcommunitrail"></li>
+            <li><input type="button" value="Send To Client" class="btn btn-blue btn-md sendtoclient" href="#modelSendToClient"></li>
+            <li><a title="Accept Without Proposal" class="popup-inline btn btn-red btn-md clsAcceptWithoutProposal" href="#modelAcceptWithoutProposal">Accept Without Proposal</a></li>
+            <li>
+                <input type="button" value="Agent Accept" class="btn btn-blue btn-md agentaccept">
+                @*@Html.ActionLink("Agent Accept", "AgentAcceptSendToClient", "AgentApproval", new { QRFID = Model.QRFID, id = Model.QRFPriceID, status = "agentaccept" }, new { @class = "btn btn-blue btn-md agentaccept" })*@
+            </li>
+            <li>
+                <a href="#amendment-quote-submitted" class="popup-inline btn btn-blue btn-md btnAmendmentQuote">Amendment Quote</a>
+            </li>
+            <li><a href="#CopyQuote-popup" class="btn btn-white bld popup-inline" onclick="CopyQuote();">Copy Quote</a></li>
+            <li><a class="btn btn-white bld" onclick="QuoteRejectOpprtunity(@Model.QRFID)">Reject Opportunity</a></li>
+        </ul>
+    </div>
+    @*<h1 class="full">Sales Officer</h1>*@
+</div>
+
+<!--Amendment Quote Submitted Popup Start-->
+<div class="mfp-hide popup-box pop-md" id="amendment-quote-submitted" style="display:none">
+    @*<h2>18c-Itinerary-Quote-Submitted-Popup</h2>*@
+    <div class="popup-in">
+        <h3 class="pop-tl">Thank You</h3>
+        <p> New QRFID generated <span id="spnNewQRFID" class="blue-txt semi-bold"></span></p>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="btn-cont text-center">
+            @Html.ActionLink("Ok", "Quote", "Quote", new { }, new { @class = "btn btn-blue btn-md" })
+        </div>
+    </div>
+</div>
+<!--Amendment Quote Submitted Popup End-->
+<!--SendToClient Popup Start-->
+<div id="modelSendToClient-popup"></div>
+<!--SendToClient Popup End-->
+<!--Communication Trail Popup Start-->
+<div id="modelcommunitrail-popup"></div>
+<!--Communication Trail Popup End-->
+<!--Accept Without Proposal Popup Start-->
+<div id="modelAcceptWithoutProposal" class="mfp-hide popup-box pop-md form-theme-04 form">
+    <div class="popup-in">
+        <h3 class="pop-tl">Confirm Message</h3>
+        <p> Proposal is not sent to customer through System. Do you want to send it to Handover Pipeline without sending Proposal to Agent?</p>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="btn-cont text-center">
+            <a href="#" class="btn btn-blue-outline btn-md close-popup">Cancel</a>
+            <a class="popup-inline btn btn-blue btn-md" id="btnAcceptWithoutProposalOk" href="#modelAcceptWithoutProposalOk">Ok</a>
+        </div>
+    </div>
+</div>
+
+<div class="mfp-hide popup-box pop-md" id="modelAcceptWithoutProposalOk" style="display:none">
+    <div class="popup-in">
+        <h3 class="pop-tl">Thank You</h3>
+        <p> Quote has been sent to Handover Pipeline. Please proceed with the GoAhead. </p>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="btn-cont text-center">
+            <a href="#" class="popup-inline btn btn-blue btn-md closeOkPopup">Ok</a>
+        </div>
+    </div>
+</div>
+<!--Accept Without Proposal Popup End--> 
+
+<script src="~/js/AgentApproval/AgentApprovalHeaderButtons.js"></script> 

@@ -1,0 +1,219 @@
+﻿@model Voyager.App.ViewModels.ProposalCoveringNoteViewModel
+<link href="~/ckeditor/samples/css/samples.css" rel="stylesheet" />
+
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmProposalCoveringNote" }))
+{
+	<div class="wrapper">
+		<div class="main-content form-theme-04 form">
+			<div class="pg-container">
+				<div class="sqr-tab-cont">
+					<div class="sqr-tab-data flights">
+						<div class="btn-cont-rgt" style="text-align:right">
+							<a class="btn btn-blue btn-md" id="btnSaveCoveringNote">Generate Proposal</a>
+						</div>
+						<div class="process-data-sec">
+							<textarea id="editorCoveringNote" name="editorCoveringNote" class="editorCoveringNote" disabled>
+                                @if (!string.IsNullOrEmpty(Model.CoveringNote))
+                                {
+                                    @Model.CoveringNote;
+                                }
+                                else
+                                {
+							<strong> <i>Your plans are being co-ordinated by <strong style="color:#000;">@Model.SalesPersonCommonTitle @Model.SalesPersonFullName</strong> </i> </strong>
+							<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+							<p height="20" align="left" valign="top">Dear @Model.AgentTitle @Model.AgentFirstName @Model.AgentLastName,</p>
+							<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+							<p height="20" align="left" valign="top">
+                                                Thank you for choosing @Model.CompanyName for your proposed trip to @Model.Destination. Please mention 
+							<span class="color063178">your quote reference no.<strong>@Model.QRFID</strong></span> for all your future correspondence.
+                                                Our aim is to offer the highest levels of expertise, value and service. As discussed on the telephone call, I am delighted to
+                                                enclose the following:
+                                            </p>
+							<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+							<p height="20" align="left" valign="top" class="black-title"><strong>Information :</strong></p>
+							<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+							<table class="table" width="773" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+                                    @if (Model.ProposalIncludeRegions.Costsheet)
+                                    {
+							<td height="20" width="12%" class="Costsheet"><img src="~/resources/images/proposal-report/correct-blue-icon.jpg" alt="Blue Correct Icon" /></td>
+							<td height="20" width="88%" class="Costsheet blue-text-bold">Departure Dates / Costs</td>
+                                    }
+                                    @if (Model.ProposalIncludeRegions.IncExc)
+                                    {
+							<td height="20" width="12%" class="IncExc"><img src="~/resources/images/proposal-report/correct-blue-icon.jpg" alt="Blue Correct Icon" /></td>
+							<td height="20" width="88%" class="IncExc blue-text-bold">Inclusions / Exclusions / Notes</td>
+                                    }
+                                    @if (Model.ProposalIncludeRegions.RegionMap)
+                                    {
+							<td height="20" width="12%" class="RegionMap"><img src="~/resources/images/proposal-report/correct-blue-icon.jpg" alt="Blue Correct Icon" /></td>
+							<td height="20" width="88%" class="RegionMap blue-text-bold">Map of the Region</td>
+                                    }
+                                </tr>
+							<tr>
+                                    @if (Model.ProposalIncludeRegions.SuggestedHotels) {
+							<td height="20" width="12%" class="SuggestedHotels"><img src="~/resources/images/proposal-report/correct-blue-icon.jpg" alt="Blue Correct Icon" /></td>
+							<td height="20" width="88%" class="SuggestedHotels blue-text-bold">Information on the suggested hotel list </td>
+                                    }
+                                    @if (Model.ProposalIncludeRegions.ItineraryBrief)
+                                    {
+							<td height="20" width="12%" class="ItineraryBrief"><img src="~/resources/images/proposal-report/correct-blue-icon.jpg" alt="Blue Correct Icon" /></td>
+							<td height="20" width="88%" class="ItineraryBrief blue-text-bold">Your Itinerary in Brief</td>
+                                    }
+                                    @if (Model.ProposalIncludeRegions.ItineraryDetail)
+                                    {
+							<td height="20" width="12%" class="ItineraryDetail"><img src="~/resources/images/proposal-report/correct-blue-icon.jpg" alt="Blue Correct Icon" /></td>
+							<td height="20" width="88%" class="ItineraryDetail blue-text-bold">Your Itinerary in Detail</td>
+                                    }
+                                </tr>
+                            </table>
+                                
+							<p height="25" align="left" valign="top">
+                                                I hope the itinerary and quote meets with your satisfaction.
+                                                If you would like to book the itinerary as described, I would recommend that you proceed with your reservation as soon as
+                                                possible to avoid any disappointment.
+                                            </p>
+							<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            
+							<p height="25" align="left" valign="top">
+                                                We look forward to assisting you with your travel requirements. Should you require any further information, please do contact
+                                                me or I will call you in a few days to answer any queries you may have.
+                                            </p>
+							<br />
+							
+                            
+							<p><b>@Model.SalesPersonFullName</b>@if (!string.IsNullOrWhiteSpace(Model.SalesPersonTitle)) { <span>,</span>}
+								<br /><span>@Model.SalesPersonTitle</span>
+								</p>
+							<br />
+							
+                            
+							<table width="75%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+							<td><span class="color595959">Tel:</span>@Model.SalesPersonPhone</td>
+							<td>&nbsp;</td>
+							<td><span class="color595959">Fax:</span>@Model.SalesPersonFax</td>
+							<td>&nbsp;</td>
+							<td>Email: <a class="link13">@Model.SalesPersonEmail</a></td>
+                                    </tr>
+                                </table>
+                            }
+                            </textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="abc" style="display:none;"></div>
+	</div>
+}
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		CKEDITOR.replace("editorCoveringNote");
+		EnableDisableRoleBasedControls('QRF', 'editorCoveringNote');
+	});
+
+	$("#btnSaveCoveringNote").click(function () {
+		var text = CKEDITOR.instances['editorCoveringNote'].getData();
+		var proposalId = $("#ProposalId").val();
+		var QRFId = $("#QRFId").val();
+
+		$.ajax({
+			type: "POST",
+			url: "/Proposal/SaveProposalCoveringNote",
+			data: { QRFId: QRFId, ProposalId: proposalId, txtCoveringNote: text },
+			global: false,
+			success: function (response) {
+				$('.ajaxloader').show();
+				$('#abc').load('/ProposalDocument/GenerateProposal?QRFId=' + QRFId, function () {
+					$("#Review").click();
+					$('#divCostingOfficerHeader').load('/Proposal/CostingOfficerHeader?QRFId=' + QRFId, function () {
+						$('.ajaxloader').hide();
+					});
+				});
+
+
+			},
+			error: function (response) {
+				alert(response.statusText);
+			}
+		});
+
+	});
+
+</script>

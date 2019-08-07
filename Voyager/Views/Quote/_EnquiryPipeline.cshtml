@@ -1,0 +1,303 @@
+﻿@using Voyager.App.ViewModels
+@model EnquiryPipelineViewModel
+
+<div class="post-profile myQRFGridData">
+    <div class="main-content form form-theme-02">
+        <div class="container">
+            <div class="listing-content">
+                <div class="enquiry-ttl-due-section">
+                    <h1 style="width:100%"> @ViewBag.PipelineStages Search Result <span style="font-size:15px;font-weight:300">&nbsp; Found @Model.TotalCount Results</span></h1>
+                </div>
+
+                @if (Model.TotalCount > 0)
+                {
+                    <div class="profile-status">
+                        <ul>
+                            <li><span></span>Follow up Due Later</li>
+                            <li><span class="due-today"></span>Follow up Due Today</li>
+                            <li><span class="due-one-two-days"></span>Follow up Due 1 - 2 Days</li>
+                            <li><span class="due-more-two-days"></span>Follow up Due More than 48 Hrs</li>
+                        </ul>
+                        <div class="text-right">
+                            @*<input type="button" value="Follow" id="btnFollowUp" class="btn btn-blue btn-md" >*@
+                            <a href="#FollowUpList-popup" class="btn btn-blue popup-inline showFollowUp">Follow Up</a>
+                        </div>
+                        <span class="clear"></span>
+                    </div>
+                    @*<div class="enquiry-period-action">
+                            <div class="col-sm-6 enquiry-period" style="padding-left:0px">
+                                <h4>Found @Model.TotalCount Results</h4>
+                            </div>
+
+                            <div class="enquiry-action">
+                                <form>
+                                    <label>Action :</label>
+
+                                    <select id="target">
+                                        <option>Select Option</option>
+                                        <option value="enquiry-trail">Enquiry Trail</option>
+                                        <option value="follow-up">Follow up</option>
+                                        <option value="change-status">Change Status</option>
+                                        <option value="change-request">Change Request</option>
+                                        <option value="audit-history">Audit History</option>
+                                        <option value="view-communication-history">View Communication History</option>
+                                    </select>
+
+                                    <select id="target">
+                                        <option>Select Option</option>
+                                        <option value="enquiry-trail">Enquiry Trail</option>
+                                        <option value="follow-up">Follow up</option>
+                                        <option value="change-status">Change Status</option>
+                                        <option value="change-request">Change Request</option>
+                                        <option value="audit-history">Audit History</option>
+                                        <option value="view-communication-history">View Communication History</option>
+                                        <option value="view-request">View Enquiry</option>
+                                    </select>
+                                    <span class="clear"></span>
+                                </form>
+                            </div>
+                        </div>*@
+
+                    <div class="listing-table">
+                        <div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+                            <table class="table table-bordered tbl-theme-02 dataTables" id="tblQuoteList">
+                                <thead>
+                                    <tr>
+                                        @if (@ViewBag.IsAllowToEdit)
+                                        {
+                                            <th rowspan="2" class="sr-no"></th>
+                                        }
+                                        <th rowspan="2" class="check-list"></th>
+                                        <th rowspan="2" class="enquiry-info ">Enquiry</th>
+                                        <th rowspan="2" class="client-detail  ">Client details</th>
+                                        <th rowspan="2" class="tour-info  ">Tour Info</th>
+                                        <th colspan="2" class="internal-follow-up text-center">Internal Follow-up</th>
+                                        <th colspan="2" class="external-follow-up text-center ">External Follow-up</th>
+                                        <th rowspan="2">Contact details</th>
+                                        <th rowspan="2">Created Date</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="internal-follow-up-status sm-txt text-center">Current Status</th>
+                                        <th class="internal-follow-up-whom sm-txt text-center">With Whom</th>
+                                        <th class="external-follow-up-whom sm-txt text-center">With Whom</th>
+                                        <th class="external-follow-up-status sm-txt text-center">Current Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.TotalCount; i++)
+                                    {
+                                        <tr>
+                                            @if (@ViewBag.IsAllowToEdit)
+                                            {
+                                                @if (@ViewBag.PipelineStages == "Quote Pipeline")
+                                                {
+                                                    <td class="sr-no"><a href="/Quote/NewQuote?QRFId=@Model.QuoteSearchDetails[i].QRFID"><span><i class="fa fa-chevron-right"></i></span></a></td>
+                                                }
+                                                else if (@ViewBag.PipelineStages == "Agent Approval Pipeline")
+                                                {
+                                                    <td class="sr-no"><a href="/AgentApproval/Itinerary?QRFId=@Model.QuoteSearchDetails[i].QRFID"><span><i class="fa fa-chevron-right"></i></span></a></td>
+                                                }
+                                                else if (@ViewBag.PipelineStages == "Handover Pipeline")
+                                                {
+                                                    <td class="sr-no"><a href="/Handover/Itinerary?QRFId=@Model.QuoteSearchDetails[i].QRFID"><span><i class="fa fa-chevron-right"></i></span></a></td>
+                                                }
+                                                else if (@ViewBag.PipelineStages == "Amendment Pipeline")
+                                                {
+                                                    <td class="sr-no"><a href="/Amendment/Itinerary?QRFId=@Model.QuoteSearchDetails[i].QRFID"><span><i class="fa fa-chevron-right"></i></span></a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="sr-no"><a href="/CostingOfficer/Itinerary?QRFId=@Model.QuoteSearchDetails[i].QRFID"><span><i class="fa fa-chevron-right"></i></span></a></td>
+                                                }
+                                            }
+                                            <td class="check-list">
+                                                <label class="dark-blue checkbox-container mgr-zero">
+                                                    <input type="checkbox" value="@Model.QuoteSearchDetails[i].QRFID" class="chkQuote" />
+                                                </label>
+                                            </td>
+                                            <td class="enquiry-info">
+                                                <div class="quote-id">
+                                                    <strong class="ttl">Quote ID / QRF</strong>
+                                                    <span>@Model.QuoteSearchDetails[i].QRFID</span>
+                                                </div>
+                                            </td>
+                                            <td class="client-detail">
+                                                <strong class="name">@Model.QuoteSearchDetails[i].AgentContactName</strong>
+                                                <p class="designation">@Model.QuoteSearchDetails[i].AgentCompanyName</p>
+                                            </td>
+
+                                            <td class="tour-info">
+                                                @{ var TotalDays =  @Model.QuoteSearchDetails[i].QRFDuration + 1; }
+                                                <strong class="ttl">@Model.QuoteSearchDetails[i].TourName </strong>
+                                                <span>@TotalDays Days</span>
+                                                <span>
+                                                    @( Model.QuoteSearchDetails[i].AgentPassengerInfo == null ? "0" : Model.QuoteSearchDetails[i].AgentPassengerInfo.count.ToString() )
+                                                    Adults
+                                                </span>
+                                                <ul>
+                                                    <li>
+                                                        <label>Destination</label>
+                                                        <span>@Model.QuoteSearchDetails[i].Destination</span>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            @{ 
+                                                var InternalFollowUp = new VGER_WAPI_CLASSES.FollowUpTask();
+                                                var ExternalFollowUp = new VGER_WAPI_CLASSES.FollowUpTask();
+                                                foreach (var followup in Model.QuoteSearchDetails[i].FollowUp)
+                                                {
+                                                    var Internal = followup.FollowUpTask.Where(a => a.FollowUpType == "Internal").FirstOrDefault();
+                                                    if (Internal != null)
+                                                    {
+                                                        InternalFollowUp = Internal;
+                                                    }
+                                                    var External = followup.FollowUpTask.Where(a => a.FollowUpType == "External").FirstOrDefault();
+                                                    if (External != null)
+                                                    {
+                                                        ExternalFollowUp = External;
+                                                    }
+                                                }
+                                            }
+                                            <td class="internal-follow-up-status status">
+
+                                                <div class="tbl-box due-today">
+                                                    <div class="tblcell-box">
+                                                        @if (InternalFollowUp !=null)
+                                                        {
+                                                        <strong class="red-txt">@InternalFollowUp.Status</strong>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                            <td class="internal-follow-up-whom whom">
+                                                <div class="tbl-box due-today">
+                                                    <div class="tblcell-box">
+                                                        <span>
+                                                            @if (InternalFollowUp != null)
+                                                            {
+                                                            <strong class="red-txt">@InternalFollowUp.ToName</strong>
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="date-time">
+                                                    @if (InternalFollowUp != null)
+                                                    {
+                                                        @if (Convert.ToDateTime(@InternalFollowUp.FollowUpDateTime).Year > 1900)
+                                                        {
+                                                            <strong class="ttl">DATE </strong>
+                                                            <span class="date">@Convert.ToDateTime(@InternalFollowUp.FollowUpDateTime).ToString("dd MMM yyyy")</span>
+                                                            <strong class="ttl">Time</strong>
+                                                            <span class="time">@Convert.ToDateTime(@InternalFollowUp.FollowUpDateTime).ToString("hh:mm tt")</span>
+                                                        }
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="external-follow-up-whom whom">
+                                                <div class="tbl-box due-one-two-days">
+                                                    <div class="tblcell-box">
+                                                        <span>
+                                                            @if (ExternalFollowUp != null)
+                                                            {
+                                                                <strong class="red-txt">@ExternalFollowUp.ToName</strong>
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="date-time">
+                                                    @if (ExternalFollowUp != null)
+                                                    {
+                                                        @if (Convert.ToDateTime(ExternalFollowUp.FollowUpDateTime).Year > 1900)
+                                                        {
+                                                            <strong class="ttl">DATE </strong>
+                                                            <span class="date">@Convert.ToDateTime(ExternalFollowUp.FollowUpDateTime).ToString("dd MMM yyyy")</span>
+                                                            <strong class="ttl">Time</strong>
+                                                            <span class="time">@Convert.ToDateTime(ExternalFollowUp.FollowUpDateTime).ToString("hh:mm tt")</span>
+                                                        }
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td class="external-follow-up-status status">
+                                                <div class="tbl-box due-one-two-days">
+                                                    <div class="tblcell-box">
+                                                        <strong class="green-txt">
+                                                            @if (ExternalFollowUp != null)
+                                                            {
+                                                                <strong class="red-txt">@ExternalFollowUp.Status</strong>
+                                                            }
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                @*<div class="date-time">
+                                                        <strong class="ttl">Date of Reply</strong>
+                                                        <span class="date">18 Jan 2017</span>
+                                                        <strong class="ttl">Time</strong>
+                                                        <span class="time">04:00 pm</span>
+                                                    </div>*@
+                                            </td>
+                                            <td>
+                                                <ul>
+                                                    <li>
+                                                        <span class="phone-number"><i class="custom-offi-phone-icon"></i><a href="tel:919833332255" style="vertical-align: super;">@Model.QuoteSearchDetails[i].AgentMobileNo</a></span>
+                                                    </li>
+
+                                                    <li>
+                                                        <span class="email">
+                                                            <i class="fa fa-envelope-o"></i><a href="mailto:amit_trivedi@gmail.com">  @Model.QuoteSearchDetails[i].AgentEmailAddress</a>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td class="client-detail">
+                                                <span class="designation">@(Model.QuoteSearchDetails[i].CreateDate != null && Model.QuoteSearchDetails[i].CreateDate != DateTime.MinValue ? Model.QuoteSearchDetails[i].CreateDate.ToString("dd/MMM/yyyy") : "")</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+
+
+            @if (Model.TotalCount > 0)
+            {
+                <div class="container">
+                    <div class="col-sm-12" style="text-align:right;margin-bottom:20px">
+                        <a href="/Quote/NewQuote" class="btn btn-blue btn-md">New Quote</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="FollowUpList-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $('.dataTables').DataTable({
+            "ordering": false,
+            "aLengthMenu": [10, 25, 50, 100],
+            "iDisplayLength": 10,
+            "searching": true,
+            "lengthChange": true,
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-3'f><'col-sm-6'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+
+
+
+    });
+</script>

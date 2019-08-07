@@ -1,0 +1,228 @@
+﻿@model VGER_WAPI_CLASSES.SendToClientSetRes
+<link href="~/ckeditor/samples/css/samples.css" rel="stylesheet" />
+
+<style>
+    .popup-box.pop-lg {
+        max-width: 1450px;
+        height: auto;
+        max-height: 100%;
+    }
+</style>
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "fromSendToCilent" }))
+{
+    <div class="mfp-hide popup-box pop-lg" id="modelSendToClient">
+        <div class="popup-in">
+            <div class="radio-list-bar type02">
+                <h3>Send To Client</h3>
+                @Html.HiddenFor(m => Model.AgentName, new { @id = "AgentName" })
+                @Html.HiddenFor(m => Model.TourName, new { @id = "TourName" })
+                @Html.HiddenFor(m => Model.QRFID, new { @id = "QRFID" })
+                @Html.HiddenFor(m => Model.QRFPriceID, new { @id = "QRFPriceID" })
+                <input type="hidden" name="selectedToCC" id="selectedToCC" />
+            </div>
+            <div style="display:none;text-align:left;margin-top:3px;" id="divSuccessError">
+                <a class="close" title="close">×</a>
+                <strong id="stMsg"></strong> <label id="lblmsg"></label>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <div><p style="color: #337ab7;" class="fontsize17"> Send From </p></div>
+                    <div>
+                        <label>
+                            @Html.RadioButtonFor(model => model.FromMail, Model.SalesOfficer, new { @class = "rdoPipelineStages" })
+                            @Model.SalesOfficer
+                        </label>
+                    </div>
+                    @foreach (var centralMailItem in Model.CentralMailBoxList)
+                    {
+                        <div>
+                            <label>
+                                @Html.RadioButtonFor(model => model.FromMail, centralMailItem, new { @class = "rdoPipelineStages" })
+                                @centralMailItem
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <div><p style="color: #337ab7;" class="fontsize17"> CC to </p><p style="color: #337ab7;" class="fontsize17"> External </p></div>
+                    <div>
+                        @foreach (var item in Model.ToCC)
+                        {
+                            <div class="col-md-6">
+                                <label class="dark-blue checkbox-container mgr-zero">
+                                    <input type="checkbox" value="@item" onclick="javascript: setSelectedCC(this)" class="chkQuote" />
+                                    @item
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div><p style="color: #337ab7;" class="fontsize17">.</p><p style="color: #337ab7;" class="fontsize17"> Internal </p></div>
+                    <div>
+                        <div>
+                            <label>
+                                <input type="checkbox" checked value="@Model.SalesOfficer" onclick="javascript: setSelectedCC(this)" class="chkQuote" />
+                                @Model.SalesOfficer
+                            </label>
+                        </div>
+                        @foreach (var centralMailItem in Model.CentralMailBoxList)
+                        {
+                            <div>
+                                <label>
+                                    <input type="checkbox" checked value="@centralMailItem" onclick="javascript: setSelectedCC(this)" class="chkQuote" />
+                                    @centralMailItem
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <form>
+                <textarea id="editorSendToClient" name="editorSendToClient" class="editorSendToClient">   
+                <div class="process-data-sec" style="font-family: Arial, Helvetica, sans-serif;font-size:13px;">
+                <p>Dear @Html.DisplayFor(m => Model.ContactPerson, new { @id = "ContactPerson", @class = "form-control" }),</p>
+                <p>Thank you for contacting Cox & Kings with regards to your proposed holiday to @Html.DisplayFor(m => Model.Destination, new { @id = "SalesOfficer", @class = "form-control" }) departing in @Model.TravellingDate.</p>
+                <p>Our aim is to offer the highest levels of expertise, value and services and I hope that the enclosed Itinerary changes and quote meet <br /> with your
+                   approval. The Itinerary combines the ideas, and our experience of the destination, optimum routing and local conditions.
+                        </p>                       
+                <p>If you wish to accept our proposal, please click <a href="[#accept]" target="_blank" title="I Accept" id="aAccept" width="150px" height="40"
+                                                                       style="border-radius: 5px; moz-border-radius: 5px;khtml-border-radius: 5px;o-border-radius: 5px;webkit-border-radius: 5px;  text-align:center;cursor: pointer;border-top:transparent;border-right:transparent; border-bottom:transparent; border-left:transparent;
+                            text-decoration: none;background-color: #ff0000;color: #fff;border: 5px solid #ff0000;max-width:350px;font-size: 17px;font-weight: 700;display:inline-block;">
+                <span style="background-color:#ff0000"><span style="color:#fff"> I Accept </span></span>
+                         </a>
+                        </p>   
+                        @*<p>If you wish to retain the original format, please click  <a href="[#keeporiginal]" target="_blank" title="Keep Original" id="aKeepOriginal" style="font-weight: 700;width: 112px;cursor: pointer;border-radius: 3px;padding: 5px 12px;outline: 0;text-decoration: none;text-align: center;white-space: nowrap;background: #000096;color: #fff;border: 1px solid #000096;">Keep Original</a></p>*@
+                <p>If you wish to make changes, please click  
+                <a href="[#suggestions]" target="_blank" title="Enter Suggestions" id="aEnterSuggestions" width="250" height="40"
+                   style="border-radius: 5px; moz-border-radius: 5px;khtml-border-radius: 5px;
+                             o-border-radius: 5px;webkit-border-radius: 5px;cursor: pointer;border-top:transparent;border-right:transparent; border-bottom:transparent; border-left:transparent;
+                           text-decoration: none;background-color: #000096;color: #fff;border: 5px solid #000096;max-width:350px;font-size: 17px;font-weight: 700;display:inline-block;">
+                            Enter Suggestions </a></p>
+                <p>
+                            Please note that this itinerary is subject to availability and we will request the relevant services as soon as we are in receipt of your<br />
+                            booking form and your deposite. If you would like to book the itinerary as described,I would recommended <br />that you proceed with your reservation as soon possible.
+                        </p>
+                <p>
+                            Best Wishes,
+                <br /> @Html.DisplayFor(m => Model.FullName, new { @id = "SalesOfficer", @class = "form-control" })
+                        </p>
+                <p>Enclosed: Proposed Itinerary with suggested changes for @Html.DisplayFor(m => Model.ContactPerson, new { @id = "ContactPerson" }). </p>
+                    </div>      
+                </textarea>
+            </form>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close close-popup"></button>
+        <div class="btn-cont text-center">
+            <button type="button" class="btn btn-blue btn-md" id="sendtoclientmail" title="Send">Send</button>
+            <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        CKEDITOR.replace("editorSendToClient", {
+            height: '400px',
+            width: '100%'
+        });
+        
+        var isCheckedLength = $("input[type='checkbox']:checked").length;
+        if (isCheckedLength > 0) {
+            for (var i = 0; i < isCheckedLength; i++) {
+                setSelectedCC($("input[type='checkbox']:checked")[i]);
+            }
+        }
+    });
+
+    $("#sendtoclientmail").click(function () {
+        $("#divSuccessError").hide();
+        var text = CKEDITOR.instances['editorSendToClient'].getData();
+        var model = {
+            QRFID: $("#QRFId").val(),
+            QRFPriceID: $("#QRFPriceID").val(),
+            AgentName: $("#AgentName").val(),
+            TourName: $("#TourName").val(),
+            ToCC: $("#selectedToCC").val(),
+            UserEmail: $("input[name='FromMail']:checked").val(),
+            SendToClientHtml: "<html><head><meta charset='utf-8'><title></title></head><body>" + text.replace("\n", "") + '</body></html>',
+            __RequestVerificationToken: $(':input[name="__RequestVerificationToken"]').val()
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/AgentApproval/SendToClientMail",
+            data: model,
+            success: function (result) {
+                if (result != null && result != '' && result.status != "" && result.status != null) {
+                    $("#divSuccessError").show();
+                    if (result.status.toLowerCase() == 'success') {
+                        $("#divSuccessError").addClass("alert alert-success");
+                        $("#stMsg").text("Success!");
+                    }
+                    else {
+                        $("#divSuccessError").addClass("alert alert-danger");
+                        $("#stMsg").text("Error!");
+                    }
+                    $("#lblmsg").text(result.msg);
+                }
+                else {
+                    $('.ajaxloader').hide();
+                    $("#divSuccessError").show();
+                    $("#divSuccessError").addClass("alert alert-danger");
+                    $("#lblmsg").text("An error occurs.");
+                    $("#stMsg").text("Error!");
+                }
+            },
+            failure: function (response) {
+                $('.ajaxloader').hide();
+                $("#divSuccessError").show();
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text(response.responseText);
+                $("#stMsg").text("Failure!");
+            },
+            error: function (response) {
+                $('.ajaxloader').hide();
+                $("#divSuccessError").show();
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text(response.responseText);
+                $("#stMsg").text("Error!");
+            }
+        });
+    });
+
+    function ShowPopup(thisparam) {
+        //opens the popup
+        var targetDiv = $(thisparam).attr("href");
+        $.magnificPopup.open({
+            type: 'inline',
+            items: { src: targetDiv },
+            fixedContentPos: true,
+            fixedBgPos: true,
+            overflowY: 'auto',
+            closeBtnInside: true,
+            preloader: false,
+            midClick: true,
+            removalDelay: 500,
+            mainClass: 'my-mfp-slide-bottom',
+            closeOnBgClick: false,
+            enableEscapeKey: false
+        });
+    }
+
+    function setSelectedCC(event) {
+        var toCC = $("#selectedToCC").val() != undefined && $("#selectedToCC").val() != "" ? $("#selectedToCC").val().split(";") : [];
+        if (event.checked) {
+            toCC.push(event.value);
+        }
+        else {
+            var removeItem = event.value;
+            toCC = jQuery.grep(toCC, function (value) {
+                return value != removeItem;
+            });
+        }
+        var dd = toCC.join(";");
+        $("#selectedToCC").val(dd);
+    }
+</script>

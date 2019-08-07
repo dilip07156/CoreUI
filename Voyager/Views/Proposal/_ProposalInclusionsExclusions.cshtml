@@ -1,0 +1,94 @@
+﻿@model Voyager.App.ViewModels.ProposalInclusionsExclusionsViewModel
+
+<link href="~/ckeditor/samples/css/samples.css" rel="stylesheet" />
+
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmProposalInclusionsExclusions" }))
+{
+    <div class="wrapper">
+        <div class="main-content form-theme-04 form">
+                <div class="pg-container">
+                    <div class="sqr-tab-cont">
+                        <div class="sqr-tab-data flights">
+                            <div class="btn-cont-rgt" style="text-align:right">
+                                <a class="btn btn-blue btn-md" id="btnSaveInclusionsExclusions">Save &amp; Continue</a>
+                            </div>
+                            <div class="process-data-sec">
+                                <figure>
+                                    <textarea id="editorInclusionExclusion" name="editorInclusionExclusion" class="editorInclusionExclusion" disabled>
+                                    @if (Model.Inclusions != null)
+                                    {
+                                        @Model.Inclusions
+                                    }
+                                    else
+                                    {
+                                        @if (@Model.InclusionList != null)
+                                        {
+                                    <b>INCLUSIONS:</b>
+                                    <ul>
+                                                @for (int i = 0; i < Model.InclusionList.Count(); i++)
+                                                {
+                                    <li>@Model.InclusionList[i].Tcs</li>
+                                                }
+                                            </ul>
+                                        }
+                                    }
+
+                                    <hr />
+
+                                    @if (Model.Exclusions != null)
+                                    {
+                                        @Model.Exclusions
+                                    }
+                                    else
+                                    {
+                                        @if (@Model.ExclusionList != null)
+                                        {
+                                    <b>EXCLUSIONS:</b>
+                                    <ul>
+                                                @for (int i = 0; i < Model.ExclusionList.Count(); i++)
+                                                {
+                                    <li>@Model.ExclusionList[i].Tcs</li>
+                                                }
+                                            </ul>
+                                        }
+                                    }
+                                    </textarea>
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        CKEDITOR.replace("editorInclusionExclusion");
+        EnableDisableRoleBasedControls('QRF', 'editorInclusionExclusion');
+    });
+
+    $("#btnSaveInclusionsExclusions").click(function () {
+         
+        var text = CKEDITOR.instances['editorInclusionExclusion'].getData();
+        var proposalId = $("#ProposalId").val();
+        var QRFId = $("#QRFId").val();
+        $.ajax({
+            type: "POST",
+            url: "/Proposal/SaveProposalInclusionExclusions",
+            data: { QRFId: QRFId, ProposalId: proposalId, txtInclusionExclusions: text },
+            success: function (response) {
+                $("#Terms").click();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+    });
+
+</script>

@@ -1,0 +1,49 @@
+﻿@model Voyager.App.ViewModels.OpsCancelBooking
+
+<style>
+	.popup-box.pop-lg {
+		max-width: 80% !important;
+	}
+</style>
+
+<h3>Cancel Booking</h3>
+
+<button title="Close (Esc)" type="button" class="mfp-close"></button><br />
+<div class="modal-body" id="cancelBookingSection">
+	<form action="/" method="post" class="form-theme-04" id="frmCancelBooking">
+		<div class="alert alert-success" id="SuccessAlert" style="display:none">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<div id="SuccessMessage"></div>
+		</div>
+		<div class="alert alert-danger" id="ErrorAlert" style="display:none">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<div id="ErrorMessage"></div>
+		</div>
+		<div class="alert alert-danger" role="alert">
+			Please take care when proceeding as this action cannot be reversed
+		</div>
+		<div class="card col-md-3">
+			<div class="card-header">Cancellation</div>
+			<div class="card-body">
+				<div class="form-group">
+					<label>Enter the Reason for the Cancellation</label>
+					@Html.DropDownListFor(m => m.CancelReason, new SelectList(Model.CancellationList, "AttributeName", "AttributeName"), "Select", new { @id = "ddlCancellation", @class = "form-control clsddlCancellation" })
+					@Html.ValidationMessageFor(m => m.CancelReason, "", new { @class = "error" })
+					@*<span class="field-validation-valid text-danger" id="spanCancelReason" data-valmsg-for="" data-valmsg-replace="true"></span>*@
+				</div>
+				<div class="form-row input-group-sm">
+					<div class="col">
+						<label for="inputEmail4">Additional Info</label>
+						@Html.TextAreaFor(m => m.AdditionalInfo, new { @id = "AdditionalInfo", @class = "clsAdditionalInfo" })
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="divSupplierList">
+			@Html.Partial("_CancelBookingSupplierList", Model)
+		</div>
+		</form>
+</div>
+
+<script src="~/js/Operations/CancelBooking.js"></script>

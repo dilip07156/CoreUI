@@ -1,0 +1,84 @@
+﻿@model Voyager.App.ViewModels.UserDetailsViewModel
+
+<h3>Update Users</h3>
+<div class="form-section frmChangeUser">
+    <div class="form-group-sec">
+        <div class="row">
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Sales Officer </label>
+                @Html.DropDownListFor(m => m.SalesOfficer, new SelectList(Model.SalesOfficerList, "Email", "Email"), "Select", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SalesOfficer, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Costing Officer </label>
+                @Html.DropDownListFor(m => m.CostingOfficer, new SelectList(Model.CostingOfficerList, "Email", "Email"), "Select", new { @class = "form-control filter" })
+                @Html.ValidationMessageFor(m => m.CostingOfficer, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Product Accountant </label>
+                @Html.DropDownListFor(m => m.ProductAccountant, new SelectList(Model.ProductAccountantList, "Email", "Email"), "Select", new { @class = "form-control filter" })
+                @Html.ValidationMessageFor(m => m.ProductAccountant, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="row rwFileHandler">
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">File Handler </label>
+                @Html.DropDownListFor(m => m.FileHandler, new SelectList(Model.FileHandlerList, "Email", "Email"), "Select", new { @class = "form-control filter" })
+                @Html.ValidationMessageFor(m => m.FileHandler, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 col-xs-12 mobile-12" style="padding-bottom:0px">
+                <h3>Client Info</h3>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Contact Person </label>
+                @Html.DropDownListFor(m => m.ContactPersonID, new SelectList(Model.ContactPersonList, "Contact_Id", "FIRSTNAME"), "Select", new { @class = "form-control filter" })
+                @Html.ValidationMessageFor(m => m.ContactPersonID, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Email </label>
+                @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control", @ReadOnly = "true", @style = "background-color: #fff" })
+            </div>
+            <div class="col-sm-4 col-xs-12 mobile-12">
+                <label class="frm-sub-label">Mobile No </label>
+                @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", @ReadOnly = "true", @style = "background-color: #fff" })
+            </div>
+        </div>
+    </div>
+</div>
+<button title="Close (Esc)" type="button" class="mfp-close close-popup changeUserClose"></button>
+<div class="btn-cont">
+    <button title="Save" type="button" class="btn btn-blue btn-md" onclick="UpdateUserForQuote();">Update</button>
+    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#UserUpdate-popup .close-popup").click(function () {
+            location.reload();
+        });
+
+        $("#ContactPersonID").change(function () {
+            var ContactID = $("#ContactPersonID").val();
+            $.ajax({
+                type: "GET",
+                url: "/Quote/GetContactDetailsByContactID",
+                data: { ContactID: ContactID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    $("#MobileNo").val(result.mobile);
+                    $("#EmailAddress").val(result.mail);
+                },
+                error: function (error) {
+                    alert(error);
+                }
+            });
+        });
+    });
+</script>

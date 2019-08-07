@@ -1,0 +1,345 @@
+﻿@using Voyager.App.ViewModels
+@model LoginViewModel
+
+@{
+    Layout = null;
+}
+
+<style>
+
+</style>
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]> <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]> <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Cox &amp; Kings</title>
+    <!-- header css and script starts -->
+    <!--#include virtual="~/includes/header-js-css.inc"-->
+    <link href="~/resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/resources/css/plugin.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/resources/css/master.css" rel="stylesheet">
+    <link href="~/resources/css/myStyle.css" rel="stylesheet" />
+    <style>
+    </style>
+
+</head>
+
+<body class="post-profile login">
+    <div class="header">
+        <div class="container">
+            <div class="logo"><a href="#"><img src="../resources/images/common/cnk-logo.png" alt="" style="height:70px"></a></div>
+        </div>
+    </div>
+    <!-- MAIN_CONTENT starts -->
+    <div class="wrapper">
+        <img src="../resources/images/login/login-background.jpg" alt="" id="bg">
+        <div class="bgsection">
+            <div class="bgcontent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="left-content">
+                                <h2 class="tl lg">
+                                    Welcome to <br>Voyager
+                                </h2>
+                                @*<p class="cont">
+                                    We will put something meaningful in this space when we think of it.
+                                </p>*@
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-6 col-md-push-1">
+                            <div class="action-box">
+                                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    <div class="login-sec">
+                                        <h4 class="head-tl">Login</h4>
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <ul class="actn-list">
+                                            <li>
+                                                <label>User Name</label>
+                                                <div class="input-cntrl">
+                                                    @*<input type="text" class="form-control" placeholder="e.g. abc@coxandkings.com">*@
+                                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "e.g. abc@coxandkings.com" })
+                                                    <i class="fa-user"></i>
+                                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <label>Password</label>
+                                                <div class="input-cntrl">
+                                                    @*<input type="password" class="form-control signup-pswd" name="enterpassword" id="signup-pswd" placeholder="********">*@
+                                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control signup-pswd", @placeholder = "********" })
+                                                    <a href="#" class="show-pass"><i class="fa-eye"></i></a>
+                                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                                </div>
+                                                <!--
+                                                                                        <div class="pass-alert-box" style="display:none;">
+                                                                                            <span class="alert weak" >Weak</span>
+                                                                                            <span class="alert medium" style="display:none;">Medium</span>
+                                                                                            <span class="alert strong" style="display:none;">Strong</span>
+                                                                                            <div class="alert-toolTip">
+                                                                                                <h4>Password must include:</h4>
+                                                                                                <ul>
+                                                                                                    <li class="err-leastEightChrctr"> At least 8 Characters</li>
+                                                                                                    <li class="err-uprLwr ">UPPERCASE and lowercase letters</li>
+                                                                                                    <li class="err-leastOnenmbr">At least One number</li>
+                                                                                                    <li class="err-spclChrctr ">Special Characters</li>
+                                                                                                    <li class="err-noSpace">No Spaces</li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                -->
+                                            </li>
+                                        </ul>
+                                        <div class="btn-wrap">
+                                            @*<a href="#" class="btn btn-primary">Login</a>*@
+                                            <input type="submit" value="Login" class="btn btn-primary" />
+                                            <a href="#" class="btn-link btn-frgt-pswd">Forgot Password?</a>
+                                        </div>
+                                    </div>
+                                }
+
+                                @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @id = "from-forgot-paswd-sec", @class = "form-horizontal", role = "form" }))
+                                {
+                                    <div class="forgot-paswd-sec" style="display:none">
+                                        <a href="#" class="bck-link"><i class="fa-angle-left"></i>Back</a>
+                                        <h4 class="head-tl">Send me my password</h4>
+                                        <p class="txt-cont">
+                                            We shall verify your email address and send your password via email.
+                                        </p>
+                                        <span id="spanForPassErrMsg" class="text-danger" style="color:#b94a48;font-size:14px"></span>
+                                        <ul class="actn-list">
+                                            <li>
+                                                <label>Registered Email Address</label>
+                                                <div class="input-cntrl">
+                                                    @*<input type="text" class="form-control" placeholder="e.g. abc@coxandkings.com">*@
+                                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "e.g. abc@coxandkings.com" , id="txtEmailAddress" })
+                                                    <i class="fa-user"></i>
+                                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                                </div>
+                                            </li>
+                                          
+                                        </ul>
+                                        <div class="btn-wrap">
+                                            @*<a href="#" class="btn btn-primary new-pass-btn">Submit</a>*@
+                                            <input type="submit" value="Login" class="btn btn-primary new-pass-btn" />
+                                        </div>
+                                    </div>
+                                }
+                                <div class="password-mailed" style="display:none">
+                                    <h4 class="head-tl">Password for your account</h4>
+                                    <div class="msg-success">
+                                        <i class="fa fa-check-circle success-icon"></i>
+                                        <p>Please check your email for your password details.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MAIN_CONTENT starts -->
+    <!-- Footer Js Css :: Starts -->
+    <!--#include virtual='/includes/footer-js-css.inc'-->
+    <script src="~/resources/js/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/resources/js/bootstrap.min.js"></script>
+    <script src="~/resources/js/plugins.js"></script>
+    <script src="~/resources/js/main.js"></script>
+    <script src="~/resources/js/modernizr-2.6.2.min.js"></script>
+    <script src="~/resources/js/form-elements.js"></script>
+    <!-- Footer Js Css :: Ends -->
+    <script>
+    $(window).load(function() {
+    var theWindow        = $(window),
+        $bg              = $("#bg"),
+        aspectRatio      = $bg.width() / $bg.height();
+
+    function resizeBg() {
+        if ( (theWindow.width() / theWindow.height()) < aspectRatio ) {
+            $bg
+                .removeClass()
+                .addClass('bgheight');
+        } else {
+            $bg
+                .removeClass()
+                .addClass('bgwidth');
+        }
+    }
+    theWindow.resize(resizeBg).trigger("resize");
+    });
+
+
+    $('.action-box .btn-wrap > .btn-frgt-pswd').click(function(){
+        $('.login-sec').hide();
+        $('.forgot-paswd-sec').show();
+        return false;
+    });
+        $('#from-forgot-paswd-sec').on("submit", function (event) {
+            
+            event.preventDefault();
+            if (!($(".forgot-paswd-sec #txtEmailAddress").val() == '' || $(".forgot-paswd-sec #DateOfBirth").val() == '')) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/ForgetPassword",
+                    data: {
+                        Email: $(".forgot-paswd-sec #txtEmailAddress").val()
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        //alert(data.msg);
+
+                        if (data.msg == 'Invalid') {
+                            $("#spanForPassErrMsg").text('This email address is not regestered in the system.');
+                        }
+                        else {
+                            $("#UserMail").text($(".forgot-paswd-sec #txtEmailAddress").val());
+                            $('.forgot-paswd-sec').hide();
+                            $('.password-mailed').show();
+                        }
+                    },
+                    error: function () {
+                        alert("Something went wrong!!");
+                    }
+                });
+
+            }
+    });
+
+    $('.forgot-paswd-sec .bck-link').click(function(){
+         $('.forgot-paswd-sec').hide();
+        $('.login-sec').show();
+        return false;
+
+    })
+
+
+	 $(document).ready(function(){
+        $('#signup-pswd').keyup(function(){
+            var valid = true;
+            checkStrength($('#signup-pswd').val());
+        });
+        function checkStrength(password){
+            var valid = true;
+            var strength = 0;
+
+            //on password input focus show tooltip
+            $(".pass-alert-box").show();
+
+            //hide tooltip when input blur
+            $("#signup-pswd").blur(function(){
+                $(".pass-alert-box").hide();
+            });
+
+            //If password contains both lower and uppercase characters, increase strength value.
+            if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) {
+                 strength += 1 ;
+                 $('.err-uprLwr').addClass('text-success');
+            }
+            else{
+                $('.err-uprLwr').removeClass('text-success');
+
+            }
+
+            //If it has numbers and characters, increase strength value.
+            if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)){
+                strength += 1;
+                $('.err-leastOnenmbr').addClass('text-success');
+            }
+            else{
+                $('.err-leastOnenmbr').removeClass('text-success');
+            }
+
+            //If it has one special character, increase strength value.
+            @*if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) {
+                strength += 1;
+                $('.err-spclChrctr').addClass('text-success');
+            }
+            else{
+                $('.err-spclChrctr').removeClass('text-success');
+            }*@
+
+            //If there is space, decrease strenght value.
+            if (password.match(/ /)) {
+                $('.err-noSpace').removeClass('text-success');
+            }
+            else{
+                strength += 1;
+                $('.err-noSpace').addClass('text-success');
+            }
+
+            //If letter are more than 8, increase strength value.
+            if (password.length > 7){
+             strength += 1;
+             $('.err-leastEightChrctr').addClass('text-success');
+            }
+            else{
+                $('.err-leastEightChrctr').removeClass('text-success');
+            }
+
+            //If letter are more than 8, increase strength value.
+            if (password.length > 0){
+             //strength += 1;
+             $('.signup-pswd').siblings('.show-pass').show();
+            }
+            else{
+             $('.signup-pswd').siblings('.show-pass').hide();
+            }
+
+            //This is to Count Strenth of Password
+            if(strength == 1){
+                $(".pass-alert-box > .weak.alert").show();
+                $(".strong.alert, .medium.alert").hide();
+            }
+            if(strength == 2){
+                $(".pass-alert-box > .weak.alert").show();
+                $(".strong.alert, .medium.alert").hide();
+            }
+            if(strength == 3){
+                $(".pass-alert-box > .medium.alert").show();
+                $(".strong.alert, .alert.weak").hide();
+            }
+            if(strength == 4){
+                $(".pass-alert-box > .medium.alert").show();
+                $(".weak.alert,  .strong.alert").hide();
+            }
+            if(strength == 5){
+                $(".pass-alert-box > .strong.alert").show();
+                $(".weak.alert,  .medium.alert").hide();
+            }
+        }
+
+
+    });
+
+    $('.show-pass').click(function(e){
+        e.preventDefault();
+        if(!$(this).hasClass('hide-pass')){
+            $(this).addClass('hide-pass');
+            $(this).siblings('.signup-pswd').removeAttr("type");
+            $(this).siblings('.signup-pswd').prop('type', 'text');
+            $(this).find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+        }else{
+            $(this).removeClass('hide-pass');
+            $(this).siblings('.signup-pswd').removeAttr("type");
+            $(this).siblings('.signup-pswd').prop('type', 'password');
+            $(this).find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+
+    </script>
+</body>
+
+</html>

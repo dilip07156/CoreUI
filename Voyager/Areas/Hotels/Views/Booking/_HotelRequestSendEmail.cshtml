@@ -1,0 +1,114 @@
+﻿@model VGER_WAPI_CLASSES.EmailTemplateGetRes
+
+<div class="" style="margin-bottom:18px;">
+    <div class="radio-list-bar type02 hidesec">
+        <h3 class="hidesec">Send To Client</h3>
+        @Html.HiddenFor(m => m.EmailGetReq.BookingNo, new { @id = "BookingNo" })
+        @Html.HiddenFor(m => m.EmailGetReq.PositionId, new { @id = "PositionId" })
+        @Html.HiddenFor(m => m.EmailGetReq.AlternateServiceId, new { @id = "AlternateServiceId" })
+        @Html.HiddenFor(m => m.EmailGetReq.DocumentType, new { @id = "DocumentType" })
+        @Html.HiddenFor(m => m.EmailGetReq.SupplierId, new { @id = "SupplierId" })
+
+        @Html.HiddenFor(m => Model.From, new { @id = "MailFrom" })
+        @Html.HiddenFor(m => Model.To, new { @id = "MailTo" })
+        @Html.HiddenFor(m => Model.CC, new { @id = "MailCC" })
+        @Html.HiddenFor(m => Model.Subject, new { @id = "MailSubject" })
+    </div>
+    <div style="display:none;text-align:left;margin-top:3px;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+    <form>
+        <textarea id="editorSendToClient" name="editorSendToClient" class="editorSendToClient">
+            @Model.Body
+        </textarea>
+    </form>
+    <div class="btn-cont text-center">
+        <button type="button" class="btn btn-blue btn-md" id="sendtoclientmail" title="Send">Send</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        CKEDITOR.replace("editorSendToClient", {
+            height: '400px',
+            width: '100%'
+        });
+    });
+
+    $("#sendtoclientmail").click(function () {
+        var htmlMail = $("#editorSendToClient").val()
+        var htmlString = $.parseHTML(htmlMail);
+        var style = '', meta = '', title = '';
+
+        $.each(htmlString, function (i, el) {
+            if (el.nodeName == "STYLE") {
+                style = el.outerHTML;
+            }
+            else if (el.nodeName == "META") {
+                meta = el.outerHTML;
+            }
+            else if (el.nodeName == "TITLE") {
+                title = el.outerHTML;
+            }
+        });
+
+        $("#divSuccessError").hide();
+        var text = CKEDITOR.instances['editorSendToClient'].getData();
+        var model = {
+            From: $("#MailFrom").val(),
+            To: $("#MailTo").val(),
+            CC: $("#MailCC").val(),
+            Subject: $("#MailSubject").val(),
+            // Body: "<html><head><meta charset='utf-8'><title></title></head><body>" + text.replace("\n", "") + '</body></html>',
+            Body: "<html><head>" + meta + "" + title + "" + style + "</head><body>" + text.replace("\n", "") + '</body></html>',
+            BookingNo: $('#BookingNo').val(),
+            PositionId: $('#PositionId').val(),
+            AltSvcId: $('#AlternateServiceId').val(),
+            doctype: $('#DocumentType').val(),
+            SupplierId: $('#SupplierId').val(),
+            __RequestVerificationToken: $(':input[name="__RequestVerificationToken"]').val()
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Hotels/SendMailToSupplier",
+            data: model,
+            success: function (result) {
+                if (result != null && result != '' && result.status != "" && result.status != null) {
+                    $("#divSuccessError").show();
+                    if (result.status.toLowerCase() == 'success') {
+                        $("#divSuccessError").addClass("alert alert-success");
+                        $("#stMsg").text("Success!");
+                    }
+                    else {
+                        $("#divSuccessError").addClass("alert alert-danger");
+                        $("#stMsg").text("Error!");
+                    }
+                    $("#lblmsg").text(result.msg);
+                }
+                else {
+                    $('.ajaxloader').hide();
+                    $("#divSuccessError").show();
+                    $("#divSuccessError").addClass("alert alert-danger");
+                    $("#lblmsg").text("An error occurs.");
+                    $("#stMsg").text("Error!");
+                }
+            },
+            failure: function (response) {
+                $('.ajaxloader').hide();
+                $("#divSuccessError").show();
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text(response.responseText);
+                $("#stMsg").text("Failure!");
+            },
+            error: function (response) {
+                $('.ajaxloader').hide();
+                $("#divSuccessError").show();
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text(response.responseText);
+                $("#stMsg").text("Error!");
+            }
+        });
+    });
+</script>

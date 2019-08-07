@@ -1,0 +1,475 @@
+﻿@model Voyager.App.ViewModels.UpdateAvailabilityViewModel
+@{
+    ViewData["Title"] = "Update Booking Availability Request";
+    if (ViewBag.Caller == "ui")
+    {
+        Layout = "";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutOffline.cshtml";
+    }
+}
+
+@{ string clsWrapper = "", clsform = "", clsCont = ""; }
+@if (ViewBag.Caller != "ui")
+{
+    clsWrapper = "wrapper";
+    clsform = "main-content form form-theme-04";
+    clsCont = "container";
+}
+<div class="@clsWrapper">
+    <div class="@clsform">
+        <div class="@clsCont hotel-avail-section">
+            <div class="pg-container" id="divViewRequest">
+                <div class="enquiry-ttl-due-section btm-border">
+                    <div class="subtitle-with-list">
+                    </div>
+                </div>
+                <ul class="sqr-tab-list" id="ulViewRequest">
+                    <li data-id="viewhotel" class="active">
+                        <a href="#"> <figure><i class="fa-custom-accommodation"></i></figure> <strong>Hotel Reservation</strong> </a>
+                    </li>
+                    @if (ViewBag.Caller == "ui" && ViewBag.Page == "view")
+                    {
+                        <li data-id="commtrail" id="liCommTrail">
+                            <a href="#"> <figure><i class="fa-custom-quote"></i></figure> <strong>Communications Trail</strong> </a>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-domestic-sec ViewHotelRequest" data-id="viewhotel">
+                    <div class="sqr-tab-data">
+                        <div class="listing-content" id="header-section">
+                            @*<div class="enquiry-ttl-due-section btm-border">*@
+                            <div>
+                                @*<div class="enquiry-ttl-due-section">
+                                        <h1>Hotel Availability Request</h1>
+                                    </div>*@
+
+                                @*@if (!string.IsNullOrEmpty(Model.COHeaderViewModel.QRFID) && !string.IsNullOrEmpty(Model.OpenMode) && Model.Status != "success")*@
+                                @if (!string.IsNullOrEmpty(Model.COHeaderViewModel.QRFID) && string.IsNullOrEmpty(Model.OpenMode) && Model.Status != "success")
+                                {
+                                    <div class="subtitle-with-list">
+                                        <ul>
+                                            <li><span>Quote Ref</span><em>@Model.BookingNumber</em></li>
+                                            <li><span>Destination</span><em>@Model.COHeaderViewModel.Destination</em></li>
+                                            <li><span>Tour</span><em>@Model.COHeaderViewModel.TourName</em></li>
+                                            <li><span>Duration</span><em><i class="day-icon"></i>@Model.COHeaderViewModel.NoOfDays Days / <i class="fa-moon-o"></i>@Model.COHeaderViewModel.NoOfNights Nights</em></li>
+                                            <li><span>Travel Date</span><em>@Convert.ToDateTime(@Model.COHeaderViewModel.TravelDate).ToString("dd MMM yy")</em></li>
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div id="body-section">
+                            @if (Model.Status == "success")
+                            {
+                                <h3>Thank you for updating us!</h3>
+                            }
+                            else if (Model.Status == "error")
+                            {
+                                <h3>@Model.StatusMessage</h3>
+                            }
+                            else
+                            {
+                                <h3>Product Details</h3>
+                                @Html.Partial("~/Areas/Product/Views/ProductSRP/_ProductInfo.cshtml", Model.ProductsSRPViewModel)
+                                @Html.Partial("~/Areas/Hotels/Views/Booking/_HotelReservationReqDetails.cshtml", Model.ReservationRequestDetails)
+                                @*@Html.Partial("~/Areas/Hotels/Views/Booking/_HotelRequestSendEmail.cshtml", Model.ReservationRequestDetails)*@
+                                <div id="EditSendEmailSec"></div>
+
+                                if (Model.Status == "pending")
+                                {
+                                    @using (Html.BeginForm("UpdateAvailabilityRequest", "Hotels", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmUpdateAvailability" }))
+                                    {
+                                        <div class="form-section">
+                                            <div class="form-group-sec">
+                                                @Html.HiddenFor(a => a.COHeaderViewModel.QRFID)
+                                                @Html.HiddenFor(a => a.BookingNumber)
+                                                @Html.HiddenFor(a => a.PositionId)
+                                                @Html.HiddenFor(a => a.AltSvcId)
+                                                @Html.HiddenFor(a => a.SupplierId)
+
+                                                @if (Model.Availability != "UNAVAILABLE")
+                                                {
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="col-md-5">
+                                                                <h3>Availability Details</h3>
+                                                                <p>Please fill in the below information for your availabilty request</p>
+                                                            </div>
+                                                            @if (ViewBag.Caller != "email")
+                                                            {
+                                                                <div class="col-md-7" style="text-align:right;">
+                                                                    <button type="button" class="btn btn-sm btn-primary btn-md btnGeneric">Generic Email</button>
+                                                                    <button type="button" class="btn btn-sm btn-primary btn-md btnQuery">Rate Query</button>
+                                                                    <button type="button" class="btn btn-sm btn-primary btn-md btnExtOpt">Extension of Option Date</button>
+                                                                    <button type="button" class="btn btn-sm btn-primary btn-md btnShowHide">Hide Email</button>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <hr>
+                                                        <div>
+                                                            <div class="row">
+                                                                <div class="col-lg-3">
+                                                                    <label class="frm-sub-label">Option Date</label>
+                                                                    <div class="input-append date" data-date-format="dd/MMM/yyyy">
+                                                                        @Html.TextBoxFor(m => m.UpdateReqDetails.OptionDate, "{0:dd/MMM/yyyy}", new { @class = "span2 form-control", @size = "16", @placeholder = "dd/mmm/yyyy" })
+                                                                        <span class="add-on"></span>
+                                                                        @Html.ValidationMessageFor(m => m.UpdateReqDetails.OptionDate, "", new { @class = "error" })
+                                                                    </div>
+                                                                    <small id="emailHelp" class="form-text text-muted">Date a provisional booking should be cancelled by</small>
+                                                                </div>
+                                                                <div class="col-lg-3" style="display:none;">
+                                                                    <label class="frm-sub-label">Cancellation Deadline</label>
+                                                                    @Html.TextBoxFor(m => m.UpdateReqDetails.CancellationDeadline, new { @class = "form-control numericInt" })
+                                                                    @Html.ValidationMessageFor(m => m.UpdateReqDetails.CancellationDeadline, "", new { @class = "error" })
+                                                                    <small id="emailHelp" class="form-text text-muted">How many days before check in can the Reservation be cancelled at zero charge</small>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <label class="frm-sub-label">Reservations Email</label>
+                                                                    @Html.TextBoxFor(m => m.UpdateReqDetails.ReservationsEmail, new { @class = "form-control emailfield", @placeholder = "name@example.com" })
+                                                                    @Html.ValidationMessageFor(m => m.UpdateReqDetails.ReservationsEmail, "", new { @class = "error" })
+                                                                    <small id="emailHelp" class="form-text text-muted">The best email address to send requests</small>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <label class="frm-sub-label">Telephone </label>
+                                                                    @Html.TextBoxFor(m => m.UpdateReqDetails.Telephone, new { @class = "form-control numericWithSpecChar", @placeholder = "12345678" })
+                                                                    @Html.ValidationMessageFor(m => m.UpdateReqDetails.Telephone, "", new { @class = "error" })
+                                                                    <small id="emailHelp" class="form-text text-muted">The best number to call you for more details</small>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-3">
+                                                                    <label class="frm-sub-label">Title</label>
+                                                                    @{ var TitleList = new List<SelectListItem>();
+                                                                        TitleList.Add(new SelectListItem { Text = "Mr", Value = "Mr" });
+                                                                        TitleList.Add(new SelectListItem { Text = "Ms", Value = "Ms" });
+                                                                        TitleList.Add(new SelectListItem { Text = "Mrs", Value = "Mrs" });
+                                                                        TitleList.Add(new SelectListItem { Text = "The", Value = "The" });
+                                                                    }
+                                                                    @Html.DropDownListFor(m => m.UpdateReqDetails.Title, TitleList, "Select", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(m => m.UpdateReqDetails.Title, "", new { @class = "error" })
+                                                                    <small id="emailHelp" class="form-text text-muted">Title of the person</small>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <label class="frm-sub-label">First Name</label>
+                                                                    @Html.TextBoxFor(m => m.UpdateReqDetails.FirstName, new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(m => m.UpdateReqDetails.FirstName, "", new { @class = "error" })
+                                                                    <small id="emailHelp" class="form-text text-muted">First Name of the person</small>
+                                                                </div>
+                                                                <div class="col-lg-3">
+                                                                    <label class="frm-sub-label">Last Name</label>
+                                                                    @Html.TextBoxFor(m => m.UpdateReqDetails.LastName, new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(m => m.UpdateReqDetails.LastName, "", new { @class = "error" })
+                                                                    <small id="emailHelp" class="form-text text-muted">Last Name of the person</small>
+                                                                </div>
+                                                            </div>
+                                                            @if (ViewBag.Caller == "ui" && ViewBag.Page == "amend")
+                                                            {
+                                                                <div class="row">
+                                                                    <div class="col-lg-6"></div>
+                                                                    <div class="col-lg-3" style="text-align:right">
+                                                                        <button type="submit" class="btn btn-sm btn-primary btn-md btnValid" name="command" value="SAVE~@ViewBag.Caller">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <br />
+                                                        <h3>Rates</h3>
+                                                        <hr>
+                                                        <table class="table table-bordered tbl-theme-02">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Room</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Currency</th>
+                                                                    <th>Rate</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @for (int i = 0; i < Model.RoomRateDetails.Count; i++)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @Html.HiddenFor(a => a.RoomRateDetails[i].BookingRoomsId)
+                                                                            @Html.HiddenFor(a => a.RoomRateDetails[i].RoomName)
+                                                                            @Model.RoomRateDetails[i].PersonType (@Model.RoomRateDetails[i].RoomName)
+                                                                        </td>
+                                                                        <td>@Model.RoomRateDetails[i].Quantity</td>
+                                                                        <td>
+                                                                            @Html.HiddenFor(a => a.RoomRateDetails[i].CurrencyCode, new { @id = "Currency" + i })
+                                                                            @Html.DropDownListFor(m => m.RoomRateDetails[i].CurrencyId, new SelectList(Model.BudgetCurrencyList, "CurrencyId", "CurrencyCode"), "Select", new { @class = "form-control select", @id = "Currency" + i + "ID", @onchange = "GetBudgetSupplement()" })
+                                                                            @Html.ValidationMessageFor(m => m.RoomRateDetails[i].CurrencyId, "", new { @class = "error" })
+                                                                        </td>
+                                                                        <td>
+                                                                            @Html.TextBoxFor(m => m.RoomRateDetails[i].RoomRate, new { @class = "form-control numeric", @placeholder = "Enter Your Rate", @onfocusout = "GetBudgetSupplement()", @style = "text-align:left !important" })
+                                                                            @Html.ValidationMessageFor(m => m.RoomRateDetails[i].RoomRate, "", new { @class = "error" })
+                                                                            <small id="emailHelp" class="form-text text-muted">per ADULT in Room</small>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                            <tbody></tbody>
+                                                        </table>
+
+                                                        <div class="divBudgtSupp">
+                                                            @Html.Partial("~/Areas/Hotels/Views/Booking/_BudgetSupplement.cshtml", Model)
+                                                        </div>
+
+                                                    </div>}
+
+                                                @if ((Model.Availability == "PENDING") || (Model.Availability == "AVAILABLE" && (string.IsNullOrEmpty(Model.OpenMode) || Model.OpenMode == "e")))
+                                                {
+                                                    <button type="submit" class="btn btn-success btn-md btnValid" name="command" value="AVAILABLE~@ViewBag.Caller">Update Available</button>
+                                                }
+                                                @*@if ((Model.Availability == "PENDING") || (Model.Availability == "WAITLIST" && (string.IsNullOrEmpty(Model.OpenMode) || Model.OpenMode == "e")))
+                                                    {
+                                                        <button type="submit" class="btn btn-warning btn-md" name="command" value="WAITLIST~@ViewBag.Caller">Update Waitlist</button>
+                                                    }*@
+                                                @if ((Model.Availability == "PENDING") || (Model.Availability == "UNAVAILABLE" && (string.IsNullOrEmpty(Model.OpenMode) || Model.OpenMode == "e")))
+                                                {
+                                                    <button type="submit" class="btn btn-danger btn-md btnValid" name="command" value="UNAVAILABLE~@ViewBag.Caller">Update Not Available</button>
+                                                }
+                                                @if (ViewBag.Caller == "ui")
+                                                {
+                                                    <button type="button" class="btn close-popup btn-md">Cancel</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="btn btn-cancel btn-md">Cancel</button>
+                                                }
+                                            </div>
+                                        </div>}
+                                }
+                                else
+                                {
+                                    <br />
+                                    <h3>You have already updated us on your availability for this reservation!</h3>}
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-domestic-sec ViewCommunicationTrail" data-id="commtrail" style="display:none" id="viewTrail">
+                    <br /><br />
+                    @Html.Partial("~/Views/Shared/CommunicationTrail/_CommunicationTrail.cshtml", Model.CommunicationTrailViewModel)
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+				$(document).ready(function () {
+
+					$('#modelcommunitrail').removeClass('popup-box pop-lg');
+
+        $('.btnValid').click(function () {
+            var flag = true;
+            var msg = "";
+            var dt = $("#UpdateReqDetails_OptionDate").val();
+            if (dt != "" && dt != undefined && dt!=null && !ValidateDate('#UpdateReqDetails_OptionDate')) {
+                flag = false;
+                msg += msg != "" ? "\n" : "";
+                msg += "Please enter the Option Date in correct format dd/MMM/yyyy.";
+                //$("span[data-valmsg-for='UpdateReqDetails.OptionDate']").text("*");
+            }
+            if (!flag) {
+                alert(msg);
+                return false;
+            }
+        });
+
+				$("#ulViewRequest li").click(function (e) {
+            e.preventDefault();
+				$("#divViewRequest .ViewHotelRequest").hide();
+				$("#divViewRequest .ViewCommunicationTrail").hide();
+            $("#ulViewRequest").find("li").removeClass("active");
+            $(this).addClass("active");
+            $("#divViewRequest").find("[data-id=" + $(this).attr("data-id") + "]").show();
+		});
+
+        $('.btn-cancel').click(function () {
+            window.close();
+            window.location.href = window.location.origin;
+        });
+
+        $('.btnGeneric').click(function () {
+            EditSendEmail('GE');
+        });
+        $('.btnQuery').click(function () {
+            EditSendEmail('RQ');
+        });
+        $('.btnExtOpt').click(function () {
+            EditSendEmail('EO');
+        });
+        $('.btnShowHide').click(function () {
+            $('#EditSendEmailSec').toggle();
+				});
+
+				$('#liCommTrail').click(function () {
+
+					loadCommtrain();
+				});
+
+        //$(".btn-success,.btn-warning").click(function (e) {
+        //
+        //    var flag = ValidateEmail($('#UpdateReqDetails_ReservationsEmail'), $('span[data-valmsg-for="UpdateReqDetails.ReservationsEmail"]'));
+        //    return flag;
+        //});
+        //$(".displayPosition button,:radio,:checkbox").prop('disabled', 'disabled');
+        $('.hotel-avail-section .amendment-control, .hotel-avail-section .rht-sec.price-sec').hide();
+        var OpenMode = '@Model.OpenMode';
+        if (OpenMode == 'v') {
+            $('.hotel-avail-section').find('input,select').attr('disabled', 'disabled');
+            $('.tblBudgtSupp').find('input,select').removeAttr("disabled");
+            $('.hotel-avail-section').find('input[type=hidden]').removeAttr("disabled");
+
+        }
+
+        var form = $("#frmUpdateAvailability");
+        form.removeData('validator');
+        form.removeData('unobtrusiveValidation');
+        $.validator.unobtrusive.parse(form);
+    });
+
+    function EditSendEmail(doctype) {
+
+        var BookingNumber = $('#BookingNumber').val();
+        var PositionId = $('#PositionId').val();
+		var AltSvcId = $('#AltSvcId').val();
+		var SupplierId = $('#SupplierId').val();
+		var data = { BookingNo: BookingNumber, PositionId: PositionId, AltSvcId: AltSvcId, doctype: doctype, SupplierId: SupplierId };
+
+        //$('#EditSendEmailSec').load('/Hotels/GetHotelEmailContent',
+        //    data,
+        //    function () {
+        //        alert('success');
+        //    });
+
+
+        $.ajax({
+            type: "GET",
+            url: "/Hotels/GetHotelEmailContent",
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#EditSendEmailSec").html(response);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.statusText);
+            }
+        });
+				}
+
+				function loadCommtrain() {
+
+					var BookingNumber = $('#BookingNumber').val();
+					var PositionId = $('#PositionId').val();
+					var AltSvcId = $('#AltSvcId').val();
+					var SupplierId = $('#SupplierId').val();
+					var data = { bn: BookingNumber, asid: AltSvcId };
+
+					//$('#EditSendEmailSec').load('/Hotels/GetHotelEmailContent',
+					//    data,
+					//    function () {
+					//        alert('success');
+					//    });
+
+
+					$.ajax({
+						type: "GET",
+						url: "/Hotels/LoadCommunicationTrail",
+						data: data,
+						contentType: "application/json; charset=utf-8",
+						success: function (response) {
+							$('#viewTrail').html(response);
+							$('#modelcommunitrail').removeClass('popup-box pop-lg');
+						},
+						error: function (response) {
+							$(".ajaxloader").hide();
+							alert(response.statusText);
+						}
+					});
+    }
+
+    function GetBudgetSupplement() {
+         
+        var model = $("#frmUpdateAvailability").serialize();
+        var modelnew = model.replace(/BudgetSupplements/g, 'BudgetSupplementsOld');
+        $(".divBudgtSupp").html('');
+
+        $.ajax({
+            type: "POST",
+            url: "/Hotels/GetBudgetSupplement",
+            data: modelnew,
+            //contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                 
+                $(".divBudgtSupp").html(response);
+                var form = $("#frmUpdateAvailability");
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+
+    function SetBudgetSupplement() {
+        var isvalid = $("#frmUpdateAvailability").valid();
+        if(!isvalid)
+            return false;
+
+        var model = $("#frmUpdateAvailability").serialize();
+
+        $.ajax({
+            type: "POST",
+            url: "/Hotels/SetBudgetSupplement",
+            data: model,
+            //contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response.status == 'Success') {
+                    alert('Data saved successfully.');
+                }
+                else {
+                    alert('Error Occured: ' + response.errorMessage)
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+</script>
+<script src="~/resources/js/main.js"></script>
+<style>
+    /*.amendment-control {
+                    display: none;
+                }*/
+
+    /*.rht-sec.price-sec {
+                    display: none;
+                }*/
+
+    .row {
+        margin-bottom: 15px;
+    }
+</style>

@@ -1,0 +1,221 @@
+﻿
+@model Voyager.App.ViewModels.PaymentTermsDetails
+    
+<style>
+    .popup-box.pop-md {
+        width: 650px;
+    }
+  
+</style>
+
+<div class="popup-box pop-md form-theme-04 form">
+    <div class="popup-in">
+        <form id="frmPaymentTerms">
+            <div class="custom-mob-tbl table-responsive">
+                <div id="message"></div>
+                @Html.HiddenFor(x => x.PaymentTerms_Id, new { @id = "PaymentTerms_Id" })
+                @Html.HiddenFor(x => x.Company_Id)
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-sm"><span>From</span></th>
+                            <th class="col-sm"><span>Days</span></th>
+                            <th class="col-sm"><span>Amount</span></th>
+                            <th class="col-sm"><span>Type</span></th>
+                            <th class="col-sm"><span>Currency</span></th>
+                            <th class="col-sm"><span>Business Type</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        <tr>
+                            <td>
+                                @Html.DropDownListFor(m => m.From, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="Booked", Value = "Booked" },
+                                                 new SelectListItem{ Text="Start", Value ="Start" },
+                                                 new SelectListItem{ Text="End", Value ="End" }
+                                                 }, new { @id = "ddlFrom", @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanFrom" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.Days, new { @id = "Days", @class = "form-control numericInt" })
+                                <span class="field-validation-valid text-danger" id="spanDays" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.Value, new { @id = "Value", @class = "form-control OnlyNumericOneDigit" })
+                                <span class="field-validation-valid text-danger" id="spanValue" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.ValueType, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="Percent", Value = "Percent" },
+                                                 new SelectListItem{ Text="Fixed", Value ="Fixed" },
+                                                 new SelectListItem{ Text="Balance", Value ="Balance" }
+                                                 }, new { @id = "ddlValueType", @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanValueType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.Currency_Id, new SelectList(Model.CurrencyList, "CurrencyId", "CurrencyCode"), "Select", new { @id = "ddlCurrency", @class = "form-control leftalign" })
+                                @Html.HiddenFor(x => x.Currency, new { @id = "Currency" })
+                                <span class="field-validation-valid text-danger" id="spanCurrency" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.BusiType, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="FIT", Value = "FIT" },
+                                                 new SelectListItem{ Text="GROUPS", Value ="GROUPS" },
+                                                 new SelectListItem{ Text="BOTH", Value ="BOTH" }
+                                                 }, new { @id = "ddlBusiType", @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanBusiType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <button id="btnSavePaymentTerms" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+                <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ddlCurrency").on("change", function () {
+            var currencytName = $(this).find("option:selected").text();
+            $("#Currency").val(currencytName);
+        });
+
+        $("#ddlValueType").on("change", function () {            
+            var ddlValueType = $(this).find("option:selected").val();
+            if (ddlValueType == "Fixed") {
+                $("#spanCurrency").text("*");
+                IsValidFlag = false;
+            }
+            else {
+                $("#spanCurrency").text("");
+            }
+        });
+
+        $("#btnSavePaymentTerms").on("click", function () {
+            var IsValidFlag = true;
+             
+            var from = $("#ddlFrom").find("option:selected").val();
+            if (from == '') {
+                $("#spanFrom").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanFrom").text("");
+
+            var Days = $("#Days").val();
+            if (Days == '') {
+                $("#spanDays").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanDays").text("");
+
+            var Value = $("#Value").val();
+            if (Value == '') {
+                $("#spanValue").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanValue").text("");
+
+             
+            var ValueType = $("#ddlValueType").find("option:selected").val();
+            var Currency = $("#ddlCurrency").find("option:selected").val();
+            if (ValueType == '') {
+                $("#spanValueType").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanValueType").text("");
+
+            if ((ValueType == "Fixed") && (Currency == null || Currency == "")) {
+                $("#spanCurrency").text("*");
+                IsValidFlag = false;
+            }
+            else {
+                $("#spanCurrency").text("");
+            }
+           
+            //var Currency = $("#ddlCurrency").find("option:selected").val();
+            //if (Currency == '') {
+            //    $("#spanCurrency").text("*");
+            //    IsValidFlag = false;
+            //}
+            //else
+            //    $(this).siblings("span").text("");
+
+            var BusiType = $("#ddlBusiType").find("option:selected").val();
+            if (BusiType == '') {
+                $("#spanBusiType").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanBusiType").text("");
+
+            if (!IsValidFlag)
+                return false;
+
+            //var from = $("#ddlFrom").find("option:selected").val();
+            //var days = $("#Days").val();
+            //var amt = $("#Value").val();
+            //var valtype = $("#ddlValueType").find("option:selected").val();
+            //var currencyId = $("#ddlCurrency").find("option:selected").val();
+            //var currency = $("#ddlCurrency").find("option:selected").text();
+            //var busitype = $("#ddlBusiType").find("option:selected").val();
+
+            //if ((from == null || from == undefined || from == "") && (days == null || days == undefined || days == "") && (amt == null || amt == undefined || amt == "") && (valtype == null || valtype == undefined || valtype == "") && (currency == null || currency == undefined || currency == "") && (busitype == null || busitype == undefined || busitype == "")) {
+            //    var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! Enter atleast one record.</strong></div>';
+            //    $("#frmPaymentTerms #message").html(successmsg);
+            //}
+            //else {
+                $(".ajaxloader").show();
+                var model = $("#frmPaymentTerms").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/Agent/SavePaymentTerms",
+                    data: model,
+                    global: false,
+                    success: function (response) {    
+                        $("#Commercials").click();
+                        if (response.status == "error1") {                         
+                            var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! Duplicate Record </strong></div>';
+                            $("#frmPaymentTerms #message").html(successmsg);
+                        }
+                        else if (response.status == "error") {                          
+                            var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong></div>';
+                            $("#frmPaymentTerms #message").html(successmsg);
+                        }
+                        else {
+                            $("#frmPaymentTerms #PaymentTerms_Id").val(response.paymentTermsId);
+                            var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! Details saved successfully.</strong></div>';
+                            $("#frmPaymentTerms #message").html(successmsg);
+                            $("#spanFrom").text("");
+                            $("#spanDays").text("");
+                            $("#spanValue").text("");
+                            $("#spanValueType").text("");
+                            $("#spanCurrency").text("");
+                            $("#spanBusiType").text("");
+                        }
+                        $(".ajaxloader").hide();
+                    },
+                    error: function () {
+                        $(".ajaxloader").hide();
+                    }
+                });
+            //}
+        });
+
+    });
+</script>

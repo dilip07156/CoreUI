@@ -1,0 +1,595 @@
+﻿@using VGER_WAPI_CLASSES;
+@model Voyager.App.ViewModels.ProductsPDPViewModel
+
+<div class="product-cont-sec">
+    <div class="btn-cont pull-right">
+        <ul>
+            <li class="li-diff"> <a id="back-link" href="#" class="txt-lnk darkblue"><i class="fa fa-arrow-left"></i> Back</a> </li>
+        </ul>
+    </div>
+    <h3><i class="fa-custom-building"></i> Accommodation - <span class="txt-green">Hotel Details</span></h3>
+    <div class="details-container">
+        <!--Product basic info section start-->
+        <div class="dtls-head-cont">
+            <h3>@Model.Products.ProductName</h3>
+            <ul class="border-list">
+                @{
+                    string starrating = "";
+                    if (!string.IsNullOrWhiteSpace(Model.Products.HotelAdditionalInfo.StarRating))
+                    {
+                        starrating = Model.Products.HotelAdditionalInfo.StarRating.Substring(0, 1);
+                    }
+                }
+                @if (starrating == "1")
+                {
+                    <li><img src="/resources/images/common/three-star-blue.png" alt=""></li>
+                    <li><img src="~/resources/images/proposal-report/one-star.png"></li>
+                }
+                else if (starrating == "2")
+                {
+                    <li><img src="~/resources/images/proposal-report/two-star.png"></li>
+                }
+                else if (starrating == "3")
+                {
+                    <li><img src="~/resources/images/proposal-report/three-star.png"></li>
+                }
+                else if (starrating == "4")
+                {
+                    <li><img src="~/resources/images/proposal-report/four-star.png"></li>
+                }
+                else if (starrating == "5")
+                {
+                    <li><img src="~/resources/images/proposal-report/five-star.png"></li>
+                }
+            </ul>
+            <h4 class="heading-tl" style="float:right;margin-right:2%;font-weight:700;font-size:15px;">PRODUCT CODE : @Model.Products.ProductCode</h4>
+            <p>@Model.Products.Address</p>
+        </div>
+        <!--Product basic info section end-->
+
+        <div class="row row-zero">
+            <!--Product images and map section start-->
+            <div class="col-sm-7" data-animation="fadeIn" data-animation-delay="300">
+                <ul class="gal-view-switcher">
+                    <li class="active"><a href="javascript:;" class="photos"><i class="fa-image"></i> Photos</a></li>
+                    <li><a href="javascript:;" class="map"><i class="fa-map-marker"></i> Map</a></li>
+                </ul>
+                <div class="photos-panel thumb-seven">
+                    <div class="photo-gallery owl-carousel owl-theme">
+                        @for (int i = 0; i < Model.Products.ProductResources.Count; i++)
+                        {
+                            <div class="item">
+                                <figure>
+                                    @if (!string.IsNullOrEmpty(Model.Products.ProductResources[i].ImageSRC) && Model.Products.ProductResources[i].ImageSRC.ToLower().StartsWith("http"))
+                                    {
+                                        <img src="@Model.Products.ProductResources[i].ImageSRC" alt="">
+                                    }
+                                    else
+                                    {
+                                        <img src="@Model.ImageInitial@Model.Products.ProductResources[i].ImageSRC" alt="">
+                                    }
+                                </figure>
+                            </div>
+                        }
+                    </div>
+                    <div class="custom-options">
+                        <span id="StatusNumThree"><span class="owlItems"><span><span class="result"></span> <b>More</b></span></span></span>
+                    </div>
+                    <div class="owl-carousel photo-gallery-thumb">
+                        @for (int i = 0; i < Model.Products.ProductResources.Count; i++)
+                        {
+                            <div class="item">
+                                @if (!string.IsNullOrEmpty(Model.Products.ProductResources[i].ImageSRC) && Model.Products.ProductResources[i].ImageSRC.ToLower().StartsWith("http"))
+                                {
+                                    <img src="@Model.Products.ProductResources[i].ImageSRC" alt="" style="width: 86px;height: 64px;">
+                                }
+                                else
+                                {
+                                    <img src="@Model.ImageInitial@Model.Products.ProductResources[i].ImageSRC" alt="" style="width: 86px;height: 64px;">
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="map-panel carmap-panel" style="display:none">
+                    <img src="@Model.ProductMapUrl" class="img-responsive float-left carmap-panel" alt="">
+                </div>
+            </div>
+            <!--Product images and map section end-->
+            <!--Product additional info section start-->
+            <div class="col-sm-5" data-animation="fadeIn" data-animation-delay="300">
+                <div class="details-content">
+                    <ul class="count-two list-icons-big">
+                        @{ var times = Model.Products.ProductAttributes.Where(a => a.AttributeGroupName == "Times").FirstOrDefault();
+                            ProdAttributeValues checkin = null, checkout = null;
+                            if (times != null)
+                            {
+                                checkin = times.AttributeValues.Where(a => a.AttributeName == "Check In").FirstOrDefault();
+                                checkout = times.AttributeValues.Where(a => a.AttributeName == "Check Out").FirstOrDefault();
+                            }
+                        }
+                        @if (checkin != null)
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-check-in"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">Check in</h4>
+                                    <p>@checkin.AttributeValue</p>
+                                </div>
+                            </li>
+                        }
+                        @if (checkout != null)
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-check-out"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">Check out</h4>
+                                    <p>@checkout.AttributeValue</p>
+                                </div>
+                            </li>
+                        }
+                        @if (Model.Products.HotelAdditionalInfo.NoOfRooms > 0)
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-room-lg"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">No. of rooms</h4>
+                                    <p>@Model.Products.HotelAdditionalInfo.NoOfRooms</p>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Products.HotelAdditionalInfo.Location))
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-room-lg"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">Location</h4>
+                                    <p>@Model.Products.HotelAdditionalInfo.Location</p>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Products.HotelAdditionalInfo.BdgPriceCategory))
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-room-lg"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">Budget Price Category</h4>
+                                    <p>@Model.Products.HotelAdditionalInfo.BdgPriceCategory</p>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Products.HotelAdditionalInfo.Chain))
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-room-lg"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">Hotel Chain</h4>
+                                    <p>@Model.Products.HotelAdditionalInfo.Chain</p>
+                                </div>
+                            </li>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.Products.HotelAdditionalInfo.HotelType))
+                        {
+                            <li>
+                                <div class="icon-sec">
+                                    <i class="fa-custom-room-lg"></i>
+                                </div>
+                                <div class="icon-details">
+                                    <h4 class="heading-tl">Hotel Type</h4>
+                                    <p>@Model.Products.HotelAdditionalInfo.HotelType</p>
+                                </div>
+                            </li>
+                        }
+                        <li style="display:none;">
+                            <div class="icon-sec">
+                                <i class="fa-custom-flat-lg"></i>
+                            </div>
+                            <div class="icon-details">
+                                <h4 class="heading-tl">Floors</h4>
+                                <p>9 </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!--Product additional info section end-->
+        </div>
+    </div>
+    <!--Product detail tabs section start-->
+    <div class="itenary-details">
+        <div class="itenary-heading-btn"><a href="javascript:void(0);" class="fixedPos">Overview  </a></div>
+        <!--tab menu section start-->
+        <ul class="itenary-heading mobile">
+            <li><a class="active" href="#" rel="" data-label="overview">Overview</a></li>
+            <li><a href="#" rel="" data-label="room-rates">Room &amp; Rates</a></li>
+            <li><a href="#" rel="" data-label="facilities">Facilities &amp; Amenities</a></li>
+            <li><a href="#" rel="" data-label="InAndAround">In and Around Your Hotel</a></li>
+            <li><a href="#" rel="" data-label="offer">Offer T&amp;C</a></li>
+        </ul>
+        <!--tab menu section End-->
+        <!--tab section start-->
+        <!-- overview Section Start-->
+        <div id="tab-overview-sect" class="itenary-section collapse-block">
+            @{ var ProdDesc = Model.Products.ProductDescription.Where(a => a.DescType == "Description").FirstOrDefault();
+                var Meeting_Rooms_Info = Model.Products.ProductDescription.Where(a => a.DescType == "Meeting_Rooms_Info").FirstOrDefault();
+                var Resturants_Info = Model.Products.ProductDescription.Where(a => a.DescType == "Resturants_Info").FirstOrDefault();
+                var Area_Transportation_Info = Model.Products.ProductDescription.Where(a => a.DescType == "Area_Transportation_Info").FirstOrDefault();
+            }
+            @if (ProdDesc != null && !string.IsNullOrWhiteSpace(ProdDesc.Description))
+            {
+                <h2>Product Info</h2>
+                <p>
+                    @ProdDesc.Description
+                </p>
+            }
+            @if (Meeting_Rooms_Info != null && !string.IsNullOrWhiteSpace(Meeting_Rooms_Info.Description))
+            {
+                <h2>Meeting Rooms Info</h2>
+                <p>
+                    @Meeting_Rooms_Info.Description
+                </p>
+            }
+            @if (Resturants_Info != null && !string.IsNullOrWhiteSpace(Resturants_Info.Description))
+            {
+                <h2>Resturants Info</h2>
+                <p>
+                    @Resturants_Info.Description
+                </p>
+            }
+            @if (Area_Transportation_Info != null && !string.IsNullOrWhiteSpace(Area_Transportation_Info.Description))
+            {
+                <h2>Area Transportation Info</h2>
+                <p>
+                    @Area_Transportation_Info.Description
+                </p>
+            }
+            @*<p>
+                    <a class=" more collapse-link">
+                        <span class="txt-lnk">Read more <i class="fa fa-angle-right"></i></span>
+                        <span class="txt-lnk" style="display:none;">Hide details <i class="fa fa-angle-up"></i></span>
+                    </a>
+                </p>
+                <p class="collapse-container" style="display:none;">
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book
+                </p>*@
+        </div>
+        <!-- overview Section End-->
+        <!-- Itinary Section Start-->
+        <div id="tab-room-rates-sect" class="itenary-section clpsbl-block">
+            <h2>Rooms & Rates</h2>
+            @for (int i = 0; i < Model.Products.ProductCategories.Count; i++)
+            {
+                <div class="room-type">
+                    <ul class="tbl-style">
+                        <li class="table-cell"><b>@Model.Products.ProductCategories[i].ProductCategoryName Room (@Model.Products.ProductCategories[i].ParentCategoryName)</b></li>
+                        <li class="table-cell"><i class="fa-custom-restaurant lightgrey"></i><span> Breakfast Type @Model.Products.ProductCategories[i].GroupBreakfast</span></li>
+                        <li class="table-cell" style="display:none;"><i><img src="/resources/images/common/icons/fa-custom-user-small.png" alt=""></i> Max Occupancy 2 Adults, 2 Children </li>
+                        <li class="table-cell" style="display:none;"><i><img src="/resources/images/common/icons/fa-custom-bed-blue.png" alt=""></i> 1 double bed / twin bed</li>
+                    </ul>
+                </div>
+                <div class="row room-rates">
+                    <div class="col-sm-4">
+                        <div class="photos-panel owl-singleItem">
+                            <div class="owl-carousel owl-theme slider-type">
+                                <div class="item">
+                                    <figure>
+                                        <img src="~/resources/images/my-setting/carousel-img.jpg" alt="">
+                                    </figure>
+                                </div>
+                                <div class="item">
+                                    <figure>
+                                        <img src="~/resources/images/my-setting/carousel-img.jpg" alt="">
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="owl-status"><span class="currentItem"><span class="result">1</span></span></div>
+                        </div>
+                        <div class="room-amenities">
+                            <b>Room amenities</b>
+                            <ul class="packge-desc border-list">
+                                @for (int j = 0; j < Model.Products.ProductCategories[i].RoomFacilities.Count; j++)
+                                {
+                                    <li>@Model.Products.ProductCategories[i].RoomFacilities[j].FacilityDesc</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <ul class="room-itinerary">
+                            @foreach (var range in Model.Products.ProductCategories[i].ProductRanges.Where(a => a.PersonType == "ADULT" && (a.ProductTemplateCode == "TWIN" || a.ProductTemplateCode == "DOUBLE")))
+                            {
+                                string selectClass = "";
+                                if (range.ProductTemplateCode == "TWIN")
+                                {
+                                    selectClass = "selected";
+                                }
+                                <li class="@selectClass">
+                                    <div class="tbl-style">
+                                        <div class="table-cell">
+                                            <span>@range.ProductTemplateName</span>
+                                        </div>
+                                        <div class="table-cell">
+                                            <span>[Meal Plan]</span>
+                                            <span class="additinal-info">[Rooms Allocation]</span>
+                                        </div>
+                                        <div class="table-cell">
+                                            <div class="price-info">
+                                                <div class="price-sec">
+                                                    <p>Price for 1 Night</p>
+                                                    <div class="offer-price">
+                                                        <span class="price"><span class="amt"><i class="fa-rupee"></i>  [price]</span></span>
+                                                        <span class="info-btn-sec">
+                                                            <span class="tool-tip">
+                                                                <a href="#"><i class="fa-info-circle purple"></i></a>
+                                                                <span class="tooltip-cont" style="display: none;">
+                                                                    <span>[description for price]</span>
+                                                                    <a href="#" class="btn-close"></a>
+                                                                </span>
+                                                            </span>
+                                                            <a href="#" class="refresh"><i class="fa-custom-refresh purple"></i></a>
+                                                        </span>
+                                                        <p class="btn btn-secondary btn-bordered btn-md supplier-panel">[Supplier Name]</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="table-cell">
+                                            <a href="#" class="txt-green"></a>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                            <li style="display:none;">
+                                <div class="tbl-style">
+                                    <div class="table-cell">
+                                        <span>With all meals <small><a href="#" class="txt-lnk darkblue">Room & pricing info</a></small></span>
+                                    </div>
+                                    <div class="table-cell">
+                                        <span>Free Cancellation until 18 May 17</span>
+                                        <span class="additinal-info">3 rooms left</span>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="price-info">
+                                            <div class="price-sec">
+                                                <p>Price for 2 Nights</p>
+                                                <div class="offer-price">
+                                                    <span class="price"><span class="amt"><i class="fa-rupee"></i>  85,000</span></span>
+                                                    <span class="info-btn-sec">
+                                                        <span class="tool-tip">
+                                                            <a href="#"><i class="fa-info-circle purple"></i></a>
+                                                            <span class="tooltip-cont" style="display: none;">
+                                                                <span>Lorem ipsum dolor sit amet, brute aliquid instructior in qui, id eirmod comprehensam</span>
+                                                                <a href="#" class="btn-close"></a>
+                                                            </span>
+                                                        </span>
+                                                        <a href="#" class="refresh"><i class="fa-custom-refresh purple"></i></a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="table-cell">
+
+                                    </div>
+                                </div>
+                            </li>
+                            <!--Show foc ranges from contract here-->
+                            <li style="display:none;">
+                                <div class="offer-ribbon rib sm">
+                                    <span class="offer-bdg">deal</span>
+                                    <span>
+                                        4th night FREE
+                                    </span>
+                                </div>
+                                <div class="tbl-style">
+                                    <div class="table-cell">
+                                        <span>With breakfast & dinner <small><a href="#">Room & pricing info</a></small></span>
+                                    </div>
+                                    <div class="table-cell">
+                                        <span>Free Cancellation until 18 May 17</span>
+                                        <span class="additinal-info">3 rooms left</span>
+                                    </div>
+                                    <div class="table-cell">
+                                        <div class="price-info">
+                                            <div class="price-sec">
+                                                <div class="old-price">
+                                                    <p>Price for 2 Nights</p>
+                                                    <span class="price"><b><i class="fa-rupee"></i>  <span>85,000</span></b></span>
+                                                </div>
+                                                <div class="offer-price">
+                                                    <span class="price"><span class="amt"><i class="fa-rupee"></i>  88,140</span></span>
+                                                    <span class="info-btn-sec">
+                                                        <span class="tool-tip">
+                                                            <a href="#"><i class="fa-info-circle purple"></i></a>
+                                                            <span class="tooltip-cont" style="display: none;">
+                                                                <span>Lorem ipsum dolor sit amet, brute aliquid instructior in qui, id eirmod comprehensam</span>
+                                                                <a href="#" class="btn-close"></a>
+                                                            </span>
+                                                        </span>
+                                                        <a href="#" class="refresh"><i class="fa-custom-refresh purple"></i></a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-cell">
+
+                                    </div>
+                                </div>
+                            </li>
+                            <!--Show foc ranges from contract here-->
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- Itinary Section End-->
+        <!-- Facilities Section Start-->
+        <div id="tab-facilities-sect" class="itenary-section two-col-sec">
+            <h2>Facilities & Amenities</h2>
+            <div class="icon-listdata">
+                <ul>
+                    @for (int i = 0; i < Model.Products.ProductFacilities.Count; i++)
+                    {
+                        if (Model.KeyFacilities.Contains(Model.Products.ProductFacilities[i].FacilityDesc.Trim()))
+                        {
+                            string FacilityImage = Model.Products.ProductFacilities[i].FacilityDesc.Trim().Replace('/', '-') + ".png";
+                            <li>
+                                <span style="padding-left:0px !important">
+                                    <img src="/resources/images/proposal-report/@FacilityImage" alt="" style="vertical-align:middle;" />
+                                    @Model.Products.ProductFacilities[i].FacilityDesc.Trim()
+                                </span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <span style="padding-left:0px !important">
+                                    <img src="/resources/images/common/icons/list-style-plus.png" alt="" style="vertical-align:middle;width:6px;" />
+                                    @Model.Products.ProductFacilities[i].FacilityDesc.Trim()
+                                </span>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+            @*<h4>Other Facilities</h4>
+                <ul class="sec-other-facilities">
+                    @for (int i = 0; i < Model.Products.ProductFacilities.Count; i++)
+                    {
+                        if (!Model.KeyFacilities.Contains(Model.Products.ProductFacilities[i].FacilityDesc.Trim()))
+                        {
+                            string FacilityImage = Model.Products.ProductFacilities[i].FacilityDesc.Trim().Replace('/', '-') + ".png";
+                            <li>@Model.Products.ProductFacilities[i].FacilityDesc.Trim()</li>
+                        }
+                    }
+                </ul>*@
+        </div>
+        <!-- Facilities Section End-->
+        <!-- In Arround Start-->
+        <div id="tab-InAndAround-sect" class="itenary-section collapse-block">
+            <h2>In and Around Your Hotel</h2>
+            <div class="inaround-det-sec">
+                <table>
+                    <thead>
+                        @*<tr>
+                                <th class="nonebdr-b" colspan="3">&nbsp;</th>
+                                <th class="bdr-right" colspan="5">Duration</th>
+                            </tr>*@
+                        <tr>
+                            <th class="valign-t">Sr. No.</th>
+                            <th class="valign-t">Name of Attraction</th>
+                            <th class="valign-t">Distance</th>
+                            @*<td class="bg1"><span><i class="fa-custom-rail1"></i></span>By Train</td>
+                                <td class="bg2"><span><i class="fa-custom-car1"></i></span>By Car</td>
+                                <td class="bg1"><span><i class="fa-custom-bus1"></i></span>By Bus</td>
+                                <td class="bg2"><span><i class="fa-custom-bicycle"></i></span>By Cycle</td>*@
+                            @*<td class="bg1 bdr-right"><span><i class="fa-custom-waking1"></i></span>Direction</td>*@
+                            <th class="bg1 bdr-right">Direction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Products.InAndAround.Count < 1)
+                        {
+                            <tr>
+                                <td></td>
+                                <td class="nonebdr-l">No data available</td>
+                                <td class="nonebdr-l"></td>
+                                <td class="nonebdr-l bdr-right"></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            for (int i = 0; i < Model.Products.InAndAround.Count; i++)
+                            {
+                                <tr>
+                                    <td class="nonebdr-l">@(i + 1)</td>
+                                    <td class="nonebdr-l align-left"><a>@Model.Products.InAndAround[i].LandmarkName</a></td>
+                                    <td class="nonebdr-l">@Model.Products.InAndAround[i].Distance @Model.Products.InAndAround[i].DistanceUnit</td>
+                                    @*<td>40 min</td>
+                                        <td class="bg3">1 hr 10 min</td>
+                                        <td>1 hr 25 min</td>
+                                        <td class="bg3">1 hr 40 min</td>*@
+                                    <td>@Model.Products.InAndAround[i].Direction</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- In Arround End-->
+        <!-- Terms and Conditions Start-->
+        <div id="tab-offer-sect" class="itenary-section offer-Tc">
+            @if (Model.Products.TermsAndConditions.Count > 0)
+            {
+                <h2>Offer T&C</h2>
+            }
+            <ul class="circled-list">
+                @for (int i = 0; i < Model.Products.TermsAndConditions.Count; i++)
+                {
+                    <li>@Model.Products.TermsAndConditions[i].Tcs</li>
+                }
+            </ul>
+
+            @{ var Credit_Card_Info = Model.Products.ProductDescription.Where(a => a.DescType == "Credit_Card_Info").FirstOrDefault();
+                var Group_Child_Policy = Model.Products.ProductDescription.Where(a => a.DescType == "Group_Child_Policy").FirstOrDefault();
+                var FIT_Child_Policy = Model.Products.ProductDescription.Where(a => a.DescType == "FIT_Child_Policy").FirstOrDefault();
+            }
+            @if (Credit_Card_Info != null && !string.IsNullOrWhiteSpace(Credit_Card_Info.Description))
+            {
+                <h2>Credit Card Info</h2>
+                <p>
+                    @Credit_Card_Info.Description
+                </p>
+            }
+            @if (Group_Child_Policy != null && !string.IsNullOrWhiteSpace(Group_Child_Policy.Description))
+            {
+                <h2>Group Child Policy</h2>
+                <p>
+                    @Group_Child_Policy.Description
+                </p>
+            }
+            @if (FIT_Child_Policy != null && !string.IsNullOrWhiteSpace(FIT_Child_Policy.Description))
+            {
+                <h2>FIT Child Policy</h2>
+                <p>
+                    @FIT_Child_Policy.Description
+                </p>
+            }
+        </div>
+        <!-- Terms and Conditions End-->
+        <!--tab section End-->
+    </div>
+    <!--Product detail tabs section end-->
+</div>
+<script src="~/resources/js/main.js"></script>
+<script>
+    $('#Horizontal_Tab h2[aria-controls="hor_2_tab_item-1"]').click();
+    $('.itenary-section').hide();
+    $("#tab-overview-sect").show();
+    $('#back-link').click(function () {
+        //window.location = document.referrer;
+        history.back();
+    });
+</script>
+<style>
+    .photo-gallery-thumb .owl-item img {
+        /*object-fit: fill !important;*/
+    }
+</style>

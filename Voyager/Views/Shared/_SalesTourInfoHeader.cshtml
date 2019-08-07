@@ -1,0 +1,18 @@
+﻿@model Voyager.App.ViewModels.TourInfoHeaderViewModel
+
+@if (!string.IsNullOrEmpty(Model.QRFID))
+{
+    <div class="subtitle-with-list">
+        <ul>
+            <li><span>Reference No. </span><em> @Model.QRFID</em></li>
+            <li><span>Agent Name </span><em>@Model.AgentName</em></li>
+            <li><span>Tour Name</span><em>@Model.TourName</em></li>
+            <li><em><i class="day-icon"></i><span id="spNoOfDays">@Model.NoOfDays</span> D / <i class="night-icon"></i><span id="spNights">@Model.NoOfNights</span> N</em></li>
+            <li><span>Tour Code </span><em>@Model.TourCode</em></li>
+            @if (Model.IsLinkedQRFsExist)
+            {
+                <li><a href="#QuoteVersionList-popup" class="popup-inline showLinkedQRFs">Linked QRFs</a></li>
+            }
+        </ul>
+    </div>
+}

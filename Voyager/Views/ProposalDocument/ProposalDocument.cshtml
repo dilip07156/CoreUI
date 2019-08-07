@@ -1,0 +1,48 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+
+@{
+    ViewData["Title"] = "ProposalDocument";
+    Layout = "";
+}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link href="@Model.URLinitial/resources/css/style_report.css" rel="stylesheet" type="text/css">
+    <link href="@Model.URLinitial/resources/css/proposal_report.css" rel="stylesheet" type="text/css" />
+    <script src="@Model.URLinitial/resources/js/jquery.min.js"></script>
+    <title>Cox &amp; Kings</title>
+</head>
+<body>
+    @Html.Partial("~/Views/ProposalDocument/_Index.cshtml", Model)
+    <div class="new-page"></div>
+    @Html.Partial("~/Views/ProposalDocument/_Letter.cshtml", Model)
+    <div class="new-page"></div>
+    @Html.Partial("~/Views/ProposalDocument/_CostWithSupplements.cshtml", Model)
+    <div class="new-page"></div>
+    @Html.Partial("~/Views/ProposalDocument/_InclusionsExclusionsNotes.cshtml", Model)
+    <div class="new-page"></div>
+    @if (Model.Proposal.ProposalIncludeRegions.RegionMap)
+    {
+        @Html.Partial("~/Views/ProposalDocument/_MapOfRegion.cshtml", Model)
+        <div class="new-page"></div>
+    }
+    @if (Model.Proposal.ProposalIncludeRegions.ItineraryBrief)
+    {
+        @Html.Partial("~/Views/ProposalDocument/_ItineraryInBrief.cshtml", Model)
+        <div class="new-page"></div>
+    }
+    @if (Model.Proposal.ProposalIncludeRegions.ItineraryDetail)
+    {
+        @Html.Partial("~/Views/ProposalDocument/_ItineraryInDetail.cshtml", Model)
+        <div class="new-page"></div>
+    }
+    @if (Model.Proposal.ProposalIncludeRegions.SuggestedHotels)
+    {
+        @Html.Partial("~/Views/ProposalDocument/_SuggestedHotelInformation.cshtml", Model)
+        <div class="new-page"></div>
+    }
+    @Html.Partial("~/Views/ProposalDocument/_ThankYou.cshtml", Model)
+    <div class="new-page"></div>
+</body>
+</html>

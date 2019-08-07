@@ -1,0 +1,142 @@
+﻿@model Voyager.App.ViewModels.Materialisation
+
+@Html.HiddenFor(Model => Model.GoAheadId, new { @id = "GoAheadId" })
+@Html.HiddenFor(Model => Model.DepartureId, new { @id = "DepartureId" })
+@Html.HiddenFor(Model => Model.QRFID, new { @id = "QRFId" })
+<div class="mfp-hide popup-box pop-md" id="modelMaterialisation">
+    <div class="popup-in">
+        <div class="radio-list-bar type02">
+            <h3>Set Materialisation Level</h3>
+        </div>
+
+        <div style="display:none;text-align:left;margin-top:3px;" id="divSuccessError">
+            <a class="close" title="close">×</a>
+            <strong id="stMsg"></strong> <label id="lblmsg"></label>
+        </div>
+        <div class="custom-mob-tbl table-responsive valign-top-tbl top-gap-md">
+            <h3>Adult Passengers</h3>
+            @if (Model.RoomInfo != null && Model.RoomInfo.Count > 0)
+            {
+                <table class="table top-gap-md" id="tblAdult">
+                    <thead>
+                        <tr>
+                            <th>Room Type</th>
+                            <th>Number of Rooms</th>
+                            <th>Number of Pax</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.RoomInfo.Count; i++)
+                        {
+                            <tr class="adultrow">
+                                <td>
+                                    @Html.TextBoxFor(m => Model.RoomInfo[i].RoomTypeName, new { @id = "RoomTypeName_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                    @Html.HiddenFor(m => Model.RoomInfo[i].RoomTypeID, new { @id = "RoomTypeID_" + i })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => Model.RoomInfo[i].RoomCount, new { @id = "RoomCount_" + i, @class = "form-control numericInt roomcount" })
+                                    @Html.ValidationMessageFor(m => Model.RoomInfo[i].RoomCount, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => Model.RoomInfo[i].PaxCount, new { @id = "PaxCount_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                    @Html.ValidationMessageFor(m => Model.RoomInfo[i].PaxCount, "", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table class="table top-gap-md">
+                    <tr>
+                        <td>No Adult Passengers Info Found.</td>
+                    </tr>
+                </table>
+            }
+        </div>
+
+        <div class="custom-mob-tbl table-responsive valign-top-tbl top-gap-md">
+            <h3>Children</h3>
+            @if (Model.ChildInfo != null && Model.ChildInfo.Count > 0)
+            {
+                <table class="table top-gap-md" id="tblChild">
+                    <thead>
+                        <tr>
+                            <th class="col-md-4">Child Type</th>
+                            <th class="col-md-2">Number</th>
+                            <th class="col-md-2">Age</th>
+                            <th class="col-md-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.ChildInfo.Count; i++)
+                        {
+                            <tr class="ChildRow">
+                                <td>
+                                    <div class="form-group">
+                                        <select name="@Html.NameFor(m => m.ChildTypeList)" id="ddlChildTypeListID_@i" class="form-control select">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.ChildTypeList)
+                                            {
+                                                <option value="@item.AttributeValue_Id" selected="@(Model.ChildInfo[i].Type == item.AttributeValue_Id)" data-flag="@item.Flag">
+                                                    @item.Value
+                                                </option>
+                                            }
+                                        </select>
+                                        @Html.ValidationMessageFor(m => Model.ChildTypeId, "", new { @class = "text-danger" }) 
+                                    </div>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => Model.ChildInfo[i].Number, new { @id = "childNumber_" + i, @class = "form-control numericInt" })
+                                    @Html.ValidationMessageFor(m => Model.ChildInfo[i].Number, "", new { @class = "text-danger" })
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        @*@Html.DropDownListFor(m => m.ChildInfo[i].Age, new SelectList(Model.ChildAgeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control", @id = "ddlAgeID_" + i })*@
+                                        <select name="@Html.NameFor(m => m.ChildAgeList)" id="ddlAgeID_@i" class="form-control">
+                                            <option value="">Select</option>
+                                            @foreach (var item in Model.ChildAgeList)
+                                            {
+                                                <option value="@item.AttributeValue_Id" selected="@(Model.ChildInfo[i].Age.ToString() == item.AttributeValue_Id)">
+                                                    @item.Value
+                                                </option>
+                                            }
+                                        </select>
+                                        @Html.ValidationMessageFor(m => Model.ChildAgeList, "", new { @class = "text-danger" })
+                                    </div>
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => Model.ChildInfo[i].IsDeleted, new { @id = "hdnIsDeleted_" + i })
+                                    @Html.HiddenFor(m => Model.ChildInfo[i].ChildInfoId, new { @id = "hdnChildInfoId_" + i })
+                                    @Html.HiddenFor(m => Model.ChildInfo[i].SeqNo, new { @id = "hdnSeqNo" })
+                                    <div class="icon-squre-cont">
+                                        <a href="#" class="icon-squre-green addMaterilization"><i class="fa fa-plus"></i></a>
+                                        <a href="#" class="icon-squre-red deleteMaterilization"><i class="fa fa-times"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table class="table top-gap-md">
+                    <tr>
+                        <td>No Children Info Found.</td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close close-popup"></button>
+    <div class="btn-cont text-center">
+        @if ((Model.ChildInfo != null && Model.ChildInfo.Count > 0) || (Model.RoomInfo != null && Model.RoomInfo.Count > 0))
+        {
+            <button type="button" class="btn btn-blue btn-md SetMaterialisation" title="Set Level">Set Level</button>
+        }
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+    </div>
+</div>

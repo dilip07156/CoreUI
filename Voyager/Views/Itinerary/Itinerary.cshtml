@@ -1,0 +1,126 @@
+﻿@model Voyager.App.ViewModels.ItineraryViewModel
+
+@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID" })
+<div class="wrapper">
+    @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02" }))
+    {
+        <!-- Main Content :: Starts -->
+        @*<div class="main-content form-theme-04 form">*@
+        <div class="main-content form form-theme-02">
+            <div class="container">
+                <div class="pg-container">
+                    <div class="listing-content">
+                        @*<div class="enquiry-ttl-due-section btm-border">
+            @if (Model.MenuViewModel.EnquiryPipeline != "Costing Approval Pipeline")
+            {
+                <h1 class="full">Costing Officer</h1>
+            }
+            else
+            {
+                <h1 class="full">Product Accountant</h1>
+            }
+        </div>*@
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel, new ViewDataDictionary(this.Vi‌​ewData) { { "EnquiryPipeline", Model.MenuViewModel.EnquiryPipeline } })
+                    </div>
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_COMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data costing-officers">
+                            <div class="listing-content summary-prices">
+                                <div class="date-btn-wrap">
+                                    <span class="date">Itinerary</span>
+                                </div>
+                                @*<div class="subtitle-with-list">
+                                    <ul>
+                                        <li><span>Follow-up Costing officer</span><em>11 Sep 2017 12:30pm</em></li>
+                                        <li><span>With Client</span><em>14 Sep 2017 12:30pm</em></li>
+                                        <li><a href="#" class="link txt-darkblue">Change</a></li>
+                                    </ul>
+                                </div>*@
+                            </div>
+                            <div class="collapse-block">
+                                <div class="collapse-container">
+                                    <div id="divPricingSummary"></div>
+                                </div>
+                                <div class="lnk-dotted"><a href="#" class="collapse-link"><i class="fa fa-angle-up"></i> View Prices </a> </div>
+                            </div>
+                            <div id="divItinerary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div id="action-popup" style="display:none;">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayPosition">
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetItineraryData();
+        GetPricingSummaryData();
+    });
+    function GetItineraryData() {
+        $(".ajaxloader").show();
+        var QRFId = $("#QRFId").val();
+        var selectedDay = $("#Days option:selected").text();
+        var selectedServiceType = $("#Services option:selected").text();
+        var selectedDepartureId = $("#DepartureDate option:selected").val();
+        var selectedPaxSlabId = $("#PaxSlab option:selected").val();
+        $.ajax({
+            type: "GET",
+            url: "/Itinerary/GetItinerary",
+            data: { QRFId: QRFId, filterByDay: selectedDay, filterByServiceType: selectedServiceType, filterByDeparture: selectedDepartureId, filterByPaxSlab: selectedPaxSlabId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#divItinerary").html(response);
+                $(".ajaxloader").hide();
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function GetPricingSummaryData() {
+        $(".ajaxloader").show();
+        var QRFId = $("#QRFId").val();
+        var selectedDepartureId = $("#DepartureDate option:selected").val();
+        var selectedPaxSlabId = $("#PaxSlab option:selected").val();
+        $.ajax({
+            type: "GET",
+            url: "/Itinerary/GetPricingSummary",
+            data: { QRFId: QRFId, filterByDeparture: selectedDepartureId, filterByPaxSlab: selectedPaxSlabId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#divPricingSummary").html(response);
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+
+<link href="~/css/qrfSummary.css" rel="stylesheet" />
+

@@ -1,0 +1,98 @@
+﻿@model Voyager.App.ViewModels.QRFSummaryViewModel
+
+<div class="wrapper">
+    @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02" }))
+    {
+        @Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" });
+        <div class="container pg-container">
+            <div class="head-ttl">
+                <h1 class="pg-ttl pull-left">Itinerary</h1>
+                <div class="btn-cont right">
+                    <ul>
+                        <li><a href="#itinerary-submit-quote" class="popup-inline btn btn-blue btn-md itinerary-submit-quote">Submit Quote</a></li>
+                        @*<li><a class="popup-inline btn btn-primary btn-md">Save as Draft</a></li>*@
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="listing-content itinerary">
+                <div class="enquiry-ttl-due-section">                             
+                    @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+                    <div class="sqr-tab-cont">
+                        <ul class="sqr-tab-list">
+                            @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                        </ul>                      
+                    </div>                   
+                    <div class="main-content form form-theme-02">
+                        <div class="container pg-container">
+                            <div class="listing-content itinerary">                              
+                                <div id="divQRFSummary"></div>
+                                <div class="subtitle-with-list">
+                                    <div class="btn-cont">
+                                        <a href="#itinerary-submit-quote" class="popup-inline btn btn-blue btn-md itinerary-submit-quote">Submit Quote</a>
+                                        @*<a class="popup-inline btn btn-primary btn-md">Save as Draft</a>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!--Itinerary Submit Quote Popup Start-->
+<div class="mfp-hide popup-box pop-md form-theme-04 form" id="itinerary-submit-quote">
+    <h2>18b-Itinerary-Submit-Quote-Popup</h2>
+    <div class="popup-in">
+        <h3 class="pop-tl">Submit Quote</h3>
+        <p>
+            <i>@Model.CurrentDate</i><br>
+            <br>
+            <div class="row">
+                <div class="col-md-5">
+                    <b>The Costing Officer</b><br>
+                    OBT - Series Department<br>
+                </div>
+                <div class="col-md-6">
+                    @Html.DropDownListFor(m => m.Officer, new SelectList(Model.OfficerList, "MAIL", "MAIL"), new { @class = "form-control" })
+                </div>
+            </div>
+            <br>
+            Dear Sir / Madam<br>
+            <br>
+            Please made note of the following remarks while working this quotation.<br>
+            <br>
+            @Html.TextAreaFor(x => x.QuoteRemarks, new { @id = "quoteRemarks", @rows = 5 })
+            <br>
+            <br>
+            Thank You.<br>
+            <br>
+            @Model.UserName<br>
+            Sales Officer
+        </p>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="btn-cont text-center"> 
+        <a href="#itinerary-quote-submitted" class="popup-inline btn btn-blue btn-md" id="btnSubmitQuoteSave">Submit</a> 
+        <a href="#" class="btn btn-blue-outline btn-md close-popup ">Cancel</a> 
+        </div>
+    </div>
+</div>
+<!--Itinerary Submit Quote Popup End-->
+<!--Itinerary Quote Submitted Popup Start-->
+<div class="mfp-hide popup-box pop-md" id="itinerary-quote-submitted" style="display:none">
+    <h2>18c-Itinerary-Quote-Submitted-Popup</h2>
+    <div class="popup-in">
+        <h3 class="pop-tl">Thank You</h3>
+        <p> Your Quotation Reference <span class="blue-txt semi-bold">@Model.MenuViewModel.QRFID</span> has been submitted to our Costing Officer, who will reply you shortly. </p>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="btn-cont text-center"> 
+        <a href="#" class="popup-inline btn btn-blue btn-md closeOkPopup">Ok</a>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Sales/Summary.js"></script>
+ 

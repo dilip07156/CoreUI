@@ -1,0 +1,122 @@
+﻿@model Voyager.App.ViewModels.OpsChangeProductViewModel
+<h3>Change Product</h3>
+
+<form>
+    <div class="custom-mob-tbl table-responsive">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    Current Product
+                </div>
+                @Html.HiddenFor(m => m.PositionEndDate, new { @id = "PositionEndDate" })
+                @Html.HiddenFor(m => m.CityName, new { @id = "ProductCity" })
+                @Html.HiddenFor(m => m.Attributes.Location, new { @id = "proLocation" })
+                @Html.HiddenFor(m => m.Attributes.BdgPriceCategory, new { @id = "proBdgPriceCategory" })
+                @Html.HiddenFor(m => m.Attributes.StarRating, new { @id = "proStarRating" })
+                @Html.HiddenFor(m => m.Attributes.Chain, new { @id = "proChain" })
+                @Html.Hidden("ServiceType", "ChangeProduct")
+
+
+                <div class="card-body">
+                    <h4>@Model.Product_Name</h4>
+                    <br />
+                    <table class="table table-striped table">
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Budget</th>
+                                <th>Contract</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.BookingRoomsAndPrices?.Count > 0)
+                            {
+                                for (int i = 0; i < Model.BookingRoomsAndPrices.Count; i++)
+                                {
+                                    <tr>
+                                        <td>(@Model.BookingRoomsAndPrices[i].CategoryName) @Model.BookingRoomsAndPrices[i].RoomName</td>
+                                        <td> @Model.BookingRoomsAndPrices[i].BuyCurrency_Name @Model.BookingRoomsAndPrices[i].BudgetPrice</td>
+                                        <td> @Model.BookingRoomsAndPrices[i].BuyCurrency_Name @Model.BookingRoomsAndPrices[i].ContractedBuyPrice</td>
+                                    </tr>
+
+                                    @*<tr>
+                                <td>(%Category%) %Range%</td>
+                                <td>%CURRENCY% %BudgetRate%</td>
+                                <td>N/A</td>
+                            </tr>*@
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <br />
+
+            <div class="card">
+                <div class="card-header">
+                    Applicable Products
+                </div>
+                <div class="card-body">
+                    <div class="lft-pnl" id="ProductFilterView">
+                    </div>
+                    <br>
+                    <div id="divProductList" style="margin:-15px"></div>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        You are about to change the product on this Position. Please be aware that
+                        Budgets and Contracted rates
+                        used on the original Quotation may not be applicable for this product.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-popup">Close</button>
+        </div>
+    </div>
+</form>
+<button title="Close (Esc)" type="button" class="mfp-close"></button>
+
+
+<script>
+    $(document).ready(function () {
+        var ProductTypeId = $("#ProductType_Id").val();
+        var ProductCity = $("#ProductCity").val();
+        var Location = $("#proLocation").val();
+        var BdgPriceCategory = $("#proBdgPriceCategory").val();
+        var StarRating = $("#proStarRating").val().substring(0, 1);
+        var Chain = $("#proChain").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Product/_ProductSearchView",
+            data: { PageName: "OpsChangeProduct", ProductTypeID: ProductTypeId, CityName: ProductCity, LocationID: Location, BudgetCategoryID: BdgPriceCategory, StarRating: StarRating, Chain: Chain},
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+                $("#ProductFilterView").html(response);
+                $("#ProductTypeID").attr('disabled', 'disabled');
+                var ProductType = $("#ProductTypeID option:selected").text();
+                if (ProductType == 'Hotel') {
+                    $(".budget-category, .hotel-star, .prod-location, .hotel-chain").css('display', '');
+                }
+                $(".searchProduct").click();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+</script>
+

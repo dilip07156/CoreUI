@@ -1,0 +1,406 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+	<table width="950" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+		<tr>
+			<td align="center" valign="top" height="950">
+				<table width="774" border="0" align="center" cellpadding="0" cellspacing="0" class="container">
+					<tr>
+						<td class="main-title">Your Itinerary in Brief</td>
+					</tr>
+					<tr>
+						<td style="height:25px"></td>
+					</tr>
+					<tr>
+						<td>
+							<table width="774" border="0" cellpadding="0" cellspacing="0" class="itinarary plain-table">
+								<tr class="bgf9f9f9">
+									<td class="days" style="height:35px;">Days</td>
+									<td class="description" colspan="2">Description</td>
+									<!--td class="distance">Distance</td-->
+									<td class="meals">Meals</td>
+									<td class="hotel">Hotel</td>
+								</tr>
+								@for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+								{
+									@if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].RoutingMatrix) && i != 0)
+									{
+										var RoutingMatrix = Model.Itinerary.ItineraryDays[i].RoutingMatrix.Split('|');
+										var count = (@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count) + 1;
+
+										<tr>
+											<td rowspan="@count" style="vertical-align:top">
+												<span class="day-no-txt">@Model.Itinerary.ItineraryDays[i].Day</span>
+												<span class="date-txt">@Convert.ToDateTime(Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy")</span>
+												<span class="days-txt">@Model.Itinerary.ItineraryDays[i].DayOfWeek</span>
+											</td>
+											@*<td></td>*@
+
+											<td colspan="2">
+												<label>Coach Routing For The Day</label>
+												<br />
+												@for (int k = 0; k < RoutingMatrix.Length; k++)
+												{
+													@RoutingMatrix[k]
+													<br />
+												}
+											</td>
+
+											<td rowspan="@count" style="vertical-align:top">
+												@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Meal.Count; k++)
+												{
+													<span>@Model.Itinerary.ItineraryDays[i].Meal[k].MealType</span><br />
+												}
+											</td>
+
+											<td rowspan="@count" style="vertical-align:top">
+												@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Hotel.Count; k++)
+												{
+													<table width="100%" border="0" cellspacing="0" cellpadding="0">
+														<tr class="tr-avoid-break">
+															<td class="list-para left padlft11">
+																@Model.Itinerary.ItineraryDays[i].Hotel[k].HotelName <br>
+																<small>
+																	@Model.Itinerary.ItineraryDays[i].Hotel[k].ProdCategory Room or similar <br>
+																	(@Model.Itinerary.ItineraryDays[i].Hotel[k].Location)
+																</small>
+															</td>
+														</tr>
+														<tr>
+															<td height="5"></td>
+														</tr>
+														<tr class="tr-avoid-break">
+															<td class="padlft11">
+																@if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 1)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/one-star.png" width="74" height="12" alt="One Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 2)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/two-star.png" width="74" height="12" alt="Two Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 3)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/three-star.png" width="74" height="12" alt="Three Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 4)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/four-star.png" width="74" height="12" alt="Four Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 5)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/five-star.png" width="74" height="12" alt="Five Star Icon">			}
+															</td>
+														</tr>
+													</table>
+												}
+											</td>
+										</tr>
+										@for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+										{
+											<tr>
+
+												<td>
+													@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsRoutingMatrix == true)
+													{
+														<span class="list-para" style="padding-top:5px;"></span>
+													}
+													else if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+													{
+														<span class="list-para" style="padding-top:5px;">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</span>
+													}
+													else
+													{
+														<span class="list-para" style="padding-top:5px;">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</span>
+													}
+												</td>
+
+												<td>
+													@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "MEAL")
+													{
+														<span width="6%" align="center" valign="top" style="padding-top:5px;"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="Arrow">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span>
+														if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j]?.RoomDetails != null && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j]?.RoomDetails.Count > 0)
+														{
+															@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails.Count; k++)
+															{
+																if (k == 0)
+																{
+																	<span>(</span>
+																}
+																<span> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails[k].RangeDesc </span>
+																if (k == (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails.Count - 1))
+																{
+																	<span>)</span>
+																}
+																else
+																{
+																	<span>/</span>
+																}
+															}
+														}
+													}
+													else
+													{
+														<span width="6%" align="center" valign="top" style="padding-top:5px;"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="Arrow">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span>
+													}
+												</td>
+
+											</tr>
+										}
+									}
+									else if (i == 0)
+									{
+										var count = (@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count) + 1;
+										@if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].RoutingMatrix))
+										{
+											count = (@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count) + 2;
+										}
+
+										<tr class="tr-avoid-break">
+											<td rowspan="@count" style="vertical-align:top">
+												<span class="day-no-txt">@Model.Itinerary.ItineraryDays[i].Day</span>
+												<span class="date-txt">@Convert.ToDateTime(Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy")</span>
+												<span class="days-txt">@Model.Itinerary.ItineraryDays[i].DayOfWeek</span>
+											</td>
+											@*<td></td>*@
+											<td colspan="2">
+												@if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Arrive at") && Model.Itinerary.ItineraryDays[i].ItineraryName.Contains(","))
+												{
+													var firstName = Model.Itinerary.ItineraryDays[i].ItineraryName.Split(',').First();
+													@firstName
+												}
+												else
+												{
+													@Model.Itinerary.ItineraryDays[i].ItineraryName
+												}
+											</td>
+											<td rowspan="@count" style="vertical-align:top">
+												@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Meal.Count; k++)
+												{
+													<span>@Model.Itinerary.ItineraryDays[i].Meal[k].MealType</span><br />
+												}
+											</td>
+											<td rowspan="@count" style="vertical-align:top">
+												@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Hotel.Count; k++)
+												{
+													<table width="100%" border="0" cellspacing="0" cellpadding="0">
+														<tr class="tr-avoid-break">
+															<td class="list-para left padlft11">
+																@Model.Itinerary.ItineraryDays[i].Hotel[k].HotelName <br>
+																<small>
+																	@Model.Itinerary.ItineraryDays[i].Hotel[k].ProdCategory Room or similar <br>
+																	(@Model.Itinerary.ItineraryDays[i].Hotel[k].Location)
+																</small>
+															</td>
+														</tr>
+														<tr>
+															<td height="5"></td>
+														</tr>
+														<tr class="tr-avoid-break">
+															<td class="padlft11">
+																@if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 1)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/one-star.png" width="74" height="12" alt="One Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 2)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/two-star.png" width="74" height="12" alt="Two Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 3)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/three-star.png" width="74" height="12" alt="Three Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 4)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/four-star.png" width="74" height="12" alt="Four Star Icon">			}
+																else if (Model.Itinerary.ItineraryDays[i].Hotel[k].Stars == 5)
+																{
+																	<img src="@Model.URLinitial/resources/images/proposal-report/five-star.png" width="74" height="12" alt="Five Star Icon">			}
+															</td>
+														</tr>
+													</table><br />
+												}
+											</td>
+										</tr>
+
+										@if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].RoutingMatrix))
+										{
+											var RoutingMatrix = Model.Itinerary.ItineraryDays[i].RoutingMatrix.Split('|');
+											<tr>
+												@*<td></td>*@
+												<td colspan="2">
+													<label>Coach Routing For The Day</label>
+													<br />
+													@for (int k = 0; k < RoutingMatrix.Length; k++)
+													{
+														@RoutingMatrix[k]
+														<br />
+													}
+												</td>
+											</tr>
+										}
+
+										@for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+										{
+											<tr>
+												<td>
+													@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsRoutingMatrix == true)
+													{
+														<span class="list-para" style="padding-top:5px;"></span>
+													}
+													else if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+													{
+														<span class="list-para" style="padding-top:5px;">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</span>
+													}
+													else
+													{
+														<span class="list-para" style="padding-top:5px;">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</span>
+													}
+												</td>
+
+												<td>
+													@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "MEAL")
+													{
+														<span width="6%" align="center" valign="top" style="padding-top:5px;"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="Arrow">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span>
+														if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j]?.RoomDetails != null && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j]?.RoomDetails.Count > 0)
+														{
+															@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails.Count; k++)
+															{
+																if (k == 0)
+																{
+																	<span>(</span>
+																}
+																<span> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails[k].RangeDesc </span>
+																if (k == (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails.Count - 1))
+																{
+																	<span>)</span>
+																}
+																else
+																{
+																	<span>/</span>
+																}
+															}
+														}
+													}
+													else
+													{
+														<span width="6%" align="center" valign="top" style="padding-top:5px;"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="Arrow">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span>
+													}
+												</td>
+
+											</tr>
+										}
+									}
+									else
+									{
+										@for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+										{
+											<tr>
+												@if (j == 0)
+												{
+													<td rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count" style="vertical-align:top">
+														<span class="day-no-txt">@Model.Itinerary.ItineraryDays[i].Day</span>
+														<span class="date-txt">@Convert.ToDateTime(Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy")</span>
+														<span class="days-txt">@Model.Itinerary.ItineraryDays[i].DayOfWeek</span>
+													</td>
+												}
+												<td>
+													@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsRoutingMatrix == true)
+													{
+														<span class="list-para" style="padding-top:5px;"></span>
+													}
+													else if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+													{
+														<span class="list-para" style="padding-top:5px;">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</span>
+													}
+													else
+													{
+														<span class="list-para" style="padding-top:5px;">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</span>
+													}
+												</td>
+
+												<td>
+													@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "MEAL")
+													{
+														<span width="6%" align="center" valign="top" style="padding-top:5px;"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="Arrow">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span>
+														if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j]?.RoomDetails != null && Model.Itinerary.ItineraryDays[i].ItineraryDescription[j]?.RoomDetails.Count > 0)
+														{
+															@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails.Count; k++)
+															{
+																if (k == 0)
+																{
+																	<span>(</span>
+																}
+																<span> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails[k].RangeDesc </span>
+																if (k == (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].RoomDetails.Count - 1))
+																{
+																	<span>)</span>
+																}
+																else
+																{
+																	<span>/</span>
+																}
+															}
+														}
+													}
+													else
+													{
+														<span width="6%" align="center" valign="top" style="padding-top:5px;"><img src="@Model.URLinitial/resources/images/proposal-report/bullet.jpg" alt="Arrow">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span>
+													}
+												</td>
+
+												@if (j == 0)
+												{
+													<td rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count" style="vertical-align:top">
+														@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Meal.Count; k++)
+														{
+															<span>@Model.Itinerary.ItineraryDays[i].Meal[k].MealType</span><br />
+														}
+													</td>
+												}
+
+												@if (j == 0)
+												{
+													<td rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count" style="vertical-align:top">
+														@for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Hotel.Count; k++)
+														{
+															<table width="100%" border="0" cellspacing="0" cellpadding="0">
+																<tr class="tr-avoid-break">
+																	<td class="list-para left padlft11">
+																		@Model.Itinerary.ItineraryDays[i].Hotel[j].HotelName <br>
+																		<small>
+																			@Model.Itinerary.ItineraryDays[i].Hotel[j].ProdCategory Room or similar <br>
+																			(@Model.Itinerary.ItineraryDays[i].Hotel[j].Location)
+																		</small>
+																	</td>
+																</tr>
+																<tr>
+																	<td height="5"></td>
+																</tr>
+																<tr class="tr-avoid-break">
+																	<td class="padlft11">
+																		@if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 1)
+																		{
+																			<img src="@Model.URLinitial/resources/images/proposal-report/one-star.png" width="74" height="12" alt="One Star Icon">				}
+																		else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 2)
+																		{
+																			<img src="@Model.URLinitial/resources/images/proposal-report/two-star.png" width="74" height="12" alt="Two Star Icon">				}
+																		else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 3)
+																		{
+																			<img src="@Model.URLinitial/resources/images/proposal-report/three-star.png" width="74" height="12" alt="Three Star Icon">				}
+																		else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 4)
+																		{
+																			<img src="@Model.URLinitial/resources/images/proposal-report/four-star.png" width="74" height="12" alt="Four Star Icon">				}
+																		else if (Model.Itinerary.ItineraryDays[i].Hotel[j].Stars == 5)
+																		{
+																			<img src="@Model.URLinitial/resources/images/proposal-report/five-star.png" width="74" height="12" alt="Five Star Icon">				}
+																	</td>
+																</tr>
+															</table><br />
+														}
+													</td>
+												}
+											</tr>
+										}
+									}
+								}
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>

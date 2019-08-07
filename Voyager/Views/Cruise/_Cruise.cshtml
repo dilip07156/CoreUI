@@ -1,0 +1,218 @@
+﻿@using Voyager.App.ViewModels
+@model CruiseViewModel
+
+@using (Html.BeginForm("Cruise", "Cruise", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmCruise" }))
+{
+	<div class="btn-cont pull-right AddEditSH">
+		<ul>
+			<li><input type="button" value="Save" class="btn btn-blue btn-md cruisesave"></li>
+		</ul>
+	</div>
+
+	<h3><i class="fa-custom-cruise-black"></i> Cruise</h3>
+	@if (TempData.Keys.Contains("success"))
+	{
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Success!</strong> @TempData["success"].ToString()
+		</div>
+	}
+	else if (TempData.Keys.Contains("error"))
+	{
+		<div class="alert alert-danger">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Error!</strong> @TempData["error"].ToString()
+		</div>
+	}
+	<div class="simple-tab-cont">
+		<div class="simple-tab-data">
+			@Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+			<div style="display:block">
+				<div class="custom-mob-tbl type02 table-responsive table-departures-dates valign-top-tbl">
+					<table class="table top-align" id="tblCruise">
+						<thead>
+							<tr>
+								<th class="col-md-2"><span>Country / City</span></th>
+								<th class="col-md-2"><span>Product</span></th>
+								<th class="col-md-2"><span>Services</span></th>
+								<th class="col-md-1"><span>Keep As</span></th>
+								<th class="col-md-1"><span>Remarks</span></th>
+
+								<th class="col-md-1 AddEditSH">&nbsp;</th>
+
+							</tr>
+						</thead>
+						<tbody>
+							@for (int i = 0; i < Model.CruiseDetails.Count; i++)
+							{
+								<tr id="CruiseRow_@i" class="CruiseRow">
+									<td>
+										<div class="form-group">
+											<label class="frm-sub-label txt-orange">Day</label>
+											@Html.Hidden("hdnSeqNo", i)
+											@Html.HiddenFor(m => m.CruiseDetails[i].PositionId, new { @id = "hfPositionId_" + i })
+											@Html.HiddenFor(m => m.CruiseDetails[i].PositionSequence, new { @id = "hfPositionSequence_" + i })
+											@Html.HiddenFor(m => m.CruiseDetails[i].IsDeleted, new { @id = "hfIsDeleted_" + i })
+
+											@*@Html.DropDownListFor(m => m.CruiseDetails[i].DayID, new SelectList(Model.CruiseDetails[i].DayList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control bindDayStartTime select", @id = "ddlDayID_" + i })*@
+											<select name="@Html.NameFor(m =>m.CruiseDetails[i].DayID)" id="ddlDayID_@i" class="form-control select ddlday">
+												<option value="">Select</option>
+												@foreach (var item in Model.CruiseDetails[i].DayList)
+												{
+													<option value="@item.AttributeValue_Id" cityname="@item.CityName"
+															cityid="@item.CityId"
+															selected="@(Model != null && item.AttributeValue_Id == Model.CruiseDetails[i].DayID)">
+														@item.Value
+													</option>
+												}
+											</select>
+											@Html.ValidationMessageFor(m => m.CruiseDetails[i].DayID, "", new { @class = "text-danger" })
+											@Html.HiddenFor(m => m.CruiseDetails[i].DayName, new { @id = "ddlDay_" + i })
+										</div>
+										<div class="form-group">
+											<label class="frm-sub-label txt-orange">City</label>
+											@Html.HiddenFor(m => m.CruiseDetails[i].CityID, new { @id = "CityID_" + i, @class = "fromcity" })
+											@Html.TextBoxFor(m => m.CruiseDetails[i].CityName, new { @class = "form-control bindCity fromcityUI", @id = "CityIDUI_" + i })
+											@Html.ValidationMessageFor(m => m.CruiseDetails[i].CityName, "", new { @class = "text-danger" })
+										</div>
+										<div class="form-group">
+											<label class="frm-sub-label txt-orange">Duration</label>
+											@Html.DropDownListFor(m => m.CruiseDetails[i].Duration, new SelectList(Model.CruiseDetails[i].DurationList, "Value", "Value"), new { @class = "form-control", @id = "ddlDuration_" + i })
+											@Html.ValidationMessageFor(m => m.CruiseDetails[i].Duration, "", new { @class = "text-danger" })
+										</div>
+										<div class="form-group">
+											<label class="frm-sub-label txt-orange">Start Time</label>
+											@Html.TextBoxFor(m => m.CruiseDetails[i].StartTime, new { @class = "form-control time24", @id = "StartTime_" + i, @placeholder = "00.00" })
+											@Html.ValidationMessageFor(m => m.CruiseDetails[i].StartTime, "", new { @class = "text-danger" })
+										</div>
+									</td>
+									<td>
+										<div class="form-group-cont collapse-block">
+											<div class="form-group">
+												<label class="frm-sub-label txt-orange">Product Name</label>
+												@Html.HiddenFor(m => m.CruiseDetails[i].ProductID, new { @class = "clsProductID", @id = "ProductName_" + i })
+												@Html.HiddenFor(m => m.CruiseDetails[i].ProductType, new { @id = "ProductName_" + i + "Type" })
+												@Html.HiddenFor(m => m.CruiseDetails[i].ProductTypeID, new { @id = "ProductName_" + i + "TypeID" })
+												@Html.TextBoxFor(m => m.CruiseDetails[i].ProductName, new { @class = "form-control bindpositionprod", @id = "ProductNameUI_" + i })
+												@Html.ValidationMessageFor(m => m.CruiseDetails[i].ProductName, "", new { @class = "text-danger" })
+											</div>
+											<div class="collapse-container">
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">Cabin Type</label>
+													@Html.HiddenFor(m => m.CruiseDetails[i].SupplierID, new { @id = "hfSupplierID_" + i })
+													@Html.HiddenFor(m => m.CruiseDetails[i].SupplierName, new { @id = "hfSupplierName_" + i })
+													@Html.DropDownListFor(m => m.CruiseDetails[i].BudgetCategory, new SelectList(Model.CruiseDetails[i].ProdCategoryList, "ProductCategoryId", "ProductCategoryName"), "Select", new { @class = "form-control bindProductRange", @id = "ddlCategoryID_" + i })
+													@Html.ValidationMessageFor(m => m.CruiseDetails[i].BudgetCategory, "", new { @class = "text-danger" })
+													@Html.HiddenFor(m => m.CruiseDetails[i].BudgetCategoryId, new { @id = "ddlCategory_" + i })
+												</div>
+												<div class="form-group">
+													@{
+														var TransportationList = new List<SelectListItem>();
+														TransportationList.Add(new SelectListItem { Text = "Through Coach", Value = "Through Coach" });
+														TransportationList.Add(new SelectListItem { Text = "With Transfer", Value = "With Transfer" });
+														TransportationList.Add(new SelectListItem { Text = "Without Transfer", Value = "Without Transfer" });
+														TransportationList.Add(new SelectListItem { Text = "Not Decided", Value = "Not Decided" });
+													}
+													<label class="frm-sub-label txt-orange">Transportation</label>
+													@Html.DropDownListFor(m => m.CruiseDetails[i].TransferDetails, TransportationList, new { @class = "form-control" })
+													@Html.ValidationMessageFor(m => m.CruiseDetails[i].TransferDetails, "", new { @class = "error" })
+												</div>
+												@*@Html.Partial("_PositionTransportOptions", new ProdTransferDetails { TransferDetails = Model.CruiseDetails[i].TransferDetails, Index = i })
+													@Html.HiddenFor(m => m.CruiseDetails[i].TransferDetails, new { @id = "hdnTransferDetails" })*@
+											</div>
+										</div>
+									</td>
+									@{
+										Model.CruiseDetails[i].PositionRoomsData.RowNo = i;
+										Model.CruiseDetails[i].PositionRoomsData.PositionType = "CruiseDetails[";
+									}
+									@Html.Partial("_PositionRoomDetails", Model.CruiseDetails[i].PositionRoomsData)
+									<td id="divRoomDetails_@i" class="divRoomDetails" style="display:none"></td>
+									<td>
+										@{
+											var keepasList = new List<SelectListItem>();
+											keepasList.Add(new SelectListItem { Text = "Included", Value = "Included" });
+											keepasList.Add(new SelectListItem { Text = "Optional", Value = "Optional" });
+											keepasList.Add(new SelectListItem { Text = "Supplement", Value = "Supplement" });
+										}
+										@Html.DropDownListFor(m => m.CruiseDetails[i].KeepAs, keepasList, new { @class = "form-control keepAsChanged", @id = "ddlKeepAs_" + i })
+										@Html.ValidationMessageFor(m => m.CruiseDetails[i].KeepAs, "", new { @class = "text-danger" })
+										<br /><br />
+										<div>
+											<div class="cust-spinner NoOfPaxColumn">
+												<label class="frm-sub-label txt-orange">ADULT</label>
+												<div class="input-group spinner">
+													<div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+													@Html.TextBoxFor(m => m.CruiseDetails[i].NoOfPaxAdult, new { @class = "form-control numeric", @autocomplete = "off" })
+													<div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+												</div>
+												@Html.ValidationMessageFor(m => m.CruiseDetails[i].NoOfPaxAdult, "", new { @class = "text-danger" })
+											</div>
+
+											<div class="cust-spinner NoOfPaxColumn">
+												<label class="frm-sub-label txt-orange" style="margin-top: 8px;">CHILD</label>
+												<div class="input-group spinner">
+													<div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+													@Html.TextBoxFor(m => m.CruiseDetails[i].NoOfPaxChild, new { @class = "form-control numeric", @autocomplete = "off" })
+													<div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+												</div>
+											</div>
+
+											<div class="cust-spinner NoOfPaxColumn">
+												<label class="frm-sub-label txt-orange" style="margin-top: 8px;">INFANT</label>
+												<div class="input-group spinner">
+													<div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+													@Html.TextBoxFor(m => m.CruiseDetails[i].NoOfPaxInfant, new { @class = "form-control numeric", @autocomplete = "off" })
+													<div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+												</div>
+											</div>
+										</div>
+									</td>
+									<td>
+										<div class="price-foc-sec">
+											<div class="tool-tip info Prices">
+												<span class="msg txt-green" style="display:none;">Prices Added</span>
+												<span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+												<a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+												<div id="divPrices_@i" class="tooltip-cont type03">
+												</div>
+											</div>
+											<hr>
+											<div class="tool-tip info FOC">
+												<span class="msg txt-green" style="display:none;">FOC Added</span>
+												<span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+												<a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+												<div id="divFOC_@i" class="tooltip-cont type03">
+												</div>
+											</div>
+											<hr>
+										</div>
+										<span class="frm-sub-label txt-orange">For TL</span>
+										@Html.TextAreaFor(m => m.CruiseDetails[i].TLRemarks, new { @id = "txtTLRemarks_" + i, @maxlength = "250", @class = "alphanumeric", @rows = "7" })
+									</td>
+									<td class="AddEditSH">
+										<div class="icon-squre-cont" style="margin:8px 0px 8px 0px;">
+											<a href="#" class="icon-squre-green"><i class="fa fa-plus"></i></a>
+											<a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+										</div>
+										<br />
+										<div>
+											<span class="frm-sub-label txt-orange">For OPS</span>
+											@Html.TextAreaFor(m => m.CruiseDetails[i].OPSRemarks, new { @id = "txtOPSRemarks_" + i, @maxlength = "250", @class = "alphanumeric", @rows = "10" })
+										</div>
+									</td>
+								</tr>
+											}
+						</tbody>
+					</table>
+				</div>
+				<div class="btn-cont" style="margin-top:20px;">
+					<ul class="pull-right">
+						<li><input type="button" value="Save" class="btn btn-blue btn-md cruisesave"></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+											}
+<script src="~/js/Sales/Cruise.js"></script>

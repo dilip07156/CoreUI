@@ -1,0 +1,129 @@
+﻿@model Voyager.App.ViewModels.OpsPosFinancials
+
+<div class="card">
+	<div class="card-header" id="headingFour">
+		<h5 class="mb-0">
+			<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" data-parent="#mainOps"
+					aria-expanded="false" aria-controls="collapseThree">
+				Financials
+			</button>
+		</h5>
+	</div>
+	<div id="collapseFour" class="collapse" aria-labelledby="headingFour">
+        <div class="card-body">
+            <div id="LocalPurchaseOrder">
+                <h4>Local Purchase Order and Profitability</h4>
+                <hr>
+                <div class="table-responsive filter-table custom-mob-tbl">
+                    <table class="table" name="TablePurchaseOrderProfitability">
+                        <thead>
+                            <tr>
+                                <th colspan="4">Order Items</th>
+                                <th colspan="3">Purchasing</th>
+                                <th colspan="2">Commercials</th>
+                                <th colspan="2">Selling</th>
+                                <th colspan="2">Profitability</th>
+                            </tr>
+                            <tr>
+                                <th>Date</th>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Charge By</th>
+                                <th>Buy</th>
+                                <th>Rate</th>
+                                <th>Total</th>
+                                <th>Basis</th>
+                                <th>Value</th>
+                                <th>Sell</th>
+                                <th>Value</th>
+                                <th>%</th>
+                                <th>Amt.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.FinancialDetails.Count; i++)
+                            {
+                                <tr>
+                                    <td>@Model.FinancialDetails[i].Date</td>
+                                    <td>@Model.FinancialDetails[i].Item</td>
+                                    <td>@Model.FinancialDetails[i].Quantity</td>
+                                    <td>@Model.FinancialDetails[i].ChargeBy</td>
+                                    <td>@Model.FinancialDetails[i].Buy</td>
+                                    <td>@Model.FinancialDetails[i].Rate</td>
+                                    <td>@Model.FinancialDetails[i].Total</td>
+                                    <td>@Model.FinancialDetails[i].Basis</td>
+                                    <td>@Model.FinancialDetails[i].Value</td>
+                                    <td>@Model.FinancialDetails[i].Sell</td>
+                                    <td>@Model.FinancialDetails[i].SValue</td>
+                                    <td>@Model.FinancialDetails[i].GPPercent</td>
+                                    <td>@Model.FinancialDetails[i].GPAmount</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><b>Grand Total</b></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><b>@Model.TotalBuyCurrency</b></td>
+                                <td></td>
+                                <td><b>@Model.TotalBuyPrice</b></td>
+                                <td></td>
+                                <td></td>
+                                <td><b>@Model.TotalSellCurrency</b></td>
+                                <td><b>@Model.TotalSellPrice</b></td>
+                                <td><b>@Model.TotalGPPercent</b></td>
+                                <td><b>@Model.TotalGPAmount</b></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <br>
+            <div id="PaymentSchedule" style="display:none;">
+                <h4>Payment Schedule</h4>
+                <hr>
+                <div class="table-responsive filter-table custom-mob-tbl">
+                    <table class="table" name="TablePaymentSchedule">
+                        <thead>
+                            <tr>
+                                <th>Due Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>01-NOV-18</td>
+                                <td>USD 123</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger">Edit</button>
+                                    <button type="button" class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>
+                                    <div class="input-append date" data-date-format="dd/MM/yyyy">
+                                        <input class="span3 form-control-1" id="DueDate" name="DueDate" placeholder="dd/MM/yyyy" size="16" type="text" value="">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control-1" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary">Add Step</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+			<button type="button" class="btn btn-sm btn-warning">Regenerate Payment Schedule</button>
+		</div>
+        </div>
+</div>

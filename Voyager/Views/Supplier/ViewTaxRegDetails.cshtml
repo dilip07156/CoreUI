@@ -1,0 +1,183 @@
+﻿
+@model Voyager.App.ViewModels.TaxRegDetails
+
+<style>
+    .popup-box.pop-md {
+        width: 650px;
+    }
+</style>
+
+<div class="popup-box pop-md form-theme-04 form">
+    <div class="popup-in">
+        <form id="frmTaxReg">
+            <div class="custom-mob-tbl table-responsive">
+                <div id="message"></div>
+                @Html.HiddenFor(x => x.TaxReg_Id, new { @id = "TaxReg_Id" })
+                @Html.HiddenFor(x => x.Company_Id)
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-sm"><span>Type</span></th>
+                            <th class="col-sm"><span>State</span></th>
+                            <th class="col-sm"><span>Number</span></th>
+                            <th class="col-sm"><span>TaxStatus</span></th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        <tr>
+                            <td>
+                                
+                                @Html.DropDownListFor(m => m.Type_Id, new SelectList(Model.TaxRegType, "AttributeValue_Id", "Value"), "Select", new { @id = "ddltype", @class = "form-control leftalign" })
+                                @Html.HiddenFor(x => x.Type, new { @id = "Type" })
+                                <span class="field-validation-valid text-danger" id="spantype" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.State_Id, new SelectList(Model.States, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlState", @class = "form-control leftalign" })
+                                @Html.HiddenFor(x => x.State, new { @id = "State" })
+                                <span class="field-validation-valid text-danger" id="spanstate" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(x => x.Number, new { @id = "Number", @class = "form-control numericInt" })
+                                <span class="field-validation-valid text-danger" id="spanNumber" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                
+                                @Html.DropDownListFor(m => m.TaxStatus_Id, new SelectList(Model.TaxRegStatus, "AttributeValue_Id", "Value"), "Select", new { @id = "ddlstatus", @class = "form-control leftalign" })
+                                @Html.HiddenFor(x => x.TaxStatus, new { @id = "TaxStatus" })
+                                <span class="field-validation-valid text-danger" id="spanstatus" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <button id="btnSaveTaxTerms" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+                <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ddltype").on("change", function () {
+            var TypeName = $(this).find("option:selected").text();
+           
+            $("#Type").val(TypeName);
+            if ((!($("#Type").val() == "PAN" || $("#Type").val() == "TAN" || $("#Type").val() == "Select" )) && $("#ddlState").find("option:selected").text() === "Select") {
+                $("#spanstate").text("*");
+            }
+            else {
+                $("#spanstate").text("");
+            }
+        });
+        $("#ddlState").on("change", function () {
+            
+            var StateName = $(this).find("option:selected").text();
+            $("#State").val(StateName);
+            
+        });
+        $("#ddlstatus").on("change", function () {
+            var StatusName = $(this).find("option:selected").text();
+            $("#TaxStatus").val(StatusName);
+        });
+        $("#btnSaveTaxTerms").on("click", function () {
+            
+            var IsValidFlag = true;
+
+            var type = $("#ddltype").find("option:selected").val();
+            if (type == '') {
+              
+                $("#spantype").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spantype").text("");
+
+            var Number = $("#Number").val();
+            if (Number == '') {
+                $("#spanNumber").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanNumber").text("");
+
+
+            var Status = $("#ddlstatus").find("option:selected").val();
+            if (Status == '') {
+                $("#spanstatus").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanstatus").text("");
+
+            var TypeText = $("#ddltype").find("option:selected").text();
+            var typedata = TypeText === "GSTIN" || TypeText === "CSGT" || TypeText === "SGST" || TypeText === "IGST" || TypeText === "UTGST";
+            if (typedata && $("#ddlState").find("option:selected").text() === "Select")
+            {   
+                $("#spanstate").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanstate").text("");
+            var EmptyStateName = "";
+            if (($("#ddltype").find("option:selected").text() === "PAN" || $("#ddltype").find("option:selected").text() === "TAN") && $("#ddlState").find("option:selected").text() === "Select") { 
+
+                $("#State").val(EmptyStateName);
+            }
+            
+            if (!IsValidFlag)
+                return false;
+
+            var type = $("#ddltype").find("option:selected").val();
+            var number = $("#Number").val();
+            var state = $("#ddlState").find("option:selected").val();
+            var status = $("#ddlstatus").find("option:selected").val();
+
+            if ((type == null || type == undefined || type == "") && (number == null || number == undefined || number == "") && (status == null || status == undefined || status == "") && (state == null || state == undefined || state == "" && typedata) ) {
+                var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! Enter atleast one record.</strong></div>';
+                $("#frmTaxReg #message").html(successmsg);
+            }
+            else {
+                $(".ajaxloader").show();
+                var model = $("#frmTaxReg").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/Supplier/SaveTaxRegDetails",
+                    data: model,
+                    global: false,
+                    success: function (response) {
+                        $("#Commercials").click();
+                        
+                        if (response.status == "error1") {
+                            var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! Duplicate Record </strong></div>';
+                            $("#frmTaxReg #message").html(successmsg);
+                        }
+                        else if (response.status == "error") {
+                            var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong></div>';
+                            $("#frmTaxReg #message").html(successmsg);
+                        }
+                        else {
+                            $("#frmTaxReg #TaxReg_Id").val(response.taxRegID);
+                            var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! Details saved successfully.</strong></div>';
+                            $("#frmTaxReg #message").html(successmsg);
+                            $("#spantype").text("");
+                            $("#spanstate").text("");
+                            $("#spanNumber").text("");
+                            $("#spanstatus").text("");
+                           
+                        }
+                        $(".ajaxloader").hide();
+                    },
+                    error: function () {
+                        $(".ajaxloader").hide();
+                    }
+                });
+            }
+        });
+
+    });
+</script>

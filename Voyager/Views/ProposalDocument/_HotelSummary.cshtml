@@ -1,0 +1,41 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        <tr>
+            <td align="center" valign="top">
+                <table width="773" border="0" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="776" class="main-title">Accommodation Summary</td>
+                    </tr>
+                    <tr class="container">
+                        <td height="25" valign="top"></td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="top">
+                            <table width="100%" border="0" align="left" cellpadding="0" cellspacing="0" class="plain-table">
+                                <tr class="bck-col">
+                                    <td align="center" height="40" valign="middle" width="159"><b>Hotel Name</b></td>
+                                    <td align="center" height="40" valign="middle" width="159"><b>City</b></td>
+                                    <td align="center" height="40" valign="middle" width="159"><b>Rating</b></td>
+                                    <td align="center" height="40" valign="middle" width="159"><b>No of Nights</b></td>
+                                </tr>
+                                <tbody>
+                                    @for (int i = 0; i < Model.HotelList.Count; i++)
+                                    {
+                                        <tr>
+                                            <td class="text-center" height="40" valign="middle"> @Model.HotelList[i].HotelName</td>
+                                            <td class="text-center" height="40" valign="middle">@Model.HotelList[i].Location</td>
+                                            <td class="text-center" height="40" valign="middle">@Model.HotelList[i].Stars*</td>
+                                            <td class="text-center" height="40" valign="middle">@Model.HotelList[i].Duration</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+

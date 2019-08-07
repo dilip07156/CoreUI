@@ -1,0 +1,787 @@
+﻿@model Voyager.App.ViewModels.CommercialsAndPayment
+
+
+<style>
+    .leftalign {
+        text-align: left !important;
+    }
+
+    .summary-tbl.custom-mob-tbl .table > tbody > tr > td {
+        text-align: left;
+        width: 85px;
+    }
+
+    .popup-box.pop-md {
+        width: 1200px !important; 
+    }
+
+    .popup-box {
+        background: #f4f7f8;
+        padding: 20px 30px;
+        text-align: left;
+        margin: 40px auto;
+        position: relative;
+        max-width: 1000px;
+    }
+</style>
+
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { role = "form", id = "frmCommercialsAndPayment" }))
+{
+    @Html.HiddenFor(x => x.Company_Id, new { @id = "CompanyId", @class = "CompanyId" })
+
+    <div class="btn-cont-rgt" style="text-align:right">
+        <input value="Update" id="btnUpdateCommercials" class="btn btn-blue btn-md btnUpdateCommercials" style="width:10px" />
+    </div><br />
+    <div id="message"></div>
+    <div class="row">
+        @if (Model.IsSupplier == false)
+    {
+        <div class="col-md-12">
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <div class="tbl-actn-btns"><h4>Default Commissions</h4></div>
+                <div id="table1">
+                    <table class="table table-striped ">
+                        <thead>
+                            <tr>
+                                <th class="col-lg-3">Business Type</th>
+                                <th class="col-lg-3">Basis</th>
+                                <th class="col-lg-3">Type</th>
+                                <th class="col-lg-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align:center">
+                                    <b>Groups</b>
+                                </td>
+                                <td>
+                                    @*@Html.DropDownListFor(m => m.Group, new SelectList(Model.GroupsBasisList, "Markup_Basis", "Markup_Basis"), "Percentage / Scheme", new { @id = "ddlGroup", @class = "form-control leftalign" })*@
+
+                                    @Html.DropDownListFor(m => m.Group, new List<SelectListItem>
+                                                        {
+                                                        new SelectListItem{ Text="Select", Value = "Select" },
+                                                        new SelectListItem{ Text="Percentage / Scheme", Value = "Percentage / Scheme" },
+                                                        new SelectListItem{ Text="Amount", Value ="Amount" },
+                                                        }, new { @id = "ddlGroup", @class = "form-control" })
+
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.MarkupSchemesGroupsType, new SelectList(Model.GroupsTypeList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlGroupType", @class = "form-control leftalign", @disabled = "disabled" })
+                                    @Html.HiddenFor(m => m.GroupsTypeText, new { @id = "GroupsTypeText" })
+                                    <span class="field-validation-valid text-danger" id="spanGTypeText" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.GroupsValue, new { @id = "GroupsValue", @class = "form-control leftalign OnlyNumericOneDigit", @disabled = "disabled" })
+                                    <span class="field-validation-valid text-danger" id="spanGTypeVal" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align:center">
+                                    <b>FIT</b>
+                                </td>
+                                <td>
+                                    @*@Html.DropDownListFor(m => m.FIT, new SelectList(Model.FITBasisList, "Markup_Basis", "Markup_Basis"), "Percentage / Scheme", new { @id = "ddlFIT", @class = "form-control leftalign" })*@
+
+                                    @Html.DropDownListFor(m => m.FIT, new List<SelectListItem>
+                                                        {
+                                                        new SelectListItem{ Text="Select", Value = "Select" },
+                                                        new SelectListItem{ Text="Percentage / Scheme", Value = "Percentage / Scheme" },
+                                                        new SelectListItem{ Text="Amount", Value ="Amount" },
+                                                        }, new { @id = "ddlFIT", @class = "form-control" })
+
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.MarkupSchemesFITType, new SelectList(Model.FITTypeList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlFITType", @class = "form-control leftalign", @disabled = "disabled" })
+                                    @Html.HiddenFor(m => m.FITTypeText, new { @id = "FITTypeText" })
+                                    <span class="field-validation-valid text-danger" id="spanFTypeText" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.FITValue, new { @id = "FITValue", @class = "form-control leftalign OnlyNumericOneDigit", @disabled = "disabled" })
+                                    <span class="field-validation-valid text-danger" id="spanFTypeVal" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align:center">
+                                    <b>Series</b>
+                                </td>
+                                <td>
+                                    @*@Html.DropDownListFor(m => m.Series, new SelectList(Model.SeriesBasisList, "Markup_Basis", "Markup_Basis"), "Percentage / Scheme", new { @id = "ddlSeries", @class = "form-control leftalign" })*@
+
+                                    @Html.DropDownListFor(m => m.Series, new List<SelectListItem>
+                                                        {
+                                                        new SelectListItem{ Text="Select", Value = "Select" },
+                                                        new SelectListItem{ Text="Percentage / Scheme", Value = "Percentage / Scheme" },
+                                                        new SelectListItem{ Text="Amount", Value ="Amount" },
+                                                        }, new { @id = "ddlSeries", @class = "form-control" })
+
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.MarkupSchemesSeriesType, new SelectList(Model.SeriesTypeList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlSeriesType", @class = "form-control leftalign", @disabled = "disabled" })
+                                    @Html.HiddenFor(m => m.SeriesTypeText, new { @id = "SeriesTypeText" })
+                                    <span class="field-validation-valid text-danger" id="spanSTypeText" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.SeriesValue, new { @id = "SeriesValue", @class = "form-control leftalign OnlyNumericOneDigit", @disabled = "disabled" })
+                                    <span class="field-validation-valid text-danger" id="spanSTypeVal" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align:center">
+                                    <b>B2B2B</b>
+                                </td>
+                                <td>
+                                    @*@Html.DropDownListFor(m => m.B2B2B, new SelectList(Model.B2B2BBasisList, "Markup_Basis", "Markup_Basis"), "Percentage / Scheme", new { @id = "ddlB2B2B", @class = "form-control leftalign" })*@
+
+
+                                    @Html.DropDownListFor(m => m.B2B2B, new List<SelectListItem>
+                                                            {
+                                                            new SelectListItem{ Text="Select", Value = "Select" },
+                                                            new SelectListItem{ Text="Percentage / Scheme", Value = "Percentage / Scheme" },
+                                                            new SelectListItem{ Text="Amount", Value ="Amount" },
+                                                            }, new { @id = "ddlB2B2B", @class = "form-control" })
+
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.MarkupSchemesB2B2BType, new SelectList(Model.B2B2BTypeList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlB2B2BType", @class = "form-control leftalign", @disabled = "disabled" })
+                                    @Html.HiddenFor(m => m.B2B2BTypeText, new { @id = "B2B2BTypeText" })
+                                    <span class="field-validation-valid text-danger" id="spanBTypeText" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.B2B2BValue, new { @id = "B2B2BValue", @class = "form-control leftalign OnlyNumericOneDigit", @disabled = "disabled" })
+                                    <span class="field-validation-valid text-danger" id="spanBTypeVal" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br />
+}
+        <div class="col-md-12">
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <br />
+                <div class="tbl-actn-btns"><h4>Payment Terms</h4></div>
+                @if (Model.PaymentTermsDetails.Count() > 0)
+            {
+                <table class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>Days</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Currency</th>
+                            <th>Business Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.PaymentTermsDetails.Count(); i++)
+                    {
+                        <tr>
+                            @Html.HiddenFor(x => x.PaymentTermsDetails[i].PaymentTerms_Id, new { @class = "clsPaymentTermsId" })
+                            <td style="text-align:center">@Model.PaymentTermsDetails[i].From</td>
+                            <td style="text-align:center">@Model.PaymentTermsDetails[i].Days</td>
+                            <td style="text-align:center">@Model.PaymentTermsDetails[i].Value</td>
+                            <td style="text-align:center">@Model.PaymentTermsDetails[i].ValueType</td>
+                            <td style="text-align:center">@Model.PaymentTermsDetails[i].Currency</td>
+                            <td style="text-align:center">@Model.PaymentTermsDetails[i].BusiType</td>
+                            <td style="text-align:center">
+                                <a href="#addNewDetails1-popup" class="popup-inline btn btn-primary btn-sm ViewPaymentTerms">View</a>
+                            </td>
+                        </tr>
+                }
+                    </tbody>
+                </table>
+        }
+        else
+        {
+            <br />
+            <h4 class="alert alert-info">No Records Found</h4>
+    }
+                <div class="row">
+                    <div class="col-lg-3">
+                        <a href="#addNewDetails1-popup" class="popup-inline btn btn-primary btn-sm ViewPaymentTerms">Add Payment New Terms</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="col-md-12">
+            <br />
+            
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <div class="tbl-actn-btns"><h4> Payment Details</h4></div>
+                <table class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <td class="col-lg-6"></td>
+                            <td class="col-lg-6"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="form-group">
+                            <td>
+                                <label class="leftalign">Finance Contact</label>
+                                @Html.DropDownListFor(m => m.FinanceContactId, new SelectList(Model.FinanceContactList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlFinanceContact", @class = "form-control leftalign" })
+                            </td>
+                            <td>
+                                <label class="leftalign">Sort Code</label>
+                                @Html.TextBoxFor(x => x.SortCode, new { @class = "form-control leftalign" })
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label>Account Name</label>
+                                    @Html.TextBoxFor(x => x.AccountName, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="inputAddress">IBAN</label>
+                                    @Html.TextBoxFor(x => x.IBAN, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label for="inputAddress">Account Number</label>
+                                    @Html.TextBoxFor(x => x.AccountNo, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="inputAddress">Swift</label>
+                                    @Html.TextBoxFor(x => x.Swift, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label for="inputAddress">Bank Name</label>
+                                    @Html.TextBoxFor(x => x.BankName, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="inputAddress">Finance Note</label>
+                                    @Html.TextBoxFor(x => x.FinanceNote, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label for="inputAddress">Bank Address</label>
+                                    @Html.TextBoxFor(x => x.BankAddr, new { @class = "form-control leftalign" })
+                                </div>
+                            </td>
+                            <td></td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+
+
+            </div>
+        </div>
+        
+        <br />
+       
+        <div class="col-md-12">
+           
+            <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                <br />
+                <div class="tbl-actn-btns"><h4>Tax Reg Details</h4></div>
+                @if (Model.TaxRegDetails.Count() > 0)
+                {
+                <table class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>State</th>
+                            <th>Number</th>
+                            <th>Tax Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.TaxRegDetails.Count(); i++)
+                        {
+                        <tr>
+                            @Html.HiddenFor(x => x.TaxRegDetails[i].TaxReg_Id, new { @class = "clsTaxregId" })
+                            <td style="text-align:center">@Model.TaxRegDetails[i].Type</td>
+                            <td style="text-align:center">@Model.TaxRegDetails[i].State</td>
+                            <td style="text-align:center">@Model.TaxRegDetails[i].Number</td>
+                            <td style="text-align:center">@Model.TaxRegDetails[i].TaxStatus</td>
+                            <td style="text-align:center">
+                                <a href="#addNewDetails1-popup" class="popup-inline btn btn-primary btn-sm ViewTaxRegDetails">View</a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                }
+                else
+                {
+                <br />
+                <h4 class="alert alert-info">No Records Found</h4>
+                }
+                <div class="row">
+                    <div class="col-lg-3">
+                        <a href="#addNewDetails1-popup" class="popup-inline btn btn-primary btn-sm ViewTaxRegDetails">Add New TaxRegDetails</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+}
+
+
+<div id="addNewDetails1-popup"></div>
+
+<script type="text/javascript">
+   
+    $(document).ready(function () { 
+         
+        var grp = $("#ddlGroup").val();
+        if (grp == "Amount") {
+            $("#GroupsValue").removeAttr("disabled");
+            $("#ddlGroupType").attr("disabled", "disabled");
+        }
+        if (grp == "Percentage / Scheme") {
+            $("#ddlGroupType").removeAttr("disabled", "disabled");
+        }   
+
+        var fit = $("#ddlFIT").val();
+        if (fit == "Amount") {
+            $("#FITValue").removeAttr("disabled");
+            $("#ddlFITType").attr("disabled", "disabled");
+        }
+        if (fit == "Percentage / Scheme") {
+            $("#ddlFITType").removeAttr("disabled", "disabled");
+        }   
+
+        var series = $("#ddlSeries").val();
+        if (series == "Amount") {
+            $("#SeriesValue").removeAttr("disabled");
+            $("#ddlSeriesType").attr("disabled", "disabled");
+        }
+        if (series == "Percentage / Scheme") {
+            $("#ddlSeriesType").removeAttr("disabled", "disabled");
+        } 
+
+        var b2b2b = $("#ddlB2B2B").val();
+        if (b2b2b == "Amount") {
+            $("#B2B2BValue").removeAttr("disabled");
+            $("#ddlB2B2BType").attr("disabled", "disabled");
+        }
+        if (b2b2b == "Percentage / Scheme") {
+            $("#ddlB2B2BType").removeAttr("disabled", "disabled");
+        } 
+    });   
+
+
+    $("#ddlGroup").on("change", function () {
+         
+        var name = $("#ddlGroup").find("option:selected").text();
+        if (name == "Amount") {
+            $("#ddlGroupType").empty();
+            $("#ddlGroupType").append($("<option></option>").val(null).html("AMOUNT"));
+            $("#GroupsValue").removeAttr("disabled", "disabled");
+            $("#ddlGroupType").attr("disabled", "disabled");
+            $("#spanGTypeText").text("");
+            $("#spanGTypeVal").text("*");
+        }
+        else if (name == "Select") {
+             
+            $("#ddlGroupType").empty();
+            $("#ddlGroupType").append($("<option></option>").val(null).html("Select"));    
+            $("#spanGTypeText").text("");
+            $("#spanGTypeVal").text("");
+            $("#ddlGroupType").attr("disabled", "disabled");
+            $("#GroupsValue").attr("disabled", "disabled");
+        }       
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/Agent/GetMarkupsList",
+                success: function (result) {
+                     
+                    //$("#GroupsValue").attr("disabled", "disabled");
+                    $("#ddlGroupType").removeAttr("disabled", "disabled");
+                    $("#ddlGroupType").empty();
+                    $("#ddlGroupType").append($("<option></option>").val(null).html("Select"));
+                    if (result.response.length > 0) {
+                        $.each(result.response, function (key, value) {
+                            $("#ddlGroupType").append($("<option></option>").val
+                                (value.attribute_Id).html(value.attributeName));
+                        });
+                    }
+                    $("#GroupsValue").attr("disabled", "disabled");
+                    $("#spanGTypeText").text("*");
+                    $("#spanGTypeVal").text("");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+    });
+
+    $("#ddlFIT").on("change", function () {
+         
+        var name = $("#ddlFIT").find("option:selected").text();
+        if (name == "Amount") {
+            $("#ddlFITType").empty();
+            $("#ddlFITType").append($("<option></option>").val(null).html("AMOUNT"));
+            $("#FITValue").removeAttr("disabled", "disabled");
+            $("#ddlFITType").attr("disabled", "disabled");
+            $("#spanFTypeText").text("");
+            $("#spanFTypeVal").text("*");
+        }
+        else if (name == "Select") {         
+            $("#ddlFITType").empty();
+            $("#ddlFITType").append($("<option></option>").val(null).html("Select"));
+            $("#spanFTypeText").text("");
+            $("#spanFTypeVal").text("");
+            $("#ddlFITType").attr("disabled", "disabled");
+            $("#FITValue").attr("disabled", "disabled");
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/Agent/GetMarkupsList",
+                success: function (result) {
+                     
+                    $("#ddlFITType").removeAttr("disabled", "disabled");
+                    $("#ddlFITType").empty();
+                    $("#ddlFITType").append($("<option></option>").val(null).html("Select"));
+                    if (result.response.length > 0) {
+                        $.each(result.response, function (key, value) {
+                            $("#ddlFITType").append($("<option></option>").val
+                                (value.attribute_Id).html(value.attributeName));
+                        });
+                    }
+                    $("#FITValue").attr("disabled", "disabled");
+                    $("#spanFTypeText").text("*");
+                    $("#spanFTypeVal").text("");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+    });
+
+    $("#ddlSeries").on("change", function () {
+         
+        var name = $("#ddlSeries").find("option:selected").text();
+        if (name == "Amount") {
+            $("#ddlSeriesType").empty();
+            $("#ddlSeriesType").append($("<option></option>").val(null).html("AMOUNT"));
+            $("#SeriesValue").removeAttr("disabled", "disabled");
+            $("#ddlSeriesType").attr("disabled", "disabled");
+            $("#spanSTypeText").text("");
+            $("#spanSTypeVal").text("*");
+        }
+        else if (name == "Select") {
+            $("#ddlSeriesType").empty();
+            $("#ddlSeriesType").append($("<option></option>").val(null).html("Select"));
+            $("#spanSTypeText").text("");
+            $("#spanSTypeVal").text("");
+            $("#ddlSeriesType").attr("disabled", "disabled");
+            $("#SeriesValue").attr("disabled", "disabled");
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/Agent/GetMarkupsList",
+                success: function (result) {
+                     
+                    $("#ddlSeriesType").removeAttr("disabled", "disabled");
+                    $("#ddlSeriesType").empty();
+                    $("#ddlSeriesType").append($("<option></option>").val(null).html("Select"));
+                    if (result.response.length > 0) {
+                        $.each(result.response, function (key, value) {
+                            $("#ddlSeriesType").append($("<option></option>").val
+                                (value.attribute_Id).html(value.attributeName));
+                        });
+                    }
+                    $("#SeriesValue").attr("disabled", "disabled");
+                    $("#spanSTypeText").text("*");
+                    $("#spanSTypeVal").text("");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+    });
+
+    $("#ddlB2B2B").on("change", function () {
+         
+        var name = $("#ddlB2B2B").find("option:selected").text();
+        if (name == "Amount") {
+            $("#ddlB2B2BType").empty();
+            $("#ddlB2B2BType").append($("<option></option>").val(null).html("AMOUNT"));
+            $("#B2B2BValue").removeAttr("disabled", "disabled");
+            $("#ddlB2B2BType").attr("disabled", "disabled");
+            $("#spanBTypeText").text("");
+            $("#spanBTypeVal").text("*");
+        }
+        else if (name == "Select") {
+            $("#ddlB2B2BType").empty();
+            $("#ddlB2B2BType").append($("<option></option>").val(null).html("Select"));
+            $("#spanBTypeText").text("");
+            $("#spanBTypeVal").text("");
+            $("#ddlB2B2BType").attr("disabled", "disabled");
+            $("#B2B2BValue").attr("disabled", "disabled");
+        }
+        else {
+            $.ajax({
+                type: "GET",
+                url: "/Agent/GetMarkupsList",
+                success: function (result) {
+                     
+                    $("#ddlB2B2BType").removeAttr("disabled", "disabled");
+                    $("#ddlB2B2BType").empty();
+                    $("#ddlB2B2BType").append($("<option></option>").val(null).html("Select"));
+                    if (result.response.length > 0) {
+                        $.each(result.response, function (key, value) {
+                            $("#ddlB2B2BType").append($("<option></option>").val
+                                (value.attribute_Id).html(value.attributeName));
+                        });
+                    }
+                    $("#B2B2BValue").attr("disabled", "disabled");
+                    $("#spanBTypeText").text("*");
+                    $("#spanBTypeVal").text("");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+    });
+
+    $("#ddlGroupType").on("change", function () {       
+        var name = $("#ddlGroupType").find("option:selected").text();
+        $("#GroupsTypeText").val(name);
+    });
+
+    $("#ddlFITType").on("change", function () {
+        var name = $("#ddlFITType").find("option:selected").text();
+        $("#FITTypeText").val(name);
+    });
+
+    $("#ddlSeriesType").on("change", function () {
+        var name = $("#ddlSeriesType").find("option:selected").text();
+        $("#SeriesTypeText").val(name);
+    });
+
+    $("#ddlB2B2BType").on("change", function () {
+        var name = $("#ddlB2B2BType").find("option:selected").text();
+        $("#B2B2BTypeText").val(name);
+    });
+
+    $(".ViewPaymentTerms").click(function () {
+        var companyId = $("#CompanyId").val();
+        var paymentTermsId = $(this).parents('tr').find('.clsPaymentTermsId').val();
+        $.ajax({
+            type: "GET",
+            url: "/Agent/ViewPaymentTerms",
+            data: { CompanyId: companyId, PaymentTermsId: paymentTermsId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                 
+                $("#addNewDetails1-popup").html(response);
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+    $(".ViewTaxRegDetails").click(function () {
+        var companyId = $("#CompanyId").val();
+        var taxRegId = $(this).parents('tr').find('.clsTaxregId').val();
+        $.ajax({
+            type: "GET",
+            url: "/Supplier/ViewTaxRegDetails",
+            data: { CompanyId: companyId, TaxRegId: taxRegId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+
+                $("#addNewDetails1-popup").html(response);
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    });
+
+    $("#btnUpdateCommercials").on("click", function () {
+         
+        var IsValidFlag = true;
+
+        var ddlGroup = $("#ddlGroup").find("option:selected").val();
+        if (ddlGroup == 'Percentage / Scheme') {
+            $("#spanGTypeVal").text("");
+
+            var ddlGroupType = $("#ddlGroupType").find("option:selected").val();
+            if (ddlGroupType == '') {
+                $("#spanGTypeText").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanGTypeText").text("");
+        }
+        else if (ddlGroup == 'Amount') {
+            $("#spanGTypeText").text("");
+            var value = $("#GroupsValue").val();
+            if (value == '') {
+                $("#spanGTypeVal").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanGTypeVal").text("");
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var ddlFIT = $("#ddlFIT").find("option:selected").val();
+        if (ddlFIT == 'Percentage / Scheme') {
+            $("#spanFTypeVal").text("");
+
+            var ddlFITType = $("#ddlFITType").find("option:selected").val();
+            if (ddlFITType == '') {
+                $("#spanFTypeText").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanFTypeText").text("");
+        }
+        else if (ddlFIT == 'Amount') {
+            $("#spanFTypeText").text("");
+            var value = $("#FITValue").val();
+            if (value == '') {
+                $("#spanFTypeVal").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanFTypeVal").text("");
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var ddlSeries = $("#ddlSeries").find("option:selected").val();
+        if (ddlSeries == 'Percentage / Scheme') {
+            $("#spanSTypeVal").text("");
+
+            var ddlSeriesType = $("#ddlSeriesType").find("option:selected").val();
+            if (ddlSeriesType == '') {
+                $("#spanSTypeText").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanSTypeText").text("");
+        }
+        else if (ddlSeries == 'Amount') {
+            $("#spanSTypeText").text("");
+            var value = $("#SeriesValue").val();
+            if (value == '') {
+                $("#spanSTypeVal").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanSTypeVal").text("");
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var ddlB2B2B = $("#ddlB2B2B").find("option:selected").val();
+        if (ddlB2B2B == 'Percentage / Scheme') {
+            $("#spanBTypeVal").text("");
+
+            var ddlB2B2BType = $("#ddlB2B2BType").find("option:selected").val();
+            if (ddlB2B2BType == '') {
+                $("#spanBTypeText").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanBTypeText").text("");
+        }
+        else if (ddlB2B2B == 'Amount') {
+            $("#spanBTypeText").text("");
+            var value = $("#B2B2BValue").val();
+            if (value == '') {
+                $("#spanBTypeVal").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $("#spanBTypeVal").text("");
+        }
+        else
+            $(this).siblings("span").text("");
+
+
+        if (!IsValidFlag)
+            return false;
+
+        $(".ajaxloader").show();
+        var model = $("#frmCommercialsAndPayment").serialize();
+        $.ajax({
+            type: "POST",
+            url: "/Agent/UpdateCommercialsAndPayment",
+            data: model,
+            global: false,
+            success: function (response) {
+                                
+                if (response.status == "error") {
+                    var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! ' + response.message + '</strong></div>';
+                    $("#frmCommercialsAndPayment #message").html(successmsg);
+                }
+                else {
+                    var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! ' + response.message + '</strong></div>';
+                    $("#frmCommercialsAndPayment #message").html(successmsg);
+                }
+                $(".ajaxloader").hide();
+            },
+            error: function () {
+                $(".ajaxloader").hide();
+            }
+        });
+
+    });
+
+</script>

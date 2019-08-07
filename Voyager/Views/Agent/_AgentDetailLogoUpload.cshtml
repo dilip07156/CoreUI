@@ -1,0 +1,87 @@
+﻿
+@model Voyager.App.ViewModels.AgentDetails
+
+<form method="post" enctype="multipart/form-data" id="frmAgentLogo">
+    @Html.HiddenFor(x => x.CompanyId, new { @id = "CompanyId", @name = "CompanyId" })  
+
+    <div class="alert alert-success" id="smsg" style="display:none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+        <div id="successmessage"></div>
+    </div>
+    <div class="alert alert-danger" id="emsg" style="display:none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+        <div id="errormessage"></div>
+    </div>
+    <div id="smsgg"></div>
+    <div style="height:168px;width:203px;border: 1px solid black">
+        <img src="@Url.Content(Model.LogoFilePath)" width="200px" style="height:166px;" />
+        <div>@Html.HiddenFor(x => x.LogoFilePath, new { @id = "LogoFilePath" })</div>
+    </div><br />
+    <div>
+        <input type="file" id="files" name="files" multiple /><br />
+        <input type="button" id="upload" class="btn btn-primary btn-md btnWidth" value="Upload file" />
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#upload").click(function (evt) {
+             
+            var _validFileExtensions = ["jpg", "jpeg", "bmp", "png"];
+            var ext = $('#files').val().split('.').pop().toLowerCase();
+            var sFileName = $('#files').val();
+            if (sFileName !== "") {
+                if ($.inArray(ext, _validFileExtensions) == -1) {
+                    $("#smsg").hide();
+                    $("#errormessage").html("Sorry, " + ext + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
+                    $("#emsg").show();
+                    return false;
+                }
+                else
+                {
+                    var CompanyId = $("#CompanyId").val();
+                    var fileUpload = $("#files").get(0);
+                    var files = fileUpload.files;
+                    var data = new FormData();
+                    for (var i = 0; i < files.length; i++) {
+                        data.append(files[i].name, files[i], CompanyId);
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/Agent/UploadFilesAjax",
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (message) {
+                             
+                            if (message == "error") {
+                                $("#smsg").hide();
+                                $("#errormessage").html("Error while uploading logo");
+                                $("#emsg").show();
+                            }
+                            else {
+                                $("#emsg").hide();
+                                //$("#successmessage").html("Logo uploaded successfully");
+                                //$("#smsg").show();
+                                GetLogo();
+                                //var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong> Logo uploaded successfully </div>';
+                                //$("#smsgg").html(successmsg);
+                                //$("#smsg").show();
+                            }
+                        },
+                        error: function () {
+                            alert("There was error uploading files!");
+                        }
+                    });
+                }
+            }
+            else {
+                $("#smsg").hide();
+                $("#errormessage").html("Please select the file to Upload.");
+                $("#emsg").show();
+
+                return false;
+            }            
+        });
+    });  
+</script>

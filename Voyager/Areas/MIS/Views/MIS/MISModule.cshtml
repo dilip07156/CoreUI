@@ -1,0 +1,155 @@
+﻿@model Voyager.App.ViewModels.MISModuleViewModel
+@{
+    ViewData["Title"] = "SalesDashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="references">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap Select Css -->
+    <link href="~/MISResources/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />
+    <!-- Waves Effect Css -->
+    <link href="~/MISResources/plugins/node-waves/waves.css" rel="stylesheet" />
+    <!-- Animation Css -->
+    <link href="~/MISResources/plugins/animate-css/animate.css" rel="stylesheet" />
+    <!-- Morris Chart Css-->
+    <link href="~/MISResources/plugins/morrisjs/morris.css" rel="stylesheet" />
+    <!-- Custom Css -->
+    <link href="~/MISResources/css/style.css" rel="stylesheet" />
+
+    <!-- Select Plugin Js -->
+    @*<script src="~/MISResources/plugins/bootstrap-select/js/bootstrap-select.js"></script>*@
+    <!-- Slimscroll Plugin Js -->
+    <script src="~/MISResources/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <!-- Waves Effect Plugin Js -->
+    <script src="~/MISResources/plugins/node-waves/waves.js"></script>
+    <!-- Jquery CountTo Plugin Js -->
+    <script src="~/MISResources/plugins/jquery-countto/jquery.countTo.js"></script>
+    <!-- Morris Plugin Js -->
+    <script src="~/MISResources/plugins/raphael/raphael.min.js"></script>
+    <script src="~/MISResources/plugins/morrisjs/morris.js"></script>
+</div>
+
+<!-- Overlay For Sidebars -->
+<div class="overlay"></div>
+<!-- #END# Overlay For Sidebars -->
+
+<section class="wrapper">
+    <div class="container-fluid">
+        <br />
+
+        <div class="block-header">
+            @if (Model.MISMappingList?.Count < 1)
+            {
+                <h2 style="font-size:20px;">Sorry! We have no dashboard to show</h2>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                        <h2 id="ActiveMenuHeader" style="font-size:20px;">@Model.ActiveMenu</h2>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <div class="btn-group bootstrap-select" style="float: right;margin-right: 2px;">
+                            <button type="button" class="btn dropdown-toggle btn-secondary pull-right" data-toggle="dropdown" id="DashboardMenu" aria-expanded="false" style="width:100%;">
+                                Dashboards <i class="fa fa-angle-down pull-right" style="top:0px;"></i>
+                            </button>
+                            <div class="dropdown-menu open" style="max-height: 268px; overflow: hidden; min-height: 84px;">
+                                <ul class="dropdown-menu inner">
+                                    @for (int i = 0; i < Model.MISMappingList.Count; i++)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item dashboard-menu" href="@Model.MISMappingList[i].ItemUrl">@Model.MISMappingList[i].ItemName</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div id="RenderActiveMenu"></div>
+    </div>
+</section>
+
+<script>
+    var ActiveMenuName = '@Model.ActiveMenu';
+    var ActiveMenuUrl = '@Model.ActiveMenuUrl';
+
+    $('.dashboard-menu').click(function () {
+        var menuUrl = this.href;
+        LoadDashboard(menuUrl, this.innerHTML);
+        return false;
+    })
+
+    LoadDashboard(ActiveMenuUrl);
+
+    function LoadDashboard(ActiveMenuUrl, MenuName) {
+        $('.ajaxloader').show();
+        $.ajax({
+            type: "GET",
+            url: ActiveMenuUrl,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            //async: false,
+            success: function (result) {
+                 
+                if (result !== undefined && result !== null) {
+                    if (result.toLowerCase() === "an error occured while processing your request") {
+                        alert(result.replace('"', ''));
+                        $('.ajaxloader').hide();
+                    }
+                    else {
+                        $('#RenderActiveMenu').empty();
+                        $('#RenderActiveMenu').html(result);
+                        $('#ActiveMenuHeader').html(MenuName);
+                        $('.selectpicker').selectpicker('refresh');
+                    }
+                    try {
+                        $("#DashboardMenu").parent('.bootstrap-select').removeClass('open');
+                    } catch (e) {
+                        console.log(e.message);
+                    }
+                }
+            },
+            error: function (error) {
+                 
+                alert(error.statusText);
+                $('.ajaxloader').hide();
+                try {
+                    $("#DashboardMenu").dropdown("toggle");
+                } catch (e) {
+                    console.log(e.message);
+                }
+            }
+        });
+    }
+</script>
+<style>
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+        width: auto;
+    }
+
+    a:hover, a:focus, .btn:focus {
+        outline: 0;
+        text-decoration: none;
+    }
+
+    .filter-option {
+        color: #555 !important;
+    }
+
+    /*.dropdown-menu .glyphicon.glyphicon-ok.icon-ok.check-mark {
+        display: none;
+    }*/
+</style>

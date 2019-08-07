@@ -1,0 +1,58 @@
+﻿@model Voyager.App.ViewModels.UpdateAvailabilityViewModel
+
+@if (Model.BudgetSupplements?.Count > 0)
+{
+    <h3>Budget Supplements</h3>
+    <hr>
+    <table class="table table-bordered tbl-theme-02 tblBudgtSupp">
+        <thead>
+            <tr>
+                <th width="20%">Room</th>
+                <th width="20%">Supplement Rate (@Model.BudgetSupplements[0].BudgetSuppCurrencyName)</th>
+                <th>Reason</th>
+                <th width="10%">Apply Markup</th>
+                <th width="10%">Agent Confirmed</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.BudgetSupplements.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Html.HiddenFor(a => a.BudgetSupplements[i].BudgetSupplement_Id)
+                        @Html.HiddenFor(a => a.BudgetSupplements[i].BookingRooms_Id)
+                        @Model.BudgetSupplements[i].PersonType (@Model.BudgetSupplements[i].RoomShortCode)
+                    </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.BudgetSupplements[i].BudgetSupplementAmount, new { @class = "form-control numeric", @placeholder = "Enter Your Rate", @style = "text-align:left !important" })
+                        <small id="emailHelp" class="form-text text-muted">per ADULT in Room</small><br />
+                        @Html.ValidationMessageFor(m => m.BudgetSupplements[i].BudgetSupplementAmount, "", new { @class = "error" })
+                    </td>
+                    <td>
+                        @Html.TextAreaFor(m => m.BudgetSupplements[i].BudgetSupplementReason, new { @class = "form-control", @placeholder = "Enter Your Reason", @style = "text-align:left !important" })
+                        @Html.ValidationMessageFor(m => m.BudgetSupplements[i].BudgetSupplementReason, "", new { @class = "error" })
+                    </td>
+                    <td style="text-align:center">
+                        @Html.CheckBoxFor(m => m.BudgetSupplements[i].ApplyMarkUp, new { })
+                    </td>
+                    <td style="text-align:center">
+                        @Html.CheckBoxFor(m => m.BudgetSupplements[i].AgentConfirmed, new { })
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tbody></tbody>
+    </table>
+
+    @if (!((Model.Availability == "PENDING") || (Model.Availability == "AVAILABLE" && (string.IsNullOrEmpty(Model.OpenMode) || Model.OpenMode == "e"))))
+    {
+        @if (!(ViewBag.IsHideSaveButton == true))
+        {
+            <div style="text-align:right">
+                <button type="button" class="btn btn-primary btn-md btnValid" name="command" onclick="SetBudgetSupplement();">Save</button>
+            </div>
+        }
+    }
+    <br />
+
+}

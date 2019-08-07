@@ -1,0 +1,320 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@using VGER_WAPI_CLASSES
+
+@{
+    string SessionName = "IntegrationInfo";
+    var sessionData = Context.Session.GetComplexData<List<ProductAttributeDetails>>(SessionName);
+    var ContactDisplayMessage = sessionData != null ? sessionData.Where(a => a.AttributeId == "ContactDisplayMessage").Select(b => b.Value).FirstOrDefault() : "";
+    var CompanyName = sessionData != null ? sessionData.Where(a => a.AttributeId == "CompanyName").Select(b => b.Value).FirstOrDefault() : "";
+    var Currency = sessionData != null ? sessionData.Where(a => a.AttributeId == "Currency").Select(b => b.Value).FirstOrDefault() : "";
+    var BalanceAmount = sessionData != null ? sessionData.Where(a => a.AttributeId == "BalanceAmount").Select(b => b.Value).FirstOrDefault() : "";
+    var CreditAmount = sessionData != null ? sessionData.Where(a => a.AttributeId == "CreditAmount").Select(b => b.Value).FirstOrDefault() : "";
+    var Photo = sessionData != null ? sessionData.Where(a => a.AttributeId == "Photo").Select(b => b.Value).FirstOrDefault() : "";
+    var UserName = sessionData != null ? sessionData.Where(a => a.AttributeId == "UserName").Select(b => b.Value).FirstOrDefault() : "";
+    var UserRoles = sessionData != null ? sessionData.Where(a => a.AttributeId == "UserRoles").Select(b => b.Value).FirstOrDefault() : "";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cox &amp; Kings</title>
+
+    <environment include="Development">
+
+        <link href="~/resources/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/resources/css/bootstrap-multiselect.css" rel="stylesheet" />
+        <link href="~/resources/css/plugin.css" rel="stylesheet" />
+        <link href="~/resources/css/myStyle.css" rel="stylesheet" />
+        <link href="~/resources/css/master.css" rel="stylesheet" />
+    </environment>
+
+    <environment include="Production">
+        <link href="~/resources/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/resources/css/bootstrap-multiselect.css" rel="stylesheet" />
+        <link href="~/resources/css/plugin.css" rel="stylesheet" />
+        <link href="~/resources/css/myStyle.css" rel="stylesheet" />
+        <link href="~/resources/css/master.css" rel="stylesheet" />
+    </environment>
+
+</head>
+<body>
+    <header>
+
+        <div class="top-bar">
+            <div class="container">
+                <span class="phone-no">Toll Free: <a href="tel:18002090400">@Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["ContactDisplayMessage"]) ? HttpContextAccessor.HttpContext.Request.Cookies["ContactDisplayMessage"] : ContactDisplayMessage)</a> </span>
+
+                <a href="#" class="top-toggle-btn"><span></span><span></span><span></span></a>
+                <div class="right-top-bar">
+
+
+                    <div class="account-status">
+                        <label>Welcome @Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["CompanyName"]) ? HttpContextAccessor.HttpContext.Request.Cookies["CompanyName"] : CompanyName)</label>
+                        <div class="bal-cr" style="display:none;">
+                            <div class="balance-amt">
+                                <em>Bal.</em>
+                                <div class="price">
+                                    @*<i class="fa fa-inr" aria-hidden="true"></i>*@
+                                    @Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["Currency"]) ? HttpContextAccessor.HttpContext.Request.Cookies["Currency"] : Currency)
+                                    <span class="amt">@Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["BalanceAmount"]) ? HttpContextAccessor.HttpContext.Request.Cookies["BalanceAmount"] : BalanceAmount)</span>
+                                </div>
+                                <span class="clear"></span>
+                            </div>
+                            <div class="credit-amt">
+                                <em>Cr.</em>
+                                <div class="price">
+                                    @Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["Currency"]) ? HttpContextAccessor.HttpContext.Request.Cookies["Currency"] : Currency)
+                                    <span class="amt">@Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["CreditAmount"]) ? HttpContextAccessor.HttpContext.Request.Cookies["CreditAmount"] : CreditAmount)</span>
+                                </div>
+                                <span class="clear"></span>
+                            </div>
+                            <span class="clear"></span>
+                        </div>
+                        <span class="clear"></span>
+                    </div>
+
+                    <div class="login after-lgn">
+                        <a href="#" class="dropdown-toggle" id="dropdownMenu3a" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span>
+                                <span class="author-img">
+                                    @*<img src="/resources/images/common/user.png" alt="">*@
+                                    <img src="@Url.Content(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["Photo"]) ? HttpContextAccessor.HttpContext.Request.Cookies["Photo"] : Photo)" style="height:18px;width:24px;" alt="">
+                                    <!--<img src="/dmc/resources/images/common/icons/fa-custom-login-white.png" alt="">-->
+                                </span>
+                                <span class="after-lgn-txt">@Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserName"]) ? HttpContextAccessor.HttpContext.Request.Cookies["UserName"] : UserName)</span>
+                                @Html.Hidden("hdnUserRoles", !string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) ? HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"] : UserRoles)
+                                <span class="before-lgn-txt">Login</span>
+                                <i class="fa fa-angle-down"></i>
+
+                            </span>
+                        </a>
+
+
+
+                        <div class="dropdown-menu theme-03">
+                            <!--<div class="dropdown-menu theme-03 login-sec logout-sec">-->
+                            <ul>
+                                <li class="before-lgn-txt login-sec">
+                                    <a href="#" class="btn btn-primary login-btn">LOGIN</a>
+                                    <p class="no-account">Don’t have an account yet?</p>
+                                    <a href="#" class="btn btn-create-account">Create an account</a>
+                                </li>
+                                <li class="after-lgn-txt"><a href="/Account/Manage" class="cont-wrap"><i class="fa-angle-right"></i>My Profile</a></li>
+                                @*<li class="after-lgn-txt"><a href="#" class="cont-wrap"><i class="fa-angle-right"></i>My Bookings</a></li>
+                                    <li><a href="#" class="cont-wrap"><i class="fa-angle-right"></i>Manage Booking</a></li>
+                                        <li class="after-lgn-txt"><a href="#" class="cont-wrap"><i class="fa-angle-right"></i>e-Wallet</a></li>
+                                        <li><a href="#" class="cont-wrap"><i class="fa-angle-right"></i>Fare Alerts</a></li>
+                                        <li><a href="#" class="cont-wrap"><i class="fa-angle-right"></i>Flight Status</a></li>*@
+                                <li class="after-lgn-txt"><a href="/Account/Logoff" class="cont-wrap btn-logout"><i class="fa-angle-right"></i>Logout</a></li>
+
+                            </ul>
+
+                        </div>
+                        @*<div class="col-lg-offset-3" style="padding-left:10px">
+                                <input type="hidden" id="hdnCollapsCheck" />
+                                <a class="btn btn-default" style="padding:0px 8px" id="btnCollpasToggle" role="button">
+                                    <span class="fa fa-angle-double-up"></span>
+                                </a>
+                            </div>*@
+                    </div>
+
+
+                    <span style="line-height: 40px;">
+                        <input type="hidden" id="hdnCollapsCheck" />
+                        <a class="btn btn-default" style="padding: 0px 8px;" id="btnCollpasToggle" role="button">
+                            <span class="fa fa-angle-double-up"></span>
+                        </a>
+                    </span>
+
+                </div>
+            </div>
+        </div>
+        <div class="collapse in" id="collapseExample">
+            @*<div class="collapse in" id="collapseExample" style="display:@data == 'true'?'none':'' ">*@
+            <div class="">
+                <div class="main-header">
+                    <div class="container">
+                        <div class="logo-div">
+                            <a href="/Home/Dashboard" class="ck-logo"><img src="/resources/images/common/Dubai-Logo-01.png" style="height:65px" alt="Cox and Kings Logo"></a>
+                        </div>
+                        <a href="#" class="menu-btn"><span></span><span></span><span></span></a>
+                        <nav class="navigation">
+                            <ul>
+                                <li class="sales-nav"><a href="/Quote/Quote">Sales</a></li>
+                                @if ((!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && (HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Groups") ||
+                         HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("FIT"))) || (!string.IsNullOrEmpty(UserRoles) && (UserRoles.Contains("Groups") || UserRoles.Contains("FIT"))))
+                                {
+                                    <li class="agent-nav"><a href="/Operations/SearchBooking">Operations</a></li>
+                                }
+                                <li class="booking-nav"><a href="/Booking/Booking">Booking</a></li>
+                                <li class="agent-nav"><a href="/Agent/Agent">Agent</a></li>
+
+                                @if (HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"] != null || !string.IsNullOrEmpty(UserRoles))
+                                {
+                                    if ((!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && (HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Administrator") ||
+                                 HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Supplier Manager") ||
+                                 HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Costing Officer"))) ||
+                                 (!string.IsNullOrEmpty(UserRoles) && (UserRoles.Contains("Administrator") || UserRoles.Contains("Supplier Manager") || UserRoles.Contains("Costing Officer"))))
+                                    {
+                                        <li class="supplier-nav"><a href="/Supplier/Supplier">Supplier</a></li>
+                                    }
+                                    if ((!string.IsNullOrEmpty(UserRoles) && UserRoles.Contains("Products")) || (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Products")))
+                                    {
+                                        @*<li class="agent-nav"><a href="/Product/ProductSearch">Product</a></li>*@
+                                    }
+                                    if ((!string.IsNullOrEmpty(UserRoles) && UserRoles.Contains("Hotel")) || (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Hotel")))
+                                    {
+                                        <li class="supplier-nav"><a href="/Hotels/SearchHotels">Hotels</a></li>
+                                    }
+                                    if ((!string.IsNullOrEmpty(UserRoles) && UserRoles.Contains("MIS")) || (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("MIS")))
+                                    {
+                                        <li class="supplier-nav"><a href="/MIS/MISModule">MIS</a></li>
+                                    }
+                                    if ((!string.IsNullOrEmpty(UserRoles) && UserRoles.Contains("Agent_Manuals")) || (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Agent_Manuals")))
+                                    {
+                                        <li class="booking-nav menu-document-sec"><a href="/Documentation/GetDocumentation">Agent Manual</a></li>
+                                    }
+                                    @if ((!string.IsNullOrEmpty(UserRoles) && UserRoles.Contains("Administrator")) || (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"]) && HttpContextAccessor.HttpContext.Request.Cookies["UserRoles"].Contains("Administrator")))
+                                    {
+                                        <li class="booking-nav menu-document-sec"><a href="/Account/Settings">Settings</a></li>
+                                    }
+                                }
+                                @*<li class="booking-nav"><a href="#">Booking</a></li>
+                                    <li class="agent-nav"><a href="#">Agent</a></li>
+                                    <li class="product-nav"><a href="#">Product</a></li>
+                                    <li class="mis-nav"><a href="#">MIS</a></li>*@
+                            </ul>
+
+
+
+                        </nav>
+
+                        <span class="clear"></span>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </header>
+
+    <environment include="Development">
+        <script src="~/ckeditor/ckeditor.js"></script>
+        <script src="~/resources/js/jquery.min.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/resources/js/modernizr-2.6.2.min.js"></script>
+        <script src="~/resources/js/form-elements.js"></script>
+    </environment>
+
+    <environment include="Production">
+        <script src="~/ckeditor/ckeditor.js"></script>
+        <script src="~/resources/js/jquery.min.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/resources/js/modernizr-2.6.2.min.js"></script>
+        <script src="~/resources/js/form-elements.js"></script>
+    </environment>
+    <div id="QuoteVersionList-popup" style="display:none">
+        <div class="popup-box pop-lg form-theme-04 form">
+            <div class="popup-in">
+
+            </div>
+        </div>
+    </div>
+    <div id="CopyQuote-popup" style="display:none">
+        <div class="popup-box pop-lg form-theme-04 form">
+            <div class="popup-in">
+
+            </div>
+        </div>
+    </div>
+
+    @*Below popup used for Showing an error Message*@
+    <div class="mfp-hide popup-box pop-md" id="modelErrorMsg">
+        <div class="popup-in">
+            <h3 class="pop-tl">Error Message</h3>
+            <p id="pErrorMsg"></p>
+            <button title="Close (Esc)" type="button" class="mfp-close error-close-popup"></button>
+            <div class="btn-cont text-center">
+                <a href="#" class="btn btn-blue btn-md error-close-popup">Ok</a>
+            </div>
+        </div>
+    </div>
+
+    @*Below popup used for Showing an Success Message*@
+    <div id="commonMsg-popup" style="display:none">
+        <div class="popup-box pop-md">
+            <div class="popup-in">
+                <h3 class="pop-tl" id="headerCommonMsg"></h3>
+                <p id="pCommonMsg"></p>
+                <button title="Close (Esc)" type="button" class="mfp-close close-popup"></button>
+                <div class="btn-cont text-center">
+                    <a href="#" class="btn btn-blue btn-md close-popup">Ok</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*Below popup used for Confirm Modal Popup*@
+    <div id="Confirm-popup" style="display:none">
+        <div class="popup-box pop-md">
+            <div class="popup-in">
+                <h3 class="pop-tl" id="headerConfirm">Confirm</h3>
+                <p id="pConfirmMsg">Are you sure want to confirm?</p>
+                <button title="Close (Esc)" type="button" class="mfp-close confirm-close-popup"></button>
+                <div class="btn-cont text-center">
+                    <a href="#" class="btn btn-default btn-md close-popup" id="confirmCancel" data-value="" onclick="ConfirmCancelOnClick()">No</a>
+                    <a href="#" class="btn btn-blue btn-md" id="confirmOk" data-value="" onclick="ConfirmOkOnClick()">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @RenderBody()
+    @*<div id="ajaxloading" class="loading" style="margin: -1% 0% 0% 48%;z-index: 10000;position: fixed">*@
+    @*<div class="loading" style="display:none;">
+            <img src="~/Images/ajax loader/ajax-loader.gif" />
+        </div>*@
+    <div class="ajaxloader" style="display:none;">Loading&#8230;</div>
+    @*<div style="display: none;" id="loader" class="loader">
+            <div class="side"></div>
+            <div class="side"></div>
+            <div class="side"></div>
+            <div class="side"></div>
+            <div class="side"></div>
+            <div class="side"></div>
+            <div class="side"></div>
+            <div class="side"></div>
+        </div>*@
+
+    <environment include="Development">
+        @*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+        <script id="oldbstag" src="~/resources/js/bootstrap.min.js"></script>
+        <script src="~/resources/js/bootstrap-multiselect.js"></script>
+        <script src="~/resources/js/plugins.js"></script>
+        <script src="~/resources/js/CoockiePlugin.js"></script>
+        <script src="~/resources/js/main.js"></script>
+        <script src="~/js/Master.js"></script>
+        <script src="~/resources/js/jquery.inputmask.bundle.js"></script>
+    </environment>
+
+    <environment include="Production">
+        @*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+        <script src="~/resources/js/bootstrap.min.js"></script>
+        <script src="~/resources/js/bootstrap-multiselect.js"></script>
+        <script src="~/resources/js/plugins.js"></script>
+        <script src="~/resources/js/CoockiePlugin.js"></script>
+        <script src="~/resources/js/main.js"></script>
+        <script src="~/js/Master.js"></script>
+        <script src="~/resources/js/jquery.inputmask.bundle.js"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

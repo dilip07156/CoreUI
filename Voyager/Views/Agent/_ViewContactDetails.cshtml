@@ -1,0 +1,309 @@
+﻿
+<style>
+    .leftalign {
+        text-align: left;
+    }
+
+    .regshort {
+        font-weight: bold;
+        color: #FF0000;
+        font-size: small;
+    }
+
+    .regweak {
+        font-weight: bold;
+        color: orange;
+        font-size: small;
+    }
+
+    .reggood {
+        font-weight: bold;
+        color: #2D98F3;
+        font-size: small;
+    }
+
+    .regstrong {
+        font-weight: bold;
+        color: limegreen;
+        font-size: small;
+    }
+</style>
+
+@model Voyager.App.ViewModels.ContactAndStaffDetails
+
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        <h3>@Model.FIRSTNAME @Model.LastNAME</h3>
+        <div class="modal-body"> 
+            <ul class="nav nav-tabs" id="ulContactsTab">
+                <li class="nav-item active">
+                    @*@Html.HiddenFor(x => x.Contact_Id)*@
+                    <a class="nav-link active" data-toggle="tab" href="#home">Personal Details</a>
+                </li>
+                @if (@ViewBag.IsAllowToEdit == true)
+                {
+                    <li class="nav-item">
+                        @Html.HiddenFor(x => x.Contact_Id)
+                        <a class="nav-link" data-toggle="tab" href="#system">System User</a>
+                    </li>
+                }
+                @if (@ViewBag.IsAllowToEditForTarget == true)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#" id="aTargets">Targets</a>
+                    </li>
+                }
+            </ul>
+            <div class="tab-content">
+                <br>
+                <div class="tab-pane active" id="home">
+                    <form id="frmHome">
+                        <div id="message"></div>
+                        @Html.HiddenFor(x => x.EmergencyContact_Id)
+                        @Html.HiddenFor(x => x.Contact_Id, new { @id = "Contact_Id" })
+                        @Html.HiddenFor(x => x.Company_Id, new { @id = "Company_Id" })
+                        @Html.HiddenFor(x => x.Company_Name)
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card ">
+                                    <h4 style="color: #337ab7;">Personal</h4><br />
+                                    <div class="card-body ">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">Title</label>
+                                            @Html.DropDownListFor(m => m.CommonTitle, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="Mr", Value = "Mr." },
+                                                 new SelectListItem{ Text="Ms", Value ="Ms." },
+                                                 new SelectListItem{ Text="Mrs", Value ="Mrs." }
+                                                 }, new { @class = "form-control" , @id="TITLE" })
+                                            <span class="field-validation-valid text-danger" id="spanTitle" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">First Name</label>
+                                            @Html.TextBoxFor(x => x.FIRSTNAME, new { @id = "FIRSTNAME", @class = "form-control leftalign" })
+                                            <span class="field-validation-valid text-danger" id="spanFIRSTNAME" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Last Name</label>
+                                            @Html.TextBoxFor(x => x.LastNAME, new { @id = "LastNAME", @class = "form-control leftalign" })
+                                            <span class="field-validation-valid text-danger" id="spanLastNAME" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card ">
+                                    <h4 style="color: #337ab7;">Designation</h4><br />
+                                    <div class="card-body ">
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Department</label>
+                                            @Html.TextBoxFor(x => x.Department, new { @class = "form-control leftalign" })
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Job Title</label>
+                                            @Html.TextBoxFor(x => x.TITLE, new { @class = "form-control leftalign" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card ">
+                                    <div class="card-body ">
+                                        <div class="form-check">
+                                            <label>
+                                                @Html.CheckBoxFor(x => x.Default, new { id = "Default" }) Default
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <label>
+                                                @Html.CheckBoxFor(x => x.IsCentralEmail, new { id = "IsCentralEmail" }) Centralized Email
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 ">
+                                <div class="card ">
+                                    <h4 style="color: #337ab7;">Contact</h4><br />
+                                    <div class="card-body ">
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Mobile</label>
+                                            @Html.TextBoxFor(x => x.MOBILE, new { @class = "form-control leftalign numericInt", @maxlength = "15" })
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Telephone</label>
+                                            @Html.TextBoxFor(x => x.TEL, new { @id = "Telephone", @class = "form-control leftalign numericInt", @maxlength = "15" })
+                                            <span class="field-validation-valid text-danger" id="spanTelephone" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Email</label>
+                                            @Html.TextBoxFor(x => x.MAIL, new { @id = "MAIL", @class = "form-control leftalign" })
+                                            <span class="field-validation-valid text-danger" id="spanMAIL" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Web</label>
+                                            @Html.TextBoxFor(x => x.WEB, new { @id = "WEB", @class = "form-control leftalign" })
+                                            <span class="field-validation-valid text-danger" id="spanWEB" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card ">
+                                    <h4 style="color: #337ab7;">Status</h4><br />
+                                    <div class="card-body ">
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Status</label>
+                                            @Html.DropDownListFor(m => m.Status, new SelectList(Model.StatusList, "Status", "Description"), new { @id = "ddlStatus", @class = "form-control leftalign" })
+                                            <span class="field-validation-valid text-danger" id="spanStatus" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label for="exampleInputEmail1 ">Start Page</label>
+                                            @Html.DropDownListFor(m => m.StartPageId, new SelectList(Model.StartPageList, "StartPage_Id", "Name"), "Select", new { @id = "ddlStartPage", @class = "form-control leftalign" })
+                                            @Html.HiddenFor(m => m.StartPage, new { @id = "StartPage" })
+                                            @*<span class="field-validation-valid text-danger" id="spanStartPage" data-valmsg-for="" data-valmsg-replace="true"></span>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer ">
+                            <button type="button" class="btn btn-primary btnSaveHome">Save changes</button>
+                            <button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade" id="system">
+                    <form id="frmSystem">
+                        <div id="message"></div>
+                        @Html.HiddenFor(x => x.Contact_Id, new { @id = "Contact_Id" })
+                        @Html.HiddenFor(x => x.Company_Id, new { @id = "Company_Id" })
+                        @Html.HiddenFor(x => x.Company_Name)
+                        @Html.HiddenFor(x => x.User_Id, new { @id = "User_Id" })
+                        @Html.HiddenFor(x => x.IsUserExists, new { @id = "IsUserExists" })
+                        <div class="row ">
+                            @if (Model.IsUserExists == false)
+                            {
+                                <div class="col-lg-8 frmSystembtn">
+                                    <button type="button" class="btn btn-primary btnCreateUser" disabled>Create User</button>
+                                    <button type="button" class="btn btn-primary btnSendReset" style="display:none">Send Reset</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary btnRemoveUser" style="display:none">Remove User</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-8">
+                                    <button type="button" class="btn btn-primary btnSendReset" disabled>Send Reset</button>&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary btnRemoveUser" disabled>Remove User</button>
+                                </div>
+                            }
+                            <div class="col-lg-4" style="text-align:right">
+                                <button type="button" class="btn btn-primary btnSaveSystem" disabled>Save changes</button>&nbsp;&nbsp;
+                                <button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="card">
+                            <h4 style="color: #337ab7;">System Administrator Only</h4><br />
+                            <div class="card-body ">
+                                <div class="row ">
+                                    @if (Model.IsUserExists == false)
+                                    {
+                                        <div class="col-lg-4 ">
+                                            <div class="form-group ">
+                                                <label for="exampleInputEmail1 ">Username</label>
+                                                @Html.TextBoxFor(x => x.UserName, new { @id = "UserName", @class = "form-control leftalign", @disabled = "true" })
+                                                <span class="field-validation-valid text-danger" id="spanUserName" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group ">
+                                                <label for="exampleInputEmail1 ">Password</label>
+                                                @Html.PasswordFor(x => x.Password, new { @id = "Password", @class = "form-control leftalign clsPassword" })
+                                                <span class="field-validation-valid text-danger" id="spanPwd" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                <span id="result"></span>
+                                            </div>
+                                            <div class="form-group ">
+                                                <label for="exampleInputEmail1 ">Confirm password</label>
+                                                @Html.PasswordFor(x => x.ConfirmPassword, new { @id = "ConfirmPassword", @class = "form-control leftalign clsConfirmPassword" })
+                                                <span class="field-validation-valid text-danger" id="spanConfirmPwd" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                            </div><br />
+                                            <h6><span style="color:red"><b> *Note:</b> </span> Password must be 8 characters long and must contain atleast 1 number and 1 special character in it. </h6>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-4 ">
+                                            <div class="form-group ">
+                                                <label for="exampleInputEmail1 ">Username</label>
+                                                @Html.TextBoxFor(x => x.UserName, new { @id = "UserName", @class = "form-control leftalign", @disabled = "true" })
+                                                <span class="field-validation-valid text-danger" id="spanUserName" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                            </div>
+                                            <div class="form-group ">
+                                                <label for="exampleInputEmail1 ">Password</label>
+                                                @Html.PasswordFor(x => x.Password, new { @id = "Password", @class = "form-control leftalign clsPassword", @disabled = "true" })
+                                                <span class="field-validation-valid text-danger" id="spanPwd" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                <span id="result"></span>
+                                            </div>
+
+                                            <div class="form-group ">
+                                                <label for="exampleInputEmail1 ">Confirm password</label>
+                                                @Html.PasswordFor(x => x.ConfirmPassword, new { @id = "ConfirmPassword", @class = "form-control leftalign clsConfirmPassword", @disabled = "true" })
+                                                <span class="field-validation-valid text-danger" id="spanConfirmPwd" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                            </div><br />
+                                            <h6><span style="color:red"><b> *Note:</b> </span> Password must be 8 characters long and must contain atleast 1 number and 1 special character in it. </h6>
+                                        </div>
+                                    }
+
+                                    <div class="col-lg-8 ">
+                                        <div class="card ">
+                                            <div class="card-body ">
+                                                <h4 style="color: #337ab7;">Roles</h4><br />
+                                                <div class="col-md-6">
+                                                    @for (int i = 0; i <= 30; i++)
+                                                    {
+                                                        <span>@Html.CheckBoxFor(x => x.UserRolesDetails[i].IsRoled)</span><span>&nbsp;</span>
+                                                        @Model.UserRolesDetails[i].RoleName
+                                                        @Html.HiddenFor(x => x.UserRolesDetails[i].RoleId)
+                                                        @Html.HiddenFor(x => x.UserRolesDetails[i].RoleName)
+                                                        <br />
+                                                    }
+                                                </div>
+                                                <div class="col-md-6">
+                                                    @for (int i = 31; i < Model.UserRolesDetails.Count; i++)
+                                                    {
+                                                        <span>@Html.CheckBoxFor(x => x.UserRolesDetails[i].IsRoled)</span><span>&nbsp;</span>
+                                                        @Model.UserRolesDetails[i].RoleName
+                                                        @Html.HiddenFor(x => x.UserRolesDetails[i].RoleId)
+                                                        @Html.HiddenFor(x => x.UserRolesDetails[i].RoleName)
+                                                        <br />
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade" id="divTargets">
+                    <form id="frmTargets"> 
+                        <div class="card">
+                            <div class="card-body" style="margin-top: -35px;">
+                                @*@Html.Partial("_Targets", Model.TargetGetRes)*@
+                                <div id="divContactTargetDetails"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="~/js/Agent/Contacts.js"></script>

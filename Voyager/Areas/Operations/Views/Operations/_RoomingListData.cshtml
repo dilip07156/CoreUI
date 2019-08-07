@@ -1,0 +1,119 @@
+﻿@model Voyager.App.ViewModels.Operations.OpsRoomListViewModel
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+
+            @Html.Hidden("PassengerCount", Model.PassengerDetails.Count)
+            <div class="card-body">
+                <div class="table-responsive filter-table custom-mob-tbl">
+                    <table class="table table-bordered tbl-theme-02 dataTables" id="tblRoomingList">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Non English Name</th>
+                                <th>Passport Number</th>
+                                <th>Date of Birth</th>
+                                <th>Comment</th>
+                                <th>Room Number </th>
+                                <th>Room Type</th>
+                                <th>View Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if (Model.PassengerDetails.Any())
+                            {
+                                @foreach (var item in Model.PassengerDetails)
+                                {
+                                    <tr>
+                                        <td>@item.Title</td>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.LastName</td>
+                                        <td>@item.PassengerName_LocalLanguage</td>
+                                        <td>@item.PassportNumber</td>
+                                        <td>@item.DateOfBirth</td>
+                                        <td>@item.Notes</td>
+                                        <td>@item.RoomAssignment</td>
+                                        <td>@item.RoomType</td>
+                                        <td><a href="#VersionList-popup" class="btn btn-primary btn-sm  popup-inline" onclick="ViewPersonalDetails('@item.Passenger_Id','@Model.BookingNumber');">View Details</a></td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <br />
+                                <h4 class="alert alert-info">No Records Found</h4>
+
+                            }
+
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<a href="#VersionList-popup" class="btn btn-white popup-inline showVersion">Show more Version</a>*@
+<div id="VersionList-popup" style="display:none">
+    <div class="popup-box pop-lg form-theme-04 form" style="max-width:80%;">
+        <div class="popup-in">
+
+        </div>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.dataTables').DataTable({
+            "ordering": false,
+            "aLengthMenu": [30, 50, 70, 90],
+            "iDisplayLength": 30,
+            "lengthChange": true,
+            "searching": false,
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-3'f><'col-sm-6'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+    });
+
+
+    function ViewPersonalDetails(Passenger_id, Booking_number) {
+         
+
+        $.ajax({
+            type: "GET",
+            url: "/Operations/ViewPersonalDetails",
+            data: { Personid: Passenger_id, BookingNumber: Booking_number },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (result) {
+
+                $("#VersionList-popup .popup-in").html(result);
+                $("#VersionList-popup").show();
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+
+    }
+   //Passenger_id, Booking_number item.Passenger_Id,Model.BookingNumber
+//    $('#tblRoomingList tbody').on('click', 'td', function (e) {
+//         
+//        var table = $('#tblRoomingList').DataTable();
+
+//        alert(table.cell(this).data());
+//    }
+//);
+    //$('#tblRoomingList tbody').on('click', 'button', function () {
+    //     
+    //    var data = table.row($(this).parents('tr')).data();
+</script>

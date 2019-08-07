@@ -1,0 +1,118 @@
+﻿@model Voyager.App.ViewModels.QuoteFOCViewModel;
+@using (Html.BeginForm("QuoteFOC", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmQuoteFOC" }))
+{
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="successmsg">Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="errormsg">Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    <div class="btn-cont pull-right">
+        <ul>
+            <li><input type="button" value="Save" class="btn btn-blue btn-md SaveQuoteFOC"></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <h5 class="sm-ttl">Freeplace for each Departure and Pax Slab </h5>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="main-lbl" style="margin-top: 3px;width:auto;">Enter Freeplaces</label>
+                </div>
+                <div class="col-md-3">
+                    <label class="main-lbl" style="width:auto;">
+                        Standard FOC&nbsp;&nbsp;
+                        @Html.CheckBoxFor(m => m.StandardFoc)
+                    </label>
+                </div>
+                <div class="col-md-3">
+                    <label class="main-lbl" style="margin-top: 3px;width:auto;">Date Range</label>
+                    @Html.DropDownList("FilterDateRange", new SelectList(Model.QuoteFOCDetails.Select(a => a.DateRange).Distinct()), new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    <label class="main-lbl" style="margin-top: 3px;width:auto;">Pax Slab</label>
+                    @Html.DropDownList("FilterPaxSlab", new SelectList(Model.QuoteFOCDetails.Select(a => a.PaxSlab).Distinct()), new { @class = "form-control" })
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.QRFID)
+            <br />
+            <div class="col-md-12" style="color:red;font-weight:bold;font-size:12px;padding:0px;display:none" id="divErrorMsg">
+                <span>Number of FOC passangers should not be same or more than Paying passangers on Slab.</span>
+            </div>
+            <br />
+            <div class="custom-mob-tbl table-responsive table-departures-dates">
+                <table class="table" id="tblFOC">
+                    <thead>
+                        <tr class="sub-hdng">
+                            <th class="col-xs"><span>Date Range</span></th>
+                            <th class="col-xs"><span>Pax Slab</span></th>
+                            <th class="col-xs"><span>FOC Single</span></th>
+                            <th class="col-xs"><span>FOC Twin</span></th>
+                            <th class="col-xs"><span>FOC Double</span></th>
+                            <th class="col-xs"><span>FOC Triple</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        @{ string RowClass = "";}
+                        @for (int i = 0; i < Model.QuoteFOCDetails.Count; i++)
+                        {
+                            if (Model.QuoteFOCDetails[i].DateRange.ToUpper() == "ALL")
+                            { RowClass = "StandardFocRow"; }
+                            else
+                            { RowClass = "FocRow"; }
+
+                            <tr class="@RowClass">
+                                <td>
+                                    @Html.Hidden("hdnSeqNo", i)
+                                    @Html.HiddenFor(m => m.QuoteFOCDetails[i].FOCId)
+                                    @Html.HiddenFor(m => m.QuoteFOCDetails[i].DateRangeId)
+                                    @Html.HiddenFor(m => m.QuoteFOCDetails[i].IsDeleted)
+                                    @Html.HiddenFor(m => m.QuoteFOCDetails[i].DivideByCost)
+                                    @Html.TextBoxFor(m => m.QuoteFOCDetails[i].DateRange, new { @class = "form-control txt-span align-center", @autocomplete = "off" })
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => m.QuoteFOCDetails[i].PaxSlabId)
+                                    @Html.TextBoxFor(m => m.QuoteFOCDetails[i].PaxSlab, new { @class = "form-control txt-span align-center", @autocomplete = "off" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuoteFOCDetails[i].FOCSingle, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuoteFOCDetails[i].FOCSingle, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuoteFOCDetails[i].FOCTwin, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuoteFOCDetails[i].FOCTwin, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuoteFOCDetails[i].FOCDouble, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuoteFOCDetails[i].FOCDouble, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuoteFOCDetails[i].FOCTriple, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuoteFOCDetails[i].FOCTriple, "", new { @class = "error" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="btn-cont pull-right">
+        <ul>
+            <li><input type="button" value="Save" class="btn btn-blue btn-md SaveQuoteFOC"></li>
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+}
+<script src="~/js/Sales/QuotePaxRange.js"></script>

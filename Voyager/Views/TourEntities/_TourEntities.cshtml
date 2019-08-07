@@ -1,0 +1,114 @@
+﻿@model Voyager.App.ViewModels.TourEntitiesViewModel
+
+<style>
+    .custom-mob-tbl .table > thead > tr > th.trTourHeaderPS {
+        padding-top: 20px;
+    }
+
+    .custom-mob-tbl .table > thead > tr > th {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    /*css for table controls*/
+    .custom-mob-tbl.tbl-tour-entity .table .form-control {
+        min-height: 25px;
+        min-width: 60px;
+        width: 60px;
+        padding: 0px;
+        height: 25px;
+    }
+
+    /*css for how many starts here*/
+    .custom-mob-tbl.tbl-tour-entity .table .numeric, .clshm > hr {
+        min-width: 35px;
+        width: 35px;
+    }
+    /*css for how many ends here*/
+
+    /*css for Add button starts here*/
+    .custom-mob-tbl.tbl-tour-entity .table a.icon-squre-green {
+        border: 1px solid green;
+        width: 22px;
+        min-width: 22px;
+        min-height: 20px;
+        height: 24px;
+    }
+    /*css for Add button ends here*/
+
+    /*css for Del button starts here*/
+    .custom-mob-tbl.tbl-tour-entity .table a.icon-squre-red {
+        border: 1px solid red;
+        width: 22px;
+        min-width: 22px;
+    }
+    /*css for Del button ends here*/
+
+    .custom-mob-tbl .table > tbody > tr > td {
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 11px;
+    }
+
+    /*css for Plax Slab label starts here*/
+    .custom-mob-tbl.tbl-tour-entity .table .trTourHeaderPS > label {
+        min-width: 35px;
+        width: 35px;
+        padding: 0px;
+        border-bottom: none;
+    }
+
+    .custom-mob-tbl .table > tbody > tr > td.trTourHeaderPS {
+        font-size: 12px;
+        padding-left: 4px;
+    }
+    /*css for Plax Slab label ends here*/
+</style>
+
+@using (Html.BeginForm("TourEntities", "TourEntities", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmTourEntities" }))
+{
+    <div class="btn-cont pull-right">
+        <ul>
+            <li><input type="button" value="Save" class="btn btn-blue btn-md btnsaveTourEntity"></li>
+        </ul>
+    </div>
+    <h3>Tour Entity</h3>
+    <div class="clearfix"></div>
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @*Tour Entities starts here*@
+            <div id="divTourEntityMenu">
+                @Html.Partial("_TourEntitiesMenu", Model)
+            </div>            
+            @*Tour Entities ends here*@
+
+            @*Tour Entities starts here*@
+            <div id="divTE">
+                <div class="row">
+                    <div class="col-md-12 top-gap-md custom-mob-tbl table-responsive tbl-tour-entity" style="overflow-x:auto;">
+                        <table class="table" id="tblTourEntitiesMain">
+                            <thead>
+                                <tr id="trTourHeader"></tr>
+                                <tr class="sub-hdng" id="trTourSubHeader"></tr>
+                                <tr class="sub-hdng" id="trTourSubSubHeader"></tr> 
+                            </thead>
+                            <tbody class="row-grid-sm document-list tbodyPaxSlab"></tbody>
+                        </table>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            @*Tour Entities ends here*@
+        </div>
+    </div>
+
+    <div class="btn-cont">
+        <a class="btn btn-blue btn-md btnsaveTourEntity">Save</a>
+    </div>
+}
+<script src="~/js/Sales/TourEntities/TourEntities.js"></script>

@@ -1,0 +1,44 @@
+﻿@model Voyager.App.ViewModels.AccomodationViewModel
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container accommodation">
+                @*@using (Html.BeginForm("Accomodation", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form" }))
+        {*@
+                <div class="head-ttl">
+                    <h2 class="pg-ttl pull-left">Accomodation</h2>
+                    @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    <div class="clearfix"></div>
+                </div>
+
+                @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+
+                <div class="sqr-tab-cont">
+                    <ul class="sqr-tab-list">
+                        @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                    </ul>
+                    <div class="sqr-tab-data displayAccomodation">
+                        @Html.Partial("_Accomodation", Model)
+                    </div>
+                </div>
+                @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                <div class="clearfix"></div>
+                @*}*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        var QRFId = $("#QRFId").val();
+        GetAccomodationData(QRFId, "", "", "");
+    });
+</script>*@
+
+
+<script src="~/js/Sales/common.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>

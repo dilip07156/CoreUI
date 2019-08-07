@@ -1,0 +1,58 @@
+﻿@model Voyager.App.ViewModels.TourEntitiesViewModel
+
+<style>
+    .btn-cancel, .btn-close {
+        display: none;
+    }
+
+    .panelaccord {
+        padding-bottom: 20px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 5px;
+    }
+
+    .divRoomeDetails, .trprice {
+        border: 1px solid #ddd !important;
+    }
+</style>
+@using (Html.BeginForm("TourEntities", "TourEntities", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmTourEntities" }))
+{
+    @*<div class="btn-cont pull-right">
+            <ul>
+                <li><input type="button" value="Save" class="btn btn-blue btn-md Save"></li>
+            </ul>
+        </div>*@
+    <h3>Tour Entity Allowances</h3>
+    <div class="clearfix"></div>
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            @*Tour Entities Menu starts here*@
+            @Html.Partial("_TourEntitiesMenu", Model)
+            @*Tour Entities Menu ends here*@
+        </div>
+    </div>
+    <div class="clearfix" style="padding-top:15px;"></div>
+    <div class="row">
+        <div class="col-md-12">
+            @*Tour Entities starts here*@
+            <div id="divTourPriceServices">
+                <div class="panel-group" id="accordion">
+                </div>
+            </div>
+            @*Tour Entities ends here*@
+        </div>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    @*<div class="btn-cont">
+            <a class="btn btn-blue btn-md btnsave">Save</a>
+        </div>*@
+}
+
+<script src="~/js/Sales/common.js"></script>
+<script src="~/js/Sales/TourEntities/TourAllowance.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>

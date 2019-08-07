@@ -1,0 +1,249 @@
+﻿@model Voyager.App.ViewModels.SalesPipelineViewModel
+
+<div class="popup-in">
+	<div class="custom-mob-tbl table-responsive">
+		<h3>Sales Pipeline Workflow</h3>
+		<br />
+		<div class="modal-body">
+			<ul class="nav nav-tabs" id="tabContent">
+				@{ string sdisplay = ""; string ddisplay = ""; }
+				@if (ViewBag.tabName == "sales")
+				{
+					sdisplay = "active";
+					ddisplay = "";
+				}
+				else
+				{
+					sdisplay = "";
+					ddisplay = "active";
+				}
+
+				<li class="@ddisplay"><a href="#details" data-toggle="tab">By Destination</a></li>
+				<li class="@sdisplay"><a href="#access-security" data-toggle="tab">By Sales Office</a></li>
+
+			</ul>
+			<br />
+			<div class="tab-content">
+				<div class="tab-pane @ddisplay" id="details">
+					<form id="frmtabDestination">
+						@*<h4>By Destination</h4>*@
+						<p>Select a Destination to Costing Approval Routes</p>
+						<br />
+
+						<div class="alert alert-success success1" style="display:none"><span id="successmsg1"></span><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a></div>
+						<div class="alert alert-danger error1" style="display:none"><span id="errmsg1"></span><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a></div>
+
+						@*<div id="message" style="display:none"></div>*@
+						<table class="table table-hover" id="tblDestination">
+							<thead>
+								<tr>
+									<th>Destination</th>
+									<th>Role</th>
+									<th colspan="2">Users</th>
+								</tr>
+							</thead>
+							<tbody class="clsDest">
+								@for (int i = 0; i < Model.RolesByDestinationList.Count - 1; i++)
+								{
+								<tr id="Destination_@i" class="Destination">
+									@Html.Hidden("hdnSeqNo", i)
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].Status, new { @id = "hfIsDeleted_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].TypeId, new { @id = "hfTypeId_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].TypeName, new { @id = "hfTypeName_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].RoleId, new { @id = "hfRoleId_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].RoleName, new { @id = "hfRoleName_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].UserId, new { @id = "hfUserId_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].UserName, new { @id = "hfUserName_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].CreateUser, new { @id = "hfCreateUser_" + i })
+									@Html.HiddenFor(x => x.RolesByDestinationList[i].CreateDate, new { @id = "hfCreateDate_" + i })
+									@if (!string.IsNullOrWhiteSpace(Model.RolesByDestinationList[i].TypeName) && Model.RolesByDestinationList[i].TypeName.Contains("|"))
+										{
+									<td>@Model.RolesByDestinationList[i].TypeName.Split("|")[1]</td>
+										}
+										else
+										{
+									<td>@Model.RolesByDestinationList[i].TypeName</td>
+										}
+									<td>@Model.RolesByDestinationList[i].RoleName</td>
+									<td>@Model.RolesByDestinationList[i].UserName</td>
+									<td>
+										<button type="button" class="btn btn-sm  btn-danger frm1Delete" id="frm1Delete">X</button>
+									</td>
+								</tr>
+								}
+								<tr>
+									@Html.Hidden("hdnSeqNo", Model.RolesByDestinationList.Count - 1)
+									<td>
+										<div class="form-group">
+											@*<div class="col-sm-4 col-xs-6 mobile-12">*@
+											@Html.DropDownListFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].TypeId, new SelectList(Model.DestinationList, "AttributeValue_Id", "Value", "", "CityName"), "Select", new { @class = "form-control frm1ddlDestination select", @id = "ddlDestinationID_" + (Model.RolesByDestinationList.Count - 1) })
+											@Html.HiddenFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].TypeName, new { @id = "ddlDestination_" + (Model.RolesByDestinationList.Count - 1), @class = "DestinationName" })
+											@Html.ValidationMessageFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].TypeId, "", new { @class = "text-danger" })
+											@*</div>*@
+										</div>
+									</td>
+									<td>
+										<div class="form-group">
+											@*<div class="col-sm-4 col-xs-6 mobile-12">*@
+											@Html.DropDownListFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].RoleId, new SelectList(Model.RoleList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control frm1ddlRole select", @id = "ddlRoleID_" + (Model.RolesByDestinationList.Count - 1) })
+											@Html.HiddenFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].RoleName, new { @id = "ddlRole_" + (Model.RolesByDestinationList.Count - 1), @class = "RoleName" })
+											@Html.ValidationMessageFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].RoleId, "", new { @class = "text-danger" })
+											@*</div>*@
+										</div>
+									</td>
+									<td>
+										<div class="form-group">
+											@*<div class="col-sm-4 col-xs-6 mobile-12">*@
+											@Html.DropDownListFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].UserId, new SelectList(Model.UserList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control frm1ddlUsers select", @id = "ddlUserID_" + (Model.RolesByDestinationList.Count - 1) })
+											@Html.HiddenFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].UserName, new { @id = "ddlUser_" + (Model.RolesByDestinationList.Count - 1), @class = "UserName" })
+											@Html.ValidationMessageFor(x => x.RolesByDestinationList[Model.RolesByDestinationList.Count - 1].UserId, "", new { @class = "text-danger" })
+											@*</div>*@
+										</div>
+									</td>
+									<td><button type="button" class="btn btn-sm btn-success frm1Add" id="frm1Add">Add</button></td>
+								</tr>
+							</tbody>
+						</table>
+						@*<div class="alert alert-success" role="alert" id="message">
+								R.A.G.Alert message for CRUD operation
+							</div>*@
+						<div class="modal-footer">
+							<button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+							<button type="button" class="btn btn-primary frm1Save" id="frm1Save">Save changes</button>
+						</div>
+					</form>
+				</div>
+				<div class="tab-pane @sdisplay" id="access-security">
+					<form id="frmtabSalesOffice">
+						@*<h4>By Sales Office</h4>*@
+						<p>Select a Sales Office to Costing Approval Routes</p>
+						<br />
+
+						<div class="alert alert-success success2" style="display:none"><span id="successmsg2"></span><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a></div>
+						<div class="alert alert-danger error2" style="display:none"><span id="errmsg2"></span><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a></div>
+
+						@*<div id="message1" style="display:none"></div>*@
+						<table class="table table-hover" id="tblSalesOffice">
+							<thead>
+								<tr>
+									<th>Sales Office</th>
+									<th>Role</th>
+									<th colspan="2">Users</th>
+								</tr>
+							</thead>
+							@*<tbody class="clsSales">
+									@for (int i = 0; i < Model.RolesBySalesOfficeList.Count; i++)
+									{
+										<tr>
+											<td>@Model.RolesBySalesOfficeList[i].TypeName</td>
+											<td>@Model.RolesBySalesOfficeList[i].RoleName</td>
+											<td>@Model.RolesBySalesOfficeList[i].UserName</td>
+											<td>
+												<button type="button" class="btn btn-sm  btn-danger">X</button>
+											</td>
+										</tr>
+									}
+								</tbody>
+								<tfoot>
+									<tr>
+										<td>
+											<div class="form-group">
+
+												@Html.DropDownListFor(m => m.SalesOffice, new SelectList(Model.SalesOfficeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control" })
+
+											</div>
+										</td>
+										<td>
+											<div class="form-group">
+
+												@Html.DropDownListFor(m => m.Role, new SelectList(Model.RoleList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control", @id = "frm2ddlRole" })
+
+											</div>
+										</td>
+										<td>
+											<div class="form-group">
+
+												@Html.DropDownListFor(m => m.User, new SelectList(Model.UserList, "AttributeValue_Id", "Value"), "Select", new { @id = "frm2ddlUsers", @class = "form-control leftalign" })
+
+											</div>
+										</td>
+										<td><button type="button" class="btn btn-sm btn-success frm2Add" id="frm1Add">Add</button></td>
+									</tr>
+								</tfoot>*@
+							<tbody class="clsSales">
+								@for (int i = 0; i < Model.RolesBySalesOfficeList.Count - 1; i++)
+								{
+								<tr id="SalesOffice_@i" class="SalesOffice">
+									@Html.Hidden("hdnSeqNo1", i)
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].Status, new { @id = "hfIsDeleted1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].TypeId, new { @id = "hfTypeId1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].TypeName, new { @id = "hfTypeName1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].RoleId, new { @id = "hfRoleId1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].RoleName, new { @id = "hfRoleName1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].UserId, new { @id = "hfUserId1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].UserName, new { @id = "hfUserName1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].CreateUser, new { @id = "hfCreateUser1_" + i })
+									@Html.HiddenFor(x => x.RolesBySalesOfficeList[i].CreateDate, new { @id = "hfCreateDate1_" + i })
+									@if (!string.IsNullOrWhiteSpace(Model.RolesBySalesOfficeList[i].TypeName) && Model.RolesBySalesOfficeList[i].TypeName.Contains("|"))
+										{
+										<td>@Model.RolesBySalesOfficeList[i].TypeName.Split("|")[1]</td>
+										}
+										else
+										{
+										<td>@Model.RolesBySalesOfficeList[i].TypeName</td>
+										}
+									<td>@Model.RolesBySalesOfficeList[i].RoleName</td>
+									<td>@Model.RolesBySalesOfficeList[i].UserName</td>
+									<td>
+										<button type="button" class="btn btn-sm  btn-danger frm2Delete" id="frm2Delete">X</button>
+									</td>
+								</tr>
+								}
+								<tr>
+									@Html.Hidden("hdnSeqNo1", Model.RolesBySalesOfficeList.Count - 1)
+									<td>
+										<div class="form-group">
+											@*<div class="col-sm-4 col-xs-6 mobile-12">*@
+											@Html.DropDownListFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].TypeId, new SelectList(Model.SalesOfficeList, "AttributeValue_Id", "Value", "", "CityName"), "Select", new { @class = "form-control frm2ddlSalesOffice select", @id = "ddlSalesOfficeID_" + (Model.RolesBySalesOfficeList.Count - 1) })
+											@Html.HiddenFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].TypeName, new { @id = "ddlSalesOffice_" + (Model.RolesBySalesOfficeList.Count - 1), @class = "SalesOfficeName" })
+											@Html.ValidationMessageFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].TypeId, "", new { @class = "text-danger" })
+											@*</div>*@
+										</div>
+									</td>
+									<td>
+										<div class="form-group">
+											@*<div class="col-sm-4 col-xs-6 mobile-12">*@
+											@Html.DropDownListFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].RoleId, new SelectList(Model.RoleList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control frm2ddlRole select", @id = "ddlRoleID1_" + (Model.RolesBySalesOfficeList.Count - 1) })
+											@Html.HiddenFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].RoleName, new { @id = "ddlRole1_" + (Model.RolesBySalesOfficeList.Count - 1), @class = "RoleName1" })
+											@Html.ValidationMessageFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].RoleId, "", new { @class = "text-danger" })
+											@*</div>*@
+										</div>
+									</td>
+									<td>
+										<div class="form-group">
+											@*<div class="col-sm-4 col-xs-6 mobile-12">*@
+											@Html.DropDownListFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].UserId, new SelectList(Model.UserList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control frm2ddlUsers select", @id = "ddlUserID1_" + (Model.RolesBySalesOfficeList.Count - 1) })
+											@Html.HiddenFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].UserName, new { @id = "ddlUser1_" + (Model.RolesBySalesOfficeList.Count - 1), @class = "UserName1" })
+											@Html.ValidationMessageFor(x => x.RolesBySalesOfficeList[Model.RolesBySalesOfficeList.Count - 1].UserId, "", new { @class = "text-danger" })
+											@*</div>*@
+										</div>
+									</td>
+									<td><button type="button" class="btn btn-sm btn-success frm2Add" id="frm2Add">Add</button></td>
+								</tr>
+							</tbody>
+
+						</table>
+						@*<div class="alert alert-success" role="alert" id="message">
+								R.A.G.Alert message for CRUD operation
+							</div>*@
+						<div class="modal-footer">
+							<button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+							<button type="button" class="btn btn-primary frm2Save" id="frm2Save">Save changes</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="~/js/Settings/SalesPipelineRoles.js"></script>

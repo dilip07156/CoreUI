@@ -1,0 +1,222 @@
+﻿@model Voyager.App.ViewModels.QuotePaxRangeViewModel;
+
+@using (Html.BeginForm("QuotePaxRange", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmQuotePaxRange" }))
+{
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="successmsg">Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="errormsg">Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+
+    <div class="btn-cont pull-right">
+        <ul>
+            <li><input type="button" value="Save" class="btn btn-blue btn-md SaveQuotePaxRange"></li>
+        </ul>
+    </div>
+    <h3>Pax Range </h3>
+    <div class="row">
+        <div class="col-lg-9">
+            <a id="PaxSlabs" href="#" class="txt-lnk darkblue pull-right">Generate Slabs <i class="fa fa-angle-right"></i> </a>
+            <h5 class="sm-ttl">Pax Slabs and Transport (For each slab)</h5>
+
+            <div class="slab-box collapse" style="display:none">
+                <strong>Generate Slabs</strong>
+                From <input id="SlabFrom" type="text" class="form-control" autocomplete="off"> To <input id="SlabTo" type="text" class="form-control" autocomplete="off">
+                Maintain Gaps of <input id="SlabGap" type="text" class="form-control" autocomplete="off">
+                <a id="GenerateSlabs" href="#" class="btn btn-off-blue">Go</a>
+                <a href="#" class="btn-close"></a>
+            </div>
+            @Html.HiddenFor(m => m.QRFID)
+            <div class="clearfix"></div>
+            <div class="custom-mob-tbl table-responsive table-departures-dates">
+                <table class="table" id="tblPaxRange">
+                    <thead>
+                        <tr>
+                            <th colspan="3"><span>Pax Slabs</span></th>
+                            <th colspan="6">
+                                Transport
+                                <div class="tool-tip info">
+                                    <a href="#" class="info-lnk">
+                                        <i class="fa fa-info-circle"></i>
+                                    </a>
+                                    <div class="tooltip-cont disable">
+                                        Gives you the flexibility to assign vehicles of different capacities to the corresponding pax slabs to control costs & improve utilisation
+                                        <a href="#" class="btn-close"></a>
+                                    </div>
+                                </div>
+                            </th>
+                            <th rowspan="2" class="col-xs"><span></span></th>
+                        </tr>
+                        <tr class="sub-hdng">
+                            <th class="col-xs"><span>From</span></th>
+                            <th class="col-xs"><span>To</span></th>
+                            <th class="col-xs"><span>Divided Costs by</span></th>
+                            <th class="col-xs"><span>Category</span></th>
+                            <th class="col-sm4"><span>Coach Type</span></th>
+                            <th class="col-xs"><span>Brand</span></th>
+                            <th class="col-xs2"><span>How Many?</span></th>
+                            <th class="col-xs2"><span>Currency</span></th>
+                            <th class="col-xs2"><span>Budget</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        @for (int i = 0; i < Model.QuotePaxSlabDetails.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.Hidden("hdnSeqNo", i)
+                                    @Html.HiddenFor(m => m.QuotePaxSlabDetails[i].PaxSlabId)
+                                    @Html.HiddenFor(m => m.QuotePaxSlabDetails[i].IsDeleted)
+                                    @Html.TextBoxFor(m => m.QuotePaxSlabDetails[i].PaxSlabFrom, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].PaxSlabFrom, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuotePaxSlabDetails[i].PaxSlabTo, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].PaxSlabTo, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuotePaxSlabDetails[i].PaxSlabDividedBy, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].PaxSlabDividedBy, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    <div class="edit-cont">
+                                        @Html.HiddenFor(m => m.QuotePaxSlabDetails[i].TransportCategory)
+                                        @Html.DropDownListFor(m => m.QuotePaxSlabDetails[i].TransportCategoryID, new SelectList(Model.QuotePaxSlabDetails[i].TransportCategoryList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select" })
+                                        @*@Html.TextBoxFor(m => m.QuotePaxSlabDetails[i].TransportCategory, new { @class = "form-control txt-span", @value = "35 Seater Coach", @ReadOnly = "true" })*@
+                                        @Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].TransportCategoryID, "", new { @class = "error" })
+                                        @*<a href="#" class="lnk-edit"><i class="fa fa-pencil"></i><i class="fa fa-check edit-save" style="display:none;"></i></a>*@
+                                    </div>
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => m.QuotePaxSlabDetails[i].TransportCoachType)
+                                    @Html.DropDownListFor(m => m.QuotePaxSlabDetails[i].TransportCoachTypeID, new SelectList(Model.QuotePaxSlabDetails[i].TransportCoachTypeList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select" })
+                                    @Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].TransportCoachTypeID, "", new { @class = "error" })
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => m.QuotePaxSlabDetails[i].TransportBrand)
+                                    @Html.DropDownListFor(m => m.QuotePaxSlabDetails[i].TransportBrandID, new SelectList(Model.QuotePaxSlabDetails[i].TransportBrandList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuotePaxSlabDetails[i].TransportCount, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].TransportCount, "", new { @class = "error" })
+                                </td>
+                                <td class="numeric">
+                                    @Model.QuotePaxSlabDetails[i].BudgetCurrency
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.QuotePaxSlabDetails[i].BudgetAmount, new { @class = "form-control numeric", @autocomplete = "off" })
+                                    @*@Html.ValidationMessageFor(m => m.QuotePaxSlabDetails[i].BudgetAmount, "", new { @class = "error" })*@
+                                </td>
+                                <td>
+                                    <div class="icon-squre-cont">
+                                        <a href="#" class="icon-squre-green"><i class="fa fa-plus"></i></a>
+                                        <a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="clearfix"></div>
+            @*<h3>Hotels </h3>*@
+            <div class="hotel-cat-sec" style="display:none">
+                <p>Would you like to base your quote on different categories / chain of hotels?</p>
+                <div class="radio-group">
+                    @*<label><input type="radio" name="hotel-opt" value="yes"> Yes </label>*@
+                    @*box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);*@
+                    <label>@Html.RadioButtonFor(m => m.HotelsOption, "yes") Yes </label>
+                    <label>@Html.RadioButtonFor(m => m.HotelsOption, "no") No </label>
+                    @Html.ValidationMessageFor(m => m.HotelsOption, "", new { @class = "error" })
+                    <div class="hotels-opt-cont tooltip-cont">
+                        <div class="row">
+                            <div class="col-sm-6 hotel-category">
+                                @*style="border-right: 1px solid #000;"*@
+                                <h4>
+                                    <span class="txt-blue">Hotel Categories</span>
+                                    If Yes, based on
+                                </h4>
+                                <ul>
+                                    @for (int i = 0; i < Model.HotelCategoryList.Count; i++)
+                                    {
+                                        <li>
+                                            <div>
+                                                <span id="cat_seq">@(i + 1) - </span>
+                                            </div>
+                                            <div>
+                                                @Html.TextBoxFor(m => m.HotelCategoryList[i].Value, new { @class = "form-control bindHotelCat", @id = "HotelCategory_" + i + "UI", @value = "1" })
+                                                @Html.HiddenFor(m => m.HotelCategoryList[i].AttributeId, new { @id = "HotelCategory_" + i })
+                                            </div>
+                                            <div class="icon-squre-cont">
+                                                <a class="txt-green" href="#"><i class="fa fa-plus"></i> </a>
+                                                <a class="txt-red" href="#"><i class="fa fa-times"></i> </a>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div style="height :100%"></div>
+                            <div class="col-sm-6 hotel-chain">
+                                <h4>
+                                    <span class="txt-blue">Chain of Hotels</span>
+                                    If Yes, based on
+                                </h4>
+                                <ul>
+                                    @for (int i = 0; i < Model.HotelChainList.Count; i++)
+                                    {
+                                        <li>
+                                            <div>
+                                                <span id="chain_seq">@(i + 1) - </span>
+                                            </div>
+                                            <div>
+                                                @Html.TextBoxFor(m => m.HotelChainList[i].Value, new { @class = "form-control bindHotelChain", @id = "HotelChain_" + i + "UI", @value = "1" })
+                                                @Html.HiddenFor(m => m.HotelChainList[i].AttributeId, new { @id = "HotelChain_" + i })
+                                            </div>
+                                            <div class="icon-squre-cont">
+                                                <a class="txt-green" href="#"><i class="fa fa-plus"></i> </a>
+                                                <a class="txt-red" href="#"><i class="fa fa-times"></i> </a>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <a href="#" class="btn-close"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="btn-cont pull-right">
+        <ul>
+            <li><input type="button" value="Save" class="btn btn-blue btn-md SaveQuotePaxRange"></li>
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+}
+<script src="~/js/Sales/QuotePaxRange.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var a = @Model.QuotePaxSlabDetails.Count;
+        var b = @Model.HotelCategoryList.Count;
+        var c = @Model.HotelChainList.Count;
+        LoadListCounts(a, b, c);
+    });
+</script>

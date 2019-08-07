@@ -1,0 +1,38 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+
+@Html.HiddenFor(model => model.EnquiryPipeline, new { @id = "EnquiryPipeline" })
+<ul class="sqr-tab-list">
+    <li id="Itinerary">
+        <a id="aItinerary" href="/Amendment/Itinerary?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-itinerary-wht yellow"></i></figure> <strong>Itinerary</strong>
+        </a>
+    </li>
+    <li id="Guesstimate">
+        <a id="aGuesstimate" href="/Amendment/Guesstimate?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-guesstimate-wht sky-blue"></i></figure> <strong>Guesstimate</strong>
+        </a>
+    </li>
+    <li id="Commercials">
+        <a id="aCommercials" href="/Amendment/Commercials?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-commercials-wht orange"></i></figure> <strong>Commercials</strong>
+        </a>
+    </li>
+    <li id="Costsheet">
+        <a id="aCostsheet" href="/Amendment/Costsheet?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-costsheet-wht purple"></i></figure> <strong>Costsheet</strong>
+        </a>
+    </li>
+    <li id="Proposal">
+        <a id="aProposal" href="/Amendment/Proposal?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-proposal-wht red"></i></figure> <strong>Proposal</strong>
+        </a>
+    </li>
+</ul>
+
+<script>
+    $(document).ready(function () {
+        var SelectedMenu = '@Model.MenuName';
+        $("#" + SelectedMenu).parent().find("li").removeClass("active");
+        $("#" + SelectedMenu).addClass("active");
+    });
+</script>

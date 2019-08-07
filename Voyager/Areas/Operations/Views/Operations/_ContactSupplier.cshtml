@@ -1,0 +1,73 @@
+﻿@model  Voyager.App.ViewModels.OPSContactSupplier
+
+<style>
+	/*.btn-cont {
+		text-align: left !important;
+	}*/
+</style>
+
+<h3>Contact Supplier</h3>
+<button title="Close (Esc)" type="button" class="mfp-close"></button>
+	<div class="modal-body form-theme-04">
+		@Html.HiddenFor(x=>x.BookingNumber,new { @id= "BookingNumber" })
+		@Html.HiddenFor(x => x.PositionId, new { @id = "PositionId" })
+		<!-- Standard Email Functions-->
+		<div class="row">
+			<div class="col-12">
+				<h5>Select Template</h5>
+				<br />
+				<button type="button" class="btn btn-primary btnGeneric">Generic</button>
+				<button type="button" class="btn btn-primary btnProvisional">Provisional</button>
+				<button type="button" class="btn btn-primary btnExtendOption">Extend Option</button>
+			</div>
+			<br />
+			<div id="EditSendEmailSec"></div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary close-popup"	data-dismiss="modal">Close</button>
+	</div>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function () { 
+
+		$('.btnGeneric').click(function () {
+			EditSendEmail('GE');
+		});
+
+		$('.btnProvisional').click(function () {
+			EditSendEmail('PROV');
+		});
+
+		$('.btnExtendOption').click(function () {
+			EditSendEmail('KK');
+		});
+
+	});
+
+	function EditSendEmail(doctype) {
+		var BookingNumber = $('#BookingNumber').val();
+		var PositionId = $('#PositionId').val();
+		var data = { BookingNo: BookingNumber, PositionId: PositionId, Doctype: doctype };
+		
+		$.ajax({
+			type: "GET",
+			url: "/Hotels/GetHotelEmailContent",
+			data: data,
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (response) {
+				$("#EditSendEmailSec").html(response);
+				$(".hidesec").css('display', 'none');
+				$("#sendtoclientmail").text("Contact Supplier").removeClass('btn-blue').addClass('btn-danger');
+			},
+			error: function (response) {
+				$(".ajaxloader").hide();
+				alert(response.statusText);
+			}
+		});
+	}
+
+</script>

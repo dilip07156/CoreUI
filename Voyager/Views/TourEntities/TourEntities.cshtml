@@ -1,0 +1,100 @@
+﻿@model Voyager.App.ViewModels.TourEntitiesViewModel
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="head-ttl">
+                    <h2 class="pg-ttl pull-left">Tour Entities</h2>
+                    @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    <div class="clearfix"></div>
+                </div>
+                @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+                <div class="sqr-tab-cont">
+                    @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                    @Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+                    <div class="sqr-tab-data">
+                        <div class="ttl-sec tbl-style pull-left">
+                            <div class="ttl">
+                                <i class="fa-custom-tour-entities-black"></i> Tour Entities
+                            </div>
+                        </div>
+                        <div class="simple-tab-cont">
+                            <ul class="simple-tab-list">
+                                <li id="TourEntity"><a id="aTourEntity" href="#" class="active" data-label="TourEntity">Tour Entity</a></li>
+                                <li id="Allowances"><a id="aAllowances" href="#" data-label="allowances">Tour Entity Allowances</a></li>
+                            </ul>
+                        </div>
+                        <div id="TourTabsCont">
+                            <div class="simple-tab-data" id="TETourEntity">@Html.Partial("_TourEntities", Model)</div>
+                            <div class="simple-tab-data" id="TEAllowances" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#TourEntity").click(function () {
+            $(".ajaxloader").show();
+            $("#TourTabsCont").children().hide();
+            $("#TourEntity").parent().find("a").removeClass("active");
+            $("#aTourEntity").addClass("active");
+            $("#TETourEntity").show();
+
+            $("#trTourHeader").find("th").remove();
+            $("#trTourSubHeader").find("th").remove();
+            $("tr[class^=trPaxSlab]").remove();
+            $("#tblTourEntitiesMain").find(".trTourHeaderPS").remove();             
+             
+           // $('#TETourEntity').load('/TourEntities/GetTourEntities/', { QRFId: $("#QRFId").val(), TourType:"TE" }); 
+            $.ajax({
+                type: "GET",
+                url: "/TourEntities/GetTourEntities",
+                data: { QRFId: $("#QRFId").val(), TourType: "TE" },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                global: false,
+                success: function (response) {                    
+                    $('#TETourEntity').html(response); 
+                },
+                error: function (response) {
+                    $(".ajaxloader").hide();
+                    alert(response.statusText);
+                }
+            }); 
+        });
+
+        $("#Allowances").click(function () { 
+            //$('#TEAllowances').load('/TourEntities/GetTourEntitiesAllowances/', { QRFId: $("#QRFId").val(), TourType:"allowances" });
+            $('#TEAllowances').load('/TourEntities/GetTourEntitiesAllowances/', { QRFId: $("#QRFId").val(), TourType: "TE" });
+            $("#TourTabsCont").children().hide();
+            $("#Allowances").parent().find("a").removeClass("active");
+            $("#aAllowances").addClass("active");
+            $("#TEAllowances").show();
+
+            //$(".ajaxloader").show();
+            //$.ajax({
+            //    type: "GET",
+            //    url: "/TourEntities/GetTourEntitiesAllowances",
+            //    data: { QRFId: $("#QRFId").val(), TourType: "allowances" },
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "html",
+            //    global: false,
+            //    success: function (response) {
+            //        $('#TEAllowances').html(response);
+            //    },
+            //    error: function (response) {
+            //        $(".ajaxloader").hide();
+            //        alert(response.statusText);
+            //    }
+            //}); 
+        });
+    });
+</script>

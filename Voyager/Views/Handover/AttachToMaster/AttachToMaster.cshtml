@@ -1,0 +1,24 @@
+﻿@model Voyager.App.ViewModels.AttachToMasterViewModel
+
+<div class="wrapper">
+
+    <!-- Main Content :: Starts -->
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="listing-content">
+                    @*<div class="enquiry-ttl-due-section btm-border">
+            <h1 class="full">Sales Officer</h1>
+        </div>*@
+                    @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel, new ViewDataDictionary(this.Vi‌​ewData) { { "EnquiryPipeline", Model.MenuViewModel.EnquiryPipeline } })
+                </div>
+                <div class="sqr-tab-cont">
+                    @Html.Partial("_HandoverMenu", Model.MenuViewModel)
+                    <div class="sqr-tab-data sales-officers" id="attachtomaster">
+                        @Html.Partial("~/Views/Handover/AttachToMaster/_AttachToMaster.cshtml", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

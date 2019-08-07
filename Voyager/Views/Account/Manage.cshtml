@@ -1,0 +1,245 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model Voyager.App.ViewModels.ManageViewModel
+@using VGER_WAPI_CLASSES
+
+@{
+    string SessionName = "IntegrationInfo";
+    var sessionData = Context.Session.GetComplexData<List<ProductAttributeDetails>>(SessionName);
+    var UserName = sessionData != null ? sessionData.Where(a => a.AttributeId == "UserName").Select(b => b.Value).FirstOrDefault() : "";
+}
+
+<style>
+    .products-contracting {
+        width: 100%;
+    }
+
+    .add-to-menu.products-contracting .detail-container .form-sec {
+        padding: 0 0px;
+    }
+
+        .add-to-menu.products-contracting .detail-container .form-sec .btn-md {
+            min-width: 100px;
+        }
+
+    .top-margin {
+        margin-top: 20px;
+    }
+
+    a .arrow:before {
+        content: "\f107";
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid #ddd;
+        border-bottom-color: #ddd;
+    }
+
+    .form-theme-04 input[type="password"] {
+        border: none !important;
+        border-bottom: 1px solid #000 !important;
+        border-radius: 0px !important;
+    }
+</style>
+
+<body class="inner-pg logged-in" data-responsejs='{"create":[{"prop":"width", "prefix":"min-device-width-", "lazy":false, "breakpoints":[0, 320, 481, 641, 767, 961, 1025, 1281] }]}'>
+    <!-- Wrapper ::Starts -->
+    <div class="wrapper">
+        <!-- Main Content :: Starts -->
+        <div class="main-content form-theme-04 form">
+            <div class="container">
+                <div class="pg-container">
+                    @using (Html.BeginForm("Manage", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data", id = "frmManageAccount" }))
+                    {
+                        <div class="col-md-12">
+                            <div class="row">
+                                <h2 class="pg-ttl">User Name : @Html.Raw(!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Request.Cookies["UserName"]) ? HttpContextAccessor.HttpContext.Request.Cookies["UserName"] : UserName)</h2>
+                                @Html.HiddenFor(Model => Model.VoyagerUser_Id, new { @id = "VUId" })
+                                @if (TempData.Keys.Contains("success"))
+                                {
+                                    <div class="alert alert-success">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                                        <strong>Success!</strong> @TempData["success"].ToString()
+                                    </div>
+                                }
+                                else if (TempData.Keys.Contains("error"))
+                                {
+                                    <div class="alert alert-danger">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                                        <strong>Error!</strong> @TempData["error"].ToString()
+                                    </div>
+                                }
+                            </div>
+                            <div class="row"> <hr /></div>
+
+
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div>
+                                        <div>
+                                            <div style="padding-bottom:12px;">
+                                                <h3> Contact Details</h3>
+
+                                            </div>
+                                            <div class="border-bottom"></div>
+                                            <div class="collapse-container" style="display: block;">
+                                                <div class="detail-container form-sec">
+                                                    <div class="row" style="margin:0px 0px 10px 0px">
+                                                        <div class="row">
+                                                            <div style="padding-top:10px;">
+
+                                                                <div class="col-md-12">
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <label class="control-label">Telephone Number</label>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            @*@Html.TextBox("txtPhone", "", new { @class = "form-control numericWithSpecChar", @style = "background - color: #fff" })*@
+                                                                            @Html.TextBoxFor(model => model.Telephone, new { @class = "form-control numericWithSpecChar", @style = "background - color: #fff" })
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4"><label class="control-label">Mobile Number</label></div>
+                                                                        <div class="col-md-6">
+                                                                            @*@Html.TextBox("txtMobile", "", new { @class = "form-control numericWithSpecChar", @style = "background - color: #fff" })*@
+                                                                            @Html.TextBoxFor(model => model.MobileNumber, new { @class = "form-control numericWithSpecChar", @style = "background - color: #fff" })
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4"><label class="control-label">Fax</label> </div>
+                                                                        <div class="col-md-6">
+                                                                            @*@Html.TextBox("txtFax", "", new { @class = "form-control", @style = "background - color: #fff" })*@
+                                                                            @Html.TextBoxFor(model => model.FaxNumber, new { @class = "form-control numericWithSpecChar", @style = "background - color: #fff" })
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                    @*<div class="row">
+                                                                            <div class="col-md-4"><label class="control-label">Web </label></div>
+                                                                            <div class="col-md-6">
+                                                                                @Html.TextBox("txtWeb", "", new { @class = "form-control", @style = "background - color: #fff" })
+                                                                            </div>
+
+                                                                        </div>*@
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        @*<div class="col-md-12 text-right top-margin">
+                                                                <input type="submit" value="Save" id="btnSave" class="btn btn-blue btn-md" />
+
+                                                            </div>*@
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row top-margin"></div>
+                                <div class="top-margin">
+                                    <div>
+
+
+                                        <div class="row">
+                                            <div style="padding-bottom:12px;padding-right:16px;">
+                                                <span class="h3">Change Password</span>
+                                                <input type="button" value="Change" id="btnChange" class="btn btn-blue btn-md pull-right col-md-pull-1" />
+                                                @*@Html.Hidden("IsPasswordEnabled", "false", new { id = "hdnIsPasswordEnabled" })*@
+                                                @Html.HiddenFor(model => model.IsPasswordEnabled, new { id = "hdnIsPasswordEnabled" })
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="border-bottom"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div style="display: block;">
+                                                <div class="detail-container">
+                                                    <div class="row" style="margin:0px 0px 10px 0px">
+
+
+                                                        <div class="row">
+                                                            <div style="padding-top:10px;">
+
+                                                                <div class="col-md-12">
+                                                                    <div class="row">
+                                                                        <div class="col-md-4"><label class="control-label">Password</label></div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="input-cntrl">
+                                                                                @Html.Password("Password", "", new { @class = "form-control pwd", @readonly = "readonly", @style = "background - color: #fff" })
+                                                                                @*@Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })*@
+                                                                                <span id="spanPassword" class="text-danger" style="display:none;">*</span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4"><label class="control-label">Confirm Password</label></div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="input-cntrl">
+                                                                                @Html.Password("ConfirmPassword", "", new { @class = "form-control pwd", @readonly = "readonly", @style = "background - color: #fff" })
+
+                                                                                <span id="spanConfirmPassword" class="text-danger" style="display:none;">*</span>
+
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12 text-right top-margin">
+                                                            <input type="submit" value="Update" name="command" id="btnSavePassword" class="btn btn-blue btn-md updateButton" style="margin-right:16px" />
+                                                            <input type="submit" name="command" value="Cancel" id="btnCancelPassword" class="btn btn-blue btn-md" />
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-6">
+                                    Photo Container
+                                    <div style="height:168px;width:203px;border: 1px solid black">
+                                        @*<img src="@Url.Content(Model.PhotoPath)" width="203px" style="height:166px;" />*@
+                                        <img src="@Model.PhotoPath" width="203px" style="height:166px;" />
+
+                                    </div>
+                                    <div class="col-md-11 text-right top-margin">
+                                        <input type="file" name="file" id="files" />
+                                        <br />
+                                        <input value="Upload" type="submit" name="command" id="btnUpload" class="btn btn-blue btn-md" />
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                    }
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="~/js/Manage/Profile.js"></script>
+
+

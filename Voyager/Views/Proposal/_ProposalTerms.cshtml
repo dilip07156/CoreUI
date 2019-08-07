@@ -1,0 +1,117 @@
+﻿@model Voyager.App.ViewModels.ProposalTermsViewModel
+<link href="~/ckeditor/samples/css/samples.css" rel="stylesheet" />
+
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmProposalTerms" }))
+{
+    <div class="main-content form-theme-04 form">
+        <div class="pg-container">
+            <div class="sqr-tab-cont">
+                <div class="sqr-tab-data flights">
+                    <div class="row" style="margin-left:0px;margin-right:0px;">
+                        <div class="radio-list-bar proposal-radio-list-bar col-sm-10">
+                            <span class="table-cell"><strong>Include in Proposal</strong> </span>
+                            <ul class="table-cell" id="chkIncludes">
+                                <li>
+                                    <label class="chk-cont inline-pop">
+                                        @*@Html.CheckBox("pkgd-type", true, new { id = "chkPackage" }) Departure Dates / Costs*@
+                                        @Html.CheckBoxFor(m => m.ProposalIncludeRegions.Costsheet, new { @disabled = "true" }) Departure Dates / Costs
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="chk-cont">
+                                        @Html.CheckBoxFor(m => m.ProposalIncludeRegions.IncExc, new { @disabled = "true" }) Inclusions / Exclusions / Notes
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="chk-cont inline-pop">
+                                        @Html.CheckBoxFor(m => m.ProposalIncludeRegions.RegionMap) Map of the Region
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="chk-cont inline-pop">
+                                        @Html.CheckBoxFor(m => m.ProposalIncludeRegions.SuggestedHotels) Information on the suggested hotel list
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="chk-cont inline-pop">
+                                        @Html.CheckBoxFor(m => m.ProposalIncludeRegions.ItineraryBrief) Your Itinerary in Brief
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="chk-cont inline-pop">
+                                        @Html.CheckBoxFor(m => m.ProposalIncludeRegions.ItineraryDetail) Your Itinerary in Detail
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="btn-cont-rgt col-sm-2" style="text-align:right">
+                            <a class="btn btn-blue btn-md" id="btnSaveTerms">Save &amp; Continue</a>
+                        </div>
+                    </div>
+                    <div class="process-data-sec">
+                        <textarea id="editorTerms" name="editorTerms" class="editorTerms" disabled>
+                        @if (Model.Terms != null)
+                        {
+                            @Model.Terms
+                        }
+                        else
+                        {
+                            @if (@Model.TermsList != null)
+                            {
+                            <b>SPECIAL NOTES:</b>
+                            <ul>
+                                    @for (int i = 0; i < Model.TermsList.Count(); i++)
+                                    {
+                            <li>@Model.TermsList[i].Tcs</li>
+                                    }
+                                </ul>
+                            }
+                        }
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        CKEDITOR.replace("editorTerms");
+        EnableDisableRoleBasedControls('QRF', 'editorTerms');
+    });
+
+    $("#btnSaveTerms").click(function () {
+        var text = CKEDITOR.instances['editorTerms'].getData();
+        var proposalId = $("#ProposalId").val();
+        var QRFId = $("#QRFId").val();
+        var ProposalIncludeRegions = {
+            Costsheet: $('#ProposalIncludeRegions_Costsheet').is(':checked'),
+            IncExc: $('#ProposalIncludeRegions_IncExc').is(':checked'),
+            RegionMap: $('#ProposalIncludeRegions_RegionMap').is(':checked'),
+            SuggestedHotels: $('#ProposalIncludeRegions_SuggestedHotels').is(':checked'),
+            ItineraryBrief: $('#ProposalIncludeRegions_ItineraryBrief').is(':checked'),
+            ItineraryDetail: $('#ProposalIncludeRegions_ItineraryDetail').is(':checked')
+        };
+        $.ajax({
+            type: "POST",
+            url: "/Proposal/SaveProposalTerms",
+            data: { QRFId: QRFId, ProposalId: proposalId, txtTerms: text, ProposalIncludeRegions: ProposalIncludeRegions },
+            success: function (response) {
+                $("#CoveringNote").click();
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+    });
+
+    $('#chkIncludes input[type="checkbox"]').click(function () {
+        if (this.id == 'ProposalIncludeRegions_Costsheet' || this.id == 'ProposalIncludeRegions_IncExc') {
+            return false;
+        }
+    });
+</script>

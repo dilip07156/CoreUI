@@ -1,0 +1,677 @@
+﻿@model Voyager.App.ViewModels.GuesstimateViewModel
+<style>
+    .cost-guesstimate-hor .table > tbody > tr > td {
+        font-size: 11px !important;
+    }
+
+    .filter-table .table > tbody > tr > td .form-control {
+        font-size: 11px !important;
+    }
+
+    .cost-guesstimate-hor .filter-table table .cost-basis {
+        min-width: 50px !important;
+    }
+
+    .lgnd-box h5, .lgnd-box ul li {
+        padding-top: 15px !important;
+    }
+</style>
+<form id="frmGuesstimate">
+    @Html.HiddenFor(x => x.Guesstimate.GuesstimateId, new { @id = "GuesstimateId" })
+    @Html.HiddenFor(x => x.Guesstimate.QRFID)
+    @Html.HiddenFor(x => x.IsNewVersion, new { @id = "IsNewVersion" })
+    @Html.HiddenFor(x => x.Guesstimate.VersionId, new { @id = "VersionId" })
+
+    <div class="row col-md-12 divAlertRegenCost" style="color:red;font-weight:bold;font-size:11px;display:none">
+        <span>* Guesstimate Prices are changed, Please Regenerate the Costsheet</span>
+    </div>
+    <br />
+
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong>Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+    @*<div>
+            <label>
+                <span style="font-weight:bold">Version: @Model.Guesstimate.VersionId (@ViewBag.VersionName - </span> @ViewBag.VersionDescription<span style="font-weight:bold">)</span>
+                <a href="#VersionList-popup" class="btn-blue popup-inline showVersion">Show more Version</a>
+            </label>
+        </div>*@
+    <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+        <div class="tbl-actn-btns">
+            <h4>Version: @Model.Guesstimate.VersionId (@ViewBag.VersionName -  @ViewBag.VersionDescription)</h4>
+            <span><a href="#VersionList-popup" class="btn btn-white popup-inline showVersion">Show more Version</a> <a href="#Version-popup" class="btn btn-white popup-inline saveVersion">Create new Version</a></span>
+        </div>
+    </div>
+    <br />
+    <div class="filter-wrap">
+        <h6>Filter by:</h6>
+
+        <ul class="filter-links">
+            <li>
+                <a>Days <i class="fa fa-angle-down"></i></a>
+                <div class="compare-dropdown">
+                    @Html.DropDownListFor(m => m.Day, new SelectList(Model.DayList, "Attribute_Id", "AttributeName"), "All", new { @class = "form-control filter" })
+                </div>
+            </li>
+            <li>
+                <a>Products <i class="fa fa-angle-down"></i></a>
+                <div class="compare-dropdown">
+                    @Html.DropDownListFor(m => m.Service, new SelectList(Model.ServiceTypeList, "Prodtype", "Prodtype"), "All", new { @class = "form-control filter" })
+                </div>
+            </li>
+            <li>
+                <a>Package <i class="fa fa-angle-down"></i></a>
+                <div class="compare-dropdown">
+                    @Html.DropDownListFor(m => m.KeepAs, new SelectList(Model.KeepAsList, "Value", "Value"), "All", new { @class = "form-control filter" })
+                </div>
+            </li>
+            <li>
+                <a>Date band <i class="fa fa-angle-down"></i></a>
+
+                <div class="compare-dropdown">
+                    @if (Model.IsStandardPrice)
+                    {
+                        @Html.DropDownListFor(m => m.DepartureDate, new SelectList(Model.DepartureDatesList, "AttributeValue_Id", "Value"), "All", new { @class = "form-control filter" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.DepartureDate, new SelectList(Model.DepartureDatesList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                    }
+                </div>
+            </li>
+            <li>
+                <a>Pax Slab <i class="fa fa-angle-down"></i></a>
+                <div class="compare-dropdown">
+                    @if (Model.IsStandardPrice)
+                    {
+                        @Html.DropDownListFor(m => m.PaxSlab, new SelectList(Model.PaxSlabList, "AttributeValue_Id", "Value"), "All", new { @class = "form-control filter" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.PaxSlab, new SelectList(Model.PaxSlabList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                    }
+                </div>
+            </li>
+            <li>
+                <div class="lgnd-box ">
+                    <h5>Legend:</h5>
+                    <ul>
+                        <li class="txt-red">Guesstimate</li>
+                        @*<li>Database</li>*@
+                        <li class="txt-green">Valid Rates</li>
+                        <br />
+                        <br />
+                        <li class="txt-blue">Rates Expired</li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+
+        <span class="clear"></span>
+        <div class="cost-guesstimate-hor cost-guesstimate-tbl-wrap">
+            <div class=" table-responsive filter-table ">
+                <table class="table table-bordered tbl-theme-02">
+                    <thead>
+                        <tr>
+                            <th rowspan="3">Day</th>
+                            @*<th rowspan="3" class="place-of-service">Place of Service</th>*@
+
+                            <th rowspan="3" class="service-type">
+                                <div>
+                                    Service Type
+                                </div>
+                            </th>
+                            <th rowspan="3">Time</th>
+                            <th rowspan="3">
+                                <div>
+                                    Particulars
+                                </div>
+                            </th>
+                            <th rowspan="3" class="cost-basis">Cost Basis</th>
+
+                            <th rowspan="3" class="keep-zero">
+                                Keep Zero
+                                <div class="tool-tip info">
+                                    <a href="#" class="info-lnk">
+                                        <i class="fa fa-info-circle"></i>
+                                    </a>
+                                    <div class="tooltip-cont">
+                                        <p>Keep Zero indicates that the cost of that item is 0, as opposed to an item whose cost is missing. The system will not seek rates for items that have been marked as intentionally zero.</p>
+                                        <a href="#" class="btn-close"></a>
+                                    </div>
+                                </div>
+                            </th>
+                            <th rowspan="3" class="preferred-supplier">Preferred Supplier</th>
+                            @*<th rowspan="2" class="select">
+                                    Select
+
+                                </th>*@
+                            <th rowspan="3" class="keep-as">Keep As</th>
+                            <th rowspan="3" class="currency">Currency</th>
+                            <th colspan="@Model.RangesList.Count"><div>Guesstimate CNK (<span id="lblPaxSlab"></span> Pax)</div></th>
+                        </tr>
+                        <tr class="text-center">
+                            @if (Model.RangeAccoList.Count > 0)
+                            {
+                                <th colspan="@Model.RangeAccoList.Count"><div>Accommodation</div></th>
+                            }
+                            @if (Model.RangeServicesList.Count > 0)
+                            {
+                                <th colspan="@Model.RangeServicesList.Count"><div>Services</div></th>
+                            }
+                            @if (Model.RangeUnitList.Count > 0)
+                            {
+                                <th colspan="@Model.RangeUnitList.Count"><div>Unit</div></th>
+                            }
+                        </tr>
+                        <tr>
+                            @*
+                                <th class="particulars-service">Service</th>
+                                <th class="particulars-details">Details</th>*@
+                            @for (int i = 0; i < Model.RangeAccoList.Count; i++)
+                            {
+                                <th class="gn-trans-adt">@Model.RangeAccoList[i].Value</th>
+                            }
+                            @for (int i = 0; i < Model.RangeServicesList.Count; i++)
+                            {
+                                <th class="gn-trans-adt">@Model.RangeServicesList[i].Value</th>
+                            }
+                            @for (int i = 0; i < Model.RangeUnitList.Count; i++)
+                            {
+                                <th class="gn-trans-adt">@Model.RangeUnitList[i].Value</th>
+                            }
+                            @*
+                                <th class="gn-trans-adt">ADT</th>
+                                <th class="gn-trans-chd">CHD</th>
+                                <th class="gn-trans-inf">INF</th>
+                                <th class="gn-acc-sgl">SGL</th>
+                                <th class="gn-acc-dbl">DBL</th>
+                                <th class="gn-acc-trpl">TRPL</th>
+                                <th class="gn-acc-quad">QUAD</th>
+                                <th class="gn-acc-cwb">CWB</th>
+                                <th class="gn-acc-cnb">CNB</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*@for (int i = 0; i < Model.SummaryDetails.Count; i++)
+                            {*@
+                        @*<tr class="tbl-sub-heading">
+                                <td class="day">@Model.SummaryDetails[i].Day</td>
+                                <td class="place-of-service">@Model.SummaryDetails[i].PlaceOfService</td>
+                                <td class="type" colspan="50"></td>
+                            </tr>*@
+
+                        @{
+                            var DayNo = "Day 0";
+                        }
+                        @for (int j = 0; j < Model.Guesstimate.GuesstimatePosition.Count; j++)
+                        {
+                            <tr>
+                                @Html.HiddenFor(x => x.Guesstimate.GuesstimatePosition[j].GuesstimatePositionId)
+                                @Html.HiddenFor(x => x.Guesstimate.GuesstimatePosition[j].PositionId, new { @id = "PostionId" })
+                                @if (DayNo != @Model.Guesstimate.GuesstimatePosition[j].Day)
+                                {
+                                    <td class="" rowspan="@Model.Guesstimate.GuesstimatePosition.Where(b=>b.Day== @Model.Guesstimate.GuesstimatePosition[j].Day).ToList().Count">@Model.Guesstimate.GuesstimatePosition[j].Day <br /> @Model.Guesstimate.GuesstimatePosition[j].PlaceOfService <br /> @Convert.ToDateTime(@Model.Guesstimate.GuesstimatePosition[j].OriginalItineraryDate).ToString("dd MMM yy") <br />@Model.Guesstimate.GuesstimatePosition[j].OriginalItineraryDay</td>
+                                    DayNo = @Model.Guesstimate.GuesstimatePosition[j].Day;
+                                }
+
+                                <td class="type">
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "HOTEL")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-hotel-blue.jpg">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "MEAL")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-meals-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "ATTRACTIONS")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-activities-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "LDC" || @Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "COACH")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-bus-dark-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "OVERNIGHT FERRY")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-cruise-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "TRAIN")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-rail-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "PRIVATE TRANSFER" || @Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "SCHEDULED TRANSFER" || @Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "FERRY TRANSFER" || @Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "FERRY PASSENGER")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-car-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "DOMESTIC FLIGHT")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-flights-blue.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "SIGHTSEEING - CITYTOUR")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "GUIDE")
+                                    {
+                                        <img src="~/resources/images/common/icons/local-guide.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "VISA")
+                                    {
+                                        <img src="~/resources/images/common/icons/visa.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "INSURANCE")
+                                    {
+                                        <img src="~/resources/images/common/icons/insurance.png">
+                                    }
+                                    @if (@Model.Guesstimate.GuesstimatePosition[j].ProductType.ToUpper() == "ASSISTANT")
+                                    {
+                                        <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png">
+                                    }
+                                </td>
+                                @if (@Model.Guesstimate.GuesstimatePosition[j].EndTime == null)
+                                {
+                                <td>@Model.Guesstimate.GuesstimatePosition[j].StartTime</td>
+                                }
+                                else
+                                {
+                                <td>@Model.Guesstimate.GuesstimatePosition[j].StartTime - @Model.Guesstimate.GuesstimatePosition[j].EndTime</td>
+                                }
+                                <td>
+                                    @Model.Guesstimate.GuesstimatePosition[j].OriginalItineraryDescription
+                                    (@Model.Guesstimate.GuesstimatePosition[j].ProductCategory)
+                                </td>
+                                <td>@Model.Guesstimate.GuesstimatePosition[j].ProductTypeChargeBasis</td>
+                                <td class="select">
+                                    @Html.CheckBoxFor(m => m.Guesstimate.GuesstimatePosition[j].KeepZero, new { @class = "KeepZero" })
+                                    @*<label class="checkbox-container">
+                                            <input type="checkbox" />
+                                        </label>*@
+                                </td>
+
+                                <td class="col-md-2 tdSupplier">
+                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].ProductId, new { @id = "ProductId" })
+                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].ActiveSupplier, new { @id = "ddlActiveSupplier" })
+                                    @*@Html.DropDownListFor(m => m.Guesstimate.GuesstimatePosition[j].ActiveSupplierId, new SelectList(Model.SupplierList, "Value", "Value"), @Model.Guesstimate.GuesstimatePosition[j].DefaultSupplier, new { @class = "form-control ddlSupplier" })*@
+
+                                    @Html.DropDownListFor(m => m.Guesstimate.GuesstimatePosition[j].ActiveSupplierId, new List<SelectListItem> { new SelectListItem { Text = @Model.Guesstimate.GuesstimatePosition[j].ActiveSupplier, Value = @Model.Guesstimate.GuesstimatePosition[j].ActiveSupplierId } }, new { @id = "ddlActiveSupplierID", @class = "form-control ddlSupplier selectDDL" })
+
+                                </td>
+                                <td class="col-md-1">@Html.DropDownListFor(m => m.Guesstimate.GuesstimatePosition[j].KeepAs, new SelectList(Model.KeepAsList, "Value", "Value"), new { @class = "form-control" })</td>
+                                <td>
+                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].BuyCurrency,new { @id= "GuesPosBuyCurrency" })
+                                    <span id="spCurrency">@Model.Guesstimate.GuesstimatePosition[j].BuyCurrency</span>
+                                </td>
+
+                                @for (int r = 0; r < Model.RangeAccoList.Count; r++)
+                                {
+                                <td class="guessPrice">
+                                    @{ bool flag = false;}
+                                    @for (int pp = 0; pp < Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice.Count; pp++)
+                                    {
+                                        if (Model.Guesstimate.GuesstimatePosition[j].ProductType != null)
+                                        {
+                                            if (Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "hotel" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "overnight ferry")
+                                            {
+                                                if ((Model.RangeAccoList[r].Value == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ProductRange.Replace("ADULT", "A").Replace("GUIDE", "G").Replace("DRIVER", "D"))
+                                                    && Model.Guesstimate.GuesstimatePosition[j].ActiveSupplierId == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].SupplierId)
+                                                {
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].GuesstimatePriceId)
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].PositionPriceId, new { @class = "clsPositionPriceId" })
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].RoomId)
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractPrice, new { @class = "clsContractPrice" })
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId, new { @class = "clsContractId" })
+                                     
+                                                    if (Model.Guesstimate.GuesstimatePosition[j].KeepZero)
+                                                    {
+                                                        if (string.IsNullOrEmpty(Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId))
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @disabled = "disabled", @style = "color:red" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @disabled = "disabled", @style = "color:green" })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (string.IsNullOrEmpty(Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId))
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @style = "color:red" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @style = "color:green" })
+                                                        }
+                                                    }
+                                                    flag = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    @if (!(flag))
+                                    {
+                                        <label>-</label>
+                                    }
+                                </td>
+                                }
+
+                                @for (int r = 0; r < Model.RangeServicesList.Count; r++)
+                                {
+                                <td class="guessPrice">
+                                    @{ bool flag = false;}
+                                    @for (int pp = 0; pp < Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice.Count; pp++)
+                                    {
+                                        if (Model.Guesstimate.GuesstimatePosition[j].ProductType != null)
+                                        {
+                                            if (Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "meal" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "attractions" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "sightseeing - citytour" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "visa" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "insurance" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "ferry passenger" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "scheduled transfer" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "train" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "domestic flight")
+                                            {
+                                                if ((!Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].IsSupplement &&
+                                                    Model.RangeServicesList[r].Value == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].Type) ||
+                                                    (Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].IsSupplement &&
+                                                    Model.RangeServicesList[r].Value == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ProductRange.Replace("ADULT", "A").Replace("CHILD", "C"))
+                                                    && Model.Guesstimate.GuesstimatePosition[j].ActiveSupplierId == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].SupplierId)
+                                                {
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].GuesstimatePriceId)
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].PositionPriceId, new { @class = "clsPositionPriceId" })
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].RoomId)
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractPrice, new { @class = "clsContractPrice" })
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId, new { @class = "clsContractId" })
+                                    
+                                                    if (Model.Guesstimate.GuesstimatePosition[j].KeepZero)
+                                                    {
+                                                        if (string.IsNullOrEmpty(Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId))
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @disabled = "disabled", @style = "color:red" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @disabled = "disabled", @style = "color:green" })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (string.IsNullOrEmpty(Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId))
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @style = "color:red" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @style = "color:green" })
+                                                        }
+                                                    }
+                                                    flag = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    @if (!(flag))
+                                    {
+                                        <label>-</label>
+                                    }
+                                </td>
+                                }
+
+                                @for (int r = 0; r < Model.RangeUnitList.Count; r++)
+                                {
+                                <td class="guessPrice">
+                                    @{ bool flag = false;}
+                                    @for (int pp = 0; pp < Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice.Count; pp++)
+                                    {
+                                        if (Model.Guesstimate.GuesstimatePosition[j].ProductType != null)
+                                        {
+                                            if (Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "coach" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "ferry transfer" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "guide" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "private transfer" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "ldc" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "assistant" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "fee" ||
+                                                                Model.Guesstimate.GuesstimatePosition[j].ProductType.ToLower() == "other")
+                                            {
+                                                if (Model.RangeUnitList[r].Value == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ProductRangeCode
+                                                    && Model.Guesstimate.GuesstimatePosition[j].ActiveSupplierId == Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].SupplierId)
+                                                {
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].GuesstimatePriceId)
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].PositionPriceId, new { @class = "clsPositionPriceId" })
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].RoomId)
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractPrice, new { @class = "clsContractPrice" })
+                                                    @Html.HiddenFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId, new { @class = "clsContractId" })
+                                    
+                                                    if (Model.Guesstimate.GuesstimatePosition[j].KeepZero)
+                                                    {
+                                                        if (string.IsNullOrEmpty(Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId))
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @disabled = "disabled", @style = "color:red" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @disabled = "disabled", @style = "color:green" })
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (string.IsNullOrEmpty(Model.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].ContractId))
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @style = "color:red" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.TextBoxFor(m => m.Guesstimate.GuesstimatePosition[j].GuesstimatePrice[pp].BudgetPrice, new { @class = "form-control numeric text-center clsBudgetPrice", @style = "color:green" })
+                                                        }
+                                                    }
+                                                    flag = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    @if (!(flag))
+                                    {
+                                        <label>-</label>
+                                    }
+                                </td>
+                                }
+                            </tr>
+                        }
+
+                    </tbody>
+
+
+                </table>
+            </div>
+            <div class="rht-sec">
+                <div class="btn-cont top-gap-md">
+                    @*<a href="#" class="btn  btn-primary btn-md">Compare Quotes</a>
+                        <a class="btn btn-md btn-blue ">Request for Quote</a>*@
+                    <a class="btn btn-md btn-blue" onclick="saveGuesstimate('YES');">Regenerate Costsheet</a>
+                    <a class="btn btn-md btn-blue" onclick="saveGuesstimate();">Save</a>
+                    @*<a href="#Version-popup" class="btn btn-md btn-blue popup-inline saveVersion">Save as Version</a>*@
+                    @*<a href="#remarks-popup" class="popup-inline comment-plus"><i class="fa fa-comment-o"></i></a>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Version-popup" style="display:none">
+        <div class="popup-box pop-md form-theme-04 form">
+            <div class="popup-in">
+                <h3>Save as Version</h3>
+                <div class="custom-mob-tbl table-responsive">
+                    @Html.HiddenFor(m => m.NextVersionId, new { @id = "NextVersionId" })
+                    <label style="font-weight:bold">Version: @Model.NextVersionId</label>
+                    <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="col-sm"><span>Version Name</span></th>
+                                <th class="col-sm"><span>Description</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="row-grid-sm document-list">
+                            <tr>
+                                <td>
+                                    @Html.TextAreaFor(m => m.Guesstimate.VersionName, new { @id = "VersionName", @rows = 4 })
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(m => m.Guesstimate.VersionDescription, new { @id = "VersionDescription", @rows = 4 })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+                <div class="btn-cont">
+                    <button title="Save" type="button" class="btn btn-blue btn-md saveNewVersion">Save</button>
+                    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="VersionList-popup" style="display:none">
+        <div class="popup-box pop-lg form-theme-04 form">
+            <div class="popup-in">
+
+            </div>
+        </div>
+    </div>
+
+    <!--Costs-Guesstimate-Change-Rule-Popup Start-->
+    <div class="mfp-hide popup-box pop-md form-theme-04 form" id="costs-guesstimate-change-rule">
+        <h2>01e-Costs-Guesstimate-Change-Rule-Popup</h2>
+        <div class="popup-in">
+            <h3 class="pop-tl">Change Rule</h3>
+            <p class="blue-txt">Policy for selection of Preferred Supplier.</p>
+            <ul class="radio-list">
+                <li>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Guesstimate.ChangeRule, "LP", new { @id = "ChangeRule" })
+                        Lowest Price
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Guesstimate.ChangeRule, "PS", new { @id = "ChangeRule" })
+                        Always pickup Preferred Supplier marked by the company
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Guesstimate.ChangeRule, "LPP", new { @id = "ChangeRule" })
+                        Select lowest cost supplier IF rates are atleast
+                        @Html.TextBoxFor(m => m.Guesstimate.ChangeRulePercent, new { @id = "ChangeRulePercent", @class = "form-control", @style = "width:50px;text-align:center;" })
+                        % lower than Preferred supplier
+                    </label>
+                </li>
+            </ul>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center"> <a href="#costs-guesstimate-recalculate-costs" class="btn btn-blue btn-md popup-inline ChangeRuleSave">Save</a> <a href="#" class="btn btn-blue btn-md close-popup diasabled">Cancel</a> </div>
+        </div>
+    </div>
+    <!--Costs-Guesstimate-Change-Rule-Popup End-->
+
+    <div class="mfp-hide popup-box pop-md form-theme-04 form" id="costs-guesstimate-recalculate-costs" style="display:none">
+        <h2>01f-Costs-Guesstimate-Recalculate-Costs-Popup</h2>
+        <div class="popup-in">
+            <h3 class="pop-tl">Recalculate Costs</h3>
+            <p class="blue-txt">You have changed the rule. Would you like to recalculate the cost now?</p>
+            <ul class="radio-list">
+                <li>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Guesstimate.CalculateFor, "B", new { @id = "CalculateFor" })
+                        Calculate for blanks only.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Guesstimate.CalculateFor, "BG", new { @id = "CalculateFor" })
+                        Calculate & overwrite for blanks and guesstimates.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Guesstimate.CalculateFor, "ALL", new { @id = "CalculateFor" })
+                        Calculate & overwrite for all cells.
+                    </label>
+                </li>
+            </ul>
+            <div class="checkbox-cont">
+                <label>
+                    <input type="checkbox">
+                    Keep as default setting for this session.
+                </label>
+            </div>
+            <div id="ftrChangeRule">
+                <button title="Close (Esc)" type="button" class="mfp-close"></button>
+                <div class="btn-cont text-center"> <a href="#" class="btn btn-blue btn-md close-popup ReCalcGuesstimate">Yes</a> <a href="#" class="btn btn-blue btn-md close-popup diasabled">No, I will do it later</a> </div>
+            </div>
+            <div id="ftrSFDatabse">
+                <button title="Close (Esc)" type="button" class="mfp-close"></button>
+                <div class="btn-cont text-center"> <a href="#" class="btn btn-blue btn-md close-popup ReCalcGuesstimate">Proceed</a> <a href="#" class="btn btn-primary btn-md close-popup">Cancel</a> </div>
+            </div>
+        </div>
+    </div>
+    <!--Costs-Guesstimate-Recalculate-Costs-Popup End-->
+    <!--Costs-Guesstimate-Search-from-Database-Popup Start-->
+    <div class="mfp-hide popup-box pop-md form-theme-04 form" id="costs-guesstimate-search-from-database">
+        <h2>01d-Costs-Guesstimate-Search-from-Database-Popup</h2>
+        <div class="popup-in">
+            <h3 class="pop-tl">Search From Database</h3>
+            <p class="blue-txt">There are already costs entered in the system. How would you like the system to Proceed:</p>
+            <ul class="radio-list">
+                <li>
+                    <label>
+                        <input type="radio" name="quote-type" />
+                        Calculate for blanks only.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="radio" name="quote-type" />
+                        Calculate & overwrite for blanks and guesstimates.
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="radio" name="quote-type" />
+                        Calculate & overwrite for all cells.
+                    </label>
+                </li>
+            </ul>
+            <div class="checkbox-cont">
+                <label>
+                    <input type="checkbox">
+                    Keep as default setting for this session.
+                </label>
+            </div>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center"> <a href="#" class="btn btn-blue btn-md close-popup">Proceed</a> <a href="#" class="btn btn-primary btn-md close-popup">Cancel</a> </div>
+        </div>
+    </div>
+    <!--Costs-Guesstimate-Search-from-Database-Popup End-->
+
+</form>
+<script src="~/js/Costing/Guesstimate.js"></script>

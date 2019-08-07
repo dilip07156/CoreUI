@@ -1,0 +1,200 @@
+﻿@model Voyager.App.ViewModels.PositionPricesViewModel
+@*@using (Html.BeginForm("SaveQRFPrices", "Accomodation", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmQRFPrices" }))
+    {*@
+@*<div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+        <div class="tbl-actn-btns" style="background:none;color:black">
+            <h4>Enter Prices</h4>
+            <span>* Standard price will be applicable only for the dates where contracts not available</span>
+        </div>
+    </div>*@
+<div class="row">
+    <div class="col-md-6">
+        <h4>Enter Prices</h4>
+    </div>
+    <div class="col-md-6" style="color:red;font-weight:bold;font-size:11px">
+        <span>* Standard price will be applicable only for the dates where contracts not available</span>
+    </div>
+</div>
+<br />
+<form id="frmPositionPrice">
+    @Html.HiddenFor(m => m.QRFID)
+    @Html.HiddenFor(m => m.RowId)
+    @Html.HiddenFor(m => m.Type)
+
+    <div class="row">
+        <div class="col-md-3">
+            <label class="main-lbl" style="width:auto;">
+                Standard Price&nbsp;&nbsp;
+                @Html.CheckBoxFor(m => m.StandardPrice, new { @class = "StandardPriceFOC" })
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label class="main-lbl" style="margin-top: 3px;width:auto;">Date Range</label>
+            @Html.DropDownList("FilterDateRange", new SelectList(Model.PositionPricesData.Select(a => a.Period.ToUpper() == "ALL" ? a.Period : Convert.ToDateTime(a.Period).ToString("dd/MM/yyyy")).Distinct()), new { @class = "form-control FilterDateRange" })
+        </div>
+        <div class="col-md-3">
+            <label class="main-lbl" style="margin-top: 3px;width:auto;">Pax Slab</label>
+            @Html.DropDownList("FilterPaxSlab", new SelectList(Model.PositionPricesData.Select(a => a.PaxSlab).Distinct()), new { @class = "form-control FilterPaxSlab" })
+        </div>
+    </div>
+    @if (@ViewBag.IsContractExist != null)
+    {
+        <div class="row">
+            <div class="col-md-12 btn-cont pull-right" style="color:red;font-weight:bold;font-size:11px">
+                <span>* Contracted Rates found for some dates</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <br />
+    }
+    @if (@Model.PositionPricesData.Count > 0)
+    {
+        <div class="custom-mob-tbl">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th>Pax Slab</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>For</th>
+                        @if (Model.IsSalesOfficeUser == false)
+                        {
+                            <th class="col-sm2">Contract <br>(@Model.PositionPricesData[0].BuyCurrency)</th>
+                        }
+                        <th class="col-sm2">QR Rate <br>(@Model.PositionPricesData[0].BuyCurrency)</th>
+                        @*<th>&nbsp;</th>*@
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for (int i = 0; i < Model.PositionPricesData.Count; i++)
+                    {
+                        string RowClass = "";
+                        if (Model.PositionPricesData[i].Period.ToUpper() == "ALL")
+                        { RowClass = "StandardRow"; }
+                        else
+                        { RowClass = "DetailedRow"; }
+                        <tr class="@RowClass">
+                            <td class="text-center">
+                                @Html.HiddenFor(m => m.PositionPricesData[i].PositionPriceId)
+                                @Html.HiddenFor(m => m.PositionPricesData[i].ProductRangeId)
+                                @Html.HiddenFor(m => m.PositionPricesData[i].Period, new { @class = "DateRange" })
+                                @Html.HiddenFor(m => m.PositionPricesData[i].PaxSlab, new { @class = "PaxSlab" })
+                                @Html.HiddenFor(m => m.PositionPricesData[i].PositionId)
+                                @{
+                                    string Period = "";
+                                    Period = Model.PositionPricesData[i].Period.ToUpper() == "ALL" ? Model.PositionPricesData[i].Period : Convert.ToDateTime(Model.PositionPricesData[i].Period).ToString("dd/MM/yyyy");
+                                }
+                                <span class="spanDateRange">@Period</span>
+                            </td>
+                            <td class="text-center">
+                                @Model.PositionPricesData[i].PaxSlab
+                            </td>
+                            <td class="text-center">@Model.PositionPricesData[i].Type</td>
+                            <td class="text-center">@Model.PositionPricesData[i].ProductCategory</td>
+                            <td class="text-center">@Model.PositionPricesData[i].ProductRange</td>
+                            @if (Model.IsSalesOfficeUser == false)
+                            {
+                                @if (@ViewBag.IsMultipleDateExist != null)
+                                {
+                                    if (RowClass == "StandardRow")
+                                    {
+                                         <td class="text-center">@Model.PositionPricesData[i].ContractPrice</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center">@Model.PositionPricesData[i].ContractPrice</td>
+                                        @Html.HiddenFor(m => m.PositionPricesData[i].ContractPrice)
+                                    }
+                                }
+                                else
+                                {
+                                    <td class="text-center">@Model.PositionPricesData[i].ContractPrice</td>
+                                }
+                            }
+                            <td>
+                                @if (Model.PositionPricesData[i].IsContractExist)
+                                {
+                                    @Html.TextBoxFor(m => m.PositionPricesData[i].BudgetPrice, new { @class = "form-control filled numeric", @placeholder = "0.00", @style = "color:green" })
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(m => m.PositionPricesData[i].BudgetPrice, new { @class = "form-control filled numeric", @placeholder = "0.00", @style = "color:red" })
+                                }
+                            </td>
+                        </tr>
+                                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="btn-cont right">
+            <ul>
+                <li><a href="#" class="btn btn-md btn-primary btn-cancel">Cancel</a></li>
+                <li><a class="btn btn-md btn-blue btn-save SavePositionPrice">Save</a></li>
+            </ul>
+        </div>
+                                    }
+                                    else
+                                    {
+                                        <h1>No data found!</h1>
+                                    }
+    <div class="clearfix"></div>
+    <a href="#" class="btn-close"></a>
+    <hr>
+    <div class="lgnd-box" style="margin-bottom: 5px;">
+        <h5>Legend:</h5>
+        <ul>
+            <li class="txt-red">Guesstimate</li>
+            @*<li>Database</li>*@
+            <li class="txt-green">Valid Rates</li>
+            <li class="txt-blue">Rates Expired</li>
+        </ul>
+    </div>
+
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".StandardPriceFOC").click(function () {
+            if ($(this).is(":checked")) {
+                $(".FilterDateRange").val("ALL");
+                $(".FilterPaxSlab").val("ALL");
+            }
+        });
+        $(".SavePositionPrice").unbind("click");
+        $(".SavePositionPrice").click(function () {
+            var current = $(this);
+            var model = current.parents("#frmPositionPrice").serialize();
+
+            //var model = new JavaScriptSerializer({ MaxJsonLength = 86753090 }) ;// Perform your serialization
+
+            //model.Serialize("Your JSON Contents");
+
+            $.ajax({
+                type: "POST",
+                url: "/Position/SetPositionPrices",
+                data: model,
+
+                //contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                     
+                    if (response != null && response != "" && response != undefined && response.status == 'success')
+                        QRFPricesAfterSave(current, 'success', response.positionid, response.productid, response.positionname);
+                    else
+                        QRFPricesAfterSave(current, 'failure', "", "", "");
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        //PopulatePriceRows($(document.activeElement.nextElementSibling).find('.StandardPriceFOC')[0]);
+    });
+</script>

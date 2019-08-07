@@ -1,0 +1,81 @@
+﻿@model Voyager.App.ViewModels.ProposalViewModel
+<script src="~/js/Costing/Proposal.js"></script>
+<script>
+    $(document).ready(function () {
+        LoadProposalSection('@Model.MenuViewModel.QRFID');
+    });
+</script>
+<style>
+    .proposal-progress-bar-cont ul.steps-bar > li {
+        width: calc(16.6% - 37px);
+    }
+</style>
+<div class="wrapper">
+    @using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02", @id = "frmAgentItinerary" }))
+    {
+        @Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+        <!-- Main Content :: Starts -->
+        @*<div class="main-content form-theme-04 form">*@
+        <div class="main-content form form-theme-02">
+            <div class="container">
+                <div class="pg-container">
+                    <div class="listing-content">
+                        @Html.Partial("_AgentApprovalHeaderButtons", Model.AgentApprovalHeaderButtons)
+                    </div>
+                    <div class="listing-content" id="divCostingOfficerHeader">
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel, new ViewDataDictionary(this.Vi‌​ewData) { { "EnquiryPipeline", Model.MenuViewModel.EnquiryPipeline } })
+                    </div>
+
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_AgentApprovalMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data flights">
+                            <div class="ttl-sec tbl-style">
+                                <div id="HeadersTab">
+                                    <h3 id="HeaderPriceBreakUp"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Price Breakup</span></h3>
+                                    <h3 id="HeaderSuggestedItinerary" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Suggested Itinerary </span></h3>
+                                    <h3 id="HeaderInclusionsExclusions" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Inclusions / Exclusions</span></h3>
+                                    <h3 id="HeaderTerms" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Terms</span></h3>
+                                    <h3 id="HeaderCoveringNote" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Covering Note</span></h3>
+                                    <h3 id="HeaderReview" style="display:none"><i class="fa-custom-proposal-black"></i>Proposal - <span class="txt-green">Review</span></h3>
+                                </div>
+                            </div>
+                            <div class="co-alert-box">
+                                <div class="txt-cntent">
+                                    <div>
+                                        <i class="fa-custom-caution"></i>
+                                        <h3>Important</h3>
+                                    </div>
+                                </div>
+                                <div class="txt-para">
+                                    <p class="txt-red">The Build Proposal comprises five sections. Though these sections can be worked on individually, the system will not allow its generating or printing, until all six steps have been completed. </p>
+                                </div>
+                            </div>
+                            <div class="proposal-progress-bar-cont">
+                                <ul class="steps-bar" id="ProposalTabs" style="cursor:pointer;">
+                                    @Html.HiddenFor(x => x.ProposalId, new { @id = "ProposalId" })
+                                    <li id="PriceBreakup" class="active"><a id="aPriceBreakup">Price Break-Up</a></li>
+                                    <li id="SuggestedItinerary"><a id="aSuggestedItinerary">Suggested Itinerary</a></li>
+                                    <li id="InclusionsExclusions"><a id="aInclusionsExclusions">Inclusions / Exclusions</a></li>
+                                    <li id="Terms"><a id="aTerms">Terms</a></li>
+                                    <li id="CoveringNote"><a id="aCoveringNote">Covering Note</a></li>
+                                    <li id="Review"><a id="aReview">Review</a></li>
+                                </ul>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="process-data-sec" id="ProposalTabsCont">
+                                <div class="simple-tab-data" id="ProposalPriceBreakup">
+                                    @Html.Partial("_ProposalPriceBreakup", Model.ProposalPriceBreakupViewModel)
+                                </div>
+                                <div class="simple-tab-data" id="ProposalSuggestedItinerary" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalInclusionsExclusions" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalTerms" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalCoveringNote" style="display:none;"></div>
+                                <div class="simple-tab-data" id="ProposalReview" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div> 

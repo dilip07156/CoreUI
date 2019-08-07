@@ -1,0 +1,65 @@
+﻿@model Voyager.App.ViewModels.HotelsDeptSearchFilters
+<div class="add-to-menu products-contracting">
+    <div class="collapse-block">
+        <div class="collapse-link heading collapsed">
+            <a href="javascript:void(0)" class="">SEARCH <i class="fa arrow"></i></a>
+        </div>
+        <div class="collapse-container" style="display: block;">
+            <div class="detail-container">
+                <div class="row" style="margin:0px 0px 10px 0px">
+                    <div class="col-md-12">
+                        <div class="row form-sec no-space">
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Agent Name</label>
+                                @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control bindAgent", @id = "AgentName" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>CNK Reference No.</label>
+                                @Html.TextBoxFor(m => m.CNKReferenceNo, new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Date</label>
+                                @Html.DropDownListFor(m => m.DateType, new SelectList(Model.DateTypeList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanDateType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Status</label>
+                                @Html.DropDownListFor(m => m.BookingStatus, new SelectList(Model.BookingStatusList, "Attribute_Id", "AttributeName"), "Select", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row form-sec no-space">
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Agent Code</label>
+                                @Html.TextBoxFor(m => m.AgentCode, new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Agent Tour Name</label>
+                                @Html.TextBoxFor(m => m.AgentTour, new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>From</label>
+                                <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                    @Html.TextBoxFor(m => m.From, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                    <span class="field-validation-valid text-danger" id="spanFrom" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>To</label>
+                                <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                    @Html.TextBoxFor(m => m.To, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                    <span class="field-validation-valid text-danger" id="spanTo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-right top-margin">
+                        <input type="submit" value="Search" id="btnSearch" class="btn btn-blue btn-md" />
+                        <input type="button" value="Reset" id="btnReset" class="btn btn-blue btn-md" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

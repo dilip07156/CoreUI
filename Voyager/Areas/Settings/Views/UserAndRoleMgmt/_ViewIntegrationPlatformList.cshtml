@@ -1,0 +1,171 @@
+﻿@model Voyager.App.ViewModels.IntegrationPlatformViewModel
+
+<div class="listing-table">
+    <div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+        <table class="table table-bordered tbl-theme-02 dataTables" id="tblIntegrationPlatform">
+            <thead>
+                <tr>
+                    <th class="col-md-1">Platform</th>
+                    <th class="col-md-3">Module</th>
+                    <th class="col-md-2">Type</th>
+                    <th class="col-md-3">Operation</th>
+                    <th class="col-md-3">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var model = {
+            Application_Id: $("#Application_Id :selected").val(),
+            ApplicationName: $("#Application_Id :selected").text(),
+            Module: $("#Module :selected").val(),
+            ModuleName: $("#Module :selected").text(),
+            ActionId: $("#ActionId :selected").val(),
+            ActionName: $("#ActionId :selected").text(),
+            TypeName: $("#TypeName :selected").text(),
+        }
+
+        var oTable = $('#tblIntegrationPlatform').dataTable({
+            processing: true,
+            serverSide: true,
+            info: true,
+            ajax: {
+                url: "/UserAndRoleMgmt/GetIntegrationPlatformList",
+                type: "GET",
+                data: model,
+            },
+            columns: [
+                { "data": "applicationName", "orderable": true },
+                { "data": "moduleName", "orderable": true },
+                { "data": "typeName", "orderable": true },
+                { "data": "actionName", "orderable": true },
+                {
+                    "data": function (data, type, row, meta) {
+
+                        var actionHTML = "<button type='button' class='icon-squre-dark-blue' style='width:27px' title='View' onclick='AddPlatformURL(\"" + data.application + "\", \"" + data.applicationName + "\", \"" + data.module + "\", \"" + data.moduleName + "\", \"" + data.action + "\",\"" + data.typeName + "\", \"" + data.actionName + "\", " + meta.row + ", this);' ><i class='fa fa-pencil'></i></button> &nbsp;&nbsp;";
+                        actionHTML += "<button type='button' class='icon-squre-red' style='width:27px' title='Delete' onclick='DeletePlatformURL(\"" + data.application + "\", \"" + data.applicationName + "\", \"" + data.module + "\", \"" + data.moduleName + "\", \"" + data.action + "\", \"" + data.actionName + "\", " + meta.row + ", this);' ><i class='fa fa-times'></i></button>";
+
+                        return actionHTML;
+                    },
+                    "orderable": false
+                }
+            ],
+            "order": [[0, "asc"]],
+            "columnDefs": [{
+                "defaultContent": "",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+
+        $('#tblIntegrationPlatform_filter').css('display', 'none');
+    });
+
+
+    function AddPlatformURL(application, applicationName, module, moduleName, action,typeName, actionName, row, event) {
+         
+        var model = {
+            Application_Id: application,
+            ApplicationName: applicationName,
+            Module: module,
+            ModuleName: moduleName,
+            ActionId: action,
+            ActionName: actionName,
+            TypeName: typeName
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationPlatformURL",
+            data: model,
+            success: function (response) {
+                 
+                $("#divSuccessError").removeAttr('class');
+                if (response.status != undefined) {
+                    response.status.toLocaleLowerCase() == "alert" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+                    $("#divSuccessError").show();
+                    $("#lblmsg").text(response.responseText);
+                    $("#stMsg").text(response.status + "! ");
+                }
+                else {
+                    closePlatformURL();
+                    $('<tr id="trPlatformURL"><td colspan="6">' + response.replace("action-popup ", "") + '</td></tr>').insertAfter(event.closest('tr'));
+                }
+                $(".ajaxloader").hide();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+
+    function DeletePlatformURL(application, applicationName, module, moduleName, action, actionName, row, event) {
+
+        var model = {
+            Application_Id: application,
+            ApplicationName: applicationName,
+            Module: module,
+            ModuleName: moduleName,
+            ActionId: action,
+            ActionName: actionName,
+        }
+        if (confirm("Are you sure want to delete?")) {
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/DeleteIntegrationPlatform",
+                data: model,
+                success: function (response) {
+                    $("#divSuccessError").removeAttr('class');
+                    if (response.status != undefined) {
+                        //response.status.toLocaleLowerCase() == "failure" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-danger")
+                        $("#lblmsg").text(response.ResponseStatus.ErrorMessage);
+                        $("#stMsg").text(response.ResponseStatus.status + "! ");
+                    }
+                    else {
+                        $(".displayIntegrationPlatformURL").html(response.replace("action-popup ", ""));
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-success");
+                        $("#lblmsg").text("Integration Platform deleted successfully.");
+                        $("#stMsg").text("Success! ");
+                    }
+                    $(".ajaxloader").hide();
+                    setTimeout(() => {
+                        $("#divSuccessError").hide();
+                    }, 5000);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+    }
+
+    function closePlatformURL() {
+        $('#tblIntegrationPlatform').find($("#trPlatformURL")).remove();
+    }
+</script>

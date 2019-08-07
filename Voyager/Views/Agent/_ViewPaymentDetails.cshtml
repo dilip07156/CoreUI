@@ -1,0 +1,122 @@
+﻿@model Voyager.App.ViewModels.ConditionsAndPaymentDetails
+
+<style>
+    .leftalign {
+        text-align: left !important;
+    }
+</style>
+
+<div class="popup-box pop-lg form-theme-04 form">
+    <div class="popup-in">
+        <form id="frmPaymentDetails">
+            <div class="custom-mob-tbl table-responsive">
+                <div id="message"></div>
+                @Html.HiddenFor(x => x.PaymentDetails_Id, new { @id = "PaymentDetails_Id" })
+                @Html.HiddenFor(x => x.Company_Id)
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-sm-9"><span>Payment Details</span></th>
+                            <th class="col-sm-3"><span>Currency</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="row-grid-sm document-list">
+                        <tr>
+                            <td>
+                                @Html.TextAreaFor(x => x.PaymentDetails, new { @id = "PaymentDetails", @class = "form-control leftalign" })
+                                <span class="field-validation-valid text-danger" id="spanPaymentDetails" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(m => m.Currency_Id, new SelectList(Model.CurrencyList, "CurrencyId", "CurrencyCode"), "Select", new { @id = "ddlCurrency", @class = "form-control leftalign" })
+                                @Html.HiddenFor(x => x.Currency, new { @id = "Currency" })
+                                <span class="field-validation-valid text-danger" id="spanCurrency" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button title="Close (Esc)" type="button" class="mfp-close"></button>
+                <div class="btn-cont text-center">
+                    <button id="btnSavePaymentDetails" title="Save" type="button" class="btn btn-blue btn-md">Save</button>
+                    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ddlCurrency").on("change", function () {
+            var currencytName = $(this).find("option:selected").text();
+            $("#Currency").val(currencytName);
+        });
+
+        $("#btnSavePaymentDetails").on("click", function () {
+             
+
+            var IsValidFlag = true;
+
+            var PaymentDetails = $("#PaymentDetails").val();
+            if (PaymentDetails == '') {
+                $("#spanPaymentDetails").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            var Currency = $("#ddlCurrency").find("option:selected").val();
+            if (Currency == '') {
+                $("#spanCurrency").text("*");
+                IsValidFlag = false;
+            }
+            else
+                $(this).siblings("span").text("");
+
+            if (!IsValidFlag)
+                return false;
+           
+            $(".ajaxloader").show();
+            var model = $("#frmPaymentDetails").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/Agent/SavePaymentDetails",
+                data: model,
+                global: false,
+                success: function (response) {
+                    $("#Terms").click();
+                     
+                    if (response.status == "error1") {
+                        var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! Duplicate Record </strong></div>';
+                        $("#frmPaymentDetails #message").html(successmsg);
+                    }
+                    else if (response.status == "error") {
+                        var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! </strong></div>';
+                        $("#frmPaymentDetails #message").html(successmsg);
+                    }
+                    else {
+                        $("#frmPaymentDetails #PaymentDetails_Id").val(response.paymentDtlsId);
+                        var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! Details saved successfully.</strong></div>';
+                        $("#frmPaymentDetails #message").html(successmsg);
+                        $("#spanPaymentDetails").text("");
+                        $("#spanCurrency").text("");
+                    }
+                    $(".ajaxloader").hide();
+                },
+                error: function () {
+                    $(".ajaxloader").hide();
+                }
+            });           
+        });
+
+    });
+</script>
+
+
+
+
+
+
+

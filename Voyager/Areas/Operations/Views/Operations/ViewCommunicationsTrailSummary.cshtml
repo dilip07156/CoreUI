@@ -1,0 +1,40 @@
+﻿@model Voyager.App.ViewModels.OpsCommunicationTrailSummaryViewModel
+@{
+    ViewData["Title"] = "SearchHotels";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-theme-04 .form-control {
+        padding: .25rem .5rem !important;
+    }
+</style>
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="ops-page">
+                    <div class="listing-content">
+                        @Html.Partial("_CostingOfficerHeader", Model.COHeader)
+                    </div>
+                </div>
+
+                <div id="modelcommunitrail-popup">
+                    @Html.Partial("~/Views/Shared/CommunicationTrail/_CommunicationTrail.cshtml", Model.CommunicationTrailViewModel)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script> 
+    $("#modelcommunitrail").removeClass("popup-box");
+    $("#divCommunicationTrailClose").remove();
+    $(document).ready(function () {  
+        defaultViewMailDetails();
+    });
+
+    function defaultViewMailDetails(){
+        $(".btnview:first").click();
+        $("#divemailhtml > style").remove();
+    }
+</script>

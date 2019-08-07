@@ -1,0 +1,123 @@
+﻿@model Voyager.App.ViewModels.OthersViewModel
+@*<script src="~/js/Sales/SalesNewQuote.js"></script>*@
+<script src="~/js/Sales/common.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>
+<body class="inner-pg logged-in" data-responsejs='{"create":[{"prop":"width", "prefix":"min-device-width-", "lazy":false, "breakpoints":[0, 320, 481, 641, 767, 961, 1025, 1281] }]}'>
+    <!-- Wrapper ::Starts -->
+    <div class="wrapper">
+        <!-- Main Content :: Starts -->
+        <div class="main-content form-theme-04 form">
+            <div class="container">
+                <div class="pg-container a">
+                    <div class="head-ttl">
+                        @if (Context.Request.Query["ProductType"] != "Guide")
+                        {
+                            <h2 class="pg-ttl pull-left">Others</h2>
+                        }
+                        else
+                        {
+                            <h2 class="pg-ttl pull-left">Local Guide</h2>
+                        }
+                        @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                        <div class="clearfix"></div>
+                    </div>
+                    @Html.Partial("_SalesTourInfoHeader", Model.TourInfoHeaderViewModel)
+                    <div class="sqr-tab-cont">
+                        @Html.Partial("_SalesMenu", Model.MenuViewModel)
+                        <div class="sqr-tab-data">
+                            @Html.HiddenFor(m => m.OthersLocalGuide.QRFID)
+                            <div>
+                                @if (Context.Request.Query["ProductType"] != "Guide")
+                                {
+
+                                    <div class="radio-list-bar">
+                                        <ul>
+                                            @*<li id="LocalGuide" class="active"><a class="cntrl" href="#" data-label="Local Guide">Local Guide</a></li>*@
+                                            <li id="Visa" class="active"><a class="cntrl" href="#" data-label="visa">Visa</a></li>
+                                            <li id="Insurance"><a class="cntrl" href="#" data-label="insurance">Insurance</a></li>
+                                            <li id="Miscellaneous"><a class="cntrl" href="#" data-label="miscellaneous">Miscellaneous</a></li>
+                                            <li id="Gift" style="display:none;"><a class="cntrl" href="#" data-label="gift">Gift</a></li>
+                                        </ul>
+                                    </div>
+                                    <div id="OthersTabsCont">
+                                        <div class="" id="OthersVisa">@Html.Partial("_OthersVisa", Model.OthersLocalGuide)</div>
+                                        <div class="" id="OthersInsurance" style="display:none;"></div>
+                                        <div class="" id="OthersMiscellaneous" style="display:none;"></div>
+                                        <div class="" id="OthersGift" style="display:none;"></div>
+                                    </div>
+                                }
+                                else
+                                {
+
+                                    <div id="OthersTabsCont">
+                                        <div class="" id="OthersLocalGuide">@Html.Partial("_OthersLocalGuide", Model.OthersLocalGuide)</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Partial("_SalesHeaderButtons", Model.TourInfoHeaderViewModel)
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    //var iRow = 1;
+    $(document).ready(function () {
+        var QRFId = '@Model.OthersLocalGuide.QRFID';
+        //$("#LocalGuide").click(function () {
+        //    $("#OthersTabsCont").children().hide();
+        //    $("#LocalGuide").parent().find("li").removeClass("active");
+        //    $("#LocalGuide").addClass("active");
+        //    $("#OthersLocalGuide").show();
+        //    return false;
+        //});
+
+        $("#Visa").click(function () {
+            if ($('#OthersVisa').html() === "") {
+                $('#OthersVisa').load('/Others/GetVisa/', { QRFId: QRFId });
+            }
+            $("#OthersTabsCont").children().hide();
+            $("#Visa").parent().find("li").removeClass("active");
+            $("#Visa").addClass("active");
+            $("#OthersVisa").show();
+            return false;
+        });
+
+        $("#Insurance").click(function () {
+            if ($('#OthersInsurance').html() === "") {
+                $('#OthersInsurance').load('/Others/GetInsurance/', { QRFId: QRFId });
+            }
+            $("#OthersTabsCont").children().hide();
+            $("#Insurance").parent().find("li").removeClass("active");
+            $("#Insurance").addClass("active");
+            $("#OthersInsurance").show();
+            return false;
+        });
+
+        $("#Miscellaneous").click(function () {
+            if ($('#OthersMiscellaneous').html() === "") {
+                $('#OthersMiscellaneous').load('/Others/GetMiscellaneous/', { QRFId: QRFId });
+            }
+            $("#OthersTabsCont").children().hide();
+            $("#Miscellaneous").parent().find("li").removeClass("active");
+            $("#Miscellaneous").addClass("active");
+            $("#OthersMiscellaneous").show();
+            return false;
+        });
+
+        $("#Gift").click(function () {
+            if ($('#OthersGift').html() === "") {
+                $('#OthersGift').load('/Others/GetGift/', { QRFId: QRFId });
+            }
+            $("#OthersTabsCont").children().hide();
+            $("#Gift").parent().find("li").removeClass("active");
+            $("#Gift").addClass("active");
+            $("#OthersGift").show();
+            return false;
+        });
+    });
+
+</script>

@@ -1,0 +1,144 @@
+﻿@model Voyager.App.ViewModels.IntegrationApplicationMappingViewModel
+
+<div class="listing-table">
+    <div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+        <table class="table table-bordered tbl-theme-02 dataTables" id="tblApplicationMappingData">
+            <thead>
+                <tr>
+                    <th class="col-md-1">Partner Entity Name</th>
+                    <th class="col-md-2">Partner Entity Code</th>
+                    <th class="col-md-3">System Entity Name</th>
+                    <th class="col-md-3">System Entity Code</th>
+                    <th class="col-md-3">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        getDefaultMappingDataList();
+        
+    });
+
+    function getDefaultMappingDataList() {
+
+        var model = {
+            Application: $("#txtApplication").val(),
+            ApplicationName: $("#Application :selected").text(),
+            Type: $("#txtType").val(),
+            Entity: $("#txtEntity").val(),
+            IntegrationApplicationMapping_Id: $("#txtIntegrationApplicationMapping_Id").val(),
+            PartnerEntityName: $("#PartnerEntityName").val(),
+            PartnerEntityCode: $("#PartnerEntityCode").val(),
+            SystemEntityName: $("#SystemEntityName").val(),
+            SystemEntityCode: $("#SystemEntityCode").val()
+        }
+
+        var oTable = $('#tblApplicationMappingData').dataTable({
+            processing: true,
+            serverSide: true,
+            info: true,
+            ajax: {
+                url: "/UserAndRoleMgmt/GetApplicationMappingDataList",
+                type: "GET",
+                data: model,
+            },
+            columns: [
+                { "data": "partnerEntityName", "orderable": true },
+                { "data": "partnerEntityCode", "orderable": true },
+                { "data": "systemEntityName", "orderable": true },
+                { "data": "systemEntityCode", "orderable": true },
+                {
+                    "data": function (data, type, row, meta) {
+
+                        //var actionHTML = "<div>text</div>";
+                        var actionHTML = "<button type='button' class='icon-squre-dark-blue' style='width:27px' title='View' onclick='AddMappingDataItem(\"" + data.integrationApplicationMappingItem_Id + "\", \"" + data.partnerEntityName + "\", \"" + data.partnerEntityCode + "\", \"" + data.systemEntityName + "\", \"" + data.systemEntityCode + "\", " + meta.row + ", this);' ><i class='fa fa-pencil'></i></button> &nbsp;&nbsp;";
+                        actionHTML += "<button type='button' class='icon-squre-red' style='width:27px' title='Delete' onclick='DeleteMappingDataItem(\"" + data.integrationApplicationMappingItem_Id + "\", \"" + data.partnerEntityName + "\", \"" + data.partnerEntityCode + "\", \"" + data.systemEntityName + "\", \"" + data.systemEntityCode + "\", " + meta.row + ", this);' ><i class='fa fa-times'></i></button>";
+
+                        return actionHTML;
+                    },
+                    "orderable": false
+                }
+            ],
+            "order": [[0, "asc"]],
+            "columnDefs": [{
+                "defaultContent": "",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+
+        $('#tblApplicationMappingData_filter').css('display', 'none');
+    }
+
+
+    function AddMappingDataItem(integrationApplicationMappingItem_Id, partnerEntityName, partnerEntityCode, systemEntityName, systemEntityCode, row, event) {
+        $("#PartnerEntityName").val(partnerEntityName);
+        $("#PartnerEntityCode").val(partnerEntityCode);
+        $("#SystemEntityName").val(systemEntityName);
+        $("#SystemEntityCode").val(systemEntityCode);
+        $("#IntegrationApplicationMappingItem_Id").val(integrationApplicationMappingItem_Id);
+    }
+
+    function DeleteMappingDataItem(integrationApplicationMappingItem_Id, partnerEntityName, partnerEntityCode, systemEntityName, systemEntityCode, row, event) {
+        var model = {
+            Application: $("#txtApplication").val(),
+            ApplicationName: $("#Application :selected").text(),
+            IntegrationApplicationMapping_Id: $("#txtIntegrationApplicationMapping_Id").val(),
+            Type: $("#txtType").val(),
+            Entity: $("#txtEntity").val(),
+            IntegrationApplicationMappingItem_Id: integrationApplicationMappingItem_Id,
+            PartnerEntityName: partnerEntityName,
+            PartnerEntityCode: partnerEntityCode,
+            SystemEntityName: systemEntityName,
+            SystemEntityCode: systemEntityCode
+        }
+        if (confirm("Are you sure want to delete?")) {
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/DeleteIntegrationApplicationMappingItemsInfo",
+                data: model,
+                success: function (response) {
+                    $("#divURLSuccessError").removeAttr('class');
+                    if (response.responseStatus.status != undefined && response.responseStatus.status != null) {
+
+                        response.responseStatus.status.toLocaleLowerCase() == "success" ? $("#divURLSuccessError").addClass("alert alert-success") : $("#divURLSuccessError").addClass("alert alert-info");
+                        $("#divURLSuccessError").show();
+                        $("#lblURLmsg").text(response.responseStatus.errorMessage);
+                        $("#stURLMsg").text(response.responseStatus.status + "! ");
+                        $("#btnSearchMappingData").trigger("click");
+                    }
+                    else {
+                        $("#divURLSuccessError").show();
+                        $("#divURLSuccessError").addClass("alert alert-danger");
+                        $("#lblURLmsg").text("Something went wrong!");
+                        $("#stURLMsg").text("Success! ");
+                    }
+                    $(".ajaxloader").hide();
+                    setTimeout(() => {
+                        $("#divURLSuccessError").hide();
+                    }, 5000);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+    }
+
+</script>

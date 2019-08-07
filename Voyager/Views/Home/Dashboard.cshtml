@@ -1,0 +1,18 @@
+﻿
+
+<body class="inner-pg logged-in" data-responsejs='{"create":[{"prop":"width", "prefix":"min-device-width-", "lazy":false, "breakpoints":[0, 320, 481, 641, 767, 961, 1025, 1281] }]}'>
+    <!-- Wrapper ::Starts -->
+    <div class="wrapper">
+        <!-- Main Content :: Starts -->
+        <div class="main-content form-theme-04 form">
+            <div class="container">
+                <div class="pg-container">
+                    @using (Html.BeginForm("Quote", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        <h2 class="pg-ttl"></h2>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

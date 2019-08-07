@@ -1,0 +1,69 @@
+﻿@model Voyager.App.ViewModels.BookingPipelineViewModel
+
+<style>
+	.smallbutton {
+		font-weight: 700;
+		min-width: 60px;
+	}
+
+	.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+		z-index: 3;
+		color: #fff;
+		cursor: default;
+		background-color: #000096;
+		border-color: #000096;
+	}
+
+	.container-fluid {
+		padding-right: 0px;
+		padding-left: 0px;
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	.tr-strikthrough {
+		text-decoration: line-through;
+	}
+</style>
+
+<div class="gridresults">
+	<div class="main-content form form-theme-04">
+		<div class="container">
+			<div class="listing-content">
+				<div class="listing-table">
+					<div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+						<table class="table table-bordered tbl-theme-04" id="tblBooking">
+							<thead>
+								<tr>
+									<th class="col-md-1">Booking Number</th>
+									<th class="col-md-1">Agent</th>
+									<th class="col-md-1">Contact</th>
+									<th class="col-md-1">Booking Name</th>
+									<th class="col-md-1">Starts</th>
+									<th class="col-md-1">End</th>
+									<th class="col-md-1">Duration</th>
+									<th class="col-md-1">Status</th>
+									<th class="col-md-4">Action</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="action-popup" style="display:none">
+	<div class="popup-box pop-lg1 form-theme-04 form">
+		<button title="Close (Esc)" type="button" class="mfp-close"></button>
+		<div class="popup-in displayBookingPosition">
+		</div>
+	</div>
+</div>
+<div id="documentdownload-popup"></div>
+
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/js/Booking/booking.js"></script>
+<link href="~/css/qrfSummary.css" rel="stylesheet" />

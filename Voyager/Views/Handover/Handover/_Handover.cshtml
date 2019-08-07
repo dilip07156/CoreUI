@@ -1,0 +1,102 @@
+﻿@model Voyager.App.ViewModels.HandoverViewModel
+
+<style type="text/css">
+    .tblversion > tbody > tr > td, .tblversion > tbody > tr > td input {
+        text-align: center !important;
+    }
+
+    .trDeparture, .trDeparture input, .trDeparture textarea {
+        background-color: antiquewhite !important;
+    }
+</style>
+
+<div style="display:none;text-align:left;" id="divSuccessError">
+    <a class="close" title="close">×</a>
+    <strong id="stMsg"></strong> <label id="lblmsg"></label>
+</div>
+
+@if (Model.DepatureInfo != null && Model.DepatureInfo.Count > 0)
+{
+
+    <button type="button" class="btn btn-blue btn-md btnMail" id="btnbooking">Confirm Booking(s)</button>
+    <hr>
+    <div class="row">
+        <div class="col-lg-12">
+            <h3>Go Ahead Departures Details</h3>
+            <div class="table-responsive filter-table custom-mob-tbl">
+                <table class="table tblversion">
+                    <thead>
+                        <tr>
+                            <th class="col-lg-2">Confirm</th>
+                            <th class="col-lg-2">Departure Date</th>
+                            <th class="col-lg-1">Is Materialised</th>
+                            <th class="col-lg-1">Is Create</th>
+                            <th class="col-lg-3">Ops Booking Number</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodydepartures">
+                        @for (int i = 0; i < Model.DepatureInfo.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(m => Model.DepatureInfo[i].DepatureId, new { @id = "hdDepatureId_" + i })
+                                    @if (!string.IsNullOrEmpty(Model.DepatureInfo[i].OpsBookingNumber) && Model.DepatureInfo[i].IsCreate == true && Model.DepatureInfo[i].ConfirmMessage.ToLower() == "success")
+                                    {
+
+                                        @Html.CheckBoxFor(m => Model.DepatureInfo[i].IsDeleted, new { @id = "chkIsChecked_" + i, @disabled = "disabled" })
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBoxFor(m => Model.DepatureInfo[i].IsDeleted, new { @id = "chkIsChecked_" + i, data_name = Model.DepatureInfo[i].DepatureId, @class = "chkDeparture" })
+                                    }
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => Model.DepatureInfo[i].DepatureDate, "{0:dd MMM yyyy}", new { @id = "DepatureDate_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                </td>
+                                <td>
+                                    @Html.CheckBoxFor(m => Model.DepatureInfo[i].IsMaterialised, new { @id = "chkIsTemplate_" + i, @disabled = "disabled" })
+                                </td>
+                                <td class="tdStatus">
+                                    @if (Model.DepatureInfo[i].IsShowPending && string.IsNullOrEmpty(Model.DepatureInfo[i].OpsBookingNumber))
+                                    {
+                                        <span>Pending...</span>
+                                    }
+                                    else if (Model.DepatureInfo[i].IsShowProcessing && string.IsNullOrEmpty(Model.DepatureInfo[i].OpsBookingNumber))
+                                    {
+                                        <div class="classic-loading-bar"></div>
+                                    }
+                                    else if (!string.IsNullOrEmpty(Model.DepatureInfo[i].OpsBookingNumber) && Model.DepatureInfo[i].IsCreate == true && Model.DepatureInfo[i].ConfirmMessage.ToLower() == "success")
+                                    {
+                                        <span>Y</span>
+                                    }
+                                    else if (string.IsNullOrEmpty(Model.DepatureInfo[i].OpsBookingNumber) && Model.DepatureInfo[i].IsCreate == false && Model.DepatureInfo[i].ConfirmMessage.ToLower() != "success")
+                                    {
+                                        <span>N</span>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => Model.DepatureInfo[i].OpsBookingNumber, new { @id = "OpsBookingNumber_" + i, @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.DepatureInfo[i].ConfirmMessage) && !Model.DepatureInfo[i].ConfirmMessage.StartsWith("Failure"))
+                                    {
+                                        <div id="ConfirmMessage_@i" style="overflow-wrap: break-word;">
+                                            @Model.DepatureInfo[i].ConfirmMessage
+                                        </div> 
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <span id="nodata">No details found in mGoAhead Collection.</span>
+}
+<script src="~/js/Handover/Handover.js"></script>

@@ -1,0 +1,74 @@
+﻿@model Voyager.App.ViewModels.OpsCancelBooking
+
+
+@if (Model.HotelList?.Count > 0)
+{
+	<div class="card col-md-9">
+		<div class="card-header">Supplier Communication</div>
+		<div class="card-body">
+			<p>Do you wish to send cancellations to the Suppliers?</p>
+			@*<div class="form-check form-check-inline">
+					@Html.RadioButtonFor(x => x.rdoHotelList, new { id = "All" })
+					<label class="form-check-label" for="inlineRadio1">All</label>
+				</div>
+				<div class="form-check form-check-inline">
+					@Html.RadioButtonFor(x => x.rdoHotelList, new { id = "Selected" })
+					<label class="form-check-label" for="inlineRadio2">Selected</label>
+				</div>*@
+
+			<table class="table table-striped table-hover" name="TableCancelBooking" id="TableCancelBooking">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Location</th>
+						<th>Product</th>
+						<th>Status</th>
+						<th><input type="checkbox" class="btnSelectAll allChecked" id="btnSelectAll" checked="checked"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int i = 0; i < Model.HotelList.Count; i++)
+					{
+					<tr>
+						@Html.HiddenFor(x => x.HotelList[i].PositionId)
+						<td>@Model.HotelList[i].StartDate</td>
+						<td>@Model.HotelList[i].Location</td>
+						<td>@Model.HotelList[i].ProductName</td>
+						<td>@Model.HotelList[i].Status</td>
+						<td>
+							<div class="form-check chkHotelRow">
+								<input type="checkbox" class="form-check-input form-control-1" name="HotelList[@i].IsSelected" value="@Model.HotelList[i].IsSelected">
+							</div>
+						</td>
+					</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		@*<button type="button" class="btn btn-danger">
+				Cancel Booking
+			</button>*@
+		<button type="button" class="btn btn-danger" onclick="updateCancelPositionDetails()">Cancel Booking</button>&nbsp;
+		@*<button type="button"
+					class="btn btn-secondary"
+					data-dismiss="modal">
+				Close
+			</button>*@
+		<button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+	</div>
+}
+else
+{
+	<div class="card col-md-9">
+		<h4>No Records Found</h4>
+	</div>
+	<br />
+	<div class="modal-footer">
+		<button type="button" class="btn btn-danger" onclick="updateCancelPositionDetails()" disabled>Cancel Booking</button>&nbsp;
+		<button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+   </div>
+}
+

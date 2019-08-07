@@ -1,0 +1,26 @@
+﻿.filter-table .table > tbody > tr > td {
+    vertical-align: top;
+}
+
+.ui-autocomplete, .ajaxloader {
+    z-index: 100000;
+}
+
+.mfp-bg {
+    opacity: 0.6;
+}
+
+.AddEditSH {
+    display: none !important;
+}
+
+.popup-box.pop-lg1 {
+    max-width: 1100px;   
+}
+
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 0;
+    border-top: 1px solid #d1d1d1;
+}

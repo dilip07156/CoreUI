@@ -1,0 +1,718 @@
+﻿@model Voyager.App.ViewModels.CommercialsViewModel
+<style>
+    .ui-autocomplete, .ajaxloader {
+        z-index: 100000;
+    }
+
+    ul.rgt-btn-sec > li.dbl-btn {
+        padding: 0px 8px;
+        margin: 0px 5px;
+    }
+</style>
+<!-- Form : Starts -->
+<form>
+    @Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+    @Html.HiddenFor(m => m.QRFPriceId, new { @id = "QRFPriceId" })
+    <div class="float-block">
+        <div class="lft-flt-pnl">
+            <ul>
+                <li>
+                    <label>Total Sales </label> @ViewBag.QRFCurrency <span> @((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice)).ToString("0.00")) </span>
+                </li>
+                <li class="txt-red">
+                    <label>Total Profit </label> @ViewBag.QRFCurrency <span>
+                        @((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)).ToString("0.00"))
+                    </span>
+                </li>
+                <li class="txt-red">
+                    <label>Profit Margin </label><span>
+                    @if ((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice)) - (Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)) > 0)
+                    {
+                        <span>
+                            @(((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)) * 100 / ((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice)) - (Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)))).ToString("0.00"))
+                            %
+                        </span>
+                    }
+                    else
+                    {
+                        <span>100.00%</span>
+                    }
+                    </span>
+                </li>
+            </ul>
+            @*<p>*Assuming 100% direct sales. To change ratio, go to <a href="#" class="link">What-If Analysis</a></p>*@
+        </div>
+    </div>
+    <div class="clear"></div>
+    <!-- Tab title : Starts -->
+    <div class="ttl-sec tbl-style">
+        <div>
+            <h3 class="inline-block"><i class="fa-custom-summary-black"></i> Commercials</h3>
+            <ul class="slct-drtn">
+                <li>
+                    @Html.DropDownListFor(m => m.PaxSlab, new SelectList(Model.PaxSlabList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                </li>
+                <li>
+                    @Html.DropDownListFor(m => m.DepartureDate, new SelectList(Model.DepartureDatesList, "AttributeValue_Id", "Value"), new { @class = "form-control filter" })
+                </li>
+            </ul>
+        </div>
+        <div class="clearfix pull-right">
+            <ul class="rgt-btn-sec">
+                @if (@ViewBag.IsAllowToAppRej)
+                {
+                    <li><a class="btn btn-md btn-primary popup-inline showMargin" href="#Margin-popup"> Edit Margins</a></li>
+                    <li class="dbl-btn"><a class="btn btn-md btn-blue popup-inline" onclick="saveCommercials();"> Save</a> </li>
+                    <li><a id="btnApprovalCA" href="#commercials-submit-for-approval-alert" class="btn btn-blue">Approve Quotation</a> </li>
+                    <li class="dbl-btn" style="border-right:0px;padding-right:0px;margin-right:0px"><a href="#commercials-submit-for-reject-alert" class="btn btn-blue popup-inline commercialsubmit">Reject Quotation</a> </li>
+                }
+                else
+                {
+                    <li style="margin-right:18px"><a class="btn btn-md btn-primary popup-inline showMargin" href="#Margin-popup"> Edit Margins</a></li>
+                    <li><a class="btn btn-md btn-blue popup-inline" onclick="saveCommercials();"> Save</a> </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <!-- Tab title : Ends -->
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <div>
+                <div class="custom-mob-tbl table-responsive summary-tbl">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="col-md"></th>
+                                <th>Buy Price</th>
+                                <th>Sell Price</th>
+                                <th>P/L</th>
+                                <th>% of Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @for (int i = 0; i < Model.BareBoneList.Count; i++)
+                            {
+                                <tr>
+                                    <td>@Model.BareBoneList[i].ProductType</td>
+                                    <td><span class="priz">@Model.BareBoneList[i].BuyCurrency <span> @Model.BareBoneList[i].CostPrice.ToString("0.00")</span></span></td>
+                                    <td><span class="priz">@Model.BareBoneList[i].SellCurrency <span> @Model.BareBoneList[i].SellPrice.ToString("0.00")</span></span></td>
+                                    <td><span class="priz">@Model.BareBoneList[i].SellCurrency <span>@((Model.BareBoneList[i].ProfitLoss).ToString("0.00"))</span></span></td>
+                                    @if (@Model.BareBoneList[i].SellPrice > 0)
+                                    {
+                                        if (Model.BareBoneList[i].SellPrice - Model.BareBoneList[i].ProfitLoss > 0)
+                                        {
+                                            <td>@((Model.BareBoneList[i].ProfitLoss * 100 / (Model.BareBoneList[i].SellPrice - Model.BareBoneList[i].ProfitLoss)).ToString("0.00"))%</td>
+                                        }
+                                        else
+                                        {
+                                            <td>100.00%</td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td>0.00%</td>
+                                    }
+                                </tr>
+
+                            }
+                            @if (Model.BareBoneList.Count > 0)
+                            {
+                                <tr class="bg-grey txt-semibold">
+                                    <td>Total Bare bone</td>
+                                    <td><span class="priz">@Model.BareBoneList[0].BuyCurrency <span> @Model.BareBoneList.Sum(a => a.CostPrice).ToString("0.00") </span></span></td>
+                                    <td><span class="priz">@Model.BareBoneList[0].SellCurrency <span> @Model.BareBoneList.Sum(a => a.SellPrice).ToString("0.00") </span></span></td>
+                                    <td><span class="priz">@Model.BareBoneList[0].SellCurrency <span> @((Model.BareBoneList.Sum(a => a.ProfitLoss)).ToString("0.00")) </span></span></td>
+                                    @if (Model.BareBoneList.Sum(a => a.SellPrice) - Model.BareBoneList.Sum(a => a.ProfitLoss) > 0)
+                                    {
+                                        <td>@((Model.BareBoneList.Sum(a => a.ProfitLoss) * 100 / (Model.BareBoneList.Sum(a => a.SellPrice) - Model.BareBoneList.Sum(a => a.ProfitLoss))).ToString("0.00"))%</td>
+                                    }
+                                    else
+                                    {
+                                        <td>100.00%</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @*<div class="tbl-tl-head">
+                        <h4>Offers &amp; Promotions </h4><a href="#commercials-add-scheme" class="link txt-darkblue popup-inline">(Add)</a>
+                    </div>
+                    <div class="custom-mob-tbl table-responsive summary-tbl">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-left extra-padding">Regular Fare</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cash Back Effect</td>
+                                    <td></td>
+                                    <td>
+                                        <span class="priz"><i class="fa-rupee"></i> <span><span> 0</span>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Discount</td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 0</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 0</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 0</span></div>
+                                    </td>
+                                    <td>0%</td>
+                                </tr>
+                                <tr>
+                                    <td>Effects After Scheme</td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 0</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 0</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 0</span></div>
+                                    </td>
+                                    <td>0%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>*@
+                @*<div class="tbl-tl-head">
+                        <h4>Commission </h4><a href="#commercials-add-commission" class="link txt-darkblue popup-inline">(Add)</a>
+                    </div>
+                    <div class="custom-mob-tbl table-responsive summary-tbl">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Directs Client - 100% <a href="#" class="link txt-darkblue pull-right">Change</a></td>
+                                    <td></td>
+                                    <td>
+                                        <div class="priz"><i class="fa-rupee"></i><span> 6,754</span></div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>*@
+                <div class="tbl-tl-head">
+                    <h4>Optionals </h4>@*<a href="#commercials-add-service-tax" class="link txt-darkblue popup-inline">(Add)</a>*@
+                </div>
+                <div class="custom-mob-tbl table-responsive summary-tbl">
+                    <table class="table">
+                        <tbody>
+                            @if (Model.PositionOptional.Count > 0)
+                            {
+                                <tr>
+                                    <td class="inpt-td">
+                                        Optional sold
+                                        @Html.TextBoxFor(m => m.PercentSoldOptional, new { @id = "PercentSoldOptional", @class = "form-control" }) %
+                                    </td>
+                                    <td><span class="priz">@Model.PositionOptional[0].BuyCurrency <span> @((Model.PositionOptional.Sum(b => b.TotalBuyPrice)).ToString("0.00"))</span></span></td>
+                                    <td><span class="priz">@Model.PositionOptional[0].QRFCurrency <span> @((Model.PositionOptional.Sum(b => b.TotalSellPrice)).ToString("0.00"))</span></span></td>
+                                    <td><span class="priz">@Model.PositionOptional[0].QRFCurrency <span> @((Model.PositionOptional.Sum(b => b.ProfitAmount)).ToString("0.00"))</span></span></td>
+
+                                    @if (@Model.PositionOptional.Sum(b => b.TotalSellPrice) > 0)
+                                    {
+                                        <td>@((Model.PositionOptional.Sum(b => b.ProfitPercentage) / Model.PositionOptional.Count).ToString("0.00"))%</td>
+                                    }
+                                    else
+                                    {
+                                        <td><span>0.00%</span></td>
+                                    }
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="inpt-td">
+                                        Optional sold
+                                        <input type="text" value="100" class="form-control"> %
+                                    </td>
+                                    <td>
+                                        <div class="priz"><span> 0.00</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="priz"><span> 0.00</span></div>
+                                    </td>
+                                    <td>
+                                        <div class="priz"><span> 0.00</span></div>
+                                    </td>
+                                    <td><span>0.00%</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="custom-mob-tbl table-responsive summary-tbl">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th colspan="2" class="conv-head">
+                                    @if (Model.QRFExhangeRates.Count > 0)
+                                    {
+                                        <span>ROE Conversions <span class="txt-darkblue">As on @Model.QRFExhangeRates[0].AsOnDate.ToString("MMM dd, yyyy")</span></span>
+                                    }
+                                    else
+                                    {
+                                        <span>ROE Conversions <span class="txt-darkblue"></span></span>
+                                    }
+                                    @*<div><a href="#" class="btn btn-primary">Edit</a> <a href="#" class="txt-darkblue"><i class="fa-arrow-up"></i></a></div>*@
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.QRFExhangeRates.Count; i++)
+                            {
+                                <tr class="td-cnvrsn">
+                                    <td style="border-right:#d5d9da solid 1px">
+                                        <span>1 @Model.QRFExhangeRates[i].FromCurrency = <span class="txt-darkblue">@Model.QRFExhangeRates[i].ExchangeRate </span> @Model.QRFExhangeRates[i].ToCurrency </span>
+                                    </td>
+                                </tr>
+                            }
+
+                            @*<tr class="td-cnvrsn">
+                                    <td>
+                                        <span><i class="fa-custom-flag-thailand"></i> 1 THB = <span class="txt-darkblue">0.032 </span> USD </span>
+                                    </td>
+                                    <td class="text-left">
+                                        <span><i class="fa-custom-flag-usa"></i> 1 USD = <span class="txt-darkblue">54.91 </span> INR </span>
+                                    </td>
+                                </tr>*@
+                            @*<tr>
+                                    <td colspan="2"><a href="#" class="link txt-darkblue pull-right">Show all</a></td>
+                                </tr>*@
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div>
+                <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                    <div class="tbl-actn-btns"><h4>Included</h4> <span><a class="btn btn-white" onclick="changePosition(this,'Supplement');">Change to Supplement</a> <a class="btn btn-white" onclick="changePosition(this,'Optional');">Change to Optionals</a></span></div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Buy Price</th>
+                                <th>Sell Price</th>
+                                <th>% of Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @for (int i = 0; i < Model.PositionIncluded.Count; i++)
+                            {
+                                if (string.IsNullOrEmpty(Model.PositionIncluded[i].QRFCostForPositionID))
+                                {
+                                    <tr class="StandardRow">
+                                        <td>
+                                            <label><input type="checkbox" class="chkStandard"> <span class="PositionType">@Model.PositionIncluded[i].PositionType</span></label>
+                                            <a><i class="fa fa-chevron-circle-down show-positions" style="font-size:15px;"></i></a>
+                                        </td>
+                                        <td class="td-cp"><span class="priz">@Model.PositionIncluded[i].BuyCurrency <span> @Model.PositionIncluded[i].TotalBuyPrice.ToString("0.00")</span></span></td>
+                                        <td class="td-sp">
+                                            <span class="priz">
+                                                @Model.PositionIncluded[i].QRFCurrency
+                                                <span>@Model.PositionIncluded[i].TotalSellPrice.ToString("0.00")</span>
+                                            </span>
+                                        </td>
+                                        <td class="td-prft">
+                                            @if (@Model.PositionIncluded[i].TotalSellPrice > 0)
+                                            {
+                                                <span>@(Model.PositionIncluded[i].ProfitPercentage.ToString("0.00"))%</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0%</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr class="ProductRow @Model.PositionIncluded[i].PositionType.Replace(" ","-")" style="display: none;">
+                                        @Html.HiddenFor(m => m.PositionIncluded[i].PositionId, new { @id = "PositionId" })
+                                        <td class="td-paragrh">
+                                            <label><input type="checkbox" class="chkPosition"> @Model.PositionIncluded[i].ProductName</label>
+                                        </td>
+                                        <td class="td-cp"><span class="priz">@Model.PositionIncluded[i].BuyCurrency <span> @Model.PositionIncluded[i].TotalBuyPrice.ToString("0.00")</span></span></td>
+                                        <td class="td-sp">
+                                            <span class="priz">
+                                                @Model.PositionIncluded[i].QRFCurrency
+                                                <span>@Model.PositionIncluded[i].TotalSellPrice.ToString("0.00")</span>
+                                            </span>
+                                        </td>
+                                        <td class="td-prft">
+                                            @if (@Model.PositionIncluded[i].TotalSellPrice > 0)
+                                            {
+                                                <span>@(Model.PositionIncluded[i].ProfitPercentage.ToString("0.00"))%</span>
+                                            }
+                                            else
+                                            {
+                                                <span>0%</span>
+                                            }
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+
+                            <tr class="bg-grey txt-semibold">
+                                <td>Total <span class="pull-right">A</span></td>
+                                <td><span class="priz">@ViewBag.QRFCurrency <span> @Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalBuyPrice).ToString("0.00")</span></span></td>
+                                <td><span class="priz">@ViewBag.QRFCurrency <span>@Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice).ToString("0.00")</span></span></td>
+                                <td>
+                                    @if (@Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) > 0)
+                                    {
+                                        if ((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) - Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount)) > 0)
+                                        {
+                                            <span>@((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) * 100 / (Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) - Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount))).ToString("0.00"))%</span>
+                                        }
+                                        else
+                                        {
+                                            <span>100.00%</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>0.00%</span>
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="custom-mob-tbl table-responsive summary-tbl">
+                    <div class="tbl-actn-btns"><h4>Supplement</h4> <span><a class="btn btn-white" onclick="changePosition(this,'Included');">Change to Included</a> <a class="btn btn-white" onclick="changePosition(this,'Optional');">Change to Optionals</a></span></div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Buy Price</th>
+                                <th>Sell Price</th>
+                                <th>% of Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.PositionSupplement.Count; i++)
+                            {
+                                <tr class="ProductRow">
+                                    @Html.HiddenFor(m => m.PositionSupplement[i].PositionId, new { @id = "PositionId" })
+                                    <td>
+                                        <label><input type="checkbox" class="chkPosition"> @Model.PositionSupplement[i].ProductName</label>
+                                    </td>
+                                    <td class="td-cp"><span class="priz">@Model.PositionSupplement[i].BuyCurrency <span> @Model.PositionSupplement[i].TotalBuyPrice.ToString("0.00")</span></span></td>
+                                    <td class="td-sp">
+                                        <span class="priz">
+                                            @Model.PositionSupplement[i].QRFCurrency
+                                            <span>@Model.PositionSupplement[i].TotalSellPrice.ToString("0.00")</span>
+                                        </span>
+                                    </td>
+                                    <td class="td-prft">
+                                        @if (@Model.PositionSupplement[i].TotalSellPrice > 0)
+                                        {
+                                            <span>@((Model.PositionSupplement[i].ProfitPercentage).ToString("0.00"))%</span>
+                                        }
+                                        else
+                                        {
+                                            <span>0.00%</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            <tr class="bg-grey txt-semibold">
+                                <td>Total <span class="pull-right">B</span></td>
+                                @if (Model.PositionSupplement.Count > 0)
+                                {
+                                    <td><span class="priz">@Model.PositionSupplement[0].BuyCurrency <span> @Model.PositionSupplement.Sum(b => b.TotalBuyPrice).ToString("0.00")</span></span></td>
+                                    <td><span class="priz">@Model.PositionSupplement[0].QRFCurrency <span> @Model.PositionSupplement.Sum(b => b.TotalSellPrice).ToString("0.00")</span></span></td>
+                                }
+                                else
+                                {
+                                    <td><span class="priz"> <span>@ViewBag.QRFCurrency @Model.PositionSupplement.Sum(b => b.TotalBuyPrice).ToString("0.00")</span></span></td>
+                                    <td><span class="priz"> <span>@ViewBag.QRFCurrency @Model.PositionSupplement.Sum(b => b.TotalSellPrice).ToString("0.00")</span></span></td>
+                                }
+                                @if (@Model.PositionSupplement.Sum(b => b.TotalSellPrice) > 0)
+                                {
+                                    if (Model.PositionSupplement.Sum(b => b.TotalSellPrice) - Model.PositionSupplement.Sum(b => b.ProfitAmount) > 0)
+                                    {
+                                        <td>@((Model.PositionSupplement.Sum(b => b.ProfitAmount) * 100 / (Model.PositionSupplement.Sum(b => b.TotalSellPrice) - Model.PositionSupplement.Sum(b => b.ProfitAmount))).ToString("0.00"))%</td>
+                                    }
+                                    else
+                                    {
+                                        <td>100.00%</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td><span>0.00%</span></td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="custom-mob-tbl table-responsive summary-tbl">
+                    <div class="tbl-actn-btns"><h4>Optionals</h4> <span><a class="btn btn-white" onclick="changePosition(this,'Included');">Change to Included</a> <a class="btn btn-white" onclick="changePosition(this,'Supplement');">Change to Supplement</a></span></div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Buy Price</th>
+                                <th>Sell Price</th>
+                                <th>% of Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.PositionOptional.Count; i++)
+                            {
+                                <tr class="ProductRow">
+                                    @Html.HiddenFor(m => m.PositionOptional[i].PositionId, new { @id = "PositionId" })
+                                    <td>
+                                        <label><input type="checkbox" class="chkPosition"> @Model.PositionOptional[i].ProductName</label>
+                                    </td>
+                                    <td class="td-cp"><span class="priz">@Model.PositionOptional[i].BuyCurrency <span> @Model.PositionOptional[i].TotalBuyPrice.ToString("0.00")</span></span></td>
+                                    <td class="td-sp">
+                                        <span class="priz">
+                                            @Model.PositionOptional[i].QRFCurrency
+                                            <span>@Model.PositionOptional[i].TotalSellPrice.ToString("0.00")</span>
+                                        </span>
+                                    </td>
+                                    <td class="td-prft">
+                                        @if (@Model.PositionOptional[i].TotalSellPrice > 0)
+                                        {
+                                            <span>@((Model.PositionOptional[i].ProfitPercentage).ToString("0.00"))%</span>
+                                        }
+                                        else
+                                        {
+                                            <span>0.00%</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            <tr class="bg-grey txt-semibold">
+                                <td>Total <span class="pull-right">C</span></td>
+                                @if (Model.PositionOptional.Count > 0)
+                                {
+                                    <td><span class="priz">@Model.PositionOptional[0].BuyCurrency <span> @Model.PositionOptional.Sum(b => b.TotalBuyPrice).ToString("0.00")</span></span></td>
+                                    <td><span class="priz">@Model.PositionOptional[0].QRFCurrency <span> @Model.PositionOptional.Sum(b => b.TotalSellPrice).ToString("0.00")</span></span></td>
+                                }
+                                else
+                                {
+                                    <td><span class="priz"> <span>@ViewBag.QRFCurrency @Model.PositionOptional.Sum(b => b.TotalBuyPrice).ToString("0.00")</span></span></td>
+                                    <td><span class="priz"> <span>@ViewBag.QRFCurrency @Model.PositionOptional.Sum(b => b.TotalSellPrice).ToString("0.00")</span></span></td>
+                                }
+                                @if (@Model.PositionOptional.Sum(b => b.TotalSellPrice) > 0)
+                                {
+                                    if (Model.PositionOptional.Sum(b => b.TotalSellPrice) - Model.PositionOptional.Sum(b => b.ProfitAmount) > 0)
+                                    {
+                                        <td>@((Model.PositionOptional.Sum(b => b.ProfitAmount) * 100 / (Model.PositionOptional.Sum(b => b.TotalSellPrice) - Model.PositionOptional.Sum(b => b.ProfitAmount))).ToString("0.00"))%</td>
+                                    }
+                                    else
+                                    {
+                                        <td>100.00%</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td><span>0.00%</span></td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="custom-mob-tbl table-responsive summary-tbl">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-left txt-black extra-padding txt-semibold">Total <span class="pull-right">A + B + C</span></th>
+                                <th class="text-center extra-padding txt-semibold"><span class="priz txt-black">@ViewBag.QRFCurrency <span> @((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalBuyPrice) + Model.PositionSupplement.Sum(b => b.TotalBuyPrice) + Model.PositionOptional.Sum(b => b.TotalBuyPrice)).ToString("0.00"))</span></span></th>
+                                <th class="text-center extra-padding txt-semibold"><span class="priz txt-black">@ViewBag.QRFCurrency <span> @((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice)).ToString("0.00"))</span></span></th>
+                                <th class="txt-black text-right extra-padding txt-semibold">
+                                    @if (((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice))) > 0)
+                                    {
+
+                                        @if ((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice)) - (Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)) > 0)
+                                        {
+                                            <span>
+                                                @(((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)) * 100 / ((Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.TotalSellPrice) + Model.PositionSupplement.Sum(b => b.TotalSellPrice) + Model.PositionOptional.Sum(b => b.TotalSellPrice)) - (Model.PositionIncluded.Where(a => string.IsNullOrEmpty(a.QRFCostForPositionID)).Sum(b => b.ProfitAmount) + Model.PositionSupplement.Sum(b => b.ProfitAmount) + Model.PositionOptional.Sum(b => b.ProfitAmount)))).ToString("0.00"))%
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>100.00 %</span>
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <span>0.00%</span>
+                                    }
+                                </th>
+                            </tr>
+                        </thead>
+                        @*<tbody>
+                                <tr>
+                                    <td> (+) Service Tax <a href="#" class="link txt-darkblue">Change</a></td>
+                                    <td><span class="priz"><i class="fa-rupee"></i> <span> </span></span></td>
+                                    <td><span class="priz"><i class="fa-rupee"></i> <span> </span></span></td>
+                                    <td>%</td>
+                                </tr>
+                                <tr class="bg-grey txt-semibold">
+                                    <td class="txt-ltblue"> Grand Total (After Taxes)</td>
+                                    <td class="txt-ltblue"><span class="priz"><i class="fa-rupee"></i> <span> </span></span></td>
+                                    <td class="txt-ltblue"><span class="priz"><i class="fa-rupee"></i> <span> </span></span></td>
+                                    <td class="txt-ltblue">%</td>
+                                </tr>
+                                <tr>
+                                    <td> Cashback 30% </td>
+                                    <td class="txt-red"><span class="priz">(<i class="fa-rupee"></i> <span> )</span></span></td>
+                                    <td class="txt-red"><span class="priz">(<i class="fa-rupee"></i> <span> )</span></span></td>
+                                    <td class="txt-red">(%)</td>
+                                </tr>
+                                <tr class="bg-grey txt-semibold">
+                                    <td>Cashback Effect </td>
+                                    <td><span class="priz"><i class="fa-rupee"></i> <span></span></span></td>
+                                    <td><span class="priz"><i class="fa-rupee"></i> <span> </span></span></td>
+                                    <td>%</td>
+                                </tr>
+                            </tbody>*@
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="clearfix pull-right" style="margin-right:14px">
+            <ul class="rgt-btn-sec">
+                @if (@ViewBag.IsAllowToAppRej)
+                {
+                    <li><a class="btn btn-md btn-primary popup-inline showMargin" href="#Margin-popup"> Edit Margins</a></li>
+                            <li class="dbl-btn"><a class="btn btn-md btn-blue popup-inline" onclick="saveCommercials();"> Save</a> </li>
+                            <li><a href="#commercials-submit-for-approval-alert" class="btn btn-blue popup-inline commercialsubmit">Approve Quotation</a> </li>
+                            <li class="dbl-btn" style="border-right:0px;padding-right:0px;margin-right:0px"><a href="#commercials-submit-for-reject-alert" class="btn btn-blue popup-inline commercialsubmit">Reject Quotation</a> </li>
+                }
+                else
+                {
+                    <li style="margin-right:18px"><a class="btn btn-md btn-primary popup-inline showMargin" href="#Margin-popup"> Edit Margins</a></li>
+                            <li><a class="btn btn-md btn-blue popup-inline" onclick="saveCommercials();"> Save</a> </li>
+                }
+            </ul>
+        </div>
+
+    </div>
+
+    <div id="Margin-popup" style="display:none">
+        <div class="popup-box pop-lg form-theme-04 form">
+            <div class="popup-in sqr-tab-data">
+                hii
+            </div>
+        </div>
+    </div>
+
+    <!--Commercial Submit For Approval Popup Start-->
+    <div class="mfp-hide popup-box pop-md form-theme-04 form" id="commercials-submit-for-approval-alert">
+        @*<h2>18b-Itinerary-Submit-Quote-Popup</h2>*@
+        <div class="popup-in">
+            <h3 class="pop-tl">Approve Quote</h3>
+
+            <p>
+                <i>@Model.CurrentDate</i><br>
+                <br>
+                <b>The Sales Officer</b><br>
+                OBT - Series Department<br>
+                <br>
+                Dear Sir / Madam<br>
+                <br>
+                Please made note of the following remarks while working this quotation.<br>
+                <br>
+                @Html.TextAreaFor(x => x.Remarks, new { @id = "remarks", @rows = 5 })
+                <br>
+                <br>
+                Thank You.<br>
+                <br>
+                @Model.UserName<br>
+                Product Accountant
+            </p>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <a href="#commercial-approval-submitted" class="popup-inline btn btn-blue btn-md" id="btnSubmitCommercialSave">Submit</a>
+                <a href="#" class="btn btn-blue-outline btn-md close-popup ">Cancel</a>
+            </div>
+        </div>
+    </div>
+    <!--Commercial Submit For Approval Popup End-->
+    <!--Commercial Submitted Popup Start-->
+    <div class="mfp-hide popup-box pop-md" id="commercial-approval-submitted" style="display:none">
+        @*<h2>18c-Itinerary-Quote-Submitted-Popup</h2>*@
+        <div class="popup-in">
+            <h3 class="pop-tl">Thank You</h3>
+            <p> Your Quotation Reference <span class="blue-txt semi-bold">@Model.MenuViewModel.QRFID</span> has been submitted to Agent Approval, who will reply you shortly. </p>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <a href="#" class="popup-inline btn btn-blue btn-md closeOkPopup">Ok</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mfp-hide popup-box pop-md form-theme-04 form" id="commercials-submit-for-reject-alert">
+        <h2>Reject-Quote-Popup</h2>
+        <div class="popup-in">
+            <h3 class="pop-tl">Reject Quote</h3>
+            <p>
+                <i>@Model.CurrentDate</i><br>
+                <br>
+                <b>Sales Officer</b><br>
+                OBT - Series Department<br>
+                <br>
+                Dear Sir / Madam<br>
+                <br>
+                The Quoation cannot be approved for reasons mentioned below:<br>
+                <br>
+               @Html.TextAreaFor(x => x.Remarks, new { @id = "remarks", @rows = 5 })
+                <br>
+                <br>
+                Thank You.<br>
+                <br>
+                @Model.UserName<br>
+                Product Accountant
+            </p>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <a href="#commercial-reject-submitted" class="popup-inline btn btn-blue btn-md" id="btnSubmitCommercialReject">Send</a>
+                <a href="#" class="btn btn-blue-outline btn-md close-popup ">Cancel</a>
+            </div>
+        </div>
+    </div>
+    <div class="mfp-hide popup-box pop-md" id="commercial-reject-submitted" style="display:none">
+        <div class="popup-in">
+            <h3 class="pop-tl">Thank You</h3>
+            <p> Your Quotation Reference <span class="blue-txt semi-bold">@Model.MenuViewModel.QRFID</span> has been submitted to Costing Officer, who will reply you shortly. </p>
+            <button title="Close (Esc)" type="button" class="mfp-close"></button>
+            <div class="btn-cont text-center">
+                <a href="#" class="popup-inline btn btn-blue btn-md closeOkPopup">Ok</a>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- Form : Ends -->
+
+<script src="~/js/Costing/Commercials.js"></script>

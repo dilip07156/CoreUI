@@ -1,0 +1,109 @@
+.prod-info-ctrl {
+    display: none !important;
+}
+
+.ops-prod-info {
+    display: block !important;
+}
+
+/*body {
+      font-family: "Lato", sans-serif;
+    }*/
+.sidebar {
+    height: 100%;
+    width: 0;
+    /*position: fixed;*/
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding: 0px;
+}
+
+    /*.sidebar a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+
+        .sidebar a:hover {
+            color: #111;
+            font-weight: bold
+        }*/
+
+    .sidebar .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #111;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+}
+
+    .openbtn:hover {
+        background-color: #444;
+    }
+
+#mainOps {
+    border: 1px solid #ddd;
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+.list-group-item:first-child {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+}
+
+.list-group-item:last-child {
+    margin-bottom: 0;
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
+
+.list-group-item {
+    background-color: #f8f9fa !important;
+}
+/*On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size)
+    media screen and (max-height: 450px) {
+      .sidebar {padding-top: 15px;}
+      .sidebar a {font-size: 18px;}
+    }*/
+
+#divOpsDayInfo .form-control-1 {
+    /*font-size: 1.4rem;*/
+}
+
+#divOpsDayInfo .input-group-text {
+    /*font-size: 1.4rem;*/
+}
+
+.input-group img {
+    height: 20px;
+}
+
+.input-append.date.form-control-1 > input.hasDatepicker {
+    border: 0;
+    width: 100%;
+}
+
+#divOpsDayInfo .form-control {
+    border-bottom: 1px solid #ced4da;
+}
+
+.card-header {
+    text-transform: capitalize;
+}

@@ -1,0 +1,99 @@
+﻿@model VGER_WAPI_CLASSES.BookingRoomHotelsGetRes
+
+<div class="container-fluid" id="divSendRoomingListToHotel">
+    <h3>Send Rooming List to Hotel</h3>
+    <br />
+    <div class="card">
+        <div class="card-header">
+            Select which hotels you wish to send the rooming list to
+        </div>
+        <div class="card-body"> 
+            <div class="alert alert-success" id="divSuccess" style="display:none">
+                <a href="#" class="close-alert" aria-label="close" title="close">×</a>
+                <div><strong>Success! </strong> <span id="spanSuccessMsg"></span></div>
+            </div>
+            <div class="alert alert-danger" id="divError" style="display:none">
+                <a href="#" class="close-alert" aria-label="close" title="close">×</a>
+                <div><strong>Error! </strong> <span id="spanErrorMsg"></span></div>
+            </div>
+            <div class="table-responsive filter-table custom-mob-tbl">
+                <table class="table" id="TableRoomsingListToHotel" name="TableRoomsingListToHotel">
+                    <thead>
+                        <tr>
+                            <th class="col-md-2">Date</th>
+                            <th class="col-md-3">Location</th>
+                            <th class="col-md-3">Product</th>
+                            <th class="col-md-2">Status</th>
+                            <th class="col-md-2"><input type="checkbox" class="form-control-1" id="CheckAll"><span id="spCheckAll">Select All</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.SendRoomingListToHotelVm.Count > 0)
+                        {
+                            @for (int i = 0; i < Model.SendRoomingListToHotelVm.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(x => x.SendRoomingListToHotelVm[i].PositionId)
+                                        @Model.SendRoomingListToHotelVm[i].StartDate
+                                    </td>
+                                    <td>@Model.SendRoomingListToHotelVm[i].Location</td>
+                                    <td>@Model.SendRoomingListToHotelVm[i].ProductName</td>
+                                    <td>@Model.SendRoomingListToHotelVm[i].FullFormStatus</td>
+                                    <td>
+                                        <div class="form-check divIsRoomChecked">
+                                            @if (Model.SendRoomingListToHotelVm[i].PlaceHolder == true)
+                                            {
+                                                <input class="form-control-1" type="checkbox" value="" id="Check_@i" disabled="disabled" name="BookingRoomHotels[@i].IsSelected">
+                                            }
+                                            else
+                                            {
+                                                <input class="form-control-1" type="checkbox" value="" id="Check_@i" name="BookingRoomHotels[@i].IsSelected">                                                
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="alert alert-info">No Records Found</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="btn btn-success" id="SendRoomingList" onclick="sendRoominListToHotels()">Send Rooming List</button>
+        </div>
+    </div>
+    <div class="btn-cont">
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close"></button>
+</div>
+<style>
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .close-alert {
+        float: right;
+        font-size: 21px;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        text-shadow: 0 1px 0 #fff;
+        filter: alpha(opacity=20);
+        opacity: .2;
+    }
+</style>
+<script src="~/js/Operations/SendRoomingListToHotel.js"></script>

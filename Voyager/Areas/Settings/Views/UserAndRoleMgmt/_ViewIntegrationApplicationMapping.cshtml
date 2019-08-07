@@ -1,0 +1,201 @@
+﻿@model Voyager.App.ViewModels.IntegrationApplicationMappingViewModel
+
+
+<style>
+    .row1 {
+        margin-bottom: 15px !important;
+    }
+</style>
+
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        <h3>Integration Application Mapping</h3>
+        <br />
+        <div class="modal-body">
+            <br />
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <div style="display:none;text-align:left;" id="divSuccessError">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                    </div>
+                    <form id="frmIntegrationApplicationMapping">
+                        <div class="form-section">
+                            <div class="form-group-sec">
+                                <div class="row">
+                                    <div class="col-xs-3 mobile-12">
+                                        <label class="frm-sub-label">Selected Platform </label>
+                                        @Html.DropDownListFor(m => m.Application, new SelectList(Model.ApplicationList, "Attribute_Id", "AttributeName"), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.Application, "", new { @class = "text-danger" })
+                                        @Html.HiddenFor(m => m.IntegrationApplicationMapping_Id)
+                                    </div>
+                                    <div class="col-xs-3 mobile-12">
+                                        <label class="frm-sub-label">Type </label>
+                                        @Html.DropDownListFor(m => m.Type, new SelectList(new List<string>() { "MASTER", "PICKLIST" }), "Select", new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-3 mobile-12">
+                                        <label class="frm-sub-label">Entity </label>
+                                        @Html.TextBoxFor(m => m.Entity, new { @class = "form-control filter" })
+                                        @Html.ValidationMessageFor(m => m.Entity, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-xs-2 mobile-12" style="text-align: left;">
+                                        <button type="button" class="btn btn-success btn-sm" id="btnSearchApplicationMapping" onclick="SearchIntegrationApplicationMapping();">Search</button>&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-success btn-sm" id="btnAppMapping" onclick="AddIntegrationApplicationMapping();">Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="popup-in displayIntegrationApplicationMappingList">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function AddIntegrationApplicationMapping() {
+        $(".ajaxloader").show();
+
+        if (validateIntegartionApplicationMapping(true)) {
+
+            var model = {
+                Application: $("#Application :selected").val(),
+                ApplicationName: $("#Application :selected").text(),
+                Type: $("#Type :selected").val(),
+                Entity: $("#Entity").val(),
+                IntegrationApplicationMapping_Id: $("#IntegrationApplicationMapping_Id").val()
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/SaveIntegrationApplicationMappingInfo",
+                data: model,
+                success: function (response) {
+                    $("#divSuccessError").removeAttr('class');
+                    if (response.status != undefined) {
+                        response.status.toLocaleLowerCase() == "success" ? $("#divSuccessError").addClass("alert alert-success") : $("#divSuccessError").addClass("alert alert-danger");
+                        $("#divSuccessError").show();
+                        $("#lblmsg").text(response.responseText);
+                        $("#stMsg").text(response.status + "! ");
+                        resetApplicationfrm();
+                        SearchIntegrationApplicationMapping();
+                    }
+                    else {
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-danger");
+                        $("#lblmsg").text("Something went wrong.");
+                        $("#stMsg").text("Success! ");
+                    }
+                    setTimeout(() => {
+                        $("#divSuccessError").hide();
+                    }, 5000);
+                    $(".ajaxloader").hide();
+
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+
+    }
+
+    function validateIntegartionApplicationMapping(value) {
+        var flag = true;
+        var Application_Id = $("#Application :selected").text();
+
+        if (value && (Application_Id == "" || Application_Id == "Select")) {
+            $("#Application").siblings("span").text("The Platform field is required.");
+            flag = false;
+        }
+        else
+            $("#Application").siblings("span").text("");
+
+        var Type = $("#Type :selected").text();
+
+        if (value && (Type == "" || Type == "Select")) {
+            $("#Type").siblings("span").text("The Type field is required.");
+            flag = false;
+        }
+        else
+            $("#Type").siblings("span").text("");
+
+        var Entity = $("#Entity").val();
+
+        if (value && (Entity == "" || Entity == "undefined")) {
+            $("#Entity").siblings("span").text("The Entity field is required.");
+            flag = false;
+        }
+        else
+            $("#Entity").siblings("span").text("");
+
+
+        if (!flag && value) {
+            $(".ajaxloader").hide();
+            return false;
+        }
+
+        return true;
+    }
+
+    function SearchIntegrationApplicationMapping() {
+        $(".ajaxloader").show();
+        
+        validateIntegartionApplicationMapping(false);
+
+        $(".displayIntegrationApplicationMappingList").html("");
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/ViewIntegrationApplicationMappingList",
+            //data: model,
+            success: function (response) {
+                $(".ajaxloader").hide();
+                $(".displayIntegrationApplicationMappingList").html(response.replace("action-popup ", ""));
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                $("#divSuccessError").removeAttr('class');
+                $("#divSuccessError").addClass("alert alert-danger");
+                $("#lblmsg").text("something went wrong!");
+                $("#stMsg").text("Error! ");
+                setTimeout(() => {
+                    $("#divSuccessError").hide();
+                }, 5000);
+            }
+        });
+    }
+
+    function resetApplicationfrm() {
+        $("#Type").val("");
+        $("#Entity").val("");
+        $("#IntegrationApplicationMapping_Id").val("");
+        $("#btnAppMapping").html("Save");
+    }
+
+    $(document).on('click', '.close', function (e) {
+        var curdiv = $(this).parents("#divSuccessError");
+        curdiv.hide();
+        curdiv.removeAttr("class");
+        curdiv.find("#lblmsg").text("");
+        curdiv.find("#stMsg").text("");
+    });
+
+</script>

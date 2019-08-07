@@ -1,0 +1,88 @@
+﻿@model Voyager.App.ViewModels.HotelsDeptViewModel
+
+<div class="gridresults">
+	<table class="table table-bordered tbl-theme-02 dataTable">
+		<thead>
+			<tr>
+				<th class="col-sm-1">Booking Number</th>
+				<th class="col-sm-1">Agent</th>
+				<th class="col-sm-1">Contact</th>
+				<th class="col-sm-2">Booking Name</th>
+				<th class="col-sm-1">Starts</th>
+				<th class="col-sm-1">End</th>
+				<th class="col-sm-1">Dur.</th>
+				<th class="col-sm-2">Rooming</th>
+				<th class="col-sm-1">Status</th>
+				<th class="col-sm-1">Hotels</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+	$(document).ready(function () {
+		var AgentName = $('#AgentName').val();
+		var AgentCode = $('#AgentCode').val();
+		var CNKReferenceNo = $('#CNKReferenceNo').val();
+		var AgentTour = $('#AgentTour').val();
+		var From = $('.input-append > #From').val();
+		var To = $('.input-append > #To').val();
+		var DateType = $('#DateType').val();
+		var BookingStatus = $('#BookingStatus').val();
+
+		var oTable = $('.dataTable').dataTable({
+			processing: true,
+			serverSide: true,
+			info: true,
+			ajax: {
+				url: "/Hotels/LoadData",
+				type: "POST",
+				data: function (d) {
+					d.AgentName = AgentName;
+					d.AgentCode = AgentCode;
+					d.CNKReferenceNo = CNKReferenceNo;
+					d.AgentTour = AgentTour;
+					d.BookingStatus = BookingStatus;
+					d.DateType = DateType;
+					d.From = From;
+					d.To = To;
+				}
+			},
+			columns: [
+				{ "data": "bookingNumber", "orderable": true },
+				{ "data": "agentName", "orderable": true },
+				{ "data": "contactName", "orderable": true },
+				{ "data": "bookingName", "orderable": true },
+				{ "data": "startDate", "orderable": true },
+				{ "data": "endDate", "orderable": true },
+				{ "data": "duration", "orderable": true },
+				{ "data": "strBookingRooms", "orderable": true },
+				{ "data": "status", "orderable": true },
+				{
+					"data": function (data, type, row, meta) {
+						 
+						return "<a class='btn btn-primary btn-sm' href='/Hotels/ViewHotelsByBooking?BookingNo=" + data.bookingNumber + "'>View</a>";
+					},
+					"orderable": false
+				}
+			],
+			"order": [[0, "asc"]],
+			"columnDefs": [{
+				"defaultContent": "",
+				"targets": "_all"
+			},
+			{
+				"targets": [4, 5, 6, 8, 9],
+				"className": "text-center"
+			}],
+			"oLanguage": {
+				sLengthMenu: "Show entries _MENU_",
+			},
+			"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+		});
+		$('.dataTables_filter').css('display', 'none');
+	});
+</script>

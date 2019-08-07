@@ -1,0 +1,248 @@
+﻿@model Voyager.App.ViewModels.ActivitiesViewModel
+
+@using (Html.BeginForm("Activities", "Activities", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmActivities" }))
+{
+	<div class="btn-cont pull-right AddEditSH">
+		<ul>
+			<li><input type="button" value="Quick Pick" href="#activities-quice-pick" class="btn btn-blue btn-md popup-inline QuickPick"></li>
+			<li><input type="button" value="Save" class="btn btn-blue btn-md SaveActivities"></li>
+		</ul>
+	</div>
+	<h3><i class="fa-custom-activities-icon"></i> Activities</h3>
+	@if (TempData.Keys.Contains("success"))
+	{
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Success!</strong> @TempData["success"].ToString()
+		</div>
+	}
+	else if (TempData.Keys.Contains("error"))
+	{
+		<div class="alert alert-danger">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Error!</strong> @TempData["error"].ToString()
+		</div>
+	}
+
+	<div class="simple-tab-cont">
+		<div class="simple-tab-data">
+			@Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+			<div style="display:block">
+				<div class="custom-mob-tbl type02 table-responsive table-departures-dates  valign-top-tbl">
+					<table class="table top-align" id="tblActivities">
+						<thead>
+							<tr>
+								<th class="col-md-2"><span>Country / City</span></th>
+								<th class="col-md-2"><span>Activities</span></th>
+								<th class="col-md-2"><span>Services</span></th>
+								<th class="col-md-1"><span>Keep As</span></th>
+								<th class="col-md-1"><span>Remarks</span></th>
+								<th class="col-md-1 AddEditSH">&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							@for (int i = 0; i < Model.ActivityDetails.Count; i++)
+							{
+								<tr id="ActivitiesRow_@i" class="ActivitiesRow">
+                                    <td>
+                                        <div class="form-group">
+                                            <label class="frm-sub-label txt-orange">Day</label>
+                                            @Html.Hidden("hdnSeqNo", i)
+                                            @Html.HiddenFor(m => m.ActivityDetails[i].ActivityId)
+                                            @Html.HiddenFor(m => m.ActivityDetails[i].IsDeleted)
+                                            @*@Html.DropDownListFor(m => m.ActivityDetails[i].ActivityDayNo, new SelectList(Model.ActivityDetails[i].DayList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select bindDayStartTime", @id = "ddlDayID_" + i })*@
+                                            <select name="@Html.NameFor(m =>m.ActivityDetails[i].ActivityDayNo)" id="ddlDayID_@i" class="form-control select ddlday">
+                                                <option value="">Select</option>
+                                                @foreach (var item in Model.ActivityDetails[i].DayList)
+                                                {
+                                                    <option value="@item.AttributeValue_Id" cityname="@item.CityName"
+                                                            cityid="@item.CityId"
+                                                            selected="@(Model != null && item.AttributeValue_Id == Model.ActivityDetails[i].ActivityDayNo)">
+                                                        @item.Value
+                                                    </option>
+                                                }
+                                            </select>
+                                            @Html.ValidationMessageFor(m => m.ActivityDetails[i].ActivityDayNo, "", new { @class = "error" })
+                                            @Html.HiddenFor(m => m.ActivityDetails[i].DayName, new { @id = "ddlDay_" + i })
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="frm-sub-label txt-orange">City</label>
+                                            @Html.HiddenFor(m => m.ActivityDetails[i].CityID, new { @id = "CityID_" + i, @class = "fromcity" })
+                                            @Html.TextBoxFor(m => m.ActivityDetails[i].CityName, new { @class = "form-control bindCity fromcityUI", @id = "CityID_" + i + "UI" })
+                                            @Html.ValidationMessageFor(m => m.ActivityDetails[i].CityName, "", new { @class = "error" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="frm-sub-label txt-orange">Start Time</label>
+                                            @Html.TextBoxFor(m => m.ActivityDetails[i].StartTime, new { @class = "form-control time24 clsStartTime" })
+                                            @Html.ValidationMessageFor(m => m.ActivityDetails[i].StartTime, "", new { @class = "error" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="frm-sub-label txt-orange">End Time</label>
+                                            @Html.TextBoxFor(m => m.ActivityDetails[i].EndTime, new { @class = "form-control time24 clsEndTime" })
+                                            @Html.ValidationMessageFor(m => m.ActivityDetails[i].EndTime, "", new { @class = "error" })
+                                        </div>
+                                    </td>
+									<td>
+										<div class="form-group-cont collapse-block">
+											<div class="form-group">
+												<label class="frm-sub-label txt-orange">PRODUCT NAME</label>
+												@Html.HiddenFor(m => m.ActivityDetails[i].ProductID, new { @class = "clsProductID", @id = "ProductName_" + i })
+												@Html.HiddenFor(m => m.ActivityDetails[i].ProductType, new { @id = "ProductName_" + i + "Type" })
+												@Html.HiddenFor(m => m.ActivityDetails[i].ProductTypeID, new { @id = "ProductName_" + i + "TypeID" })
+												@Html.TextBoxFor(m => m.ActivityDetails[i].ProductName, new { @class = "form-control bindProductName", @id = "ProductName_" + i + "UI" })
+												@Html.ValidationMessageFor(m => m.ActivityDetails[i].ProductName, "", new { @class = "error" })
+											</div>
+											@*<div class="form-group">
+													<label class="frm-sub-label txt-orange">TYPE OF EXCURSION</label>
+													@Html.HiddenFor(m => m.ActivityDetails[i].TypeOfExcursion)
+													@Html.DropDownListFor(m => m.ActivityDetails[i].TypeOfExcursionID, new SelectList(Model.ActivityDetails[i].TypeOfExcursionList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control select" })
+												</div>*@
+											<div class="collapse-container">
+												<div class="form-group">
+													<label class="frm-sub-label txt-orange">TOUR TYPE</label>
+													@Html.HiddenFor(m => m.ActivityDetails[i].SupplierID)
+													@Html.HiddenFor(m => m.ActivityDetails[i].SupplierName)
+													@Html.HiddenFor(m => m.ActivityDetails[i].TourType)
+													@Html.DropDownListFor(m => m.ActivityDetails[i].TourTypeID, new SelectList(Model.ActivityDetails[i].TourTypeList, "AttributeValue_Id", "Value"), new { @class = "form-control select bindProductRange" })
+													@Html.ValidationMessageFor(m => m.ActivityDetails[i].TourTypeID, "", new { @class = "error" })
+												</div>
+												<div class="form-group">
+													@{
+														var TransportationList = new List<SelectListItem>();
+														TransportationList.Add(new SelectListItem { Text = "Through Coach", Value = "Through Coach", Selected = true });
+														TransportationList.Add(new SelectListItem { Text = "With Transfer", Value = "With Transfer" });
+														TransportationList.Add(new SelectListItem { Text = "Without Transfer", Value = "Without Transfer" });
+														TransportationList.Add(new SelectListItem { Text = "Not Decided", Value = "Not Decided" });
+													}
+													<label class="frm-sub-label txt-orange">Transportation</label>
+													@Html.DropDownListFor(m => m.ActivityDetails[i].TransferDetails, TransportationList, new { @class = "form-control" })
+													@Html.ValidationMessageFor(m => m.ActivityDetails[i].TransferDetails, "", new { @class = "error" })
+												</div>
+											</div>
+											@*@Html.Partial("_PositionTransportOptions", new ProdTransferDetails { TransferDetails = Model.ActivityDetails[i].TransferDetails, Index = i })
+												@Html.HiddenFor(m => m.ActivityDetails[i].TransferDetails, new { @id = "hdnTransferDetails" })*@
+										</div>
+									</td>
+									@{
+										Model.ActivityDetails[i].PositionRoomsData.RowNo = i;
+										Model.ActivityDetails[i].PositionRoomsData.PositionType = "ActivityDetails[";
+									}
+									@Html.Partial("_PositionRoomDetails", Model.ActivityDetails[i].PositionRoomsData)								
+									<td id="divRoomDetails_@i" class="divRoomDetails" style="display:none"></td>
+									<td>
+										@{
+											var keepasList = new List<SelectListItem>();
+												keepasList.Add(new SelectListItem { Text = "Included", Value = "Included" });
+											keepasList.Add(new SelectListItem { Text = "Optional", Value = "Optional" });
+											keepasList.Add(new SelectListItem { Text = "Supplement", Value = "Supplement" });
+										}
+										@Html.DropDownListFor(m => m.ActivityDetails[i].KeepAs, keepasList, new { @class = "form-control keepAsChanged" })
+										@Html.ValidationMessageFor(m => m.ActivityDetails[i].KeepAs, "", new { @class = "error" })
+
+										<br /><br />
+										<div>
+											<div class="cust-spinner NoOfPaxColumn">
+												<label class="frm-sub-label txt-orange">ADULT</label>
+												<div class="input-group spinner">
+													<div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+													@Html.TextBoxFor(m => m.ActivityDetails[i].NoOfPaxAdult, new { @class = "form-control numeric", @autocomplete = "off" })
+													<div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+												</div>
+												@Html.ValidationMessageFor(m => m.ActivityDetails[i].NoOfPaxAdult, "", new { @class = "error" })
+											</div>
+
+											<div class="cust-spinner NoOfPaxColumn">
+												<label class="frm-sub-label txt-orange" style="margin-top: 8px;">CHILD</label>
+												<div class="input-group spinner">
+													<div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+													@Html.TextBoxFor(m => m.ActivityDetails[i].NoOfPaxChild, new { @class = "form-control numeric", @autocomplete = "off" })
+													<div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+												</div>
+											</div>
+
+											<div class="cust-spinner NoOfPaxColumn">
+												<label class="frm-sub-label txt-orange" style="margin-top: 8px;">INFANT</label>
+												<div class="input-group spinner">
+													<div class="input-group-btn"><button class="btn btn-default count-down" type="button"><i class="fa-custom-minus white"></i></button></div>
+													@Html.TextBoxFor(m => m.ActivityDetails[i].NoOfPaxInfant, new { @class = "form-control numeric", @autocomplete = "off" })
+													<div class="input-group-btn"><button class="btn btn-default count-up" type="button"><i class="fa-custom-plus white"></i></button></div>
+												</div>
+											</div>
+										</div>
+									</td>
+									<td>
+										<div class="price-foc-sec">
+											<div class="tool-tip info Prices">
+												<span class="msg txt-green" style="display:none;">Prices Added</span>
+												<span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+												<a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+												<div id="divPrices_@i" class="tooltip-cont type03">
+												</div>
+											</div>
+											<hr>
+											<div class="tool-tip info FOC">
+												<span class="msg txt-green" style="display:none;">FOC Added</span>
+												<span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+												<a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+												<div id="divFOC_@i" class="tooltip-cont type03">
+												</div>
+											</div>
+											<hr>
+										</div>
+										<span class="frm-sub-label txt-orange">For TL</span>
+										@Html.TextAreaFor(m => m.ActivityDetails[i].RemarksTL, new { @rows = "7" })
+									</td>
+									<td class="AddEditSH">
+										<div class="icon-squre-cont" style="margin:8px 0px 8px 0px;">
+											<a href="#" class="icon-squre-green"><i class="fa fa-plus"></i></a>
+											<a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+										</div>
+										<br />
+										<div>
+											<span class="frm-sub-label txt-orange">For OPS</span>
+											@Html.TextAreaFor(m => m.ActivityDetails[i].RemarksOPS, new { @rows = "10" })
+										</div>
+									</td>
+								</tr>
+											}
+						</tbody>
+					</table>
+				</div>
+				<div class="btn-cont" style="margin-top:20px;">
+					<ul class="pull-right">
+						<li><input type="button" value="Save" class="btn btn-blue btn-md SaveActivities"></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+											}
+
+
+<!--Activities Quice Pick List Popup Start-->
+<div id="activities-quice-pick-cont"></div>
+<!--Activities Quice Pick List Popup End-->
+
+<script src="~/js/Sales/Activities.js"></script>
+<style>
+	.popup-box.pop-lg1 {
+		max-width: 1200px;
+	}
+
+	#sortable > tr:hover {
+		/*cursor: move;*/
+	}
+
+	.ui-sortable-helper {
+		/*background-color: #a5f6ca;*/
+		cursor: n-resize;
+	}
+
+	#tblQuickPickList td.divRoomeDetails > div, td[data-label="ProductCategory"] > div {
+		display: none;
+	}
+
+	.disable-quick-pick {
+		cursor: not-allowed;
+	}
+</style>

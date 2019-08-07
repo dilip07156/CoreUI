@@ -1,0 +1,121 @@
+﻿@using Voyager.App.ViewModels
+@model LoginViewModel
+
+@{
+    ViewBag.Title = "LoginPage";
+    Layout = null;
+}
+<style type="text/css">
+    text-danger {
+        color: #b94a48;
+    }
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Voyager</title>
+
+    <environment include="Development">
+        <link href="~/resources/Login/css/core.css" rel="stylesheet" />
+        <link href="~/resources/Login/css/login.css" rel="stylesheet" />
+        <link href="~/resources/Login/css/responsive.css" rel="stylesheet" />
+        <link href="~/resources/Login/css/googlefontapis.css" rel="stylesheet" />
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+    </environment>
+    @*<environment exclude="Development">
+            <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+            <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        </environment>*@
+</head>
+<body>
+    <main>
+        <div class="main_left">
+            <div class="login_overlay"></div>
+            <div class="main_left_container box_size">
+                <div class="login_date_block">
+                    <div class="date_block_left"> @DateTime.Now.ToString("dd") </div>
+                    <div class="date_block_right">
+                        @DateTime.Now.ToString("MMM") <br>
+                        @DateTime.Now.ToString("yyyy")
+                    </div>
+
+                </div>
+                <div class="login_info_block">
+                    <h4>VOYAGER</h4>
+                    <p>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="main_right box_size">
+            <div class="main_right_container v_center relative">
+                <div class="login_logo">
+                    <img src="~/resources/Login/Images/login_logo.png" />
+                </div>
+                <h2>welcome to voyager</h2>
+                <div class="login_container">
+                    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        //if (!ViewData.ModelState.IsValid)
+                        //{
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger", @style = "color:#b94a48" })
+                        //}
+                        <div class="input_block">
+                            <i class="user"></i>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "box_size", @placeholder = "User Name" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger", @style = "color:#b94a48" })
+                        </div>
+                        <div class="input_block">
+                            <i class="password"></i>
+                            @Html.PasswordFor(m => m.Password, new { @class = "box_size", @placeholder = "Password" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", @style = "color:#b94a48" })
+                        </div>
+                            <div class="input_block">
+                                <input type="submit" value="Login" class="button" onclick="myFunction()"/>
+                                <div class="forgot" style="display: none;"><a href="#">Forgot Password?</a></div>
+                            </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+
+@Html.HiddenFor(Model => Model.QRFID)
+<ul class="sqr-tab-list">
+    <li id="NewQuote"><a id="aNewQuote" href="/Quote/NewQuote?QRFId=@Model.QRFID"> <figure><i class="fa-custom-quote"></i></figure> <strong>Quote</strong> </a></li>
+    <li id="Accomodation"><a id="aAccomodation" href="/Accomodation/Accomodation?QRFId=@Model.QRFID"> <figure><i class="fa-custom-accommodation"></i></figure> <strong>Accommodation</strong> </a></li>
+    <li id="Meals"><a id="aMeals" href="/Meals/Meals?QRFId=@Model.QRFID"> <figure><i class="fa-custom-meals"></i></figure> <strong>Meals</strong> </a></li>
+    <li id="Activities"><a id="aActivities" href="/Activities/Activities?QRFId=@Model.QRFID"> <figure><i class="fa-custom-activities"></i></figure> <strong>Activities</strong> </a></li>
+    <li id="Cruise"><a id="aCruise" href="/Cruise/Cruise?QRFId=@Model.QRFID"> <figure><i class="fa-custom-cruise"></i></figure> <strong>Cruise</strong> </a></li>
+    <li id="Rail"><a id="aRail" href="/Rail/Rail?QRFId=@Model.QRFID"> <figure><i class="fa-custom-rail"></i></figure> <strong>Rail</strong> </a></li>
+    <li id="Transfers"><a id="aTransfers" href="/Transfers/Transfers?QRFId=@Model.QRFID"> <figure><i class="fa-custom-car"></i></figure> <strong>Transfers</strong> </a></li>
+    @*<li id="IntercityTransfer"><a id="aIntercityTransfer" href="/IntercityTransfer/IntercityTransfer?QRFId=@Model.QRFID"> <figure><i class="fa-custom-van"></i></figure> <strong>Inter-city Transfer</strong> </a></li>*@
+    <li id="Flights"><a id="aFlights" href="/Flights/Flights?QRFId=@Model.QRFID"> <figure><i class="fa-custom-flights"></i></figure> <strong>Flights</strong> </a></li>
+    <li id="Bus"><a id="aBus" href="/Bus/Bus?QRFId=@Model.QRFID"> <figure><i class="fa-custom-bus"></i></figure> <strong>Bus</strong> </a></li>
+    <li id="LocalGuide"><a id="aLocalGuide" href="/Others/Others?QRFId=@Model.QRFID&ProductType=Guide"> <figure><i class="fa-local-guide"></i></figure> <strong>Local Guide</strong> </a></li>
+    <li id="TourEntities"><a id="aTourEntities" href="/TourEntities/TourEntities?QRFId=@Model.QRFID"> <figure><i class="fa-custom-tour-entities"></i></figure> <strong>Tour Entities</strong> </a></li>
+    <li id="Others"><a id="aOthers" href="/Others/Others?QRFId=@Model.QRFID&ProductType=VISA"> <figure><i class="fa-custom-more"></i></figure> <strong>Others</strong> </a></li>
+</ul>
+<script>
+    $(document).ready(function () {
+        var SelectedMenu = '@Model.MenuName'; //$("#hdnSelection").val();
+        $("#" + SelectedMenu).parent().find("li").removeClass("active");
+        $("#" + SelectedMenu).addClass("active");
+        var QRFID = '@Model.QRFID';
+        if (QRFID == null || QRFID == '' || QRFID == "0") {
+            $("#TourEntities,#aTourEntities,#Accomodation,#aAccomodation,#Meals,#aMeals,#Activities,#aActivities,#Cruise,#aCruise,#Rail,#aRail,#Transfers,#aTransfers,#Bus,#aBus,#Flights,#aFlights,#LocalGuide,#aLocalGuide,#Others,#aOthers").addClass("disabled");
+        }
+    });
+</script>

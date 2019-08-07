@@ -1,0 +1,115 @@
+.login {}
+.login > .header{ position: absolute; left: 0; top: 0; right: 0; z-index:99}
+.login > .header .logo{ padding: 18px 0}
+#bg { position: fixed; top: 0; left: 0; object-fit: cover;}
+.bgwidth { width: 100%; }
+.bgheight { height: 100%; }
+.bgsection{position: relative;	display: table;	width: 100%; z-index: 9;height: 100vh;}
+.bgcontent {display: table-cell;vertical-align: middle;	color: #FFF;font-size: 18px;font-weight: normal;}
+.tl.lg{ font-size: 50px; font-weight: 700; color: #fff} 
+.cont{ font-size: 14px; color: #fff; line-height: 30px; padding-top: 31px;}
+.action-box{ background: #ffffff; padding:38px 30px 30px; border-radius: 4px; max-width: 420px; position: relative; min-height: 400px; color: #000; }
+
+.action-box .head-tl{ font-size: 23px; color: #000; line-height: 23px; font-weight: 600; margin-bottom: 38px;}
+.action-box .input-cntrl{ position: relative}
+.action-box .input-cntrl > input.form-control{ border:0px; border-bottom: 1px solid #acacac; border-radius: 0; outline:0; box-shadow: none;  padding: 0; padding-right:25px; font-size: 16px; height: 46px;}
+.action-box .input-cntrl > input.form-control::placeholder{color:#6e6e6e;}
+.action-box  .input-append.date .ui-datepicker-trigger:after  {font-size: 18px; color: #acacac;}
+.input-append.date .ui-datepicker-trigger:after    {    content: "\f133";}
+.actn-list label{ font-size: 13px; color: #000000}
+.action-box .input-cntrl > i, .action-box .input-cntrl .show-pass{ color:rgba(172,172,172,0.8); position: absolute; right: 0; top: 50%; margin-top: -9px;}
+.actn-list > li + li{ margin-top: 24px;}
+.action-box .btn-wrap{ display: inline-block; width: 100%; margin-top: 33px;}
+.action-box .btn-wrap > .btn-primary{ float: left; width: 132px; font-size: 14px; font-weight: 700; background: #000096; height: 43px; line-height: 40px; padding: 0; border-color: #000096}
+.action-box .btn-wrap > .btn-frgt-pswd{ float: right; font-size: 13px; color: #000096; margin-top: 11px;}
+.action-box .bck-link{ font-size: 13px; color: #000096; position: absolute; right: 32px; top: 12px;}
+.action-box .bck-link:hover{ text-decoration: underline}
+.action-box .bck-link > i{ margin-right: 4px;}
+.action-box .txt-cont{ color: #000; font-size: 13px; line-height: 19px; margin-top: -24px;}
+.action-box .msg-success{ text-align: center;}
+.action-box .msg-success p{ text-align: center; font-size: 13px; line-height: 19px; margin-bottom: 5px;}
+.action-box .msg-success p a    {color: #000096; font-weight: 600;}
+.action-box .msg-success .success-icon   {color: #000096; font-weight: 600; font-size:35px; color: #01781f; margin-bottom: 12px;}
+.left-content   {padding-top: 35px;}
+
+
+.add-to-menu.products-contracting .detail-container .border-list > li:after  {height: 14px; top: 3px;}
+.add-to-menu.products-contracting  .form-sec .tp-mrgn {margin-top: 20px;}
+.add-to-menu.products-contracting .detail-container > ul > li + li:last-child{padding-top: 12px;}
+.add-to-menu.products-contracting .detail-container > ul > li.no-space  {padding-top: 0px;}
+.add-to-menu.products-contracting .detail-container .form-sec label{margin-top: 18px;}
+.add-to-menu.products-contracting .detail-container .form-sec .btn-md{min-width:180px;}
+.add-to-menu.products-contracting .detail-container > ul > li + li  {padding: 18px 0 20px;}
+.listing-table .custom-mob-tbl .table > tbody > tr > td     {vertical-align: top;} 
+
+.enquiry-ttl-due-section h1{float: left; width: 50%;}
+.enquiry-ttl-due-section h1.full{float: none; width: 100%;}
+.enquiry-ttl-due-section .enquiry-due{float: right; max-width: 50%; padding-bottom: 18px;}
+.enquiry-ttl-due-section .enquiry-due span{font-size: 13px; font-weight: 600;}
+.enquiry-ttl-due-section .enquiry-due span.overdue  {color: #ff0100;}
+.enquiry-ttl-due-section .enquiry-due .today-due{color: #000096; padding-right: 20px; position: relative;}
+.enquiry-ttl-due-section .enquiry-due .today-due:after{content: ""; position: absolute; right: 8px; top: 3px; height: 13px; width: 1px; background: #000000; }
+
+
+.listing-table .tbl-theme-02 > tbody > tr > td  {    padding: 14px 8px 10px;}
+.listing-table .tbl-theme-02 > thead > tr > th{    padding: 10px 8px; text-align: left;}
+.listing-table .tbl-theme-02 > tbody > tr > td.sr-no    {padding-left: 4px; padding-right: 4px;}
+.listing-table .tbl-theme-02 > tbody > tr > td.check-list     {padding-left: 4px; padding-right: 4px;}
+.listing-table tr th.sm-txt { font-size: 13px !important;  padding: 5px 2px !important;}
+.listing-table tr .past-client-info .old-client { font-size: 12px; color: #004f93; font-weight: 600; display: block; text-align: center; padding-top: 17px; position: relative; margin-bottom: 12px; }
+.listing-table tr .past-client-info .old-client:before  {content: "\f00c"; display: block; position: absolute; top: 0px; left: 50%; font-size: 15px; margin-left: -7px; font-weight: normal;}
+.listing-table tr .past-client-info .new-client {font-size: 12px; color: #585858; display: block; text-align: center; position: relative; padding-top: 18px;    margin-bottom: 8px;}
+.listing-table tr .past-client-info .new-client:before {font-size: 15px; color: #ff0000; content: "\f00d"; position: absolute; left: 50%; top: 0px; margin-left: -7.5px;}
+.client-status{display: block; font-size: 12px; text-align: center;  text-transform: capitalize; position: relative;}
+.client-status.happy    {padding-top: 24px;}
+.client-status.angry    {padding-top: 24px; color: red;}
+.client-status.happy:before {content: ""; position: absolute; left: 50%; top: 0px; width: 21px; height: 21px; margin-left: -10.5px; background: url(/images/common/icons/happy.png) left top no-repeat;}
+.client-status.angry:before {content: ""; position: absolute; left: 50%; top: 0px; width: 21px; height: 21px; margin-left: -10.5px; background: url(/images/common/icons/angry.png) left top no-repeat;}
+.contact-detail ul li   {list-style: none;  font-size: 12px; color: #585858; padding: 0 0 10px; }
+.contact-detail ul li a {color: #000096;position: relative; padding-left: 24px; display: inline-block; }
+.contact-detail ul li .phone-number a   {color:#585858; }
+.contact-detail ul li .phone-number a em    {font-style: italic;}
+.contact-detail ul li a i   {position: absolute; left: 0px; top: 0%; margin-top: -2px; color: #585858; font-size: 14px;}
+.contact-detail ul li .email a i { margin-top: 2px;}
+.contact-detail .call-visit-time ul li {position: relative; padding-left: 24px;}
+.contact-detail .call-visit-time ul li:last-child   {padding-bottom: 6px;}
+.contact-detail .call-visit-time ul li i{position: absolute; left: 0px; top: 0%; margin-top: -2px; color: #585858; font-size: 14px;}
+.contact-detail .call-visit-time ul li span {display: inline-block; padding-right: 5px;letter-spacing: -0.1px;}
+.contact-detail .call-visit-time ul li span:last-child {padding-right:0px;}
+.listing-table tr .contact-detail    {width: 185px; position: relative;} 
+.call-visit-time    {padding-top:6px;}
+.call-visit-time .ttl   {    display: block; font-size: 11px; text-transform: uppercase; color: #f78000; font-weight: 600; padding-bottom:6px;}
+.custom-mob-icon    {display: inline-block; content: ""; width: 22px; height: 22px; background: url(../images/common/icons/custom-mob-icon.png) left center no-repeat;}
+.custom-resi-phone-icon {display: inline-block; content: ""; width: 19px; height: 22px; background: url(../images/common/icons/custom-resi-phone-icon.png) left center no-repeat;}
+.custom-offi-phone-icon {display: inline-block; content: ""; width: 15px; height: 22px; background: url(../images/common/icons/custom-offi-phone-icon.png) left center no-repeat;}
+.custom-headphone-icon  {display: inline-block; content: ""; width: 16px; height: 22px; background: url(../images/common/icons/custom-headphone-icon.png) left center no-repeat;}
+.custom-visit-icon  {display: inline-block; content: ""; width: 14px; height: 22px; background: url(/images/common/icons/custom-visit-icon.png) left center no-repeat;}
+
+.listing-table .check-list .checkbox-container{padding-left: 17px;}
+.listing-table tr .client-detail    {width: 180px;}
+.listing-table tr .tour-info ul li label{width: 74px; }
+.listing-table tr .tour-info ul li  {padding-left: 84px; letter-spacing: -0.1px;}
+.listing-table tr td a.link  {transition: ease 0.4s all; display: inline-block; font-size: 11px; color: #000096; font-weight: 700; margin-top: 6px;}
+.listing-table tr td a.link.open .fa:before    {content: "\f107";}
+.listing-table tr td a.link i {color: #000096; font-size: 14px;}
+.listing-table tr td a.link:hover   {border-bottom: 1px solid #000096;}
+
+
+.pass-alert-box {position: absolute;left: 100%;margin-left: 15px;margin-top: -1px;top: 60%;}
+.pass-alert-box .alert {padding: 0px 9px;margin-bottom: 20px;border: 1px solid transparent;border-radius: 3px;color: #fff;display: inline-block;font-size: 12px;margin-bottom: 0px;}
+.pass-alert-box .alert:before {content: "";position: absolute;background: url(/images/common/tooltip-arrow-up-yellow.png) no-repeat;width: 16px;height: 8px;bottom: -7px;z-index: 11;left: 50%;margin-left: -8px;}
+.pass-alert-box .alert.weak {background: #ff0000;}
+.pass-alert-box .alert.strong {background: #017920;}
+.pass-alert-box .alert.medium {background: #eeae33;}
+.alert-toolTip {min-width: 260px;position: absolute;padding: 15px;right: 0px;background-color: #fafce0;border: 1px solid #d2d1cb;z-index: 1;border-radius: 5px;padding-right: 8px;top: 25px;}
+.alert-toolTip > h4 {font-size: 16px;color: #333;font-weight: 600;margin-bottom: 10px;}
+.alert-toolTip > ul > li {position: relative;font-size: 13px;font-weight: 600;margin-bottom: 3px;padding-left: 18px;}
+.alert-toolTip > ul > li.text-success {color: #017920;}
+.alert-toolTip > ul > li {color: #ed3910;}
+.alert-toolTip > ul > li.text-success:before {content: "\f00c";color: #017920;}
+.alert-toolTip > ul > li:before {content: "\f00d";color: #ed3910;}
+.alert-toolTip > ul > li:before {content: "\f00d";display: inline-block;position: absolute;left: 0px;font-family: "FontAwesome";top: 50%;margin-top: -8px;}
+
+
+
+

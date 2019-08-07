@@ -1,0 +1,27 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+
+<ul class="sqr-tab-list">
+    <li id="Itinerary">
+        <a id="aItinerary" href="/AgentApproval/Itinerary?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-itinerary-wht yellow"></i></figure> <strong>Itinerary</strong>
+        </a>
+    </li>
+    <li id="Proposal">
+        <a id="aProposal" href="/AgentApproval/Proposal?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-proposal-wht red"></i></figure> <strong>Proposal</strong>
+        </a>
+    </li>
+    <li id="ActivityList">
+        <a id="aActivityList" href="/AgentApproval/ActivityList?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-commercials-wht orange"></i></figure> <strong>Activity List</strong>
+        </a>
+    </li>
+</ul>
+
+<script>
+    $(document).ready(function () {
+        var SelectedMenu = '@Model.MenuName';
+        $("#" + SelectedMenu).parent().find("li").removeClass("active");
+        $("#" + SelectedMenu).addClass("active"); 
+    });
+</script>

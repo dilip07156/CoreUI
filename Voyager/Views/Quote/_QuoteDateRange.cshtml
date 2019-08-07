@@ -1,0 +1,310 @@
+﻿@using Voyager.App.ViewModels;
+@model QuoteDateRangeViewModel
+
+<script src="~/js/Sales/QuoteDateRange.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        addDatesOnLoad(@Html.Raw(Json.Serialize(@Model.QuoteSpecificDateViewModel)));
+    });
+</script>
+
+@if (Model.QuoteSpecificDateViewModel != null && Model.QuoteSpecificDateViewModel.Count > 0)
+{
+    <table id="TableToClone" style="display:none;">
+        <tr>
+            @Html.HiddenFor(m => m.QuoteSpecificDateViewModel[0].DepartureId)
+            @Html.HiddenFor(m => m.QuoteSpecificDateViewModel[0].IsDeleted)
+            <td data-label="Selected Date">
+                @*<span> 04 Mar 2017</span>*@
+                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[0].SelectedDate, new { @class = "form-control txt-span", @ReadOnly = "true" })
+                @Html.ValidationMessageFor(m => m.QuoteSpecificDateViewModel[0].SelectedDate, "", new { @class = "error" })
+            </td>
+            <td data-label="No. of Departures">
+                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[0].NoOfDepartures, new { @class = "form-control numeric", @value = "1", @maxlength = "3" })
+                @Html.ValidationMessageFor(m => m.QuoteSpecificDateViewModel[0].NoOfDepartures, "", new { @class = "error" })
+            </td>
+            <td data-label="Pax per Departure">
+                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[0].PaxPerDeparture, new { @class = "form-control numeric", @value = "1", @maxlength = "4" })
+                @Html.ValidationMessageFor(m => m.QuoteSpecificDateViewModel[0].PaxPerDeparture, "", new { @class = "error" })
+            </td>
+            <td data-label="Warning">
+                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[0].Warning, new { @class = "form-control txt-span txt-red", @value = "1", @ReadOnly = "true" })
+            </td>
+            <td data-label="">
+                <div class="icon-squre-cont" style="display:none;">
+                    <a href="#" class="icon-squre-green"><i class="fa fa-check"></i></a>
+                    <a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+                </div>
+            </td>
+        </tr>
+    </table>
+}
+
+@using (Html.BeginForm("QuoteDateRange", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "form-horizontal", role = "form", id = "frmQuoteDateRange" }))
+{
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="successmsg">Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="errormsg">Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    <div style="display:none;text-align:left;" id="divSuccessError">
+        <a class="close" title="close">×</a>
+        <strong id="stMsg"></strong> <label id="lblmsg"></label>
+    </div>
+
+    <div class="btn-cont pull-right">
+        <input type="button" value="Save" class="btn btn-blue btn-md SaveQuoteDateRange">
+    </div>
+    <h3>Date Range</h3>
+    <div>
+        <div class="radio-list-bar js-tab">
+            <span class="table-cell"><em>How do you wish to define the Travel Date?</em> </span>
+            <ul class="table-cell">
+                @*
+                    <li class="active"><label class="cntrl" data-label="spe-dates"><input type="radio" name="quote-type" checked /> Specific Dates</label></li>
+                    <li><label class="cntrl" data-label="date-tange"><input type="radio" name="quote-type" /> Date Range Or Month</label></li>*@
+                <li><label class="cntrl" data-label="spe-dates">@Html.RadioButtonFor(m => m.TravelDateType, "SpecificDates") Specific Dates</label></li>
+                @*<li><label class="cntrl" data-label="date-tange">@Html.RadioButtonFor(m => m.TravelDateType, "DateRange") Date Range Or Month</label></li>*@
+            </ul>
+        </div>
+
+        @Html.HiddenFor(m => m.QRFID)
+        <div class="tab-spe-dates-sec radio-list-data" style="display:none;">
+            <div class="cal-icon-cont">
+                <i class="fa fa-calendar"></i>
+                <a id="CalenderCollapse" data-toggle="collapse" data-target=".multi-calendar"><i class="fa fa-angle-down"></i></a>
+            </div>
+            <div class="clearfix"></div>
+            <div class="multi-calendar collapse in">
+                <div class="custom_datepicker hasDatepicker">
+                    <div class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all ui-datepicker-multi ui-datepicker-multi-3" style="display: block; width: 51em;">
+                        <div id="datepicker"></div>
+                        <div class="ui-datepicker-buttonpane ui-widget-content">
+                            <button type="button" class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" data-handler="today" data-event="click"><i class="today-icon"></i> Today's Date</button>
+                            <button type="button" class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" data-handler="today" data-event="click"><i class="selected-icon"></i> Selected</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+            <div class="">
+                <div class="row">
+                    <div class="col-md-9">
+                        <h5 class="sm-ttl">Date Range</h5>
+                        <div class="custom-mob-tbl table-responsive">
+                            <table class="table" id="SpecificDateRange">
+                                <thead>
+                                    <tr>
+                                        <th class="col-sm txt-green"><span>Selected Date</span></th>
+                                        <th class="col-sm"><span>No. of Departures</span></th>
+                                        <th class="col-sm"><span>Pax per Departure</span></th>
+                                        <th class="col-lg"><span>Warning</span></th>
+                                        <th class="col-sm1"><span></span></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="row-grid-sm document-list">
+                                    @{
+                                        Model.QuoteSpecificDateViewModel = Model.QuoteSpecificDateViewModel.Where(a => a.DepartureId >= 0).ToList();
+                                    }
+
+                                    @for (int i = 0; i < Model.QuoteSpecificDateViewModel.Count; i++)
+                                    {
+                                        //string trClass = "";
+                                        //if (Model.QuoteSpecificDateViewModel[i].DepartureId == -1) { trClass = "deleteRow"; }
+                                        <tr>
+                                            @Html.HiddenFor(m => m.QuoteSpecificDateViewModel[i].DepartureId)
+                                            @Html.HiddenFor(m => m.QuoteSpecificDateViewModel[i].Warning)
+                                            @Html.HiddenFor(m => m.QuoteSpecificDateViewModel[i].IsDeleted)
+                                            <td data-label="Selected Date">
+                                                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[i].SelectedDate, new { @class = "form-control txt-span", @value = "1", @ReadOnly = "true" })
+                                                @Html.ValidationMessageFor(m => m.QuoteSpecificDateViewModel[i].SelectedDate, "", new { @class = "error" })
+                                            </td>
+                                            <td data-label="No. of Departures">
+                                                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[i].NoOfDepartures, new { @class = "form-control numeric", @value = "1", @maxlength = "3" })
+                                                @Html.ValidationMessageFor(m => m.QuoteSpecificDateViewModel[i].NoOfDepartures, "", new { @class = "error" })
+                                            </td>
+                                            <td data-label="Pax per Departure">
+                                                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[i].PaxPerDeparture, new { @class = "form-control numeric", @value = "1", @maxlength = "4" })
+                                                @Html.ValidationMessageFor(m => m.QuoteSpecificDateViewModel[i].PaxPerDeparture, "", new { @class = "error" })
+                                            </td>
+                                            <td data-label="Warning">
+                                                @Html.TextBoxFor(m => m.QuoteSpecificDateViewModel[i].Warning, new { @class = "form-control txt-span txt-red", @value = "1", @ReadOnly = "true" })
+                                            </td>
+                                            <td data-label="">
+                                                @if (!string.IsNullOrEmpty(Model.QuoteSpecificDateViewModel[i].Warning))
+                                                {
+                                                    <div class="icon-squre-cont">
+                                                        <a href="#" class="icon-squre-green"><i class="fa fa-check"></i></a>
+                                                        <a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="btn-cont">
+                    <input type="button" value="Save" class="btn btn-blue btn-md SaveQuoteDateRange">
+                </div>
+            </div>
+        </div>
+        <div class="tab-date-tange-sec radio-list-data">
+            <div class="row">
+                <div class="col-md-9">
+                    <h5 class="sm-ttl">Date Range</h5>
+                    <div class="custom-mob-tbl">
+                        <table class="table top-align">
+                            <thead>
+                                <tr>
+                                    <th class="col-md" rowspan="2"><span>Date Range Or Month</span></th>
+                                    <th colspan="4"><span>Departures</span></th>
+                                    <th class="col-sm1" rowspan="2"><span></span></th>
+                                </tr>
+                                <tr>
+                                    <th class="col-sm4 txt-sm"><label class="chk-cont"><input type="checkbox" /> Leaving Across</label></th>
+                                    <th class="col-sm1 txt-sm"><span>Purpose</span></th>
+                                    <th class="col-sm1 txt-sm"><span>How many?</span></th>
+                                    <th class="col-sm1 txt-sm"><span>Pax per departure</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="row-grid-sm document-list">
+                                <tr>
+                                    <td data-label="Date Range Or Month">
+                                        <div class="date-range-sec">
+                                            <div class="row">
+                                                <div class="col-xs-6 mobile-12">
+                                                    <label class="frm-sub-label txt-orange">FROM </label>
+                                                    <div class="input-append date" data-date-format="dd-mm-yyyy">
+                                                        <input class="span2 form-control" size="16" type="text" placeholder="dd/mm/yyyy" />
+                                                        <span class="add-on"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6 mobile-12">
+                                                    <label class="frm-sub-label txt-orange">TO </label>
+                                                    <div class="input-append date" data-date-format="dd-mm-yyyy">
+                                                        <input class="span2 form-control" size="16" type="text" placeholder="dd/mm/yyyy" />
+                                                        <span class="add-on"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                                <div class="col-xs-12 mobile-12">
+                                                    <div class="divider-sec">
+                                                        <span>OR</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 mobile-12">
+                                                    <div class="form-group">
+                                                        <label class="frm-sub-label txt-orange">MONTH </label>
+                                                        <select class="form-control">
+                                                            <option selected>March 2017 </option>
+                                                            <option>Option 1</option>
+                                                            <option>Option 1</option>
+                                                            <option>Option 1</option>
+                                                            <option>Option 1</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 mobile-12">
+                                                    <hr />
+                                                </div>
+                                                <div class="col-xs-12 mobile-12">
+                                                    <ul class="col-two txt-red arrow-list">
+                                                        <li>Trade Fairs Dates</li>
+                                                        <li>Block-out Dates</li>
+                                                        <li>Festival Dates</li>
+                                                        <li>Check-in / Check-out</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Leaving Across">
+                                        <ul class="chk-box-list">
+                                            <li>
+                                                <div class="chk-cont"><input type="checkbox" /> Weekend</div>
+                                            </li>
+                                            <li>
+                                                <div class="chk-cont"><input type="checkbox" /> Weekday</div>
+                                            </li>
+                                            <li>
+                                                <div class="chk-cont"><input type="checkbox" /> Every</div>
+                                            </li>
+                                            <li>
+                                                <div class="chk-cont"><input type="checkbox" /> Daily</div>
+                                            </li>
+                                            <li>
+                                                <label class="chk-cont"><input type="checkbox" class="chk-except-day" /> Except Day</label>
+                                                <ul class="mlti-lst" style="margin-top:3px">
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Sunday</label></li>
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Monday</label></li>
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Tuesday</label></li>
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Wednesday</label></li>
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Thursday</label></li>
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Friday</label></li>
+                                                    <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Saturday</label></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <select class="form-control">
+                                            <option selected>Tour</option>
+                                            <option>Recce</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" value="2" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" value="30" />
+                                    </td>
+                                    <td>
+                                        <a href="" class="icon-squre-green"><i class="fa fa-plus"></i></a>
+                                        <a href="" class="icon-squre-red"><i class="fa fa-times"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="weekednd-dtl">
+                        <strong class="table-cell">Weekend:</strong>
+                        <div>
+                            <input type="text" class="form-control" value="Saturday, Sunday">
+                            <a class="lnk-wk-edit"><i class="fa fa-pencil"></i></a>
+                            <ul class="mlti-lst" style="margin-top:3px">
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Friday</label></li>
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Saturday</label></li>
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Sunday</label></li>
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Monday</label></li>
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Tuesday</label></li>
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Wednesday</label></li>
+                                <li><label class="chk-cont"><input type="checkbox" name="week-days" /> Thursday</label></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="btn-cont">
+                <input type="button" value="Save" class="btn btn-blue btn-md">
+            </div>
+        </div>
+    </div>
+}
+

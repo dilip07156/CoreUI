@@ -1,0 +1,33 @@
+﻿@model Voyager.App.ViewModels.ProdTransferDetails
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.rdoTransfer', function () {
+            $(this).closest('tr').find('#hdnTransferDetails').val(this.value);
+            $(this).closest('tr').find('.rdoTransfer').not(this).prop('checked', false);
+        });
+    });
+</script>
+<div class="form-group">
+    <div class="row row-sm">
+        <div class="col-md-12 text-left">
+            <label class="frm-sub-label txt-orange">Transportation</label>
+            <div class="chk-wrp dashed-brd-btm">
+                @{ Model.TransferDetails = string.IsNullOrEmpty(Model.TransferDetails) ? "Through Coach" : Model.TransferDetails; }
+                <div class="frm-opts form-group row">
+                    <label class="inline-inputs col-sm-6">
+                        @Html.RadioButton("rdoTransfer1_" + Model.Index, "Not Decided", Model.TransferDetails == "Not Decided" ? true : false, new { @id = "rdoNotDecided", @class = "rdoTransfer" }) Not Decided
+                    </label>
+                    <label class="inline-inputs col-sm-6">
+                        @Html.RadioButton("rdoTransfer2_" + Model.Index, "With Transfer", Model.TransferDetails == "With Transfer" ? true : false, new { @id = "rdoWithTransfer", @class = "rdoTransfer" }) With Transfer
+                    </label>
+                    <label class="inline-inputs col-sm-6">
+                        @Html.RadioButton("rdoTransfer3_" + Model.Index, "Without Transfer", Model.TransferDetails == "Without Transfer" ? true : false, new { @id = "rdoWithoutTransfer", @class = "rdoTransfer" }) Without Transfer
+                    </label>
+                    <label class="inline-inputs col-sm-6">
+                        @Html.RadioButton("rdoTransfer4_" + Model.Index, "Through Coach", Model.TransferDetails == "Through Coach" ? true : false, new { @id = "rdoThroughCoach", @class = "rdoTransfer" }) Through Coach
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

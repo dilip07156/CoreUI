@@ -1,0 +1,148 @@
+﻿@model Voyager.App.ViewModels.NewAgent
+<style>
+    .row1 {
+        margin-bottom: 15px !important;
+    }
+</style>
+
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        @if (Model.IsSupplier == true)
+            { <h3>Create New Supplier</h3> }
+            else
+            { <h3>Create New Agent</h3> }
+        <form id="frmNewAgent">
+            <div>
+                <br />
+                <div id="message"></div>
+                @Html.HiddenFor(x => x.IsSupplier, new { @id = "IsSupplier" })
+                @Html.HiddenFor(x => x.CompanyId, new { @id = "Company_Id" })
+                @Html.HiddenFor(x => x.ContactId, new { @id = "Contact_Id" })
+                @Html.HiddenFor(x => x.CompanyCode, new { @id = "Company_Code" })
+                <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                    <div class="table">
+                        <div class="tbl-actn-btns">
+                            @if (Model.IsSupplier == true)
+                            { <h4> SUPPLIER DETAILS</h4> }
+                            else
+                            { <h4>AGENT DETAILS</h4> }
+                        </div><br />
+                        <div class="row row1" style="margin:0px 0px 10px 0px">
+                            <div class="col-md-12">
+                                <div class="row row1 form-sec no-space">
+                                    <div class="col-md-12 mobile-xs-12">
+                                        <div class="col-md-4 mobile-xs-12">
+                                            @if (Model.IsSupplier == true)
+                                            { <label> Supplier Name</label> }
+                                            else
+                                            { <label>Agent Name</label> }
+                                            @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control", @id = "AgentName", @maxlength = "510" })
+                                            <span class="field-validation-valid text-danger" id="spanAgentName" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Address Line 1</label>
+                                            @Html.TextBoxFor(m => m.Street, new { @class = "form-control", @id = "Street", @maxlength = "510" })
+                                            <span class="field-validation-valid text-danger" id="spanStreet" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Address Line 2</label>
+                                            @Html.TextBoxFor(m => m.Street2, new { @class = "form-control", @id = "Street2", @maxlength = "510" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div style="line-height:5px;"></div>
+                            <div class="col-md-12">
+                                <div class="row row1 form-sec no-space">
+                                    <div class="col-md-12 mobile-xs-12">
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Post Code</label>
+                                            @Html.TextBoxFor(m => m.Zipcode, new { @class = "form-control", @id = "Zipcode", @maxlength = "10" })
+                                            <span class="field-validation-valid text-danger" id="spanZipCode" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Country</label>
+                                            @Html.DropDownListFor(m => m.CountryId, new SelectList(Model.CountryList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCountry", @class = "form-control leftalign" })
+                                            @Html.HiddenFor(m => m.CountryName, new { @id = "ddlCountryName" })
+                                            <span class="field-validation-valid text-danger" id="spanCountry" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>City</label>
+                                            @Html.DropDownListFor(m => m.CityId, new SelectList(Model.CityList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCity", @class = "form-control leftalign" })
+                                            @Html.HiddenFor(m => m.CityName, new { @id = "ddlCityName" })
+                                            <span class="field-validation-valid text-danger" id="spanCity" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+                    <div class="table">
+                        <div class="tbl-actn-btns"><h4>CONTACT DETAILS</h4></div><br />
+                        <div class="row row1" style="margin:0px 0px 10px 0px">
+                            <div class="col-md-12">
+                                <div class="row row1 form-sec no-space">
+                                    <div class="col-md-12 mobile-xs-12">
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Title</label>
+                                            @Html.DropDownListFor(m => m.CommonTitle, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="Mr", Value = "Mr." },
+                                                 new SelectListItem{ Text="Ms", Value ="Ms." },
+                                                 new SelectListItem{ Text="Mrs", Value ="Mrs." }
+                                                 }, new { @class = "form-control", @id = "CTitle" })
+											<span class="field-validation-valid text-danger" id="spanCommonTitle" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>First Name</label>
+                                            @Html.TextBoxFor(m => m.FIRSTNAME, new { @class = "form-control", @id = "FIRSTNAME", @maxlength = "510" })
+                                            <span class="field-validation-valid text-danger" id="spanFirstName" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Last Name</label>
+                                            @Html.TextBoxFor(m => m.LastNAME, new { @class = "form-control", @id = "LastNAME", @maxlength = "510" })
+                                            <span class="field-validation-valid text-danger" id="spanLastName" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row row1 form-sec no-space">
+                                    <div class="col-md-12 mobile-xs-12">
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Telephone</label>
+                                            @Html.TextBoxFor(x => x.TEL, new { @id = "TEL", @class = "form-control leftalign numericInt", @maxlength = "15" })
+                                            <span class="field-validation-valid text-danger" id="spanTel" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Email</label>
+                                            @Html.TextBoxFor(x => x.MAIL, new { @id = "MAIL", @class = "form-control leftalign", @maxlength = "510" })
+                                            <span class="field-validation-valid text-danger" id="spanMAIL" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-md-4 mobile-xs-12">
+                                            <label>Contact By</label>
+                                            @Html.DropDownListFor(m => m.ContactBy, new List<SelectListItem>
+                                                 {
+                                                new SelectListItem{ Text="Select", Value = "" },
+                                                 new SelectListItem{ Text="Telephone", Value ="Telephone" },
+                                                 new SelectListItem{ Text="Email", Value = "Email" }
+                                                 }, new { @id = "ddlContactBy", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 text-right top-margin">
+                <input value="Add" id="btnAdd" class="btn btn-blue btn-md btnAdd" type="button">
+                <button title="Close (Esc)" type="button" class="btn btn-blue btn-md close-popup">Cancel</button>
+            </div><br />  <br /> <br />
+        </form>
+    </div>
+</div>
+<script src="~/js/Agent/NewAgent.js"></script>

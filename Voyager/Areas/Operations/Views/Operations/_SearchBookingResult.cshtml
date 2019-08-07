@@ -1,0 +1,156 @@
+﻿@model Voyager.App.ViewModels.OpsSearchViewModel
+
+<style>
+    .ttl {
+        display: block;
+        font-size: 15px;
+        font-weight: 400;
+        color: #000;
+    }
+
+    .tour-info {
+        display: block;
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    .tour-email {
+        display: block;
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+    .olabel {
+        color: #585858;
+    }
+</style>
+
+<div class="gridresults">
+    <h1>Operations Pipeline Search Result &nbsp;<span style="font-size:15px;font-weight:300" id="TotalRecord"></span></h1>
+    <p>
+        @*<i>Found 134 results</i> |*@ <span class="badge badge-danger">BLOB</span>
+        Follow up Due Today | <span class="badge badge-warning">BLOB</span> Follow up Due 1-2 Days |
+        <span class="badge badge-primary">BLOB</span> Follow up due +48 hours |
+    </p>
+    <hr>
+
+    <div class="ops-table">
+        <table class="table table-bordered tbl-theme-02" id="OpsResult">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="col-md-1">Booking</th>
+                    <th class="col-md-1">Status</th>
+                    <th class="col-md-1">Type</th>
+                    <th class="col-md-2">Client Details</th>
+                    <th class="col-md-3">Tour Info</th>
+                    <th class="col-md-2">Service Confirmation</th>
+                    <th class="col-md-2">Contact Details</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+       // var dtFromArr = [], dtToArr = [], Fromdt = null, Todt = null;
+        //if ($('.input-append > #From').val() != undefined && $('.input-append > #From').val() != null && $('.input-append > #From').val() != ''
+        //    && $('.input-append > #To').val() != undefined && $('.input-append > #To').val() != null && $('.input-append > #To').val() != '') {
+        //    dtFromArr = $('.input-append > #From').val().split('/');
+        //    dtToArr = $('.input-append > #To').val().split('/');             
+
+        //    Fromdt = dtFromArr[0] + "/" + dtFromArr[1] + "/" + dtFromArr[2];
+        //    Todt = dtToArr[0] + "/" + dtToArr[1] + "/" + dtToArr[2];
+        //}
+
+        var AgentName = $('#AgentName').val();
+        var CNKReferenceNo = $('#CNKReferenceNo').val();
+        var AgentReferenceNo = $('#AgentReferenceNo').val();
+        var AgentTour = $('#AgentTour').val();
+        var DateType = $('#DateType').val();
+        var From = $('.input-append > #From').val();
+        var To = $('.input-append > #To').val();
+        var BookingStatus = $('#BookingStatus').val();
+        var BusinessType = $('#BusinessType').val();
+        var Destination = $('#Destination').val();
+        var SalesOffice = $('#SalesOffice').val();
+        var FileHandler = $('#FileHandler').val();
+
+        var oTable = $('#OpsResult').dataTable({
+            processing: false,
+            serverSide: true,
+            info: true,
+            ajax: {
+                url: "/Operations/LoadData",
+                type: "POST",
+                data: function (d) {
+                    d.AgentName = AgentName;
+                    d.CNKReferenceNo = CNKReferenceNo;
+                    d.AgentReferenceNo = AgentReferenceNo;
+                    d.AgentTour = AgentTour;
+                    d.DateType = DateType;
+                    d.From = From;
+                    d.To = To;
+                    d.BookingStatus = BookingStatus;
+                    d.BusinessType = BusinessType;
+                    d.Destination = Destination;
+                    d.SalesOffice = SalesOffice;
+                    d.FileHandler = FileHandler;
+                }
+            },
+            columns: [
+                { "data": function (data, type, row, meta) { return "<a href='/Operations/ViewBookingSummary?BookingNumber=" + data.bookingNumber + "'><span class='badge badge-primary'>></span></a>"; } },
+                { "data": function (data, type, row, meta) { return "<span>" + data.bookingNumber + " <span class='badge badge-danger'>" + data.outstandingCount + "</span></span>"; } },
+                //{ "data": function (data, type, row, meta) { return "<span class='badge badge-danger'>" + data.status + "</span>"; } },
+                {
+                    "data": function (data, type, row, meta) {
+                        var aStatusClass = "bg-danger"
+                        if (data.status == 'K' || data.status == 'B' || data.status == 'I') aStatusClass = "badge-success";
+                        else if (data.status == 'M' || data.status == 'O') aStatusClass = "badge-warning";
+                        else if (data.status == 'Q' || data.status == 'N' || data.status == 'P') aStatusClass = "bg-danger";
+
+                        return "<span class='badge " + aStatusClass + "'>" + data.status + "</span>";
+                    }
+                },
+                { "data": "type", "orderable": false },
+                { "data": function (data, type, row, meta) { return "<h5 class='ttl'>" + data.companyContact + "</h5><p><span class='tour-info'>" + data.companyName + "</span>" + "</p>" + "<span class='phone-number tour-email'><i class='custom-offi-phone-icon'></i> <a href='#' style='vertical-align: super;'>" + data.telephone + "</a></span>" + "<span class='email tour-email'><i class='fa fa-envelope-o'></i> <a href='mailto:" + data.email + "'>" + data.email + "</a></span>"; } },
+                { "data": function (data, type, row, meta) { return "<strong class='ttl'>" + data.tourName + "</strong><p class='tour-info'>" + "<em><i class='day-icon'></i> " + (parseInt(data.duration) + 1) + " D / <i class='night-icon'></i> " + data.duration + " N</em>" + "&nbsp;&nbsp;&nbsp;<span class='olabel'>Pax: </span>" + data.paxCount + "<br><span class='olabel'>In: </span>" + data.startDate + " | <span class='olabel'>OUT: </span>" + data.endDate + "<br><span class='olabel'>Destination: </span>" + data.destination + "<br><span class='olabel'>Sales Office: </span>" + data.salesOffice + "</p>"; } },
+                {
+                    "data": function (data, type, row, meta) {
+                        var aPercColor = "", tPercColor = "", sPercColor = "";
+                        if (data.accomPercent < 26) aPercColor = "bg-danger";
+                        else if (data.accomPercent > 25 && data.accomPercent < 76) aPercColor = "bg-warning";
+                        else if (data.accomPercent > 75) aPercColor = "bg-success";
+                        else aPercColor = "";
+                        if (data.transportPercent < 26) tPercColor = "bg-danger";
+                        else if (data.transportPercent > 25 && data.transportPercent < 76) tPercColor = "bg-warning";
+                        else if (data.transportPercent > 75) tPercColor = "bg-success";
+                        else tPercColor = "";
+                        if (data.servicesPercent < 26) sPercColor = "bg-danger";
+                        else if (data.servicesPercent > 25 && data.servicesPercent < 76) sPercColor = "bg-warning";
+                        else if (data.servicesPercent > 75) sPercColor = "bg-success";
+                        else sPercColor = "";
+                        return "<div class='progress'><div class='progress-bar progress-bar-striped " + aPercColor + "' role='progressbar' style='width:" + data.accomPercent + "%;' aria-valuenow='25' aria-valuemin='0' aria-valuemax='100'>Accommodation</div></div><div class='progress'><div class='progress-bar progress-bar-striped " + tPercColor + "' role='progressbar' style='width:" + data.transportPercent + "%;' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100'>Transportation</div></div><div class='progress'><div class='progress-bar progress-bar-striped " + sPercColor + "' role='progressbar' style='width:" + data.servicesPercent + "%' aria-valuenow='25' aria-valuemin='0' aria-valuemax='100'>Services</div></div>";
+                    }
+                },
+                { "data": function (data, type, row, meta) { return "<div class='col-auto'><label class='sr-only' for='inlineFormInputGroup'>Username</label><div class='input-group mb-2'><div class='input-group-prepend'><div class='input-group-text'>SO</div></div><input type='text' class='form-control-1' id='inlineFormInputGroup' value=" + data.salesOfficerEmail + " placeholder='salesofficer@etn.co.uk' readonly='readonly'></div></div><div class='col-auto'><label class='sr-only' for='inlineFormInputGroup'>Username</label><div class='input-group mb-2'><div class='input-group-prepend'><div class='input-group-text'>FH</div></div><input type='text' class='form-control-1' id='inlineFormInputGroup' value=" + data.fileHandlerEmail + " placeholder='filehandler@123.com' readonly='readonly'></div></div><div class='col-auto'><label class='sr-only' for='inlineFormInputGroup'>Username</label><div class='input-group mb-2'><div class='input-group-prepend'><div class='input-group-text'>PA</div></div><input type='text' class='form-control-1' id='inlineFormInputGroup' value=" + data.productAccountantEmail + " placeholder='prodaccountant@etn.co.uk' readonly='readonly'></div></div>"; } }
+            ],
+            "order": [[0, "asc"]],
+            "columnDefs": [{
+                "defaultContent": "",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "drawCallback": function (settings) {
+                $('#TotalRecord').html("Found " + settings._iRecordsTotal + " Results");
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+        $('#OpsResult_filter').css('display', 'none');
+    });
+</script>

@@ -1,0 +1,320 @@
+﻿@model Voyager.App.ViewModels.ItineraryViewModel
+
+<style>
+    .filter-table table .day {
+        width: 85px;
+    }
+
+    .filter-table table .time {
+        width: 100px;
+    }
+
+    .table-responsive {
+        min-height: .01%;
+        overflow-x: initial !important;
+    }
+</style>
+
+@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID" })
+@Html.HiddenFor(m => m.IsClone, new { @id = "hdnIsClone" })
+@*<div class="sqr-tab-data costing-officers">
+    <div class="listing-content summary-prices">
+        <div class="date-btn-wrap">
+            <span class="date">Itinerary - Aug 2017</span>
+        </div>
+        <div class="subtitle-with-list">
+            <ul>
+                <li><span>Follow-up Costing officer</span><em>11 Sep 2017 12:30pm</em></li>
+                <li><span>With Client</span><em>14 Sep 2017 12:30pm</em></li>
+                <li><a href="#" class="link txt-darkblue">Change</a></li>
+            </ul>
+        </div>
+
+        <div id="divPricingSummary"></div>*@
+<div class="clear"></div>
+<div class="filter-wrap">
+    <h6>Filters:</h6>
+    <ul class="filter-links">
+        <li>
+            @Html.DropDownListFor(m => m.Days, new SelectList(Model.DayList, "Attribute_Id", "AttributeName"), "Day", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Days, "", new { @class = "error" })
+        </li>
+        <li>
+            @Html.DropDownListFor(m => m.Services, new SelectList(Model.ServiceTypeList, "Prodtype", "Prodtype"), "Service Type", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Services, "", new { @class = "error" })
+        </li>
+    </ul>
+</div>
+
+<div class="clear"></div>
+
+<div class="legend-msg text-right">
+    <strong>Legend </strong>
+    <span><i class="fa fa-circle txt-red"></i>Indicates that these services have been grouped as part of a package</span>
+</div>
+<div class="legend-msg text-right">
+    <strong>Distance and Timimgs are calculated for travel by Bus</strong>
+</div>
+<div class="legend-msg text-right">
+    <strong>Timings are estimated and may change based on traffic conditions</strong>
+</div>
+
+<div class="table-responsive filter-table custom-mob-tbl">
+    <div class="clear"></div>
+    <table class="table" id="tblItinerary">
+        <thead>
+            <tr>
+                <th colspan="8" class="package" style="text-align:left">Consolidated Package</th>
+                <th class="no-of-pax">No.of Pax</th>
+                <th class="PricePerPerson">Price Per Person</th>
+                <th class="TotalPrice">Total Price</th>
+                @*
+                    <th class="Move">Move</th>*@
+                @if (Model.MenuViewModel.EnquiryPipeline != "Agent Approval Pipeline")
+                {
+                    <th class="actionItinerary">Action</th>
+                }
+                @*
+                    <th>Amend</th>*@
+            </tr>
+            <tr>
+                <th colspan="8" class="package" style="text-align:left"><span><i class="fa fa-circle txt-red"></i> @Model.TourInfoHeaderViewModel.TourName </span></th>
+                <th class="no-of-pax"></th>
+                <th class="PricePerPerson"></th>
+                <th class="TotalPrice"></th>
+                @*
+                    <th class="Move"></th>*@
+                @if (Model.MenuViewModel.EnquiryPipeline != "Agent Approval Pipeline")
+                {
+                    <th class="actionItinerary"></th>
+                }
+                @*
+                    <th></th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+            {
+                <tr class="tbl-sub-heading">
+                    <td class="day">@Model.Itinerary.ItineraryDays[i].Day</td>
+                    <td class="day">Time</td>
+                    <td class="original-itinerary" colspan="6">
+                        @if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Arrive at") && Model.Itinerary.ItineraryDays[i].ItineraryName.Contains(","))
+                        {
+                            var Name = Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper();
+                            var firstName = Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper().Split(',').First();
+                            var str = Name.Replace(firstName + ',', "");
+                            @firstName <br /> @str
+                        }
+                        else
+                        {
+                            @Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper()
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].RoutingMatrix))
+                        {
+                            var RoutingMatrix = Model.Itinerary.ItineraryDays[i].RoutingMatrix.ToUpper().Split('|');
+                            <br />
+                            <br />
+                            <label>COACH ROUTING FOR THE DAY</label>
+                            <br />
+                            @for (int k = 0; k < RoutingMatrix.Length; k++)
+                            {
+                                @RoutingMatrix[k].ToUpper();
+                                <br />
+                            }
+                        }
+                    </td>
+                    <td class="no-of-pax"></td>
+                    <td class="PricePerPerson"></td>
+                    <td class="TotalPrice"></td>
+                    @*
+                        <td class="Move"><i class="custom-move-icon"></i></td>*@
+                    @if (Model.MenuViewModel.EnquiryPipeline != "Agent Approval Pipeline")
+                    {
+                        <td class="actionItinerary"></td>
+                    }
+                    @*
+                        <td></td>*@
+                </tr>
+                //Model.Itinerary.ItineraryDays[i].ItineraryDescription = Model.Itinerary.ItineraryDays[i].ItineraryDescription.OrderBy(a => a.StartTime).ToList();
+                @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+                {
+                    <tr class="light-pink-bg">
+                        @Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted, new { @id = "IsDeleted", @class = "clsIsDeleted" })
+                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType, new { @id = "ProductType", @class = "clsProductType" })
+                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type, new { @id = "Type", @class = "clsType" })
+                        @if (j == 0)
+                        {
+                            <td class="date" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count">@Convert.ToDateTime(@Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy")<br /> @Model.Itinerary.ItineraryDays[i].DayOfWeek</td>
+                        }
+                        @if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsRoutingMatrix == true)
+                        {
+                            <td></td>
+                        }
+                        else if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+                        {
+                            <td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</td>
+                        }
+                        else
+                        {
+                            <td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</td>
+                        }
+
+                        @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "TRUE")
+                        {
+                            @if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs == "Included")
+                            {
+                                <td class="original-itinerary" colspan="6" style="text-decoration:line-through"><span><i class="fa fa-circle txt-red"></i> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span></td>
+                            }
+                            else
+                            {
+                                <td class="original-itinerary" colspan="6" style="text-decoration:line-through"><b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</td>
+                            }
+                        }
+                        @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+                        {
+                            @if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs.ToUpper() == "INCLUDED")
+                            {
+                                <td class="original-itinerary" colspan="6"><span><i class="fa fa-circle txt-red"></i> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</span></td>
+                            }
+                            else
+                            {
+                                <td class="original-itinerary" colspan="6"><b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</td>
+                            }
+                        }
+
+                        <td class="no-of-pax light-pink-bg"><span> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].NumberOfPax</span></td>
+                        @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs.ToUpper() == "INCLUDED")
+                        {
+                            <td class="price-per-person no-side-border text-center"><span class="txt-green">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</span></td>
+                            <td class="total-price no-side-border">&nbsp;</td>
+                            @*
+                                <td class="Move"></td>*@
+                        }
+                        else
+                        {
+                            <td class="price-sep no-side-border">
+                                @for (int q = 0; q < Model.ListNonQrfPkgPositions.Count; q++)
+                                {
+                                    if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId == Model.ListNonQrfPkgPositions[q].PositionId)
+                                    {
+                                        <em>X &nbsp;&nbsp;&nbsp;&nbsp;</em>
+                                        @Model.ListNonQrfPkgPositions[q].SellPrice <em>(@Model.ListNonQrfPkgPositions[q].QRFCurrency)</em>
+                                    }
+                                }
+                            </td>
+                            <td class="total-price no-side-border">
+                                @for (int q = 0; q < Model.ListNonQrfPkgPositions.Count; q++)
+                                {
+                                    if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId == Model.ListNonQrfPkgPositions[q].PositionId)
+                                    {
+                                        <span class="price">
+                                            <em>=</em>&nbsp;
+                                            @(@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].NumberOfPax * @Model.ListNonQrfPkgPositions[q].SellPrice)
+                                            <em>(@Model.ListNonQrfPkgPositions[q].QRFCurrency)</em>
+                                        </span>
+                                    }
+                                }
+                                @*<span class="price"><i class="fa fa-inr" aria-hidden="true"></i> <span class="amt">1,74,000.00</span></span>*@
+                            </td>
+                            @*
+                                <td class="Move"></td>*@
+                        }
+                        @if (Model.MenuViewModel.EnquiryPipeline != "Agent Approval Pipeline")
+                        {
+                            @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+							{
+								if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type.ToUpper() == "EXTRA")
+								{
+									if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+									{
+										<td class="action">
+											<a href="#addNewDetails-popup" class="popup-inline icon-squre-dark-blue addEditNewItinerary" data-val="Edit"><i class="fa fa-pencil"></i></a>
+											<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+										</td>
+									}
+									else
+									{
+                                        <td class="action">
+                                            <a href="#addNewDetails-popup" class="popup-inline icon-squre-dark-blue addEditNewItinerary" data-val="Add"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+                                        </td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td class="action">
+                                        <a href="#action-popup" class="popup-inline icon-squre-dark-blue editPosition"><i class="fa fa-pencil"></i></a>
+                                        <a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="action"><a href="#" class="enableDisablePosition"><img src="~/resources/images/common/icons/check.png"></a></td>
+                            }
+                        }
+                    </tr>
+
+                }
+                <tr>
+                    @Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+                    @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+                    <td class="no-side-border"></td>
+                    @if (Model.MenuViewModel.EnquiryPipeline != "Agent Approval Pipeline")
+                    {
+                        <td colspan="10" class="no-side-border txt-semibold">Add Itinerary Element*</td>
+                    }
+                    else
+                    {
+                        <td colspan="9" class="no-side-border txt-semibold">Add Itinerary Element*</td>
+                    }
+                    <td class="no-side-border">
+                        <a href="#addNewDetails-popup" class="popup-inline btn btn-blue btn-md addEditNewItinerary pull-right" data-val="Add">Add</a>
+                    </td>
+                    @*
+                        <td class="no-side-border"></td>*@
+                </tr>
+            }
+            @*
+                <tr class="tbl-sub-heading">
+                    <td class="day no-side-border">&nbsp;</td>
+                    <td colspan="13" class="no-side-border">Remark</td>
+                </tr>
+                <tr>
+                    <td class="day no-side-border">&nbsp;</td>
+                    <td colspan="6" class="pkg-info no-side-border"><textarea></textarea></td>
+                    <td colspan="6" class="no-side-border">&nbsp;</td>
+                </tr>*@
+        </tbody>
+    </table>
+</div>
+<br />
+<div class="legend-msg">
+    <strong>Legend </strong>
+    <span><i class="fa fa-circle txt-red"></i>Indicates that these services have been grouped as part of a package</span>
+</div>
+<div class="rht-sec with-lgnd-msg">
+    <div class="legend-msg">
+        <strong>Timings are estimated and may change based on traffic conditions</strong>
+    </div>
+    @*<div class="btn-cont">
+            <a href="#" class="btn btn-blue btn-md">Continue</a>
+        </div>*@
+    <span class="clear"></span>
+</div>
+@*</div>
+    </div>*@
+<div id="addNewDetails-popup"></div>
+
+<script src="~/js/Costing/Itinerary.js"></script>
+<script src="~/js/Sales/common.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>
+<link href="~/css/qrfSummary.css" rel="stylesheet" />
+

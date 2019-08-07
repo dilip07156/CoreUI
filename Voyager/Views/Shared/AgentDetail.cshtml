@@ -1,0 +1,74 @@
+﻿
+@model Voyager.App.ViewModels.AgentSearchViewModel
+
+<div class="wrapper">
+	<div class="main-content form-theme-04 form">
+		<div class="container">
+			<div class="pg-container">
+				<div class="listing-content">
+                    <div class="enquiry-ttl-due-section btm-border btn-cont-rgt">
+                        <h1 class="">@Model.AgentDetails.CompanyName</h1>
+                        <button type="button" class="btn btn-primary btn-md btnBackToAgentScreen" id="btnBackToAgentScreen" style="float:right;display:none">Back</button>
+                        @Html.HiddenFor(x => x.ContactId, new { @id = "hdnContactId", @class = "CompanyId" })
+                    </div>
+				</div>
+				<div class="sqr-tab-cont">
+					<div class="simple-tab-cont">
+						@*<label id="lblQRFId" class="frm-sub-label" style="display:none;"></label>*@
+						<div id="HeadersTab">
+                            <ul class="simple-tab-list">
+                                @if (Model.AgentDetails.Issupplier == true)
+                                {
+                                    <li id="Details"><a id="aAgentDetails" href="#" class="active"> Supplier Details </a></li>
+                                }
+                                else
+                                {
+                                    <li id="Details"><a id="aAgentDetails" href="#" class="active"> Agent Details </a></li>
+                                }
+                                <li id="Contacts"><a id="aContacts" href="#"> Contacts and Staff Details </a></li>
+                                <li id="Commercials"><a id="aCommercials" href="#"> Commercials and Payment </a></li>
+                                <li id="Terms"><a id="aTerms" href="#"> Terms and Conditions </a></li>
+                                @if (@ViewBag.IsAllowToEdit == true)
+                                {
+                                    <li id="SystemOptions"><a id="aSystemOptions" href="#"> System Options </a></li>
+                                }
+                                @if (Model.AgentDetails.Issupplier == true)
+                                {
+                                    <li id="Products"><a id="aProducts" href="#"> Products </a></li>
+                                }
+                                @if (Model.AgentDetails.Issupplier == false)
+                                {
+                                    if (@ViewBag.IsAllowToEditForTarget==true)
+                                    {
+                                        <li id="Targets" actiontype=""><a id="aTargets" href="#">Targets</a></li>
+                                    } 
+                                }
+                            </ul>
+						</div>
+                        <div id="QuoteTabsCont">
+                            <div class="simple-tab-data" id="AgentDetails">@Html.Partial("_AgentDetails", Model.AgentDetails)</div>
+                            <div class="simple-tab-data" id="AgentContacts" style="display:none"></div>
+                            <div class="simple-tab-data" id="AgentCommercials" style="display:none;"></div>
+                            <div class="simple-tab-data" id="AgentTerms" style="display:none;"></div>
+                            <div class="simple-tab-data" id="AgentSystemOptions" style="display:none;"></div>
+                            <div class="simple-tab-data" id="SupplierProducts" style="display:none;"></div>
+                            <div class="simple-tab-data" id="AgentTargets" style="display:none;"></div>
+                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>	
+    $(document).ready(function () {
+        LoadAgentSection('@Model.AgentDetails.CompanyId', '@Model.AgentDetails.CompanyName');
+        showhidebackbutton();
+        if ($("#hdnContactId").val() != null && $("#hdnContactId").val() != "")
+        {
+            $("#Contacts").trigger('click');
+        }
+	});
+	
+</script>
+<script src="~/js/Agent/AgentDetails.js"></script>

@@ -1,0 +1,185 @@
+/* Media Query */
+@media screen and (max-width:1199px){   
+.table > thead > tr > th {font-size:12px;}
+.filter-table  .table > tbody > tr > td {font-size:12px;}
+.filter-table table .type {width:45px;}
+.filter-table table .remarks {width:66px;}
+.filter-table table .supplier {width:75px;}
+.filter-table table .alloc {width:45px;}
+.filter-table table .no-of-pax {width:45px;}
+.filter-table table .original-itinerary{width:335px;}
+.filter-table table {min-width:950px;}
+
+/*Summary At Glance*/
+.summary-at-glance .table .date {width:110px;}
+.summary-at-glance .table .days {width:60px;}
+.summary-at-glance .table .no-of-pax {width:80px;}
+.summary-at-glance .table .service-detail {width:350px;}
+.summary-at-glance .radio-list-bar > ul > li {margin:0px;}
+.summary-at-glance .radio-list-bar > ul > li {padding:1px 6px;}
+.summary-at-glance .radio-list-bar > span {padding-right:15px;}
+.summary-at-glance .radio-list-bar > span > strong {display:block; padding-left:0px;}
+.summary-at-glance  .radio-list-bar ul {vertical-align:middle;}
+.summary-at-glance .radio-list-bar {    padding:2px 10px 4px;}
+.summary-at-glance .radio-list-bar .select-dest:before {top:6px;}
+/*Summary At Glance*/
+
+/*Itinerary Builders Itinerary*/
+.itinerary-builders-itinerary  .filter-table table .original-itinerary {    width:285px;}
+/*Itinerary Builders Itinerary*/
+
+/*product-accountant*/
+.summary-prices .summary-tour-info {width:54%;}
+.summary-prices .subtitle-with-list {width:46%;}
+/*product-accountant*/
+
+.result-sec .details-sec > .rgh-sec{width:45%;}    
+.result-sec.type-01 ul > li.route{width:18%;}
+.result-sec.type-01 ul > li.vendor{width:24%;}
+.result-sec.type-01 ul > li.depart{width:22%;}
+.result-sec.type-01 ul > li.duration{width:22%;}
+.result-sec.type-01 ul > li.arrive{width:10%;}
+ul.rgt-btn-sec > li.dbl-btn {padding:0px 10px;margin:0px 6px;}    
+.radio-list-bar.rsp-btn-cont{padding-top: 30px;}	
+.costing-officers .summary-prices .summary-tour-info    {width: 50%;}
+.costing-officers .summary-prices .subtitle-with-list    {width: 50%;}
+ul.rgt-btn-sec > li.dbl-btn .btn.btn-md {   min-width: 75px;}
+    
+.rht-sec > .btn-cont > ul > li.from-to{vertical-align: top;}
+.rht-sec > .btn-cont > ul > li.from-to .form-group > label{display:block;width: 100% !important;text-align: left;}
+.rht-sec > .btn-cont > ul > li.from-to .form-group > div{display:block;}
+.rht-sec > .btn-cont > ul > li.from-to.pax .from,.rht-sec > .btn-cont > ul > li.from-to.pax .to{width: 60px;}
+	
+	.pkg-lists-table > table > tbody > tr > td.col-dates > ul > li {width: 100%}
+	
+	.lft-pnl .result-sec .details-sec > .rgh-sec {width: 50%}
+	.result-sec .listing .vendor figure {float: none; display: block}
+	.custom-mob-tbl .table .col-md2 {min-width: 150px}
+	.insurance .lft-pnl .result-sec.type-01 ul > li.vendor{width: 32%}
+}
+
+@media screen and (max-width:1024px){
+.pkg-pric-brkup > li > div.lbl-wrap > label {padding-left:0px;}
+ul.rgt-btn-sec {display:block;} 
+.slct-drtn {padding-left:20px;}
+.slct-drtn > li {padding-right:15px;}
+.slct-drtn.left-side-border{padding-left: 20px;}
+.slct-drtn.left-side-border:after{left: 10px;}
+
+.multi-calendar .ui-datepicker td span, .multi-calendar .ui-datepicker td a{padding: 12px 0;}
+.multi-calendar .ui-datepicker-multi-3 .ui-datepicker-group:after{right: 0;}
+
+} 
+@media screen and (min-width:992px) and (max-width:1024px){
+.rails .lft-pnl .result-sec.type-01 div.rgh-sec > .left-side + .right-side{width: 40%}
+.rails .result-sec .listing .rgh-sec .left-side > ul > li > div{min-width: 90px;}
+.lft-pnl .result-sec.type-01 ul > li.vendor{width: 22%;}
+.schedule-content{font-size: 13px;}
+} 
+
+@media screen and (max-width:991px){ 
+/*Summary At Glance*/
+.summary-at-glance .radio-list-bar > span > strong {display:inline; padding-left:10px;}
+.summary-at-glance .radio-list-bar > span {width:auto; display:block; padding-bottom:5px;}
+.summary-at-glance .radio-list-bar em {display:inline;}
+.summary-at-glance .radio-list-bar .select-dest {padding-left:0px; padding-top:13px;}
+.summary-at-glance .radio-list-bar .select-dest:before {display:none; }
+/*Summary At Glance*/
+
+/*Itinerary Builders Itinerary*/
+.itinerary-builders-itinerary  .filter-table table .original-itinerary {    width:252px;}
+/*Itinerary Builders Itinerary*/
+
+/*Co-Costs*/
+.simple-tab-list-links .simple-tab-links {padding-top:7px; }
+.simple-tab-links li {padding-right:15px;}
+.simple-tab-links.right li {padding-left:15px;}
+/*Co-Costs*/
+
+/*product-accountant*/
+.summary-prices .summary-tour-info {width:100%;}
+.summary-prices .subtitle-with-list {width:100%;}
+/*product-accountant*/
+
+.ttl-sec{margin-bottom:10px;}
+
+.ttl-sec > .rht-sec{margin-top:5px;}
+.result-sec > .head{display:none;}
+.result-sec.type-01 div.rgh-sec > .left-side,
+.result-sec.type-01 div.rgh-sec > .left-side + .right-side{display:block;width:100%;margin-top:10px;}
+
+.filter-links.typ2 li {padding-right:8px;}
+.sqr-tab-data .ttl-sec > .ttl .radio-inline {padding-left:30px !important;}
+.sqr-tab-data .ttl-sec > .ttl .radio-inline > label + label {margin:0 2px;}
+.equivalent-tbl .tbl-type2 {max-width:530px;}
+
+.subtitle-with-list ul li .subtitle { font-size:17px;padding-right:5px;}
+.subtitle-with-list ul li {padding-right:10px; margin-right:5px;font-size:12px;}
+.slct-drtn.analysis {padding-left:10px;margin-left:10px;}
+.ttl-sec.tbl-style{position:relative;height:40px;}
+/*.ttl-sec.tbl-style > div.btn-cont {position:absolute; top:5px; right:0;}*/
+.ttl-sec.tbl-style > div.btn-cont a.btn-calculate{min-width:150px;}
+.custom-mob-tbl.profit-tbl .table > tbody > tr > td {font-size:12px;}
+.main-content .profit-tbl .col-price .sale-prft-cont li span.sale-price { font-size:15px;width:86px;}
+.main-content .profit-tbl .col-price {width:190px;}
+
+.pkg-pric-brkup > li > div.lbl-wrap > label {padding-left:23px;} 
+.rgh-pnl.pull-right {float:none !important;}
+.ttl-sec > div.btn-cont {display:inline-block;}
+.progress-bar-cont .steps-progress-bar > li {padding:15px 10px;}
+.progress-bar-cont .steps-progress-bar {float:none;display:block;}
+ul.rgt-btn-sec {margin-top:15px;}
+.lft-flt-pnl > ul > li > label {font-size:10px;}
+.lft-flt-pnl > ul > li > span {font-size:15px;}
+.lft-flt-pnl > p {font-size:10px;}
+
+/*Vertical Tab Start*/
+.itenary-heading > li a {padding: 10px 6px;font-size: 11px;}
+/*Vertical Tab End*/
+
+.costing-officers .summary-prices .summary-tour-info    {width: 100%;}
+.costing-officers .summary-prices .subtitle-with-list    {width: 100%;}
+.filter-links li    {padding-right: 10px;}
+.filter-links li a  {min-width: 115px;}
+.filter-links li .compare-dropdown  {width: 115px;}
+/* .ttl-sec > div  {display: block;}*/
+
+.costing-officers  .custom-mob-tbl.tbl-itinerary .table .col-md  {min-width: 150px;}
+.custom-mob-tbl .table .col-lg1 {min-width: 220px;}
+
+.block-mob{display: block !important;}
+
+.rht-sec > .btn-cont > ul > li.from-to .form-group > label{display:table-cell;width: auto !important;text-align: left;}
+.rht-sec > .btn-cont > ul > li.from-to .form-group > div{display:table-cell;}
+.rht-sec > .btn-cont > ul > li.from-to.pax .from,.rht-sec > .btn-cont > ul > li.from-to.pax .to{width: auto;}
+	
+.miscellaneous .pkg-thumbnail .rht-sec {min-width: 100%;width: 150px; text-align: left; padding: 7px 15px}
+}
+
+@media screen and (max-width:768px){ 
+.filter-links li {padding-right:30px;}
+.pkg-thumbnail > div {display:block !important;}
+
+/*Co-Costs*/
+.ttl-sec .show-hor-ver-wrap {display:block}
+.ttl-sec .show-hor-ver-wrap + .rht-sec {display: inline-block;float: right;}    
+.show-hor-ver-wrap > ul.drpdwn {margin-right: 10px;}
+.show-hor-ver-link li + li{ padding-left: 10px; margin-left: 10px;}
+/*Co-Costs*/
+.simple-tab-links.border-list > li:after {right: 6px;height: 15px; top:2px;}
+.simple-tab-cont .simple-tab-links li{margin-bottom: 10px;}
+.simple-tab-cont .simple-tab-links .btn-cont .btn {margin-left: 0px; margin-right: 8px;}	
+}
+
+
+@media screen and (max-width:479px) {
+.list-bar > .show-curr {left:0; position:relative; border:none; padding:10px 0 0 0; margin:0;}
+.list-bar > .show-curr:before {content:'';border-left:none;}
+.slct-drtn.analysis { padding:0; margin:0 0 20px 0; border:none;}
+h4.tbl-head {padding-left:10px; width:100%;}
+.list-bar > span {margin-right:6px;}
+.custom-mob-tbl.table-responsive.summary-tbl{border:none;margin-bottom:0px;}
+.summary-tbl.custom-mob-tbl .table {margin-bottom:15px !important;}
+
+}
+/* Media Query */

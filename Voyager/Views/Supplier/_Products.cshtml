@@ -1,0 +1,251 @@
+﻿
+<style>
+	.summary-tbl.custom-mob-tbl .table > tbody > tr > td {
+		text-align: right;
+		width: initial
+	}
+
+	.pop-lg1 {
+		max-width: 1500px;
+	}
+
+	.text-left {
+		text-align: left;
+	}
+</style>
+
+@model Voyager.App.ViewModels.SupplierViewModel
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="custom-mob-tbl table-responsive summary-tbl includes-tbl">
+			<br />
+			@Html.HiddenFor(x => x.CompanyId, new { @id = "CompanyId" })
+			<div class="tbl-actn-btns"><h4>Product Mapping</h4></div><br />
+			@*@if (Model.SupplierProducts.Count > 0)
+				{*@
+			<table class="table table-striped" id="tblProducts">
+				<thead>
+					<tr>
+						<th>Product</th>
+						<th style="text-align:center">Name</th>
+						<th>Status</th>
+						<th>Type</th>
+						<th>Country</th>
+						<th>City</th>
+						<th>Default</th>
+						<th>Preferred</th>
+						<th>Usage</th>
+						<th class="col-md-4" style="width:400px"></th>
+					</tr>
+				</thead> 
+			</table> 
+			<br />
+		</div>
+	</div>
+</div>
+<div id="action-popup2" style="display:none">
+	<div class="popup-box pop-lg1 form-theme-04 form">
+		<button title="Close (Esc)" type="button" class="mfp-close"></button>
+		<div class="popup-in displayManageProduct">
+		</div>
+	</div>
+</div>
+<div id="action-popup1" style="display:none">
+	<div class="popup-box pop-lg1 form-theme-04 form">
+		<button title="Close (Esc)" type="button" class="mfp-close"></button>
+		<div class="popup-in displayViewProduct">
+		</div>
+	</div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+		//      $('#tblProducts').DataTable({
+		//          "ordering": false,
+		//          "aLengthMenu": [[10, 15, 20, 25], [10, 15, 20, 25]],
+		//          "iDisplayLength": 10,
+		//          "searching": false,
+		//          "oLanguage": {
+		//              sLengthMenu: "Show entries _MENU_",
+		//          },
+		//          "dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+		//});
+		var companyId = $("#CompanyId").val();
+		var oTable = $('#tblProducts').dataTable({
+			processing: true,
+			serverSide: true,
+			info: true,
+			ajax: {
+				url: "/Supplier/LoadData",
+				type: "POST",
+				data: function (d) {
+					d.CompanyId = companyId;
+				}
+			},
+			columns: [
+				{ "data": "code", "orderable": true },
+				{
+					"data": function (data, type, row, meta) {
+						return "<span style='text-align:left'>" + data.name + "</span>";
+					}, "orderable": true
+				},
+				{ "data": "status", "orderable": true },
+				{ "data": "type", "orderable": true },
+				{ "data": "country", "orderable": true },
+				{ "data": "city", "orderable": true },
+				{ "data": "default", "orderable": true },
+				{ "data": "preferred", "orderable": true },
+				{ "data": "usage", "orderable": true },
+				{
+					"data": function (data, type, row, meta) {
+						var str;
+						if (data.status == "Active") {
+							str = '<a id="btnEnableDisable" class="popup-inline btn btn-sm btn-blue smallbutton btnEnableDisable" onClick="ViewEnableDisableProduct(' + "'" + companyId + "'" + ',\'' + data.productSupplierId + '\',\'' + data.status + '\');">Deactivate</a>';
+						}
+						else {
+							str = '<a id="btnEnableDisable" class="popup-inline btn btn-sm btn-blue smallbutton btnEnableDisable" onClick="ViewEnableDisableProduct(' + "'" + companyId + "'" + ',\'' + data.productSupplierId + '\',\'' + data.status + '\');">Activate</a>';
+						}
+						return '<a href="#action-popup1" id="btnViewProduct" class="popup-inline btn btn-sm btn-blue smallbutton btnViewProduct" onClick="ViewProduct(\'' + data.productId + '\');">View Product</a>&nbsp;<a href= "#action-popup2" id= "btnManageProduct" class="popup-inline btn btn-sm btn-blue smallbutton btnManageProduct" onClick="ViewManageProduct(' + "'" + companyId + "'" + ',\'' + data.productSupplierId + '\');">View</a>&nbsp;' + str;
+					},
+					"orderable": false
+				}
+			],
+			"order": [[0, "asc"]],
+			"columnDefs": [{
+				"defaultContent": "",
+				"targets": "_all"
+			},
+			{
+				"targets": [0, 2, 3, 4, 5, 6, 7, 8, 9],
+				"className": "text-center"
+			}],
+			"oLanguage": {
+				sLengthMenu: "Show entries _MENU_",
+			},
+			"dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+		});
+
+		$('#tblProducts_filter').css('display', 'none');
+	});
+
+	function ViewProduct(productId) {
+		 
+		$.ajax({
+			type: "GET",
+			url: "/Product/_Accomodation",
+			data: { ProductId: productId },
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (response) {
+				$(".displayViewProduct").html(response.replace("action-popup1 ", ""));
+				$("#action-popup1").show();
+				$("#back-link").hide();
+			},
+			error: function (response) {
+				alert(response.statusText);
+			}
+		});
+	};
+
+	//$(".btnViewProduct").on("click", function () {
+	//	var selectedProductId = $(this).parents('tr').find(".clsProductId").val();
+	//	//var selectedProductType = $(this).parents('tr').find(".clsProductType").val();
+	//	//var url = '/Product/ViewFullProductInfo?ProductId=' + selectedProductId + '&ProductType=' + selectedProductType;
+	//	//window.open(url, '_blank');
+
+	//	$.ajax({
+	//		type: "GET",
+	//		url: "/Product/_Accomodation",
+	//		data: { ProductId: selectedProductId },
+	//		contentType: "application/json; charset=utf-8",
+	//		dataType: "html",
+	//		success: function (response) {
+	//			$(".displayViewProduct").html(response.replace("action-popup1 ", ""));
+	//			$("#action-popup1").show();
+	//			$("#back-link").hide();
+	//		},
+	//		error: function (response) {
+	//			alert(response.statusText);
+	//		}
+	//	});
+
+	//});
+
+	function ViewManageProduct(companyId, productSupplierId) {
+		$.ajax({
+			type: "GET",
+			url: "/Supplier/ViewManageProduct",
+			data: { CompanyId: companyId, ProductSupplierId: productSupplierId },
+			contentType: "application/json; charset=utf-8",
+			dataType: "html",
+			success: function (response) {
+				$(".displayManageProduct").html(response.replace("action-popup2 ", ""));
+				$("#action-popup2").show();
+			},
+			error: function (response) {
+				alert(response.statusText);
+			}
+		});
+	};
+
+	//$(".btnManageProduct").on("click", function () {
+	//	var companyId = $("#CompanyId").val();
+	//	var selectedProductId = $(this).parents('tr').find(".clsProductSupplierId").val();
+	//	$.ajax({
+	//		type: "GET",
+	//		url: "/Supplier/ViewManageProduct",
+	//		data: { CompanyId: companyId, ProductSupplierId: selectedProductId },
+	//		contentType: "application/json; charset=utf-8",
+	//		dataType: "html",
+	//		success: function (response) {
+	//			$(".displayManageProduct").html(response.replace("action-popup2 ", ""));
+	//			$("#action-popup2").show();
+	//		},
+	//		error: function (response) {
+	//			alert(response.statusText);
+	//		}
+	//	});
+	//});
+
+	function ViewEnableDisableProduct(companyId, productSupplierId, productStatus) {
+		 
+		$.ajax({
+			type: "GET",
+			url: "/Supplier/EnableDisableProduct",
+			data: { CompanyId: companyId, ProductSupplierId: productSupplierId, Status: productStatus },
+			contentType: "application/json; charset=utf-8",
+			global: false,
+			success: function (response) {
+				$("#Products").click();
+			},
+			error: function (response) {
+				alert(response.statusText);
+			}
+		});
+	};
+
+	//$(".btnEnableDisable").on("click", function () {
+	//	var companyId = $("#CompanyId").val();
+	//	var selectedProductId = $(this).parents('tr').find(".clsProductSupplierId").val();
+	//	var status = $(this).parents('tr').find(".clsProductStatus").val();
+
+	//	$.ajax({
+	//		type: "GET",
+	//		url: "/Supplier/EnableDisableProduct",
+	//		data: { CompanyId: companyId, ProductSupplierId: selectedProductId, Status: status },
+	//		contentType: "application/json; charset=utf-8",
+	//		global: false,
+	//		success: function (response) {
+	//			$("#Products").click();
+	//		},
+	//		error: function (response) {
+	//			alert(response.statusText);
+	//		}
+	//	});
+	//});
+</script>

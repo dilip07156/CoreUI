@@ -1,0 +1,347 @@
+﻿<style>
+    .products-contracting {
+        width: 100%;
+    }
+
+    .add-to-menu.products-contracting .detail-container .form-sec {
+        padding: 0 0px;
+    }
+
+        .add-to-menu.products-contracting .detail-container .form-sec .btn-md {
+            min-width: 100px;
+        }
+</style>
+
+@using Voyager.App.ViewModels
+@model QuoteSearchViewModel
+    <!-- Header ::Starts -->
+<!--#include virtual='/dmc/includes/header.inc'-->
+<!-- Header ::Ends -->
+<!-- MAIN_CONTENT starts -->
+<div class="wrapper">
+    @using (Html.BeginForm("Quote", "Quote", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-04",@id="frmSearchQuote" }))
+    {
+        @*<div class="main-content form form-theme-04">*@
+        <div class="container">
+            <div class="col-sm-12" style="text-align:right;padding-right:0px;margin-top:20px">
+                <a href="/Quote/NewQuote" class="btn btn-blue btn-md">New Quote</a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="add-to-menu products-contracting">
+                <div class="collapse-block">
+                    <div class="collapse-link heading collapsed">
+                        <a href="javascript:void(0)" class="">SEARCH <i class="fa arrow"></i></a>
+                    </div>
+                    <div class="collapse-container" style="display: block;">
+                        <div class="detail-container">
+                            <div class="row" style="margin:0px 0px 10px 0px">
+                                <div class="col-md-4" style="background:#f8fcff">
+                                    <div class="row form-sec no-space">
+
+                                        @{
+                                            foreach (var Ps in Model.PipelineStagesList)
+                                            {
+                                                if (Ps.Value == "Rejected Pipeline")
+                                                {
+                                                    <label style="width:49%">
+                                                    </label>
+                                                }
+                                                <label style="width:49%">
+                                                    @Html.RadioButtonFor(model => model.PipelineStages, Ps.Value, new { @class = "rdoPipelineStages" })
+                                                    @Ps.Value
+                                                </label>
+                                            }
+                                            <br />
+                                            @Html.ValidationMessageFor(m => m.PipelineStages, "", new { @class = "text-danger" })
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row form-sec no-space">
+                                        <div class="col-xs-6 mobile-xs-12">
+                                            <label>Agent Name</label>
+                                            @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.AgentName, "", new { @class = "error" })
+                                        </div>
+                                        <div class="col-xs-6 mobile-xs-12">
+                                            <label>CNK Reference No.</label>
+                                            @Html.TextBoxFor(m => m.CNKReferenceNo, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-xs-6 mobile-xs-12">
+                                            <label>Agent Reference No.</label>
+                                            @Html.TextBoxFor(m => m.AgentReferenceNo, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-xs-6 mobile-xs-12">
+                                            <label>Agent Tour Name</label>
+                                            @Html.TextBoxFor(m => m.AgentTour, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="row">
+                                                <div class="col-xs-12  mobile-xs-12">
+                                                    <label>Quote Result</label>
+                                                    @Html.DropDownListFor(m => m.QuoteResult, new SelectList(Model.QuoteResultList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Status</label>
+                                            @Html.DropDownListFor(m => m.QuoteStatus, new SelectList(Model.QuoteStatusList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Division</label>
+                                            @Html.DropDownListFor(m => m.Division, new SelectList(Model.DivisionList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <label class="frm-sub-label">Destination </label>
+                                            @Html.DropDownListFor(m => m.Destination, new SelectList(Model.DestinationList, "AttributeValue_Id", "Value", "", "CityName"), "Select", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="row form-sec no-space">
+                                        @*<label class="col-sm-12">What are you searching for?</label>*@
+                                        <div class="col-sm-12">
+                                            <div class="row row-md">
+                                                <div class="col-xs-6 mobile-xs-12">
+                                                    <label>Date</label>
+                                                    @Html.DropDownListFor(m => m.DateType, new SelectList(Model.DateTypeList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                                    <span class="field-validation-valid text-danger" id="spanDateType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                </div>
+                                                <div class="col-xs-6 mobile-xs-12">
+                                                    <label>Priority</label>
+                                                    @Html.DropDownListFor(m => m.QuotePriority, new SelectList(Model.QuotePriorityList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="row row-md">
+                                                <div class="col-xs-6">
+                                                    <label>From</label>
+                                                    <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                                        @Html.TextBoxFor(m => m.From, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                                        <span class="field-validation-valid text-danger" id="spanFrom" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <label>To</label>
+                                                    <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                                        @Html.TextBoxFor(m => m.To, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                                        <span class="field-validation-valid text-danger" id="spanTo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="row row-md">
+                                                <div class="col-xs-6">
+                                                    <label>Month</label>
+                                                    @Html.DropDownListFor(m => m.Month, new SelectList(Model.MonthList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                                     <span class="field-validation-valid text-danger" id="spanMonth" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <label>Year</label>
+                                                    @Html.DropDownListFor(m => m.Year, new SelectList(Model.YearList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                                     <span class="field-validation-valid text-danger" id="spanYear" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 text-right tp-mrgn">
+                                            <label></label>
+                                            @*<a class="btn btn-blue btn-md" href="#">Search</a>*@
+                                            <input type="submit" value="Search" id="btnSearch" class="btn btn-blue btn-md" />
+                                            <input type="button" value="Reset" id="btnReset" class="btn btn-blue btn-md" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+    }
+    <!-- MAIN_CONTENT starts -->
+    <!-- Footer ::Starts -->
+    <!--#include virtual='/dmc/includes/footer.inc'-->
+    <!-- Footer ::Ends -->
+    <!-- Footer ::Starts -->
+    <!--#include virtual='/dmc/includes/footer-js-css.inc'-->
+    <!-- Footer ::Ends -->
+</div>
+
+@if (ViewBag.SearchResult)
+{
+    @Html.Partial("_EnquiryPipeline", Model.EnquiryPipeline)
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnReset').click(function () {
+            $('.rdoPipelineStages').prop('checked', false);
+            $('#AgentName').val("");
+            $('#CNKReferenceNo').val("");
+            $('#AgentReferenceNo').val("");
+            $('#AgentTour').val("");
+            $('#From').val("");
+            $('#To').val("");
+            $('#QuoteResult').val("");
+            $('#QuoteStatus').val("");
+            $('#DateType').val("");
+            $('#QuotePriority').val("");
+            $('#Month').val("");
+            $('#Year').val("");
+            $('#Division').val("");
+            $('.myQRFGridData').html("");
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+        });
+
+        $('#btnSearch').click(function () {
+            var isvalid = $("#frmSearchQuote").valid();
+            if (!isvalid) {
+                return false;
+            }
+            $(".ajaxloader").show();
+            var flag = true;
+            $("#spanFrom, #spanTo, #spanDateType,#spanMonth, #spanYear").text("");
+
+            var fromDT = $('#From').val();
+            var toDT = $('#To').val();
+            var ddlMonth = $('#Month').val();
+            var ddlYear = $('#Year').val();
+
+            if (((fromDT != "" || toDT != "") || (ddlMonth != "" || ddlYear != "")) && $("#DateType").val() == "") {
+                $("#spanDateType").text("*");
+                flag = false;
+            }
+
+            if ($("#DateType").val() != "") {
+                if ((fromDT == "" && toDT == "") && (ddlMonth == "" && ddlYear == "")) {
+                    $("#spanFrom").text("*");
+                    $("#spanTo").text("*");
+                    $("#spanMonth").text("*");
+                    $("#spanYear").text("*");
+                    flag = false;
+                }
+                else if (ddlMonth != "" && ddlYear == "") {
+                    $("#spanYear").text("*");
+                    flag = false;
+                }
+                else if (ddlMonth == "" && ddlYear != "") {
+                    $("#spanMonth").text("*");
+                    flag = false;
+                }
+                else {
+                    if (fromDT != "") {
+                        if (!ValidateDateddmmyyyy(fromDT)) {
+                            $("#spanFrom").text("From Date should be in dd/MM/yyyy format");
+                            flag = false;
+                        }
+                    }
+                    if (toDT != "") {
+                        if (!ValidateDateddmmyyyy(toDT)) {
+                            $("#spanTo").text("To Date should be in dd/MM/yyyy format");
+                            flag = false;
+                        }
+                    }
+
+                    if (fromDT != "" && toDT != "") {
+                        var from = fromDT.split('/');
+                        var to = toDT.split('/');
+                        if (Date.parse(from[2] + "/" + from[1] + "/" + from[0]) > Date.parse(to[2] + "/" + to[1] + "/" + to[0])) {
+                            $("#spanFrom").text("From Date should be less than To Date");
+                            flag = false;
+                        }
+                    }
+                }
+            }
+            if (flag == false) {
+                $(".ajaxloader").hide();
+                return false;
+            }
+            else {
+                $("#spanFrom, #spanTo, #spanDateType").text("");
+                return true;
+            }
+        });
+
+        $('#Month, #Year').click(function () {
+            $('#From, #To').val("");
+        });
+
+        $('#From, #To').click(function () {
+            $('#Month, #Year').val("");
+        });
+
+        $('.chkQuote').click(function () {
+            $('#tblQuoteList').find('input[type="checkbox"]:checked').each(function () {
+                $(this).prop('checked', false);
+            });
+            $(this).prop('checked', true);
+            return true;
+        });
+
+        $('.showFollowUp').click(function () {
+
+            var selectedCheckBoxLen = $('#tblQuoteList').find('input[type="checkbox"]:checked').length;
+
+            if (selectedCheckBoxLen == 0) {
+                alert("Select atleast one Quote from List");
+                return false;
+            }
+            else if (selectedCheckBoxLen > 1) {
+                alert("Select only one Quote from List");
+                return false;
+            }
+            else {
+                $('#tblQuoteList').find('input[type="checkbox"]:checked').each(function () {
+                    var QRFID = $(this).val();
+                    GetFollowup(QRFID, "", "");
+                });
+            }
+            return true;
+        });
+    });
+
+    $(document).on('change', '#DateType', function () {
+        var ddlDateType = $("#DateType").val();
+        if (ddlDateType == "") {
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            $('#From, #To,#Month, #Year').val('');
+        }
+    });
+
+    function GetFollowup(QRFID, SuccessMessage, ErrorMessage) {
+        $("#FollowUpList-popup .popup-in").html("");
+        $.ajax({
+            type: "GET",
+            url: "/Quote/GetQuoteFollowUp",
+            data: { QRFID: QRFID },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+
+                $("#FollowUpList-popup .popup-in").html(response);
+                $("#FollowUpList-popup").show();
+                if (SuccessMessage != "") {
+                    $("#divSuccessError").addClass("alert alert-success");
+                    $("#lblmsg").text(SuccessMessage);
+                    $("#stMsg").text("Success!");
+                    $("#divSuccessError").css("display", "block");
+                }
+                else if (ErrorMessage != "") {
+                    $("#divSuccessError").addClass("alert alert-danger");
+                    $("#lblmsg").text(ErrorMessage);
+                    $("#stMsg").text("Error!");
+                    $("#divSuccessError").css("display", "block");
+                }
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    }
+</script>
+
+

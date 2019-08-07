@@ -1,0 +1,14 @@
+﻿@model Voyager.App.ViewModels.OpsProdTypeVM
+
+@if (Model?.OpsProdTypeDaysMenuVM?.DaysList.Count > 0)
+{
+    @Html.Partial("_ViewProdTypeDaysMenu", Model.OpsProdTypeDaysMenuVM)
+
+    <div id="divOpsDayInfo">
+        @Html.Partial("_ViewProdTypePosition", Model)
+    </div>
+}
+else
+{
+    <div style="text-align:center;">There are no items to display for this booking.</div>
+}

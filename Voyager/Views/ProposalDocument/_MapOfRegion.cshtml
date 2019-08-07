@@ -1,0 +1,174 @@
+﻿@model Voyager.App.ViewModels.ProposalDocumentViewModel
+<div class="main-content">
+    <table width="950" border="0" align="center" cellpadding="0" cellspacing="0" class="tbl-center">
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentHeader.cshtml", Model.COHeaderViewModel)*@
+        <tr>
+            <td align="center" valign="top" height="1081">
+                <table width="773" border="0" align="center" cellpadding="0" cellspacing="0" class="container">
+                    <tr>
+                        <td class="main-title">Map of the Region</td>
+                    </tr>
+                    <tr>
+                        <td height="25"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            @*<img src="@Model.URLinitial/resources/images/proposal-report/map-of-region-small.jpg" width="233" height="206" alt="Map" class="map-bdr">*@
+                            <div id="MapRegionSmall" style="width: 233px; height: 206px">
+                                @*@{ string country = Model.QRFQuote.AgentProductInfo.Destination.Split('|')[1]; }*@
+                                <img src="@Model.URLinitial@Model.SmallMapURL" class="map-bdr" style="width: 233px; height: 206px" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="50"><img src="@Model.URLinitial/resources/images/proposal-report/spacer.gif" alt="" /></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <div class="map-of-region">
+                                @*<img src="@Model.URLinitial/resources/images/proposal-report/map-of-region.jpg" alt="TRIP 360" width="773" height="682" class="map-bdr">*@
+                                <div id="MapRegionFull" class="map-bdr" style="width: 773px; height: 682px">
+                                    <img src="@Model.URLinitial@Model.BigMapURL" class="map-bdr" style="width: 773px; height: 682px" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        @*@Html.Partial("~/Views/ProposalDocument/_ProposalDocumentFooter.cshtml", Model.COHeaderViewModel)*@
+    </table>
+</div>
+@*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkK0vbxrLTF1MkZH2dLBvrt5cF_4WiPu4&libraries=places"></script>*@
+<script>
+    @*$(document).ready(function () {
+        initializeSmallMap();
+        initializeFullMap();
+    });
+
+    function initializeSmallMap() {
+        var lat = 0;// = '15.8700';
+        var longg = 0;// = '100.9925';
+        var mapCanvas = document.getElementById("MapRegionSmall");      //containerForMap
+        var destination = '@Model.QRFQuote.AgentProductInfo.Destination.Split('|')[1]';
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'address': destination }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                lat = results[0].geometry.location.lat();
+                longg = results[0].geometry.location.lng();
+                var zoneLatLong = new google.maps.LatLng(lat, longg);
+                //optionsForMap
+                var mapOptions = {
+                    center: zoneLatLong,
+                    zoom: 4,
+                    scaleControl: true
+                };
+                //createMAP
+                map = new google.maps.Map(mapCanvas, mapOptions);
+
+                var bounds = map.getBounds();
+                var areaBounds = {
+                    north: bounds.getNorthEast().lat(),
+                    south: bounds.getSouthWest().lat(),
+                    east: bounds.getNorthEast().lng(),
+                    west: bounds.getSouthWest().lng()
+                };
+
+                mapOptions = {
+                    center: zoneLatLong,
+                    zoom: 3,
+                    scaleControl: true
+                };
+                //createMAP
+                map = new google.maps.Map(mapCanvas, mapOptions);
+
+                var rectangle = new google.maps.Rectangle({
+                    bounds: areaBounds,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    //fillColor: '#FF0000',
+                    fillOpacity: 0.0,
+                });
+                rectangle.setMap(map);
+
+                //displayMarkers(zoneLatLong);
+                markerHotels = createRedMarker(zoneLatLong, results[0].formatted_address);
+            } else {
+                alert("Request failed.");
+            }
+        });
+    }
+
+    function initializeFullMap() {
+        //containerForMap
+        var mapCanvas = document.getElementById("MapRegionFull");
+        //optionsForMap
+        var mapOptions = {
+            zoom: 5,
+            scaleControl: true
+        };
+        //createMAP
+        mapfull = new google.maps.Map(mapCanvas, mapOptions);
+        displayFullMarkers();
+    }
+
+    function displayFullMarkers() {
+        var CitiesArray = @Json.Serialize(Model.RoutingCities);
+        var CityCoords = new Array();
+        if (CitiesArray != undefined && CitiesArray != "") {
+            for (var i = 0; i < CitiesArray.length; i++) {
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'address': CitiesArray[i] }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        CityCoords.push({ Latitude: results[0].geometry.location.lat(), Longitude: results[0].geometry.location.lng(), cityName: results[0].formatted_address });
+
+                        if (CityCoords.length == CitiesArray.length) {
+                            var bounds = new google.maps.LatLngBounds();
+                            // this variable sets the map bounds and zoom level according to markers position
+                            for (var i = 0; i < CityCoords.length; i++) {
+                                var markerLatLng = new google.maps.LatLng(CityCoords[i].Latitude, CityCoords[i].Longitude);
+                                var markerHotels = createfullRedMarker(markerLatLng, CityCoords[i].cityName);
+                                bounds.extend(markerLatLng);
+                            }
+                            mapfull.fitBounds(bounds);
+                            if (mapfull.getZoom() > 6) mapfull.setZoom(6);
+                        }
+                    } else {
+                        alert("Request failed.");
+                    }
+                });
+            }
+        }
+    }
+
+    function createRedMarker(Markerlatlng, destination) {
+        // create marker
+        markerHotels = new google.maps.Marker({
+            map: map,
+            position: Markerlatlng,
+            icon: "http://maps.google.com/mapfiles/ms/micons/red-dot.png",
+            title: destination
+        });
+
+        return markerHotels;
+    }
+
+    function createfullRedMarker(Markerlatlng, cityName) {
+        // create marker
+        markerHotels = new google.maps.Marker({
+            map: mapfull,
+            position: Markerlatlng,
+            icon: "http://maps.google.com/mapfiles/ms/micons/red-dot.png",
+            title: cityName
+        });
+
+        return markerHotels;
+    }*@
+
+</script>
+<style>
+    .gm-style-pbt {
+        text-align:center;
+    }
+</style>

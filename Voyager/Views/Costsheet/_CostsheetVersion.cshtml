@@ -1,0 +1,68 @@
+﻿@model List<VGER_WAPI_CLASSES.CostsheetVersion>
+
+<h3>Costsheet Versions</h3>
+<div class="custom-mob-tbl table-responsive">
+
+    <div class="alert alert-success" id="SuccessAlert" style="display:none"></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th><span>Version</span></th>
+                <th><span>Version Name</span></th>
+                <th><span>Description</span></th>
+                <th><span>Created Date</span></th>
+            </tr>
+        </thead>
+        <tbody class="row-grid-sm document-list">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                @if (@Model[i].IsCurrentVersion)
+                {
+                    <tr style="background-color:#ECECEC">
+                        <td class="text-center">
+                            @Html.RadioButton("SelectedVersion", @Model[i].QRFPriceId, new { @checked = "checked" })
+                        </td>
+                        <td class="text-center">
+                            @Model[i].VersionId
+                        </td>
+                        <td>
+                            @Model[i].VersionName
+                        </td>
+                        <td>
+                            @Model[i].VersionDescription
+                        </td>
+                        <td class="text-center">
+                            @Convert.ToDateTime(@Model[i].VersionCreateDate).ToString("dd MMM yyyy")
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td class="text-center">
+                            @Html.RadioButton("SelectedVersion", @Model[i].QRFPriceId)
+                        </td>
+                        <td class="text-center">
+                            @Model[i].VersionId
+                        </td>
+                        <td>
+                            @Model[i].VersionName
+                        </td>
+                        <td>
+                            @Model[i].VersionDescription
+                        </td>
+                        <td class="text-center">
+                            @Convert.ToDateTime(@Model[i].VersionCreateDate).ToString("dd MMM yyyy")
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+<div class="btn-cont">
+    <button title="Save" type="button" class="btn btn-blue btn-md" onclick="changeCurrentVersion();">View</button>
+    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+</div>

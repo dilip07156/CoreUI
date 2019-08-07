@@ -1,0 +1,161 @@
+﻿@model Voyager.App.ViewModels.OthersLocalGuide
+@using (Html.BeginForm("LocalGuide", "Others", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "", role = "form", id = "frmOthersMiscellaneous" }))
+{
+	<div class="btn-cont pull-right">
+		<ul>
+			<li><input type="button" value="Save" class="btn btn-blue btn-md SaveMiscellaneous"></li>
+		</ul>
+	</div>
+	<h3>••• Others - Miscellaneous</h3>
+	<div class="clearfix"></div>
+	@if (TempData.Keys.Contains("success"))
+	{
+		<div class="alert alert-success">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Success!</strong> @TempData["success"].ToString()
+		</div>
+	}
+	else if (TempData.Keys.Contains("error"))
+	{
+		<div class="alert alert-danger">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<strong>Error!</strong> @TempData["error"].ToString()
+		</div>
+	}
+
+	<div class="custom-mob-tbl table-responsive valign-top-tbl top-gap-md">
+		@Html.HiddenFor(m => m.QRFID, new { @id = "QRFId" })
+		<table id="tblMiscellaneous" class="table text-center">
+			<thead>
+				<tr>
+					<th class="col-md-2"><span>Country/City</span></th>
+					<th class="col-md-2"><span>Products</span></th>
+					<th class="col-md-2"><span>Services</span></th>
+					<th class="col-md-1"><span>Keep As</span></th>
+					<th class="col-md-1"><span>Remarks</span></th>
+					<th class="col-md-1 AddEditSH">&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for (int i = 0; i < Model.LocalGuideDetails.Count; i++)
+				{
+					<tr id="MiscellaneousRow_@i" class="MiscellaneousRow">
+						<td>
+							<div class="form-group">
+								<label class="frm-sub-label txt-orange">Day</label>
+								@Html.Hidden("hdnSeqNo", i)
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].OthersId)
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].IsDeleted)
+								@*@Html.DropDownListFor(m => m.LocalGuideDetails[i].DayNo, new SelectList(Model.LocalGuideDetails[i].DayList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control bindDayStartTime select", @id = "ddlDayID_" + i })*@
+								<select name="@Html.NameFor(m =>m.LocalGuideDetails[i].DayNo)" id="ddlDayID_@i" class="form-control select ddlday">
+									<option value="">Select</option>
+									@foreach (var item in Model.LocalGuideDetails[i].DayList)
+									{
+										<option value="@item.AttributeValue_Id" cityname="@item.CityName"
+												cityid="@item.CityId"
+												selected="@(Model != null && item.AttributeValue_Id == Model.LocalGuideDetails[i].DayNo)">
+											@item.Value
+										</option>
+									}
+								</select>
+								@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].DayNo, "", new { @class = "error" })
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].DayName, new { @id = "ddlDay_" + i })
+							</div>
+							<div class="form-group">
+								<label class="frm-sub-label txt-orange">City</label>
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].CityID, new { @id = "CityID3_" + i, @class = "fromcity" })
+								@Html.TextBoxFor(m => m.LocalGuideDetails[i].CityName, new { @class = "form-control bindCity fromcityUI", @id = "CityID3_" + i + "UI" })
+								@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].CityName, "", new { @class = "error" })
+							</div>
+							<div class="form-group">
+								<label class="frm-sub-label txt-orange">Duration</label>
+								@Html.DropDownListFor(m => m.LocalGuideDetails[i].Duration, new SelectList(Model.LocalGuideDetails[i].DurationList, "Value", "Value"), new { @class = "form-control", @id = "ddlDuration_" + i })
+								@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].Duration, "", new { @class = "text-danger" })
+							</div>
+							<div class="form-group">
+								<label class="frm-sub-label txt-orange">Start Time</label>
+								@Html.TextBoxFor(m => m.LocalGuideDetails[i].StartTime, new { @class = "form-control time24" })
+								@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].StartTime, "", new { @class = "error" })
+							</div>
+						</td>
+						<td>
+							<div class="form-group">
+								<label class="frm-sub-label txt-orange">PRODUCT NAME</label>
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].ProductID, new { @class = "clsProductID", @id = "ProductName3_" + i })
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].ProductType, new { @id = "ProductName3_" + i + "Type" })
+								@Html.HiddenFor(m => m.LocalGuideDetails[i].ProductTypeID, new { @id = "ProductName3_" + i + "TypeID" })
+								@Html.TextBoxFor(m => m.LocalGuideDetails[i].ProductName, new { @class = "form-control bindProductName", @id = "ProductName3_" + i + "UI" })
+								@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].ProductName, "", new { @class = "error" })
+							</div>
+							<div class="collapse-container">
+								<div class="form-group">
+									<label class="frm-sub-label txt-orange">OTHERS TYPE</label>
+									@Html.HiddenFor(m => m.LocalGuideDetails[i].SupplierID)
+									@Html.HiddenFor(m => m.LocalGuideDetails[i].SupplierName)
+									@Html.HiddenFor(m => m.LocalGuideDetails[i].ProductCategory, new { @id = "ProductCategory_" + i })
+									@Html.DropDownListFor(m => m.LocalGuideDetails[i].ProductCategoryID, new SelectList(Model.LocalGuideDetails[i].ProductCategoryList, "AttributeValue_Id", "Value"), new { @class = "form-control select bindProductRange", @id = "ProductCategoryID_" + i })
+									@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].ProductCategoryID, "", new { @class = "error" })
+								</div>
+							</div>
+						</td>
+						@{
+							Model.LocalGuideDetails[i].PositionRoomsData.RowNo = i;
+							Model.LocalGuideDetails[i].PositionRoomsData.PositionType = "LocalGuideDetails[";
+						}
+						@Html.Partial("_PositionRoomDetails", Model.LocalGuideDetails[i].PositionRoomsData)
+						<td id="divRoomDetails_@i" class="divRoomDetails" style="display:none"></td>
+						<td>
+							@{
+								var keepasList = new List<SelectListItem>();
+								keepasList.Add(new SelectListItem { Text = "Included", Value = "Included" });
+								keepasList.Add(new SelectListItem { Text = "Optional", Value = "Optional" });
+								keepasList.Add(new SelectListItem { Text = "Supplement", Value = "Supplement" });
+							}
+							@Html.DropDownListFor(m => m.LocalGuideDetails[i].KeepAs, keepasList, new { @class = "form-control", @id = "ddlKeepAs_" + i })
+							@Html.ValidationMessageFor(m => m.LocalGuideDetails[i].KeepAs, "", new { @class = "error" })
+
+						</td>
+
+						<td class="text-center">
+							<div class="price-foc-sec">
+								<div class="tool-tip info Prices">
+									<span class="msg txt-green" style="display:none;">Prices Added</span>
+									<span class="msgErr txt-red" style="display:none;">Prices Not Added</span>
+									<a href="#" class="txt-lnk darkblue btn-add clsAddPrice clsfocprice" data-name="price">Prices</a>
+									<div id="divPrices_@i" class="tooltip-cont type03">
+									</div>
+								</div>
+								<hr>
+								<div class="tool-tip info FOC">
+									<span class="msg txt-green" style="display:none;">FOC Added</span>
+									<span class="msgErr txt-red" style="display:none;">FOC Not Added</span>
+									<a href="#" class="txt-lnk darkblue btn-add clsAddFOC clsfocprice" data-name="foc">FOC</a>
+									<div id="divFOC_@i" class="tooltip-cont type03">
+									</div>
+								</div>
+								<hr>
+							</div>
+							<span class="frm-sub-label txt-orange">For TL</span>
+							@Html.TextAreaFor(m => m.LocalGuideDetails[i].RemarksTL, new { @rows = "7" })
+						</td>
+						<td class="AddEditSH">
+							<div class="icon-squre-cont" style="margin:8px 0px 8px 0px;">
+								<a href="#" class="icon-squre-green"><i class="fa fa-plus"></i></a>
+								<a href="#" class="icon-squre-red"><i class="fa fa-times"></i></a>
+							</div>
+							<br />
+							<div>
+								<span class="frm-sub-label txt-orange">For OPS</span>
+								@Html.TextAreaFor(m => m.LocalGuideDetails[i].RemarksOPS, new { @rows = "10" })
+							</div>
+						</td>
+					</tr>
+								}
+			</tbody>
+		</table>
+	</div>
+	<div class="btn-cont top-gap-md">
+		<input type="button" value="Save" class="btn btn-blue btn-md SaveMiscellaneous">
+	</div>
+								}
+<script src="~/js/Sales/Others/OthersMiscellaneous.js"></script>

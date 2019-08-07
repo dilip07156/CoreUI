@@ -1,0 +1,68 @@
+﻿@model Voyager.App.ViewModels.OpsPosRoomsPricesViewModel
+
+<br />
+<h4>Budget Supplements</h4>
+<hr>
+<div class="table-responsive filter-table custom-mob-tbl">
+    <table class="table" name="TableBudgetSuppliments">
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Supplement</th>
+                <th>Description</th>
+                <th>Agent Confirmed</th>
+                <th>Apply Markup</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tblPosBudgSupp">
+            @{ string trStyle = ""; }
+            @for (int i = 0; i < Model.BudgetSupplements.Count; i++)
+            {
+                trStyle = "";
+                if (Model.BudgetSupplements[i].IsNewRow)
+                {
+                    trStyle = "display: none;";
+                }
+                <tr class="trPosBudgSupp" id="trPosBudgSupp_@i" style="@trStyle">
+                    <td class="col-md-2">
+                        @Html.HiddenFor(x => x.BudgetSupplements[i].status)
+                        @Html.HiddenFor(x => x.BudgetSupplements[i].BudgetSupplement_Id, new { id = "BudgetSupplement_Id_" + i })
+                        @Html.HiddenFor(x => x.BudgetSupplements[i].IsNewRow)
+                        @Html.HiddenFor(x => x.BudgetSupplements[i].BookingRooms_Id, new { @class = "clsBookingRoomsId" })
+                        @Html.HiddenFor(x => x.BudgetSupplements[i].PositionPricing_Id, new { @class = "clsPositionPricingId" })
+                        @Html.HiddenFor(x => x.BudgetSupplements[i].ProductRange)
+                        @Html.DropDownListFor(x => x.BudgetSupplements[i].ProductRangeID, new SelectList(Model.RangeListBudgSupp, "VoyagerProductRange_Id", "ProductRangeCode"), "Select", new { @class = "form-control-1 leftalign bdgSuppProductRangeID select", @style = "width:100%;" })
+                        @Html.ValidationMessageFor(x => x.BudgetSupplements[i].ProductRangeID, "", new { @class = "text-danger leftalign" })
+                    </td>
+
+                    <td class="col-md-2">
+                        @Html.TextBoxFor(x => x.BudgetSupplements[i].BudgetSupplementAmount, new { @class = "form-control-1 numeric text-center clsBudgSuppAmt" })
+                        @Html.ValidationMessageFor(x => x.BudgetSupplements[i].BudgetSupplementAmount, "", new { @class = "text-danger leftalign" })
+                    </td>
+                    <td  class="col-md-4">
+                        @Html.TextBoxFor(x => x.BudgetSupplements[i].BudgetSupplementReason, new { @class = "form-control-1 text-left" })
+                        @Html.ValidationMessageFor(x => x.BudgetSupplements[i].BudgetSupplementReason, "", new { @class = "text-danger leftalign" })
+                    </td>
+                    <td  class="col-md-1">
+                        <input type="checkbox" name="BudgetSupplements[@i].AgentConfirmed" checked="@Model.BudgetSupplements[i].AgentConfirmed" />
+                    </td>
+                    <td  class="col-md-1">
+                        <input type="checkbox" name="BudgetSupplements[@i].ApplyMarkUp" checked="@Model.BudgetSupplements[i].ApplyMarkUp" />
+                    </td>
+                    <td  class="col-md-1">
+                        <button type="button" class="btn btn-sm btn-danger btnDeleteBudgSupp">X</button>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-4" style="text-align:right;">
+        <button type="button" class="btn btn-sm btn-warning btnAddNewBudgSupp">Add New Service</button>
+    </div>
+</div>

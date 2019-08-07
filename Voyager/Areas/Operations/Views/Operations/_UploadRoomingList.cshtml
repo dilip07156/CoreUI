@@ -1,0 +1,379 @@
+﻿@model Voyager.App.ViewModels.Operations.UploadRoomingListDetailsVm
+
+<h3>Manage Rooming List</h3>
+<br />
+@*@using (Html.BeginForm("UploadRoomingList", "Operations", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {*@
+
+
+
+<div class="card ">
+    <div class="card-header">Upload Rooming List Template</div>
+    <div class="card-body">
+
+        <div class="col-md-12">
+            <div class="form-group">
+                @Html.HiddenFor(m => m.BookingNumber)
+                <div class="custom-file">
+
+                    <input type="file" name="file" id="file1" class="custom-file-input" />
+                    <label class="custom-file-label" for="file1">Choose file</label>
+                    <br />
+                    @*<p class="file-name" style="font-size:12px">Please select a file.</p>*@
+                    @*<label>Choose file</label>*@
+
+                </div>
+            </div>
+
+
+            @*<div class="form-group">
+                    <label class="custom-file">
+                        <input type="file" id="file1" class="custom-file-input">
+                        <span class="custom-file-control"></span>
+                    </label>
+                </div>*@
+
+
+        </div>
+        <div class="col-md-3">
+            <button id="UploadButton" class="btn btn-primary" onclick="return UploadFile();">Upload File</button>
+        </div>
+
+    </div>
+</div>
+
+<div>
+    <div class="alert alert-danger" role="alert" style="display: none" id="AlertMessage">
+
+    </div>
+    <div class="alert alert-success" role="alert" style="display: none" id="SucessMessage">
+
+    </div>
+</div>
+
+<div id="CompareRoomingData" style="display: none"></div>
+
+
+<button title="Close (Esc)" type="button" class="mfp-close remarksClose"></button>
+<div class="btn-cont">
+
+    <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md  close-popup " id="closerefresh">Close</button>
+</div>
+
+
+<style>
+    .custom-file-input {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: calc(2.25rem + 2px);
+        margin: 0;
+        opacity: 0;
+    }
+
+    .custom-file-label {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 1;
+        height: calc(2.25rem + 2px);
+        padding: .375rem .75rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+    }
+
+        .custom-file-label::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            display: block;
+            height: 2.25rem;
+            padding: .375rem .75rem;
+            line-height: 1.5;
+            color: #495057;
+            content: "Browse";
+            background-color: #e9ecef;
+            border-left: 1px solid #ced4da;
+            border-radius: 0 .25rem .25rem 0;
+        }
+
+    .custom-file {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: calc(2.25rem + 2px);
+        margin-bottom: 0;
+    }
+
+    *, ::after, ::before {
+        box-sizing: border-box;
+    }
+    /*.custom-file-input:before {
+            content: "Browse";
+        }
+        .custom-file-control:after {
+            content: "Add files..";
+        }*/
+
+    /*.custom-file {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+            height: 2.5rem;
+            cursor: pointer;
+        }*/
+    /*.custom-file-input {
+            min-width: 14rem;
+            max-width: 100%;
+            margin: 0;
+            filter: alpha(opacity=0);
+            opacity: 0;
+        }*/
+    /*.custom-file-control {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            height: 2.5rem;
+            padding: .5rem 1rem;
+            line-height: 1.5;
+            color: #555;
+            user-select: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: .25rem;
+            width : 100px;
+        }*/
+
+
+
+    .custom-file-control:before {
+        content: "Browse";
+    }
+</style>
+
+
+
+@*}*@
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript">
+    //$(document).ready(function () {
+
+    //    $("#AlertMessage").style.display = "none";
+
+    //});
+    //function ValidateFile() {
+    //     
+    //    $("#file1").uploadify({
+    //        'fileExt': '*.xls;*.xlsx;',
+    //        'onSelect': function (e, q, f) {
+    //            var validExtensions = ['xls', 'xlsx']; //array of valid extensions
+    //            var fileName = f.name;
+    //            var fileNameExt = fileName.substr(fileName.lastIndexOf('.') + 1);
+    //            if ($.inArray(fileNameExt, validExtensions) == -1) {
+    //                //alert("Invalid file type");
+    //                $("#file1").uploadifyCancel(q);
+    //                $("#AlertMessage").show();
+    //                return false;
+    //            }
+    //            else {
+    //                 
+    //                UploadFile();
+    //            }
+    //        }
+    //    });
+    //}
+    //function validate1(file) {
+    //     
+    //    var ext = file.split(".");
+    //    ext = ext[ext.length - 1].toLowerCase();
+    //    var arrayExtensions = ['xls', 'xlsx'];
+
+    //    if (arrayExtensions.lastIndexOf(ext) == -1) {
+
+    //        $("#file1").val("");
+    //        return false;
+    //    }
+    //    else {
+    //        UploadFile();
+    //    }
+    //}
+    //$(document).on('click', '.close', function (e) {
+    //    var curdiv = $(this).parents("#divSuccessError");
+    //    curdiv.hide();
+    //    curdiv.removeAttr("class");
+    //    curdiv.find("#lblmsg").text("");
+    //    curdiv.find("#stMsg").text("");
+    //});
+    $('input[type="file"]').change(function () {
+         
+        if ($(this).val()) {
+            var arrayFile = $(this).val().split("\\");
+            var filename = arrayFile[2];
+            $(this).closest('.custom-file').find('.file-name').html(filename);
+        }
+    });
+    function UploadFile() {
+         
+        $("#AlertMessage").hide();
+        $("#SucessMessage").hide();
+        // Get the files
+        var file1 = $("#file1")[0].files[0];
+        if (file1 == undefined) {
+            return false;
+        }
+        var ext = file1.name.split(".");
+        ext = ext[ext.length - 1].toLowerCase();
+        var arrayExtensions = ['xls', 'xlsx'];
+        if (arrayExtensions.lastIndexOf(ext) == -1) {
+
+            // $("#file1").val("");
+            $("#AlertMessage").show();
+            $("#AlertMessage").text(' Rooming List is not an spreadsheet in format .xls or .xlsx');
+            $("#UploadButton").attr("disabled", "disabled");
+            return false;
+        }
+        else {
+            $(".ajaxloader").show();
+            var formData = new FormData();
+            var booking = $("#BookingNumber").val();
+            formData.append("files", file1);
+            formData.append('BookingNumber', booking);
+            $.ajax({
+                url: "/Operations/UploadRoomingList",
+                type: "POST",
+                data: formData,
+                datatype: "json",
+                contentType: false,
+                processData: false,
+                global: false,
+                success: function (response) {
+                     
+                    // $("#file1").val();
+                    if (response.status == "Failure") {
+                        $("#AlertMessage").show();
+                        $("#AlertMessage").text(response.statusMessage);
+                        $("#file1").val("");
+                        $(".ajaxloader").hide();
+                    }
+                    else {
+                        $("#SucessMessage").show();
+                        $("#SucessMessage").text(response.statusMessage);
+                        $("#file1").val("");
+                        GetRoomingData(formData);
+                    }
+                },
+                error: function (response) {
+                     
+                    $(".ajaxloader").hide();
+                    alert(response.statusText);
+                }
+            });
+        }
+    };
+
+    function GetRoomingData(formData) {
+        $("#CompareRoomingData").show();
+        $("#CompareRoomingData").html('');
+        $.ajax({
+            url: "/Operations/CompareRoomingListData",
+            type: "POST",
+            data: formData,
+            datatype: "html",
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                 
+                //$("#CompareRoomingData").show();
+                //$("#CompareRoomingData").html('');
+                $("#CompareRoomingData").html(response);
+                var d = ShowHideMessage();
+                if (d == false) {
+                     
+                    $("#Alert").show();
+                    $("#Success").hide();
+                }
+                else {
+                     
+                    $("#Success").show();
+                    $("#Alert").hide();
+                }
+            },
+            error: function (response) {
+                 
+                alert(response.statusText);
+
+            }
+        });
+    }
+    function ShowHideMessage() {
+        var t = true;
+        $('#tblCompareRooming tbody tr').each(function () {
+             
+            var item = $(this).find('td:last');
+            var spanText = item.find('span').text();
+            if (spanText != "No Change") {
+                t = false;
+
+            }
+        });
+        return t;
+    }
+    //function UpdateRoomingListDetails() {
+    //     
+    //    var model = $("#dataofrooming").serializeArray();
+    //    //var modelnew = model.replace(/BudgetSupplements/g, 'BudgetSupplementsOld');
+    //    //$(".divBudgtSupp").html('');
+
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Operations/SaveRoomingList",
+    //        data: model ,
+    //        //contentType: "application/json; charset=utf-8",
+    //        dataType: "html",
+    //        success: function (response) {
+
+    //            //$(".divBudgtSupp").html(response);
+    //            //var form = $("#frmUpdateAvailability");
+    //            //form.removeData('validator');
+    //            //form.removeData('unobtrusiveValidation');
+    //            //$.validator.unobtrusive.parse(form);
+    //        },
+    //        failure: function (response) {
+    //            //alert(response.responseText);
+    //            //$(".ajaxloader").hide();
+    //        },
+    //        error: function (response) {
+    //            //alert(response.responseText);
+    //            //$(".ajaxloader").hide();
+    //        }
+    //    });
+
+
+    //}
+
+
+    //$('#SubmitRoomingForm').click(function () {
+    //     
+    //    var model = $("#frmRoomingData").serialize();
+
+
+    //});
+
+    $("#closerefresh").click(function () {
+        var booking = $("#BookingNumber").val();
+        window.location = '/Operations/ViewRoomingListSummary?bookingnumber=' + booking;
+    });
+
+
+
+</script>

@@ -1,0 +1,162 @@
+﻿@model Voyager.App.ViewModels.Settings.MisArtifactsViewModel
+
+<div class="listing-table">
+    <div class="custom-mob-tbl table-responsive table-departures-dates valign-top-tbl">
+        <table class="table table-bordered tbl-theme-02 dataTables" id="tbArtifactsPlatform">
+            <thead>
+                <tr>
+                    <th class="col-md-1">Type</th>
+                    <th class="col-md-4">Item</th>
+                    <th class="col-md-4">Users</th>
+                    <th class="col-md-3">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var model = {
+            TypeName: $("#TypeName :selected").text(),
+            Item: $("#Item").val(),
+            RoleName: $("#RoleName :selected").text(),
+        }
+        
+        var oTable = $('#tbArtifactsPlatform').dataTable({
+            processing: true,
+            serverSide: true,
+            info: true,
+            ajax: {
+                url: "/UserAndRoleMgmt/SearchMisArtifacts",
+                type: "GET",
+                data: model,
+            },
+            
+            columns: [
+                { "data": "typeNameResponse", "orderable": true },
+                { "data": "itemResponse", "orderable": true },
+                { "data": "roleNameResponse", "orderable": true },
+                {
+                    "data": function (data, type, row, meta) {
+                         
+                        //var actionHTML = "<button type='button' class='btn btn-success btn-md' onclick='AddPlatformURL(\"" + data.typeNameResponse + "\", \"" + data.itemResponse + "\", \"" + data.roleNameResponse + "\",  " + meta.row + ", this);' > View</button> &nbsp;&nbsp;";
+                        var actionHTML = "<button type='button' class='btn btn-danger btn-md' onclick='DeletePlatformURL(\"" + data.typeNameResponse + "\", \"" + data.itemResponse + "\", \"" + data.roleNameResponse + "\",  " + meta.row + ", this);' > [x]</button>";
+                        
+                        return actionHTML;
+                    },
+                    "orderable": false
+                }
+            ],
+            "order": [[0, "asc"]],
+            "columnDefs": [{
+                "defaultContent": "",
+                "targets": "_all"
+            }],
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-1'f><'col-sm-8'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+
+        $('#tbArtifactsPlatform_filter').css('display', 'none');
+    });
+
+
+    function AddPlatformURL1(typenamejson, itemjson, rolenamejson,row, event) {
+
+        var model = {
+            Application_Id: application,
+            ApplicationName: applicationName,
+            Module: module,
+            ModuleName: moduleName,
+            ActionId: action,
+            ActionName: actionName,
+        }
+
+        $.ajax({
+            type: "GET",
+            url: "/UserAndRoleMgmt/GetMisArtifactsData",
+            data: model,
+            success: function (response) {
+                $("#divSuccessError").removeAttr('class');
+                if (response.status != undefined) {
+                    response.status.toLocaleLowerCase() == "alert" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+                    $("#divSuccessError").show();
+                    $("#lblmsg").text(response.responseText);
+                    $("#stMsg").text(response.status + "! ");
+                }
+                else {
+                    closePlatformURL();
+                    $('<tr id="trPlatformURL"><td colspan="4">' + response.replace("action-popup ", "") + '</td></tr>').insertAfter(event.closest('tr'));
+                }
+                $(".ajaxloader").hide();
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $(".ajaxloader").hide();
+            }
+        });
+    }
+
+    function DeletePlatformURL(typename, item, rolename, row, event) {
+       
+        var model = {
+            TypeName: typename,
+            Item: item,
+            RoleName: rolename,
+        }
+        if (confirm("Are you sure want to delete?")) {
+
+            $.ajax({
+                type: "POST",
+                url: "/UserAndRoleMgmt/DeleteMisArtifactData",
+                data: model,
+                success: function (response) {
+                   
+                    $("#divSuccessError").removeAttr('class');
+                    if (response.status != undefined) {
+                        //response.status.toLocaleLowerCase() == "failure" ? $("#divSuccessError").addClass("alert alert-info") : $("#divSuccessError").addClass("alert alert-danger");
+
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-danger")
+                        $("#lblmsg").text(response.ResponseStatus.ErrorMessage);
+                        $("#stMsg").text(response.ResponseStatus.status + "! ");
+                    }
+                    else {
+                        $(".displayArtifactsDetails").html(response.replace("action-popup ", ""));
+                        $("#divSuccessError").show();
+                        $("#divSuccessError").addClass("alert alert-success");
+                        $("#lblmsg").text("Artifacts deleted successfully.");
+                        $("#stMsg").text("Success! ");
+                    }
+                    $(".ajaxloader").hide();
+                    setTimeout(() => {
+                        $("#divSuccessError").hide();
+                    }, 5000);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                    $(".ajaxloader").hide();
+                }
+            });
+        }
+    }
+
+    function closePlatformURL() {
+        $('#tbArtifactsPlatform').find($("#trPlatformURL")).remove();
+    }
+</script>
+

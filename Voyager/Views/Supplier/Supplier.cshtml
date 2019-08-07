@@ -1,0 +1,160 @@
+﻿<style>
+    .products-contracting {
+        width: 100%;
+    }
+
+    .add-to-menu.products-contracting .detail-container .form-sec {
+        padding: 0 0px;
+    }
+
+        .add-to-menu.products-contracting .detail-container .form-sec .btn-md {
+            min-width: 100px;
+        }
+
+    .top-margin {
+        margin-top: 20px;
+    }
+
+    .popup-box.pop-lg1 {
+        max-width: 1000px;
+    }
+</style>
+
+@model Voyager.App.ViewModels.AgentSearchViewModel
+<div class="wrapper">
+	<div class="main-content form form-theme-04">
+		<div class="container">
+			<div class="add-to-menu products-contracting">
+				<div class="collapse-block">
+					<div class="collapse-link heading collapsed">
+						<a href="javascript:void(0)" class="">SEARCH <i class="fa arrow"></i></a>
+					</div>
+					<div class="collapse-container frmSupplier" style="display: block;">
+						<div class="detail-container">
+							<div class="row" style="margin:0px 0px 10px 0px">
+								<div class="col-md-12">
+									<div class="row form-sec no-space">
+										<div class="col-md-12 mobile-xs-12">
+											<div class="col-md-4 mobile-xs-12">
+												<label>Supplier Name</label>
+												@Html.TextBoxFor(m => m.AgentName, new { @class = "form-control SupplierName", @id = "SupplierName" })
+											</div>
+											<div class="col-md-4 mobile-xs-12">
+												<label>Country</label>
+												@Html.DropDownListFor(m => m.Country, new SelectList(Model.CountryList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCountry", @class = "ddlCountry form-control" })
+											</div>
+											<div class="col-md-4 mobile-xs-12">
+												<label>Product Type</label>
+												@Html.DropDownListFor(m => m.ProductType, new SelectList(Model.ProductTypeList, "Prodtype", "Prodtype"), "Select", new { @id = "ddlProductType", @class = "ddlProductType form-control" })
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="row form-sec no-space">
+										<div class="col-md-12 mobile-xs-12">
+											<div class="col-md-4 mobile-xs-12">
+												<label>CNK Reference No.</label>
+												@Html.TextBoxFor(m => m.CNKReferenceNo, new { @class = "form-control alphanumeric CNKReferenceNo", @id = "CNKReferenceNo" })
+											</div>
+											<div class="col-md-4 mobile-xs-12">
+												<label>City</label>
+												@Html.DropDownListFor(m => m.City, new SelectList(Model.CityList, "Attribute_Id", "AttributeName"), "Select", new { @id = "ddlCity", @class = "ddlCity form-control" })
+											</div>
+											<div class="col-md-4 mobile-xs-12">
+												<label>Status</label>
+												@Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                                {
+                                                new SelectListItem{ Text="Active", Value = "Active",Selected=true },
+                                                new SelectListItem{ Text="Inactive", Value ="Inactive" }
+                                                }, new { @class = "form-control Status" })
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6 text-left top-margin">
+									<a href="#action-popup" class="popup-inline btn btn-blue btn-md btnCreateNewSupplier" id="btnCreateNewSupplier">Create New Supplier</a>
+								</div>
+								<div class="col-md-6 text-right top-margin">
+									<input value="Search" id="btnSearch" class="btn btn-blue btn-md" type="button">
+									<input value="Reset" id="btnReset" class="btn btn-blue btn-md" type="button">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="SearchResult"></div>
+	</div>
+</div>
+<div id="action-popup" style="display:none">
+    <div class="popup-box pop-lg1 form-theme-04 form">
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+        <div class="popup-in displayNewSupplier">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ddlCountry").on("change", function () {
+             
+            var countryId = $(this).find("option:selected").val();
+            $.ajax({
+                type: "POST",
+                url: "/Agent/PopulateCitiesByCountryId",
+                data: { countryId: countryId },
+                success: function (result) {
+                    $("#ddlCity").empty();
+                    $("#ddlCity").append($("<option></option>").val(null).html("Select"));
+                    if (result.response.length > 0) {
+                        $.each(result.response, function (key, value) {
+                            $("#ddlCity").append($("<option></option>").val
+                                (value.attribute_Id).html(value.attributeName));
+                        });
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnReset').click(function () {
+            $("#SupplierName").val("");
+            $("#ddlCountry").val("");
+            $("#ddlProductType").val("");
+            $("#CNKReferenceNo").val("");
+			$("#ddlCity").empty();
+			$("#ddlCity").append($("<option></option>").val(null).html("Select"));
+			$("#Status").val("Active");
+			$('.gridresults').html("");         
+        });
+		
+        $("#btnCreateNewSupplier").click(function () {
+            $.ajax({
+                type: "GET",
+                url: "/Agent/CreateNewAgent",
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: { IsSupplier: true },
+                success: function (response) {
+                    $(".displayNewSupplier").html(response.replace("action-popup ", ""));
+                    $("#action-popup").show();
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+		});
+
+		$('#btnSearch').click(function () {
+			$('#SearchResult').load("/Supplier/_SupplierPipeline");
+		});
+    });
+</script>

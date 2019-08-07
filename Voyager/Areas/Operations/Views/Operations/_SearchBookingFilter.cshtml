@@ -1,0 +1,197 @@
+﻿@model Voyager.App.ViewModels.OpsSearchFilters
+
+<style>
+    .progress-bar {
+         color: #000; 
+         font-weight:600;
+    }
+</style>
+<div class="add-to-menu products-contracting" style="width:100%;">
+    <div class="collapse-block">
+        <div class="collapse-link heading collapsed">
+            <a href="javascript:void(0)" class="">SEARCH <i class="fa arrow"></i></a>
+        </div>
+        <div class="collapse-container" style="display: block;">
+            <div class="detail-container">
+                <div class="row" style="margin:0px 0px 10px 0px">
+                    <div class="col-md-12">
+                        <div class="row form-sec no-space">
+                            <div class="col-xs-3">
+                                <label class="frm-sub-label">Agent Name</label>
+                                @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3">
+                                <label class="frm-sub-label">CNK Reference No.</label>
+                                @Html.TextBoxFor(m => m.CNKReferenceNo, new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3">
+                                <label class="frm-sub-label">Agent Reference No.</label>
+                                @Html.TextBoxFor(m => m.AgentReferenceNo, new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3">
+                                <label class="frm-sub-label">Agent Tour Name</label>
+                                @Html.TextBoxFor(m => m.AgentTour, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row form-sec no-space">
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Date Type</label>
+                                @Html.DropDownListFor(m => m.DateType, new SelectList(Model.DateTypeList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                <span class="field-validation-valid text-danger" id="spanDateType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-xs-3">
+                                <label>From</label>
+                                <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                    @Html.TextBoxFor(m => m.From, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                    <span class="field-validation-valid text-danger" id="spanFrom" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <label>To</label>
+                                <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                    @Html.TextBoxFor(m => m.To, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                    <span class="field-validation-valid text-danger" id="spanTo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <label>Booking Status</label>
+                                @Html.DropDownListFor(m => m.BookingStatus, new SelectList(Model.BookingStatusList, "Attribute_Id", "AttributeName"), "Select", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row form-sec no-space">
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Business Type</label>
+                                @Html.DropDownListFor(m => m.BusinessType, new SelectList(Model.BusinessTypeList, "Value", "Value"), "Select", new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Destination</label>
+                                @*@Html.DropDownListFor(m => m.Destination, new SelectList(Model.DestinationList, "AttributeValue_Id", "Value"), "Select", new { @class = "form-control" })*@
+                                @Html.DropDownListFor(m => m.Destination, new SelectList(Model.DestinationList, "AttributeValue_Id", "Value", "", "CityName"), "Select", new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>Sales Office</label>
+                                @Html.DropDownListFor(m => m.SalesOffice, new SelectList(Model.SalesOfficeList, "Value", "Value"), "Select", new { @class = "form-control" })
+                            </div>
+                            <div class="col-xs-3 mobile-xs-12">
+                                <label>File Handler</label>
+                                @Html.DropDownListFor(m => m.FileHandler, new SelectList(Model.FileHandlerList, "Email", "Email"), "Select", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row form-sec no-space">
+                            <div class="col-xs-6 mobile-xs-12">
+
+                            </div>
+                            <div class="col-xs-6 mobile-xs-12">
+                                <div class="text-right" style="margin-top:42px;">
+                                    <input type="submit" value="Search" id="btnSearch" class="btn btn-blue btn-md" />
+                                    <input type="button" value="Reset" id="btnReset" class="btn btn-blue btn-md" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        SearchBookings();
+
+        $('#btnSearch').click(function () {
+            var flag = true;
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            var fromDT = $('#From').val();
+            var toDT = $('#To').val();
+
+            if ((fromDT != "" || toDT != "") && $("#DateType").val() == "") {
+                $("#spanDateType").text("*");
+                flag = false;
+            }
+
+            if ($("#DateType").val() != "") {
+                if (fromDT == "" && toDT == "") {
+                    $("#spanFrom").text("*");
+                    $("#spanTo").text("*");
+                    flag = false;
+                }
+
+                if ((fromDT != "" || toDT == "") || (fromDT == "" || toDT != "")) {
+                    if (fromDT != "" && !ValidateDateddmmyyyy(fromDT)) {
+                        $("#spanFrom").text("From Date should be in dd/MM/yyyy format");
+                        flag = false;
+                    }
+                    if (toDT != "" && !ValidateDateddmmyyyy(toDT)) {
+                        $("#spanTo").text("To Date should be in dd/MM/yyyy format");
+                        flag = false;
+                    }
+                }
+                if (fromDT != "" && toDT != "") {
+                    var from = fromDT.split('/');
+                    var to = toDT.split('/');
+                    if (Date.parse(from[2] + "/" + from[1] + "/" + from[0]) > Date.parse(to[2] + "/" + to[1] + "/" + to[0])) {
+                        $("#spanFrom").text("From Date should be less than To Date");
+                        flag = false;
+                    }
+                }
+            }
+
+            if (flag == false) {
+                return false;
+            }
+            else {
+                $("#spanFrom, #spanTo, #spanDateType").text("");
+                SearchBookings();
+                return true;
+            }
+        });
+
+        $('#btnReset').click(function () {
+            $("#AgentName").val("");
+			$("#CNKReferenceNo").val("");
+			$('#AgentReferenceNo').val("");
+			$('#AgentTour').val("");
+            $("#DateType").val("");
+			$('#BookingStatus').val("");
+			$("#BusinessType").val("");
+			$("#Destination").val("");
+            $("#From").val("");
+			$("#To").val("");
+            $('.gridresults').html("");
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            $('#SalesOffice').val("");
+            $('#FileHandler').val("");
+        });
+    });
+
+    $(document).on('change', '#DateType', function () {
+        var ddlDateType = $("#DateType").val();
+        if (ddlDateType == "") {
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            $('#From, #To,#Month, #Year').val('');
+        }
+    });
+
+    function SearchBookings() {
+        $(".ajaxloader").show();
+        $.ajax({
+            type: "GET",
+            url: "/Operations/_SearchBookingResult",
+            dataType: "html",
+            global: false,
+            success: function (result) {
+                $('#OpsSearchResults').html(result);
+            },
+            error: function (response) {
+                alert(response.statusText);
+            }
+        });
+    }
+</script>

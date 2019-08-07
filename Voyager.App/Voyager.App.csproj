@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Configurations>Debug;Release;VGER_APC;VGER_DXB;VGER_IND;VGER_LON;VGER_DEV;VGER_DXBUAT</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VGER_UAT|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VGER_LON|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VGER_IND|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VGER_DXB|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VGER_APC|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Voyager.App.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Contracts\Login\GetToken.cs" />
+    <Compile Remove="Library\Booking\Booking.cs" />
+    <Compile Remove="Providers\Sales\AccomodationProviders.cs" />
+    <Compile Remove="Providers\Sales\MealProviders.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.5.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
+    <PackageReference Include="NETCore.MailKit" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Library\AgentApproval\" />
+    <Folder Include="Library\Booking\" />
+    <Folder Include="Providers\AgentApproval\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="VGER_WAPI_CLASSES">
+      <HintPath>..\DLLs\VGER_WAPI_CLASSES.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

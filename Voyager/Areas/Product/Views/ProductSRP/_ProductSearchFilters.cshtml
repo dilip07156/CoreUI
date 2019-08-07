@@ -1,0 +1,115 @@
+﻿@model Voyager.App.ViewModels.ProductSRPFilters
+<div class="fliter-sec row" style="margin-left:0px;margin-right:0px;">
+    <div class="fliter-sec-head">
+        <h6>Filters:</h6>
+        <span class="fliter-sec-toggle">Show all Filters</span>
+    </div>
+    <div class="filter-mob-toggle">FILTERS: </div>
+
+    <div class="filter-pannel result-filter row">
+        <div class="col-sm-11">
+            <div class="row">
+                <div class="col-sm-3 filter-space-break">
+                    <a class="filter-tl">Product Type <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.HiddenFor(m => m.ProductType)
+                        @Html.DropDownListFor(m => m.ProductTypeID, new SelectList(Model.ProductTypeList, "AttributeValue_Id", "Value"), new { @class = "form-control select" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break">
+                    <a class="filter-tl">City <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.HiddenFor(m => m.CityID, new { @id = "CityID" })
+                        @Html.TextBoxFor(m => m.CityName, new { @class = "form-control bindCity", @id = "CityIDUI" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break">
+                    <a class="filter-tl">Product Name <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.TextBoxFor(m => m.ProdName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break">
+                    <a class="filter-tl">Product Code <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.TextBoxFor(m => m.ProdCode, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break">
+                    <a class="filter-tl filter-row-break">Status <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.DropDownListFor(m => m.Status, new SelectList(Model.StatusList, "Value", "Value"), "Select", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break budget-category" style="display:none;">
+                    <a class="filter-tl filter-row-break">Category <i class="arrow"></i> </a>
+                    <div class="filter-inner-list">
+                        @Html.HiddenFor(m => m.BudgetCategory)
+                        @Html.DropDownListFor(m => m.BudgetCategoryID, new SelectList(Model.BudgetCategoryList, "Value", "Value"), "Select", new { @class = "form-control select" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break hotel-star" style="display:none;">
+                    <a class="filter-tl filter-row-break">Star Rating <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.DropDownListFor(m => m.StarRating, new SelectList(Model.StarRatingList, "Value", "Value"), "Select", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break prod-location" style="display:none;">
+                    <a class="filter-tl filter-row-break">Location <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.HiddenFor(m => m.Location)
+                        @Html.DropDownListFor(m => m.LocationID, new SelectList(Model.LocationList, "Value", "Value"), "Select", new { @class = "form-control select" })
+                    </div>
+                </div>
+                <div class="col-sm-3 filter-space-break hotel-chain" style="display:none;">
+                    <a class="filter-tl filter-row-break">Hotel Chain <i class="arrow"></i></a>
+                    <div class="filter-inner-list">
+                        @Html.HiddenFor(m => m.ChainID, new { @id = "ChainID" })
+                        @Html.TextBoxFor(m => m.Chain, new { @class = "form-control bindProdChain", @id = "ChainIDUI" })
+                        <div id="HotelChain">
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-sm-3 filter-space-break">
+                        <a class="filter-tl filter-row-break">Select All <i class="arrow"></i></a>
+                        <div class="filter-inner-list">
+                            @Html.CheckBox("chkAllHotels", new { @class = "form-control", @id = "chkAllHotels" }) Select All
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2 btn-cont pull-right">
+        @{
+            string PageName = this.ViewData.ContainsKey("PageName") ? Convert.ToString(this.ViewData["PageName"]) : string.Empty;
+            @if (@PageName == "OpsChangeProduct")
+            {
+                <button type="button" class="btn btn-primary searchProduct">Search Product</button>
+            }
+            else
+            {
+                <input type="button" value="Search" class="btn btn-blue btn-md SearchProducts">
+            }
+        }
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#ProductTypeID').change(function (evt) {
+            var ProductType = evt.target.selectedOptions[0].label;
+            if (ProductType === 'Hotel') {
+                $('.budget-category,.hotel-star,.prod-location,.hotel-chain').show();
+            }
+            else {
+                $('.budget-category,.hotel-star,.prod-location,.hotel-chain').hide();
+                $('#BudgetCategory,#BudgetCategoryID,#StarRating,#Location,#LocationID,#ChainID,#ChainIDUI').val('');
+            }
+        });
+
+
+        if ($('.fliter-sec').length) {
+            initFilterSection();
+        }
+    });
+
+</script>

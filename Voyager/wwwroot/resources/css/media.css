@@ -1,0 +1,144 @@
+
+@media (min-width: 1199px){
+	.custom-mob-tbl.table-responsive{overflow: inherit}
+}
+
+@media (min-width: 768px){
+    .navigation   {display: block !important; padding-right: 10px;}
+    .right-top-bar   {display: block !important; padding-right: 10px;}
+}
+@media screen and (max-width:1199px){
+	[class^="col-lg"]{margin-bottom: 20px}
+	.search-enquiry-form ul li input    {font-size: 14px;}
+	.search-enquiry-form .styled-select .btn-group .btn.dropdown-toggle  {font-size:14px; }
+	.search-enquiry-form .styled-select .btn-group .dropdown-menu li a   {font-size: 14px;}
+	.search-enquiry-form form > ul > li {padding: 0 8px 15px;}
+	.search-enquiry-form    {margin: 0 -8px;}
+	.navigation ul li   {padding: 0 10px;}
+	.top-bar .phone-no  {font-size: 12px;}
+	.right-top-bar .account-status  {font-size: 12px;}
+	.right-top-bar  a.dropdown-toggle   {font-size: 12px;}
+	.container  {width: 100%;}  
+	.quote-list ul li a {font-size: 12px;}
+	.navigation{padding-top: 10px;}
+	.logo-div a img{height: 60px}	
+	.sqr-tab-list li > a{padding: 10px 5px; font-weight: 400; font-size: 11px;min-width: 74px; }	
+	.custom-mob-tbl .table > thead > tr > th{font-size: 13px;}
+	.custom-mob-tbl .table .col-lg{min-width: 315px;}
+	.custom-mob-tbl .table .col-sm{min-width: 90px;}
+	.custom-mob-tbl .table .col-xs{min-width: 54px;}
+	.custom-mob-tbl .table .col-sm4 {min-width: 140px}
+	.custom-mob-tbl .table > tbody > tr > td{font-size: 13px;}
+	.custom-mob-tbl .table > tbody > tr > td input[type="text"],.custom-mob-tbl .table > tbody > tr > td button{font-size: 13px;}
+	.custom-mob-tbl .table > thead > tr > th {min-width: auto;}
+	.btn.btn-md{min-width: 90px;}	
+	.radio-list-bar.chk{padding: 10px 5px}
+	.radio-list-bar.chk > ul > li{padding: 1px 4px; font-size: 12px}
+	
+	.tool-tip .tooltip-cont.type04 {padding: 19px 15px 0px;}
+	.col-sm-12.col-md-7{margin-top: 20px}
+}
+
+@media screen and (max-width:991px){
+	.top-bar{padding: 4px 0px; padding-top: 0px;}
+	.top-bar .phone-no {display: block; text-align: center; background: rgba(255,255,255,0.2); width: calc(100% + 30px); margin: 0px -15px; padding-bottom: 3px; font-size: 12px; font-weight: 400; line-height: 26px;}
+	.right-top-bar{padding: 0px 10px;}
+	.logo-div{padding: 5px 0px;}	
+	.logo-div a img{height: 50px;}
+	.navigation{padding-top: 2px;}
+	.navigation ul li a{font-size: 13px; padding: 13px 4px;}	
+	header .top-bar .right-top-bar .login .dropdown-menu.theme-03 {min-width: 230px;left: auto;margin-right: -12px;right: 0;margin-top: 0px;}
+	.sqr-tab-data{padding: 15px;}
+	.sqr-tab-data h3{font-size: 16px;}
+	.sqr-tab-list li > a{min-width: 58px; padding-bottom: 5px; }
+	.sqr-tab-list li > a strong{display: none;}
+	.sqr-tab-list li.active > a strong{display: block;}
+	.sqr-tab-list li{display: table-cell; vertical-align: top}
+	
+	.radio-list-bar ul li {padding: 1px 6px;}
+	.radio-list-bar > span{min-width: 100px;}
+	
+	.form-theme-04 .form-control {font-size: 13px;}
+	.styled-select .btn-group .btn.dropdown-toggle{font-size: 13px;}
+	
+	.tab-spe-dates-sec [class^="col-md"]{margin-bottom: 20px;}
+	h5.sm-ttl{margin-bottom: 10px;}	
+	
+	.radio-list-bar em {display: block; margin-bottom: 5px;}
+	.radio-list-bar ul.table-cell{display: inline-block;}
+    .radio-list-bar .table-cell.border-left{border-left: 0 none;margin-top: 10px;display: block;padding-left: 0;}
+	.radio-list-bar ul li:first-child{padding-left: 0px;}
+	.chk-rail-pass-cont {display:inline-block}	
+
+	.form-section .form-group-sec > .row > div{padding-bottom: 20px;}
+	.pg-ttl {padding: 15px 0px; font-size: 24px;}
+	.sqr-tab-data h3{margin-bottom: 20px;}
+	
+	.simple-tab-list li > a{padding: 8px 11px;}
+	.controller.pull-right{float: none !important;}
+	
+	
+	.accommodation .border-list {margin-bottom:10px;}
+	.accommodation .border-list li +li {padding-left: 0px;}
+	.accommodation .border-list li +li:after {display: none}
+	
+	.custom-mob-tbl .table .col-xs1{width:auto; min-width: 50px;}
+	.custom-mob-tbl .table .col-xs2{width:auto; min-width: 60px;}
+	.custom-mob-tbl .table .col-xs{width:auto; min-width: 74px;}
+	.custom-mob-tbl .table .col-sm{width:auto; min-width: 100px;}
+	.custom-mob-tbl .table .col-sm1{width:auto; min-width: 73px;}
+	.custom-mob-tbl .table .col-sm2{width:auto; min-width: 85px;}
+    .custom-mob-tbl .table .col-sm5{width: auto;min-width: 90px;}
+	.custom-mob-tbl .table .col-md1{width:auto; min-width: 200px;}
+	.custom-mob-tbl .table .col-md2{width:auto; min-width: 150px;}
+	.custom-mob-tbl .table .col-md{width:auto; min-width: 290px;}
+	.custom-mob-tbl .table .col-lg1{width: 300px;}
+	.custom-mob-tbl .table .col-lg{width:auto; min-width: 370px;}
+	.enquiry-period-action.type2 .enquiry-period {width: 100%; margin-bottom: 10px;}
+	.result-sec .listing .rgh-sec .left-side > ul > li > div{min-width: 75px;}
+	.lft-pnl .result-sec.type-01 div.rgh-sec > .left-side + .right-side{width: 40%;}
+	.btn-cont{margin-bottom: 10px; margin-top: -5px}
+	.ttl-sec > .rht-sec > .btn-cont{margin-left: 0;}
+	.lft-pnl .result-sec.type-01 ul > li.vendor{width: 22%;}
+	.select-option{text-align: left;}
+	.add-to-menu .trvl-info{width: 85%;}
+	.insurance .lft-pnl .result-sec.type-01 ul > li.vendor{width: 28%;}
+	.insurance .lft-pnl .result-sec div.rgh-sec > .left-side{display: inline-block;}
+    .filter-pannel.result-filter > ul > li {margin-right: 0px}
+	
+	.radio-list-bar.chk > ul > li {margin-bottom: 15px}
+	.radio-list-bar.chk > ul > li.active:after{display: none}
+	.radio-list-bar.chk ul li:first-child{padding-left: 4px}
+	.radio-list-bar.chk {padding-bottom: 0px;}
+	
+	.subtxt  .rht-sec {float: none; display: block; width: 100%; text-align: left}
+	.sqr-tab-data .subtxt .radio-list-bar ul li {padding: 1px 5px}
+	.sqr-tab-data .subtxt .radio-list-bar {float: none; margin-top: 10px}
+	.sqr-tab-data .subtxt .radio-list-bar > ul.table-cell {display: table-cell}
+	.sqr-tab-data .subtxt .radio-list-bar > ul.table-cell >  li {float: none}
+	
+	.head-ttl .btn-cont {margin-top: 12px;}
+	
+	.col-md-8 + .col-md-4 {margin-top: 20px;}
+	.col-md-5 + .col-md-7{margin-top: 20px}
+	
+	.blue-captns {margin-bottom: 15px; display: block}
+	
+	.btn-cont.right.entities{float: none; display: block; margin-top: 10px;}
+	.sqr-tab-data .ttl-sec > .ttl{display: block}
+	
+	.details-container .dtls-head-cont h3 {margin-bottom: 5px}
+}
+
+@media screen and (max-width:767px){
+    
+}
+
+@media screen and (max-width:599px){
+   
+}
+
+@media screen and (max-width:479px){
+    
+    
+}

@@ -1,0 +1,27 @@
+﻿@model Voyager.App.ViewModels.MenuViewModel
+
+<ul class="sqr-tab-list">
+    <li id="Itinerary">
+        <a id="aItinerary" href="/Handover/Itinerary?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-itinerary-wht yellow"></i></figure> <strong>Itinerary</strong>
+        </a>
+    </li> 
+    <li id="AttachToMaster">
+        <a id="aAttachToMaster" href="/Handover/AttachToMaster?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-commercials-wht orange"></i></figure> <strong>Materialization</strong>
+        </a>
+    </li>
+    <li id="Handover">
+        <a id="aHandover" href="/Handover/Handover?QRFId=@Model.QRFID">
+            <figure><i class="fa-custom-commercials-wht orange"></i></figure> <strong>Handover</strong>
+        </a>
+    </li>
+</ul>
+
+<script>
+    $(document).ready(function () {
+        var SelectedMenu = '@Model.MenuName';
+        $("#" + SelectedMenu).parent().find("li").removeClass("active");
+        $("#" + SelectedMenu).addClass("active"); 
+    });
+</script>

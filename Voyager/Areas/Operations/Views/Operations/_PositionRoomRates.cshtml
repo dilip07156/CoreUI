@@ -1,0 +1,291 @@
+﻿@model Voyager.App.ViewModels.OpsPosRoomsPricesViewModel
+
+<div id="divPosRoomRates" class="card">
+    <div class="card-header" id="headingOneRoom">
+        <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOneRoom" data-parent="#mainOps"
+                    aria-expanded="true" aria-controls="collapseOne">
+                Rooms & Rates
+            </button>
+        </h5>
+    </div>
+    <div id="collapseOneRoom" class="collapse" aria-labelledby="headingOneRoom">
+        <div class="cost-guesstimate-hor card-body custom-mob-tb">
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-4" style="text-align:right;">
+                    @*<button type="button" class="btn btn-warning btn-sm RebuildRooming">Rebuild Rooming</button>*@
+                    <button type="button" class="btn btn-success btn-sm ConfirmedOnBudget">Confirmed on Budget</button>
+                </div>
+            </div>
+            <br />
+            <div class="table-responsive filter-table custom-mob-tbl">
+                <table class="table" name="TableRoomsAndRates">
+                    <thead>
+                        <tr>
+                            <th colspan="3" class="col-md-4">
+                                Room Details
+                            </th>
+                            <th colspan="4" class="col-md-3">
+                                Purchasing
+                            </th>
+                            <th colspan="3" class="col-md-2">
+                                Allocation
+                            </th>
+                            <th rowspan="2" class="col-md-3" style="vertical-align:middle">Confirmations</th>
+                            <th rowspan="2"></th>
+                        </tr>
+                        <tr>
+                            <!-- Room Details -->
+                            <th>Room Type</th>
+                            <th>Passenger</th>
+                            <th style="width:5%">Quantity</th>
+                            <!-- Rates -->
+                            <th>Currency</th>
+                            <th>Budget</th>
+                            <th>Request</th>
+                            <th>Buy</th>
+                            <!-- Allocation -->
+                            <th>Alloc</th>
+                            <th>F/Sale</th>
+                            <th>Unconfirmed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblPosRoomPrice">
+                        @{ string trStyle = ""; }
+                        @for (int i = 0; i < Model.BookingRoomsAndPrices.Count; i++)
+                        {
+                            trStyle = "";
+                            if (Model.BookingRoomsAndPrices[i].IsNewRow)
+                            {
+                                trStyle = "display: none;";
+                            }
+                            <tr class="trPosRoomPrice" id="trPosRoomPrice_@i" style="@trStyle">
+                                <td>
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPrices[i].Status)
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPrices[i].IsNewRow)
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPrices[i].BookingRooms_Id, new { @class= "clsBookingRoomsId" })
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPrices[i].PositionPricing_Id, new { @class = "clsPositionPricingId" })
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPrices[i].ProductRange)
+                                    @Html.DropDownListFor(x => x.BookingRoomsAndPrices[i].ProductRangeID, new SelectList(Model.RangeList, "VoyagerProductRange_Id", "ProductRangeCode"), "Select", new { @class = "form-control-1 leftalign ddlBuyBookingRoomsID select", @style = "width:100%;" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].ProductRangeID, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPrices[i].PersonType)
+                                    @Html.DropDownListFor(x => x.BookingRoomsAndPrices[i].PersonTypeID, new SelectList(Model.PersonTypeList, "defPersonType_Id", "PersonType"), "Select", new { @class = "form-control-1 leftalign select", @style = "width:100%;", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].PersonTypeID, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].Req_Count, new { @class = "form-control-1 numericInt text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].Req_Count, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td> @Model.BookingRoomsAndPrices[i].BuyCurrency_Name</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].BudgetPrice, new { @class = "form-control-1 numeric text-center clBudgetPrice" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].BudgetPrice, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].RequestedPrice, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].RequestedPrice, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].BuyPrice, new { @class = "form-control-1 numeric text-center", @onfocusout = "GetBudgetSupplement(this)" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].BuyPrice, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].OnAllocQty, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].OnAllocQty, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].OnFreeSellQty, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].OnFreeSellQty, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPrices[i].OnReqQty, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPrices[i].OnReqQty, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    <label class="form-text text-muted" for="defaultCheck1">
+                                        <input type="checkbox" name="BookingRoomsAndPrices[@i].ConfirmedReqPrice" checked="@Model.BookingRoomsAndPrices[i].ConfirmedReqPrice" />
+                                        Rate OK
+                                    </label>&nbsp;
+                                    <label class="form-text text-muted" for="defaultCheck2">
+                                        <input type="checkbox" name="BookingRoomsAndPrices[@i].ExcludeFromInvoice" checked="@Model.BookingRoomsAndPrices[i].ExcludeFromInvoice" />
+                                        Ex-Invoice
+                                    </label>&nbsp;
+                                    <label class="form-text text-muted" for="defaultCheck3">
+                                        <input type="checkbox" name="BookingRoomsAndPrices[@i].ApplyMarkup" checked="@Model.BookingRoomsAndPrices[i].ApplyMarkup" />
+                                        Markup?
+                                    </label>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger btnDeletePrice">X</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-4" style="text-align:right;">
+                    <button type="button" class="btn btn-sm btn-warning btnAddNewRoom">Add New Service</button>
+                </div>
+            </div>
+            <br />
+            <h4>Additional Supplements</h4>
+            <hr>
+            <div class="table-responsive filter-table custom-mob-tbl">
+                <table class="table" name="TableAdditionalSuppliments">
+                    <thead>
+                        <tr>
+                            <!-- Room Details -->
+                            <th class="col-md-1">Item</th>
+                            <th class="col-md-1">Bill By</th>
+                            <th>Quantity</th>
+                            <th>Age</th>
+                            <!-- Rates -->
+                            <th>Currency</th>
+                            <th>Budget</th>
+                            <th>Request</th>
+                            <th>Buy</th>
+                            <th class="col-md-1">One Off</th>
+                            <th class="col-md-3">Confirmations</th>
+                            <th rowspan="1"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblPosRoomPriceSupp">
+                        @for (int i = 0; i < Model.BookingRoomsAndPricesSupp.Count; i++)
+                        {
+                            trStyle = "";
+                            if (Model.BookingRoomsAndPricesSupp[i].IsNewRow)
+                            {
+                                trStyle = "display: none;";
+                            }
+                            <tr class="trPosRoomPriceSupp" id="trPosRoomPriceSupp_@i" style="@trStyle">
+                                <td>
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPricesSupp[i].Status)
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPricesSupp[i].IsNewRow)
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPricesSupp[i].BookingRooms_Id)
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPricesSupp[i].PositionPricing_Id)
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPricesSupp[i].ProductRange)
+                                    @Html.DropDownListFor(x => x.BookingRoomsAndPricesSupp[i].ProductRangeID, new SelectList(Model.RangeListSupp, "VoyagerProductRange_Id", "ProductRangeCode"), "Select", new { @class = "form-control-1 leftalign ddlBuyBookingRoomsID select", @style = "width:100%;" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].ProductRangeID, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(x => x.BookingRoomsAndPricesSupp[i].PersonType)
+                                    @Html.DropDownListFor(x => x.BookingRoomsAndPricesSupp[i].PersonTypeID, new SelectList(Model.PersonTypeList, "defPersonType_Id", "PersonType"), "Select", new { @class = "form-control-1 leftalign select", @style = "width:100%;", @disabled = "disabled" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].PersonTypeID, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPricesSupp[i].Req_Count, new { @class = "form-control-1 numericInt text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].Req_Count, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPricesSupp[i].Age, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].Age, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td> @Model.BookingRoomsAndPricesSupp[i].BuyCurrency_Name</td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPricesSupp[i].BudgetPrice, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].BudgetPrice, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPricesSupp[i].RequestedPrice, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].RequestedPrice, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(x => x.BookingRoomsAndPricesSupp[i].BuyPrice, new { @class = "form-control-1 numeric text-center" })
+                                    @Html.ValidationMessageFor(x => x.BookingRoomsAndPricesSupp[i].BuyPrice, "", new { @class = "text-danger leftalign" })
+                                </td>
+                                <td>
+                                    <div class="input-append date" data-date-format="dd/MM/yyyy">
+                                        @Html.TextBoxFor(m => m.BookingRoomsAndPricesSupp[i].OneOffDate, "{0:dd/MM/yyyy}", new { @class = "span3 form-control-1 alphanumericdate clsOneOffDate", @maxlength = "10", @id = "OneOffDate_" + i, @placeholder = "dd/MM/yyyy" })
+                                        <span class="add-on"></span>
+                                        @Html.ValidationMessageFor(m => m.BookingRoomsAndPricesSupp[i].OneOffDate, "", new { @class = "text-danger" })
+                                    </div>
+                                </td>
+                                <td>
+                                    <label class="form-text text-muted" for="defaultCheck1">
+                                        <input type="checkbox" name="BookingRoomsAndPricesSupp[@i].ConfirmedReqPrice" checked="@Model.BookingRoomsAndPricesSupp[i].ConfirmedReqPrice" />
+                                        Rate OK
+                                    </label>&nbsp;
+                                    <label class="form-text text-muted" for="defaultCheck2">
+                                        <input type="checkbox" name="BookingRoomsAndPricesSupp[@i].ExcludeFromInvoice" checked="@Model.BookingRoomsAndPricesSupp[i].ExcludeFromInvoice" />
+                                        Ex-Invoice
+                                    </label>&nbsp;
+                                    <label class="form-text text-muted" for="defaultCheck3">
+                                        <input type="checkbox" name="BookingRoomsAndPricesSupp[@i].ApplyMarkup" checked="@Model.BookingRoomsAndPricesSupp[i].ApplyMarkup" />
+                                        Markup?
+                                    </label>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger btnDeletePriceSupp">X</button>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-4" style="text-align:right;">
+                    <button type="button" class="btn btn-sm btn-warning btnAddNewRoomSupp">Add New Service</button>
+                </div>
+            </div>
+            <div id="bdgSupplementMain">
+                @Html.Partial("_PositionBudgetSupp", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var BookingRooms_Id = $("#tblPosRoomPriceSupp #BookingRooms_Id_0").val();
+        if (@Model.BookingRoomsAndPricesSupp.Count == 1 && BookingRooms_Id == "")
+        {
+            $("#tblPosRoomPriceSupp #trPosRoomPriceSupp_0").css("display", "none");
+        }
+
+        $('.input-append.date').find('input.span3').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showOn: "both",
+            dateFormat: "dd/mm/yy",
+            beforeShow: function (el, dp) {
+                $(el).parent().append($('#ui-datepicker-div'));
+                $('#ui-datepicker-div').hide();
+            },
+            minDate: new Date()
+        });
+
+        $('#tblPosRoomPrice, #tblPosRoomPriceSupp').on('change', '.ddlBuyBookingRoomsID', function () {
+            var thisparam = this;
+            var ProdRangeId = $(this).val();
+            var ProductId = $('#ProductId').val();
+            var ProdRange = $("#" + this.id + " option:selected").text();
+            var ProdCategory = ProdRange.substr(1, ProdRange.indexOf(')') - 1);
+
+            $.ajax({
+                type: "GET",
+                url: "/Operations/GetPersonTypeByProductRange",
+                data: { ProdRangeId: ProdRangeId, ProdCategory: ProdCategory, ProductId: ProductId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $(thisparam).closest('tr').find('select[name*="PersonTypeID"]').val(response.personTypeId).change();
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+            AddRemoveRangeToBdgSupp();
+        });
+
+    });
+
+</script>

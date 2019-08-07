@@ -1,0 +1,160 @@
+﻿<style>
+    .products-contracting {
+        width: 100%;
+    }
+
+    .add-to-menu.products-contracting .detail-container .form-sec {
+        padding: 0 0px;
+    }
+
+        .add-to-menu.products-contracting .detail-container .form-sec .btn-md {
+            min-width: 100px;
+        }
+
+    .top-margin {
+        margin-top: 20px;
+    }
+</style>
+@model Voyager.App.ViewModels.BookingSearchViewModel
+<div class="wrapper">
+    <div class="main-content form form-theme-04">
+        <div class="container">
+            <div class="add-to-menu products-contracting">
+                <div class="collapse-block">
+                    <div class="collapse-link heading collapsed">
+                        <a href="javascript:void(0)" class="">SEARCH <i class="fa arrow"></i></a>
+                    </div>
+                    <div class="collapse-container" style="display: block;">
+                        <div class="detail-container">
+                            <div class="row" style="margin:0px 0px 10px 0px">
+                                <div class="col-md-12">
+                                    <div class="row form-sec no-space">
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>Agent Name</label>
+                                            @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control bindAgent", @id = "AgentIdUI" })
+                                        </div>
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>CNK Reference No.</label>
+                                            @Html.TextBoxFor(m => m.CNKReferenceNo, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>Date</label>
+                                            @Html.DropDownListFor(m => m.DateType, new SelectList(Model.DateTypeList, "Value", "Value"), "Select", new { @class = "form-control" })
+                                            <span class="field-validation-valid text-danger" id="spanDateType" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                        </div>
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>Status</label>
+                                            @Html.DropDownListFor(m => m.BookingStatus, new SelectList(Model.BookingStatusList, "Attribute_Id", "AttributeName"), "Select", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row form-sec no-space">
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>Agent Code</label>
+                                            @Html.TextBoxFor(m => m.AgentCode, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>Agent Tour Name</label>
+                                            @Html.TextBoxFor(m => m.AgentTour, new { @class = "form-control" })
+                                        </div>
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>From</label>
+                                            <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                                @Html.TextBoxFor(m => m.From, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                                <span class="field-validation-valid text-danger" id="spanFrom" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3 mobile-xs-12">
+                                            <label>To</label>
+                                            <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                                @Html.TextBoxFor(m => m.To, "{0:dd/MM/yyyy}", new { @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                                <span class="field-validation-valid text-danger" id="spanTo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 text-right top-margin">
+                                    <input type="submit" value="Search" id="btnSearch" class="btn btn-blue btn-md" />
+                                    <input type="button" value="Reset" id="btnReset" class="btn btn-blue btn-md" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="SearchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#btnReset').click(function () {
+        $("#AgentIdUI").val("");
+        $("#CNKReferenceNo").val("");
+        $("#DateType").val(""); 
+        $("#BookingStatus").val("");
+        $("#AgentCode").val("");
+        $("#AgentTour").val("");
+        $("#From").val("");
+        $("#To").val("");
+        $("#spanFrom, #spanTo, #spanDateType").text("");
+        $('.gridresults').html("");
+    });
+
+    $(document).on('change', '#DateType', function () {
+        var ddlDateType = $("#DateType").val();
+        if (ddlDateType == "") {
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            $('#From, #To').val('');
+        }
+    });
+
+    $("#btnSearch").click(function () {
+        var flag = true;
+        $("#spanFrom, #spanTo, #spanDateType").text("");
+        var fromDT = $('#From').val();
+        var toDT = $('#To').val();
+
+        if ((fromDT != "" || toDT != "") && $("#DateType").val() == "") {
+            $("#spanDateType").text("*");
+            flag = false;
+        }
+
+        if ($("#DateType").val() != "") {
+            if (fromDT == "" && toDT == "") {
+                $("#spanFrom").text("*");
+                $("#spanTo").text("*");
+                flag = false;
+            }
+
+            if ((fromDT != "" || toDT == "") || (fromDT == "" || toDT != "")) {
+                if (fromDT != "" && !ValidateDateddmmyyyy(fromDT)) {
+                    $("#spanFrom").text("From Date should be in dd/MM/yyyy format");
+                    flag = false;
+                }
+                if (toDT != "" && !ValidateDateddmmyyyy(toDT)) {
+                    $("#spanTo").text("To Date should be in dd/MM/yyyy format");
+                    flag = false;
+                }
+
+                if (fromDT != "" && toDT != "") {
+                    var from = fromDT.split('/');
+                    var to = toDT.split('/');
+                    if (Date.parse(from[2] + "/" + from[1] + "/" + from[0]) > Date.parse(to[2] + "/" + to[1] + "/" + to[0])) {
+                        $("#spanFrom").text("From Date should be less than To Date");
+                        flag = false;
+                    }
+                }
+            }
+        }
+        if (flag == false) {
+            return false;
+        }
+        else {
+            $("#spanFrom, #spanTo, #spanDateType").text("");
+            $('#SearchResult').load("/Booking/_BookingPipeline");
+            return true;
+        }
+    });
+</script>

@@ -1,0 +1,339 @@
+﻿@model Voyager.App.ViewModels.QRFSummaryViewModel
+
+<style>
+	.filter-table table .day {
+		width: 85px;
+	}
+
+	.filter-table table .time {
+		width: 100px;
+	}
+</style>
+
+<div class="filter-wrap">
+	<h6>Filters:</h6>
+	<ul class="filter-links">
+		<li>
+			@Html.DropDownListFor(m => m.Days, new SelectList(Model.DayList, "Attribute_Id", "AttributeName"), "Day", new { @id= "Days", @class = "form-control ddlFilter" })
+		</li>
+		<li>
+			@Html.DropDownListFor(m => m.Services, new SelectList(Model.ServiceTypeList, "Prodtype", "Prodtype"), "Service Type", new { @id= "Services", @class = "form-control ddlFilter" })
+		</li>
+	</ul>
+</div>
+<span class="clear"></span>
+<div class="table-responsive filter-table custom-mob-tbl">
+	<table class="table" id="tblSummary">
+		<thead>
+			<tr>
+				<th class="day">Day</th>
+				<th class="day">Place of Service</th>
+				<th class="type">Time</th>
+				<th class="type">Type</th>
+				<th class="original-itinerary">Original Itinerary</th>
+				<th class="supplier">Supplier</th>
+				<th class="alloc">Alloc</th>
+				<th class="no-of-pax">No.of Pax</th>
+				<th>Remarks</th>
+				<th class="action">Action</th>
+			</tr>
+		</thead>
+		<tbody id="tbodyQrfSummary">
+			@for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+			{
+				<tr class="tbl-sub-heading trDayHeader" trDayName="@Model.Itinerary.ItineraryDays[i].Day">
+					<td class="day">@Model.Itinerary.ItineraryDays[i].Day</td>
+					<td class="day">@Model.Itinerary.ItineraryDays[i].City</td>
+					@*<td class="day">
+						@if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Arrive at"))
+						{
+							@Model.Itinerary.ItineraryDays[i].ItineraryName.Replace("Arrive at","")
+						}
+						else if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Depart from"))
+						{
+							@Model.Itinerary.ItineraryDays[i].ItineraryName.Replace("Depart from","")
+						}
+						else
+						{
+							@Model.Itinerary.ItineraryDays[i].ItineraryName
+						}
+					</td>*@
+					<td class="type"></td>
+					<td class="type"></td>
+					<td class="original-itinerary">
+
+
+						@*@if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Arrive at") && Model.Itinerary.ItineraryDays[i].ItineraryName.Contains(","))
+						{
+							var Name = Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper();
+							var firstName = Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper().Split(',').First();
+							var str = Name.Replace(firstName + ',', "");
+							@firstName <br /> @str
+
+						}
+						else
+						{
+							@Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper()
+						}*@
+
+
+						@if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].RoutingMatrix))
+						{
+							var RoutingMatrix = Model.Itinerary.ItineraryDays[i].RoutingMatrix.ToUpper().Split('|');
+							@*<br />
+							<br />*@
+							<label>COACH ROUTING FOR THE DAY</label>
+							<br />
+
+							@for (int k = 0; k < RoutingMatrix.Length; k++)
+							{
+								@RoutingMatrix[k].ToUpper();
+								<br />
+							}
+						}
+					</td>
+					<td class="supplier"></td>
+					<td class="alloc"></td>
+					<td class="no-of-pax"></td>
+					<td class="remarks" id="quoteremarks"></td>
+					<td class="action"></td>
+				</tr>
+
+				@for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+				{
+					<tr class="light-pink-bg" trProdType="@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType" trDayName="@Model.Itinerary.ItineraryDays[i].Day">
+						@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+						@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+						@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted, new { @id = "IsDeleted", @class = "clsIsDeleted" })
+						@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType, new { @id = "ProductType", @class = "clsProductType" })
+						@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+
+						@if (j == 0)
+						{
+							<td class="date" style="vertical-align:top" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count">@DateTime.Parse(@Model.Itinerary.ItineraryDays[i].Date.ToString()).ToString("dd MMM yy") @Model.Itinerary.ItineraryDays[i].DayOfWeek</td>
+							<td class="place-of-service" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count"></td>
+						}
+						@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsRoutingMatrix == true)
+						{
+							<td></td>
+						}
+						else if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+						{
+							<td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</td>
+						}
+						else
+						{
+							<td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</td>
+						}
+						<td class="type">
+
+							@switch (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper())
+							{
+								case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+									break;
+								case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+									break;
+								case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+									break;
+								case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+									break;
+								case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+									break;
+								case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+									break;
+								case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+									break;
+								case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+									break;
+								case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+									break;
+								case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+									break;
+								case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+									break;
+								case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+									break;
+								case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+									break;
+								case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+									break;
+								case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+									break;
+								case "VISA": <img src="~/resources/images/common/icons/visa.png">
+									break;
+								case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+									break;
+								default:
+									break;
+							}
+						</td>
+
+						@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "TRUE")
+						{
+							@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs.ToUpper() == "INCLUDED")
+
+							{
+
+								<td class="original-itinerary" style="text-decoration:line-through">
+									@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+									{
+										<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City :</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+									else
+									{
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+								</td>
+								<td class="supplier" style="text-decoration:line-through">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Supplier</td>
+							}
+							else
+							{
+								<td class="original-itinerary" style="text-decoration:line-through">
+									<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</b>
+
+									@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+									{
+										<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City :</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+									else
+									{
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+								</td>
+
+								<td class="supplier" style="text-decoration:line-through">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Supplier</td>
+							}
+						}
+
+						@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+						{
+							@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs.ToUpper() == "INCLUDED")
+
+							{
+
+								<td class="original-itinerary">
+									@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+									{
+										<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City :</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+									else
+									{
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+								</td>
+								<td class="supplier">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Supplier</td>
+							}
+							else
+							{
+								<td class="original-itinerary"><b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].KeepAs</b> 
+						
+									@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City != null)
+									{
+										<b>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].City :</b> @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+									else
+									{
+										@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName
+									}
+						</td>
+								<td class="supplier">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Supplier</td>
+							}
+						}
+						<td class="alloc">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Allocation</td>
+						<td class="no-of-pax">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].NumberOfPax</td>
+
+						@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type?.ToUpper() != "EXTRA")
+						{
+							@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].TLRemarks != null || @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].OPSRemarks != null)
+
+							{
+
+								<td class="remarks"><a href="#remarks-popup" class="popup-inline comment-drk" data-toggle="tooltip" data-placement="top" title="TL Remarks: @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].TLRemarks | OPS Remarks: @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].OPSRemarks"><i class="fa fa-comment-o"></i></a></td>
+							}
+							else
+							{
+								<td class="remarks"><a href="#remarks-popup" class="popup-inline comment-plus"><i class="fa fa-comment-o"></i></a></td>
+							}
+						}
+						else
+						{
+							<td></td>
+						}
+
+						@*<td class="action">
+								@if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type.ToUpper() != "EXTRA")
+								{
+									@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+									{
+										<a href="#action-popup" class="popup-inline icon-squre-dark-blue editPosition"><i class="fa fa-pencil"></i></a>
+										<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+									}
+									else
+									{
+										<a href="#" class="enableDisablePosition"><img src="~/resources/images/common/icons/check.png"></a>
+									}
+								}
+							</td>*@
+						@if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+						{
+							if (Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type?.ToUpper() == "EXTRA")
+							{
+								if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+								{
+									<td class="action">
+										<a href="#addNewDetails-popup" class="popup-inline icon-squre-dark-blue addEditNewItinerary" data-val="Edit"><i class="fa fa-pencil"></i></a>
+										<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+									</td>
+								}
+								else
+								{
+									<td class="action">
+										<a href="#addNewDetails-popup" class="popup-inline icon-squre-dark-blue addEditNewItinerary" data-val="Add"><i class="fa fa-pencil"></i></a>
+										<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+									</td>
+								}
+							}
+							else
+							{
+								<td class="action">
+									<a href="#action-popup" class="popup-inline icon-squre-dark-blue editPosition"><i class="fa fa-pencil"></i></a>
+									<a href="#" class="icon-squre-red enableDisablePosition"><i class="fa fa-times"></i></a>
+								</td>
+							}
+						}
+						else
+						{
+							<td class="action"><a href="#" class="enableDisablePosition"><img src="~/resources/images/common/icons/check.png"></a></td>
+						}
+					</tr>
+				}
+				<tr trDayName="@Model.Itinerary.ItineraryDays[i].Day" class="trDayFooter">
+					@Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+					@Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+					<td class="no-side-border"></td>
+					<td colspan="8" class="no-side-border txt-semibold">Add Itinerary Element*</td>
+					<td class="no-side-border">
+						<a href="#addNewDetails-popup" class="popup-inline btn btn-blue btn-md addEditNewItinerary pull-right" data-val="Add">Add</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<div id="remarks-popup"></div>
+<div id="action-popup" style="display:none;">
+	<div class="popup-box pop-lg1 form-theme-04 form">
+		<button title="Close (Esc)" type="button" class="mfp-close closeWindow"></button>
+		<div class="popup-in displayPosition">
+		</div>
+	</div>
+</div>
+<div id="addNewDetails-popup"></div>
+
+<!-- MAIN_CONTENT ends -->
+<link href="~/css/qrfSummary.css" rel="stylesheet" />
+<script src="~/js/Sales/QRFSummary.js"></script>
+<script src="~/js/Sales/common.js"></script>
+<script src="~/js/Sales/PositionRooms.js"></script>
+

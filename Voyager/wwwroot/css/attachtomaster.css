@@ -1,0 +1,55 @@
+﻿.trwithdetails {
+    position: relative;
+}
+
+.celldetails {
+    display: none !important;
+    position: absolute;
+    z-index: 100;
+    border: 1px;
+    background-color: lightsteelblue;
+    padding: 10px;
+    color: black;
+    top: 55px;
+    left: 55px;
+    border: 3px solid lightsteelblue;
+    border-radius: 0.50rem;
+}
+
+.trwithdetails:hover, .trwithdetails:hover textarea, .trwithdetails:hover input {
+    background-color: #d5d9da !important;
+}
+
+    .trwithdetails:hover span.celldetails {
+        display: block !important;
+    }
+
+.spanrate {
+    float: left;
+}
+
+.tblqrfprice > tbody > tr > td {
+    text-align: center !important;
+}
+
+.padt5 {
+    padding-top: 5px;
+}
+
+.divqrfprice {
+    font-size: 17px;
+}
+
+.floatr {
+    float: right;
+}
+
+.tblversion td, .tblversion textarea, .tblversion input {
+    cursor: pointer !important;
+}
+
+.tblversion textarea {
+    font-weight: unset !important;
+    line-height: 1.4 !important;
+    min-height: 45px !important;
+}

@@ -1,0 +1,177 @@
+﻿<div id="SimilarHotels-popup" style="display:none">
+	<div class="popup-box pop-lg form-theme-04 form" style="max-width:98%;padding:2%;">
+		<form>
+			<h3>Create Request List</h3>
+			<!-- Similar Hotels Section :: Start -->
+			<div class="popup-in">
+			</div>
+			<!-- Similar Hotels Section :: End -->
+			<!-- Filter Section :: Start -->
+
+			<div id="HotelsFilterSection" class="sqr-tab-data"></div>
+			<!-- Filter Section :: End -->
+
+			<div id="SendEmailSection" class="modal-footer">
+				<button type="button" class="btn btn-warning btn-md SendTestEmail">Send Test Email</button>
+				<button type="button" class="btn btn-success btn-md SendHotelRequests">Send Hotel Requests</button>
+				<button type="button" class="btn btn-primary btn-md saveSimilarHotels">Save</button>
+				<button type="button" class="btn btn-primary btn-md close-popup">Close</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		$('#HotelsFilterSection').on('click', '.btn-whitelist-hotel', function () {
+			var param = $(this).closest('tr');
+			AddHotelsFromSRPToWLBL(param, '#SelectedHotelList','Single');
+		});
+
+		$('#HotelsFilterSection').on('click', '.btn-blacklist-hotel', function () {
+			var param = $(this).closest('tr');
+			AddHotelsFromSRPToWLBL(param, '#BlacklistedHotelList','Single');
+		});
+
+		$('#HotelsFilterSection').on('click', '.btn-selectall-whitelist-hotel', function () {
+			$('#SimilarHotels-popup #ProductSRPCont > tbody > tr').each(function () {
+				var index = $(this).closest('tr').find('#hdnSeq').val();
+				var val = ($('#chkSRP_' + index).prop("checked") == true); // $(this).find('.chkSRP').val();
+				if (val == true) {
+					AddHotelsFromSRPToWLBL(this, '#SelectedHotelList');
+				}
+			});
+		});
+
+		$('#HotelsFilterSection').on('click', '.btn-selectall-blacklist-hotel', function () {
+			$('#SimilarHotels-popup #ProductSRPCont > tbody > tr').each(function () {
+				var index = $(this).closest('tr').find('#hdnSeq').val();
+				var val = ($('#chkSRP_' + index).prop("checked") == true); // $(this).find('.chkSRP').val();
+				if (val == true) {
+					AddHotelsFromSRPToWLBL(this, '#BlacklistedHotelList');
+				}
+			});
+		});
+
+		$('#SendEmailSection').on('click', '.SendTestEmail', function () {
+			SendReservationRequestEmail('TestEmail');
+		});
+
+		$('#SendEmailSection').on('click', '.SendHotelRequests', function () {
+			SendReservationRequestEmail('HotelRequests');
+		});
+
+		$('#SimilarHotels-popup').on('click', '.close-popup, .remarksClose', function () {
+			window.location.reload();
+		});
+
+		//$('#HotelsFilterSection .booking-ctrl').show();
+		//$('.sales-ctrl, #HotelsFilterSection .prod-info-ctrl').hide();
+	});
+
+	function AddHotelsFromSRPToWLBL(thisparam, addhotelto, btnName) {
+
+		var prodCont = "";
+		var IsHotelDefSupplier = $("#IsHotelDefSupplier").val();
+
+		//prodCont = $(thisparam).closest('.prod-desc-cont');
+		//if (prodCont == undefined)
+		prodCont = $(thisparam).find('.prod-desc-cont');
+
+		var ProductId = prodCont.find('#VoyagerProductId').val();
+		var SupplierId = prodCont.find('#DefaultSupplierId').val();
+		var ProductName = prodCont.find('#ProdName').val();
+		var MixId = ProductId + '|' + SupplierId;
+		var flag = false;
+
+		if (IsHotelDefSupplier == "1") {
+			var cnt = ($('#SelectedHotelList option[value*="' + ProductId + '"]').length + $('#BlacklistedHotelList option[value*="' + ProductId + '"]').length);
+			flag = cnt < 1;
+		}
+		else {
+			flag = $('#SelectedHotelList option[value="' + MixId + '"]').length < 1 && $('#BlacklistedHotelList option[value="' + MixId + '"]').length < 1;
+		}
+
+		if (flag) {
+			var CityName = prodCont.find('#CityName').val();
+			var StarRating = prodCont.find('#StarRating').val();
+			var Category = prodCont.find('#BdgPriceCategory').val();
+			var Location = prodCont.find('#Location').val();
+			var Supplier = prodCont.find('#DefaultSupplier').val();
+			var ProdDesc = ProductName + ' (';
+
+			if (CityName != undefined && CityName != null && CityName != '')
+				ProdDesc += CityName + ', ';
+
+			if (StarRating != undefined && StarRating != null && StarRating != '')
+				if (Category != undefined && Category != null && Category != '')
+					ProdDesc += StarRating + ' ' + Category.substring(0, 3).toUpperCase() + '/';
+				else {
+					ProdDesc += StarRating + '/';
+				}
+
+			if (Category != undefined && Category != null && Category != '')
+				ProdDesc += Category + '/';
+
+			if (Location != undefined && Location != null && Location != '')
+				ProdDesc += Location + '/';
+
+			if (Supplier != undefined && Supplier != null && Supplier != '')
+				ProdDesc += Supplier;
+
+			ProdDesc += ')';
+			$('<option value="' + MixId + '">' + ProdDesc + '</option>').appendTo(addhotelto);
+		}
+		else {
+			if (btnName == "Single")
+				alert('Hotel already present in list!!!');
+		}
+	}
+
+	function SendReservationRequestEmail(SendType) {
+		var BookingNumber = $('#BookingNumber').val();
+		var PositionId = $('#PositionId').val();
+		var save = $('.saveSimilarHotels')[0];
+		save.click();
+		if (save != undefined && save != null) {
+			$.ajax({
+				type: "GET",
+				url: "/Hotels/SendReservationRequestEmail",
+				data: { BookingNumber: BookingNumber, PositionId: PositionId, SendType: SendType.toLowerCase() },
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (response) {
+					if (response != undefined && response != null) {
+						if (response.status == "success") {
+							alert('Reservation request sent successfully!!!');
+						}
+						else {
+							alert('Error Occurred : ' + response.msg);
+						}
+					}
+					else {
+						alert('Unable to send reservation request!!!');
+					}
+				},
+				error: function (response) {
+					alert(response.statusText + '\nUnable to send reservation request!!!');
+				}
+			});
+		}
+	}
+</script>
+
+<style>
+	#HotelsFilterSection .prod-info-ctrl {
+		display: none !important;
+	}
+
+	#HotelsFilterSection .booking-ctrl {
+		display: table-cell !important;
+	}
+
+	.sales-ctrl {
+		display: none;
+	}
+</style>

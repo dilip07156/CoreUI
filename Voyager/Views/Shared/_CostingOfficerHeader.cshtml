@@ -1,0 +1,334 @@
+﻿@model Voyager.App.ViewModels.COHeaderViewModel
+@*@if (!string.IsNullOrEmpty(Model.QRFID))*@
+@if (true)
+{
+    @*string className1 = "", className2 = "", className3 = "", className4 = "";
+        @if (string.IsNullOrEmpty(Model.SalesPerson)) { className1 = "display:none"; }
+        @if (string.IsNullOrEmpty(Model.CostingOfficer)) { className2 = "display:none"; }
+        @if (string.IsNullOrEmpty(Model.ProductAccountant)) { className3 = "display:none"; }
+        @if (string.IsNullOrEmpty(Model.FileHandler)) { className4 = "display:none"; }*@
+
+
+    <div class="row enquiry-ttl-due-section btm-border" style="margin-bottom:0px">
+        <div class="col-md-10">
+            <h1 style="width:100%;">@Model.TourName</h1>
+        </div>
+
+        @{
+            string EnquiryPipeline = this.ViewData.ContainsKey("EnquiryPipeline") ? this.ViewData["EnquiryPipeline"].ToString() : string.Empty;
+            //here we have written condition for Agent Approval Pipeline because we are showing button in _AgentApprovalHeaderButtons.cshtml
+            @if (@EnquiryPipeline != "Handover Pipeline" && @EnquiryPipeline != "Agent Approval Pipeline" && Model.ModuleName != "ops")
+            {
+                <div class="col-md-2">
+                    <div class="btn-cont right">
+                        <ul>
+                            <li><a class="btn btn-white bld" onclick="QuoteRejectOpprtunity(@Model.QRFID)">Reject Opportunity</a></li>
+                            @if (@EnquiryPipeline == "Costing Pipeline")
+                            {
+                                <li><a href="#CopyQuote-popup" class="btn btn-white bld popup-inline" onclick="CopyQuote();">Copy Quote</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        }
+        @if (!string.IsNullOrEmpty(Model.ModuleName) && Model.ModuleName == "ops")
+        {
+            <div class="col-md-2">
+                <div class="btn-group" style="float: right;margin-right: 10px;">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Operations <i class="fa fa-angle-down"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <h6 class="dropdown-header">Operations</h6>
+                        <a class="dropdown-item" href="/Operations/ViewBookingSummary?BookingNumber=@Model.BookingNumber">Booking Summary</a>
+                        <a class="dropdown-item" href="/Operations/ViewServiceStatus?BookingNumber=@Model.BookingNumber">Service Status</a>
+                        @*<a id="aServiceStatus" class="dropdown-item" href="#">Service Status</a>*@
+                        <div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">Liaison</h6>
+                        <a class="dropdown-item" href="/Operations/ViewRoomingListSummary?BookingNumber=@Model.BookingNumber">Rooming List</a>
+                        <a class="dropdown-item" href="/Operations/ViewItineraryBuilderSummary?BookingNumber=@Model.BookingNumber">Itinerary Builder</a>
+                        <a class="dropdown-item" href="/Operations/ViewCommunicationsTrailSummary?BookingNumber=@Model.BookingNumber">Communications Trail</a>
+                        @*<div class="dropdown-divider"></div>
+                        <h6 class="dropdown-header">Finance</h6>
+                        <a class="dropdown-item" href="#">Costsheet</a>
+                        <a class="dropdown-item" href="#">Sales Invoicing</a>
+                        <a class="dropdown-item" href="#">Profitability</a>*@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="subtitle-with-list">
+        @Html.HiddenFor(x => x.QRFID)
+        @Html.HiddenFor(x => x.QRFPriceID)
+        @Html.HiddenFor(x => x.BookingNumber)
+        @Html.HiddenFor(x => x.SalesPerson, new { @id = "SalesPerson" })
+        @Html.HiddenFor(x => x.CostingOfficer, new { @id = "CostingOfficer" })
+        @Html.HiddenFor(x => x.ProductAccountant, new { @id = "ProductAccountant" })
+        @Html.HiddenFor(x => x.FileHandler, new { @id = "FileHandler" })
+        @Html.HiddenFor(x => x.FollowUpCostingOfficer, new { @id = "FollowUpCostingOfficer" })
+        @Html.HiddenFor(x => x.WithClient, new { @id = "WithClient" })
+        @Html.HiddenFor(x => x.ModuleName)
+        @*<ul>
+                <li><strong class="subtitle">@Model.TourName</strong></li>
+            </ul>*@
+        <ul>
+            <li><em><i class="day-icon"></i> @Model.NoOfDays Days / <i class="fa-moon-o"></i> @Model.NoOfNights Nights</em></li>
+            <li><span>Destination</span><em>@Model.Destination</em></li>
+            <li><span>Travel Date</span><em>@Convert.ToDateTime(@Model.TravelDate).ToString("dd MMM yy")</em></li>
+
+            @if (!string.IsNullOrEmpty(Model.ModuleName) && Model.ModuleName == "ops")
+            {
+                <li><span>End Date</span><em>@Convert.ToDateTime(@Model.EndDate).ToString("dd MMM yy")</em></li>
+            }
+            <li><span>Agency Name</span><em>@Model.AgentName</em></li>
+
+            @if (Model.IsLinkedQRFsExist)
+            {
+                <li><a href="#QuoteVersionList-popup" class="popup-inline showLinkedQRFs">Linked QRFs</a></li>
+            }
+        </ul>
+        <ul>
+            @if (!string.IsNullOrEmpty(Model.ModuleName) && Model.ModuleName == "ops")
+            {
+                <li>
+                    <span>File Handler</span><em>@Model.FileHandler</em>
+                </li>
+            }
+            <li>
+                <span>Sales Officer</span><em>@Model.SalesPerson</em>
+            </li>
+            <li>
+                <span>Costing Officer</span><em>@Model.CostingOfficer</em>
+            </li>
+
+            <li>
+                <span>Product Accountant</span><em>@Model.ProductAccountant</em>
+            </li>
+            <li><a class="link txt-darkblue popup-inline showUsers" href="#UserUpdate-popup"> Update</a></li>
+
+        </ul>
+        <ul>
+            @if (string.IsNullOrEmpty(Model.ModuleName) || Model.ModuleName != "ops")
+            {
+                <li><span>Pax</span><em>@Model.Pax</em></li>
+                <li><span>Quote Ref</span><em>@Model.QRFID</em><span>Version</span><em>@Model.Version</em></li>
+                <li><span>Valid for Travel</span><em>@Model.ValidForTravel</em></li>
+                <li><span>Valid for Acceptance</span><em>@Model.ValidForAcceptance</em></li>
+
+                <li>
+                    <span>Follow-up Costing officer</span>
+                    @if (!string.IsNullOrEmpty(@Model.FollowUpCostingOfficer))
+                    {
+                        <em>@Convert.ToDateTime(@Model.FollowUpCostingOfficer).ToString("dd MMM yy")</em>
+                    }
+                </li>
+                <li>
+                    <span>With Client</span>
+                    @if (!string.IsNullOrEmpty(@Model.WithClient))
+                    {
+                        <em>@Convert.ToDateTime(@Model.WithClient).ToString("dd MMM yy")</em>
+                    }
+                </li>
+            }
+            @*<li><a class="link txt-darkblue popup-inline showFollowup" href="#FollowUp-popup"> Change</a></li>*@
+        </ul>
+    </div>
+
+    <div id="UserUpdate-popup" style="display:none">
+        <div class="popup-box pop-lg form-theme-04 form">
+            <div class="popup-in sqr-tab-data">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="FollowUp-popup" style="display:none">
+        <div class="popup-box pop-md form-theme-04 form">
+            <div class="popup-in sqr-tab-data">
+
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".showUsers").click(function () {
+            $("#UserUpdate-popup .popup-in").html('');
+
+            var salesperson = $(this).parents('div').find('#SalesPerson').val();
+            var costingofficer = $(this).parents('div').find('#CostingOfficer').val();
+            var prodaccountant = $(this).parents('div').find('#ProductAccountant').val();
+            var FileHandler = $(this).parents('div').find('#FileHandler').val();
+            var ModuleName = $('#ModuleName').val();
+            var BookingNumber = $('#BookingNumber').val();
+            var QRFID = $("#QRFID").val();
+
+            $.ajax({
+                type: "GET",
+                url: "/Account/GetUsersByRole",
+                data: { SalesPerson: salesperson, CostingOfficer: costingofficer, ProdAccountant: prodaccountant, FileHandler: FileHandler, QRFID: QRFID, ModuleName: ModuleName, BookingNumber: BookingNumber },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#UserUpdate-popup .popup-in").html(response);
+                    $("#UserUpdate-popup").show();
+                    if (ModuleName != "ops") {
+                        $(".rwFileHandler").css("display", "none");
+                    }
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+        });
+
+        $(".showFollowup").click(function () {
+            $("#FollowUp-popup .popup-in").html('');
+
+            var costingofficer = $(this).parents('div').find('#FollowUpCostingOfficer').val();
+            var withclient = $(this).parents('div').find('#WithClient').val();
+
+            $.ajax({
+                type: "GET",
+                url: "/Account/GetFollowUpDetails",
+                data: { CostingOfficer: costingofficer, WithClient: withclient },
+                //contentType: "application/json; charset=utf-8",
+                //dataType: "html",
+                success: function (response) {
+                    $("#FollowUp-popup .popup-in").html(response);
+                    $("#FollowUp-popup").show();
+                },
+                error: function (response) {
+                    alert(response.statusText);
+                }
+            });
+        });
+
+    });
+
+    function UpdateUserForQuote() {
+        var ModuleName = $('#ModuleName').val();
+        var data = {
+            QRFId: $("#QRFId").val(),
+            SalesOfficer: $("#SalesOfficer option:selected").val(),
+            CostingOfficer: $("#CostingOfficer option:selected").val(),
+            ProductAccountant: $("#ProductAccountant option:selected").val(),
+            FileHandler: $("#FileHandler option:selected").val(),
+            ContactPerson: $("#ContactPersonID option:selected").text(),
+            ContactPersonID: $("#ContactPersonID option:selected").val(),
+            EmailAddress: $("#EmailAddress").val(),
+            MobileNo: $("#MobileNo").val(),
+            ModuleName: $("#ModuleName").val(),
+            BookingNumber: $("#BookingNumber").val()
+        }
+        var flag = true;
+        if (data.SalesOfficer == "" || data.SalesOfficer == "Select") {
+            $("#SalesOfficer").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#SalesOfficer").siblings("span").text("");
+
+        if (data.CostingOfficer == "" || data.CostingOfficer == "Select") {
+            $("#CostingOfficer").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#CostingOfficer").siblings("span").text("");
+
+        if (data.ProductAccountant == "" || data.ProductAccountant == "Select") {
+            $("#ProductAccountant").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#ProductAccountant").siblings("span").text("");
+
+        if (ModuleName == "ops") {
+            if (data.FileHandler == "" || data.FileHandler == "Select") {
+                $("#FileHandler").siblings("span").text("*");
+                flag = false;
+            }
+            else
+                $("#FileHandler").siblings("span").text("");
+        }
+        if (data.ContactPersonID == "" || data.ContactPersonID == "Select") {
+            $("#ContactPersonID").siblings("span").text("*");
+            flag = false;
+        }
+        else
+            $("#ContactPersonID").siblings("span").text("");
+
+        if (!flag) {
+            alert('Please fill the mandatory fields!');
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Account/UpdateUserForQuote",
+            data: data,
+            //contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                $('.alert').remove();
+                if (response.status == 'Success') {
+                    var successmsg = '<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success!</strong> Users updated Successfully.</div>';
+                    $('.frmChangeUser').before(successmsg);
+                }
+                else {
+                    var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> Users not updated. ' + response.errorMessage + '</div>';
+                    $('.frmChangeUser').before(successmsg);
+                }
+            },
+            failure: function (response) {
+                alert(response.responseText);
+                $('.alert').remove();
+                var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> Users not updated. </div>';
+                $('.frmChangeUser').before(successmsg);
+            },
+            error: function (response) {
+                alert(response.responseText);
+                $('.alert').remove();
+                var successmsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> Users not updated. </div>';
+                $('.frmChangeUser').before(successmsg);
+            }
+        });
+    }
+
+    //if ((!string.IsNullOrEmpty(Model.ModuleName) && Model.ModuleName == "ops")) {
+        //$("#aServiceStatus").click(function () {
+        //    $.ajax({
+        //        type: "Get", //HTTP POST Method
+        //        url: "/Operations/ViewServiceStatus", // Controller/View
+        //        data: { BookingNumber: $("#BookingNumber").val(), ProductType:"Itinerary"},
+        //        // global: false,
+        //        dataType: "html",
+        //        error: function (jqXHR, exception, errorThrown) {
+        //            var msg = "";
+        //            $(curparent).find("#divSuccessError").show();
+        //            if (jqXHR.status === 0) {
+        //                msg = 'Not connect.\n Verify Network.';
+        //            } else if (jqXHR.status == 404) {
+        //                msg = 'Requested page not found. [404]';
+        //            } else if (jqXHR.status == 500) {
+        //                msg = 'Internal Server Error [500].';
+        //            } else if (exception === 'parsererror') {
+        //                msg = 'Requested JSON parse failed.';
+        //            } else if (exception === 'timeout') {
+        //                msg = 'Time out error.';
+        //            } else if (exception === 'abort') {
+        //                msg = 'Ajax request aborted.';
+    //            } else if (jqXHR.status === 401) {
+                    //msg = '401 : Session Timeout';
+                    //        } else {
+                    //    msg = 'Uncaught Error.\n' + jqXHR.status + ' : ' + errorThrown;
+                    //}
+        //            alert(msg);
+        //            $(".ajaxloader").hide();
+        //        }
+        //    });
+        //});
+   // }
+</script>

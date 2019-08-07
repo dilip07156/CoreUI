@@ -1,0 +1,67 @@
+﻿@model Voyager.App.ViewModels.CommercialsViewModel
+
+@Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+@Html.HiddenFor(Model => Model.MenuViewModel.EnquiryPipeline, new { @id = "EnquiryPipeline" })
+<div class="wrapper">
+    <!-- Main Content :: Starts -->
+    <div class="main-content form-theme-04">
+        <div class="container">
+            <div class="pg-container">
+                <div class="listing-content">
+                    @*<div class="enquiry-ttl-due-section btm-border">
+            @if (Model.MenuViewModel.EnquiryPipeline != "Costing Approval Pipeline")
+            {
+                <h1 class="full">Costing Officer</h1>
+            }
+            else
+            {
+                <h1 class="full">Product Accountant</h1>
+            }
+        </div>*@
+                    @Html.Partial("_CostingOfficerHeader", Model.COHeaderViewModel, new ViewDataDictionary(this.Vi‌​ewData) { { "EnquiryPipeline", Model.MenuViewModel.EnquiryPipeline } })
+                </div>
+                <div class="sqr-tab-cont">
+
+                    <!-- Tab : Starts -->
+                    @Html.Partial("_COMenu", Model.MenuViewModel)
+                    <!-- Tab : Ends -->
+                    <!-- Tab Data : Starts -->
+                    <div class="sqr-tab-data costing-officers" id="divCommercials">
+                        
+                    </div>
+                    <!-- Tab Data : Ends -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetCommercialsData();
+        
+    });
+    function GetCommercialsData() {
+        var QRFId = $("#QRFId").val();
+        var EnquiryPipeline = $("#EnquiryPipeline").val();
+        var selectedDepartureId = $("#DepartureDate option:selected").val();
+        var selectedPaxSlabId = $("#PaxSlab option:selected").val();
+        $.ajax({
+            type: "GET",
+            url: "/Commercials/GetCommercialsData",
+            data: { QRFId: QRFId, EnquiryPipeline: EnquiryPipeline, filterByDeparture: selectedDepartureId, filterByPaxSlab: selectedPaxSlabId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#divCommercials").html(response);
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+</script>

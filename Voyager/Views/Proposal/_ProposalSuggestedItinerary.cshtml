@@ -1,0 +1,143 @@
+﻿@model Voyager.App.ViewModels.ProposalViewModel
+@using (Html.BeginForm("SetSuggestedItinerary", "Proposal", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02", id = "frmProposalSuggestedItinerary" }))
+{
+    @Html.HiddenFor(Model => Model.QRFID, new { @id = "QRFId" })
+    @Html.HiddenFor(Model => Model.IsNewVersion, new { @id = "IsNewVersion" })
+
+    <div id="divItinerary">
+        <div class="wrapper">
+            <div class="main-content form-theme-04 form">
+                <div class="pg-container">
+                    <div class="sqr-tab-cont">
+                        <div class="sqr-tab-data flights">
+                            <div class="btn-cont-rgt" style="text-align:right">
+                                <input type="button" href="#addNewDetails-popup" value="Add New" class="popup-inline btn btn-blue btn-md AddNew" />
+                                <input type="button" value="Save & Continue" class="btn btn-blue btn-md SaveSuggestedItinerary" />
+                            </div>
+                            @Html.HiddenFor(Model => Model.QRFID, new { @id = "QRFId" })
+                            @Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID" })
+                            <div class="process-data-sec">
+                                <div class="table-responsive filter-table custom-mob-tbl">
+                                    <div class="clear"></div>
+                                    <table class="table" id="tblSuggestedItinerary">
+                                        <thead>
+                                            <tr>
+                                                <th class="day col-md-1">Day</th>
+                                                <th class="place-of-service col-md-1">Place of Service</th>
+                                                <th class="time col-md-2">Time</th>
+                                                <th class="type col-md-1">Type</th>
+                                                <th class="original-itinerary col-md-7">Original Itinerary</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+                                            {
+                                                @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId);
+                                                <tr class="tbl-sub-heading">
+                                                    <td class="day">@Model.Itinerary.ItineraryDays[i].Day</td>
+                                                    <td class="place-of-service">@Model.Itinerary.ItineraryDays[i].City</td>
+                                                    <td class="time"></td>
+                                                    <td class="type"></td>
+                                                    <td class="original-itinerary">
+                                                        @Model.Itinerary.ItineraryDays[i].ItineraryName
+                                                        @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].RoutingMatrix))
+                                                        {
+                                                            var RoutingMatrix = Model.Itinerary.ItineraryDays[i].RoutingMatrix.ToUpper().Split('|');
+                                                            <br />
+                                                            <br />
+                                                            <label>COACH ROUTING FOR THE DAY</label>
+                                                            <br />
+                                                            @for (int k = 0; k < RoutingMatrix.Length; k++)
+                                                            {
+                                                                @RoutingMatrix[k].ToUpper();
+                                                                <br />
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+                                                {
+                                                    <tr class="light-pink-bg">
+                                                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted, new { @id = "IsDeleted", @class = "clsIsDeleted" })
+                                                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType, new { @id = "ProductType", @class = "clsProductType" })
+                                                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+                                                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType, new { @id = "ProductType", @class = "clsProductType" })
+                                                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime, new { @id = "StartTime", @class = "clsStartTime" })
+                                                        @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime, new { @id = "EndTime", @class = "clsEndTime" })
+                                                        @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+                                                        {
+                                                            @if (j == 0)
+                                                            {
+                                                                <td class="date" style="vertical-align:top" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count">@Convert.ToDateTime(@Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy")<br /> @Model.Itinerary.ItineraryDays[i].DayOfWeek</td>
+                                                                <td class="place-of-service" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count"></td>
+                                                            }
+
+                                                            @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+                                                            {
+                                                                <td class="time">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="time">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</td>
+                                                            }
+
+                                                                <td class="type">
+                                                                    @switch (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper())
+                                                                    {
+                                                                        case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+                                                                            break;
+                                                                        case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+                                                                            break;
+                                                                        case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+                                                                            break;
+                                                                        case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                            break;
+                                                                        case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+                                                                            break;
+                                                                        case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+                                                                            break;
+                                                                        case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+                                                                            break;
+                                                                        case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                            break;
+                                                                        case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                            break;
+                                                                        case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                                                            break;
+                                                                        case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+                                                                            break;
+                                                                        case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+                                                                            break;
+                                                                        case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+                                                                            break;
+                                                                        case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+                                                                            break;
+                                                                        case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+                                                                            break;
+                                                                        case "VISA": <img src="~/resources/images/common/icons/visa.png">
+                                                                            break;
+                                                                        case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+                                                                            break;
+                                                                        default:
+                                                                            break;
+                                                                    }
+                                                                </td>
+                                                            <td class="original-itinerary">@Html.TextAreaFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName)</td>
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="addNewDetails-popup"></div>
+    </div>
+}
+
+<script src="~/js/Costing/ProposalSuggestedItinerary.js"></script>

@@ -1,0 +1,535 @@
+﻿
+<style>
+    .products-contracting {
+        display: inline-block;
+        margin: 20px 0;
+        width: 100%;
+    }
+
+    .add-to-menu.products-contracting .heading > a {
+        font-size: 16px;
+        font-weight: 300;
+        font-family: 'Open Sans';
+        text-align: left;
+        padding: 0px 12px;
+    }
+
+    .ui-autocomplete, .ajaxloader {
+        z-index: 100000;
+    }
+
+    .card1 {
+        border: 1px solid rgba(0, 0, 0, 0.14);
+    }
+
+    .card-body1 {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+</style>
+
+@model Voyager.App.ViewModels.ProductViewModel
+
+<div class="popup-in">
+    <div class="custom-mob-tbl table-responsive">
+        <form id="frmManageProduct">
+            @Html.HiddenFor(x => x.CompanyId, new { @id = "CompanyId" })
+            @Html.HiddenFor(x => x.ProductSupplierId, new { @id = "ProductSupplierId" })
+            <h3>Manage Product Supplier</h3>
+            <br />
+            <div id="message"></div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="ProductSRPDetail"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                        {
+                                        new SelectListItem{ Text="Active", Value = "Active",Selected=true },
+                                        new SelectListItem{ Text="Inactive", Value ="Inactive" }
+                                        }, new { @id = "ddlStatus", @class = "form-control" })
+                                    <span class="field-validation-valid text-danger" id="spanStatus" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label>Default Currency</label>
+                                    @Html.DropDownListFor(m => m.Currency_Id, new SelectList(Model.CurrencyList, "CurrencyId", "CurrencyCode"), "Select", new { @id = "ddlCurrency", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(x => x.Currency, new { @id = "Currency" })
+                                    <span class="field-validation-valid text-danger" id="spanCurrency" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="form-check">
+                                    <label>
+                                        @Html.CheckBoxFor(x => x.IsPreferred, new { id = "IsPreferred" }) Preferred Supplier?
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label>Active From</label>
+                                    <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                        @Html.TextBoxFor(m => m.ActiveFrom, "{0:dd/MM/yyyy}", new { @id = "ActiveFrom", @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                        <span class="field-validation-valid text-danger" id="spanActiveFrom" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Active To</label>
+                                    <div class="input-append date" data-date-format="dd/mm/yyyy">
+                                        @Html.TextBoxFor(m => m.ActiveTo, "{0:dd/MM/yyyy}", new { @id = "ActiveTo", @class = "span3 form-control alphanumericdate chkdate", @maxlength = "10", @placeholder = "dd/MM/yyyy" })
+                                        <span class="field-validation-valid text-danger" id="spanActiveTo" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="card card1">
+                                        <div class="card-header" id="headingOne">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    <b> Global Supplier Assignment</b>
+                                                </button>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
+                                            <div class="card-body card-body1">
+                                                <label>
+                                                    @Html.CheckBoxFor(x => x.IsDefault, new { id = "IsDefault" }) Default Supplier
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card card1">
+                                        <div class="card-header" id="headingTwo">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    <b> Operating Markets</b>
+                                                </button>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseTwo" class="collapse card-body1" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                            <div class="form-check form-check-inline">
+                                                @Html.CheckBoxFor(x => x.IsAllOpsMkts, new { @id = "chkOpsMkts" }) All Ops Markets
+
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.ListBoxFor(x => x.SelectedOperatingMarket, new MultiSelectList(Model.lstOperatingMarket, "BusinessRegion_Id", "BusinessRegion"), new { @id = "OperatingMarketList", @class = "form-control", @style = "height:150px;border:1px solid grey;" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card card1">
+                                        <div class="card-header" id="headingThree">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                    <b> Sales Markets</b>
+                                                </button>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseThree" class="collapse card-body1" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                            <div class="form-check form-check-inline">
+                                                @Html.CheckBoxFor(x => x.IsAllSalesMkts, new { @id = "chkSalesMkts" }) All Sales Markets
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.ListBoxFor(x => x.SelectedSalesMarket, new MultiSelectList(Model.lstSalesMarket, "BusinessRegion_Id", "BusinessRegion"), new { @id = "SalesMarketList", @class = "form-control", @style = "height:150px;border:1px solid grey;" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card card1">
+                                        <div class="card-header" id="headingFour">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                                                    <b>Agent Specific</b>
+                                                </button>
+                                            </h5>
+                                        </div>
+                                        <div id="collapseFour" class="collapse card-body1" aria-labelledby="headingFour" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <div id="divBranches"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Communication Defaults-->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">Communication Defaults</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Sales</label>
+                                    @Html.DropDownListFor(m => m.ContactSalesId, new SelectList(Model.lstSales, "Contact_Id", "Contact_Name"), "Select", new { @id = "ddlSales", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.ContactSalesName, new { @id = "ddlSalesName" })
+                                    @Html.HiddenFor(m => m.ContactSalesEmail, new { @id = "ddlSalesEmail" })
+                                    <span class="field-validation-valid text-danger" id="spanSales" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Group Reservation</label>
+                                    @Html.DropDownListFor(m => m.ContactGroupId, new SelectList(Model.lstGroup, "Contact_Id", "Contact_Name"), "Select", new { @id = "ddlGroup", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.ContactGroupName, new { @id = "ddlGroupName" })
+                                    @Html.HiddenFor(m => m.ContactGroupEmail, new { @id = "ddlGroupEmail" })
+                                    <span class="field-validation-valid text-danger" id="spanGroup" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label>FIT Reservation</label>
+                                    @Html.DropDownListFor(m => m.ContactFitId, new SelectList(Model.lstFit, "Contact_Id", "Contact_Name"), "Select", new { @id = "ddlFit", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.ContactFitName, new { @id = "ddlFitName" })
+                                    @Html.HiddenFor(m => m.ContactFitEmail, new { @id = "ddlFitEmail" })
+                                    <span class="field-validation-valid text-danger" id="spanFit" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Emergency Contact</label>
+                                    @Html.DropDownListFor(m => m.ContactEmergencyId, new SelectList(Model.lstEmergency, "Contact_Id", "Contact_Name"), "Select", new { @id = "ddlEmergency", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.ContactEmergencyName, new { @id = "ddlEmergencyName" })
+                                    @Html.HiddenFor(m => m.ContactEmergencyEmail, new { @id = "ddlEmergencyEmail" })
+                                    <span class="field-validation-valid text-danger" id="spanEmergency" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Finance</label>
+                                    @Html.DropDownListFor(m => m.ContactFinanceId, new SelectList(Model.lstFinance, "Contact_Id", "Contact_Name"), "Select", new { @id = "ddlFinance", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.ContactFinanceName, new { @id = "ddlFinanceName" })
+                                    @Html.HiddenFor(m => m.ContactFinanceEmail, new { @id = "ddlFinanceEmail" })
+                                    <span class="field-validation-valid text-danger" id="spanFinance" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Complaints</label>
+                                    @Html.DropDownListFor(m => m.ContactComplaintId, new SelectList(Model.lstComplaint, "Contact_Id", "Contact_Name"), "Select", new { @id = "ddlComplaints", @class = "form-control leftalign" })
+                                    @Html.HiddenFor(m => m.ContactComplaintName, new { @id = "ddlComplaintName" })
+                                    @Html.HiddenFor(m => m.ContactComplaintEmail, new { @id = "ddlComplaintEmail" })
+                                    <span class="field-validation-valid text-danger" id="spanComplaints" data-valmsg-for="" data-valmsg-replace="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btnUpdate" id="btnUpdate">Update</button>
+                <button title="Close (Esc)" type="button" class="btn btn-secondary close-popup">Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        datepickerInitialize();
+
+        GetProductSRPDetail();
+        var isDefault = false;
+        if ($("#IsDefault").prop("checked") == true)
+            isDefault = true;
+        else
+            isDefault = false;
+
+        GetProductSalesAgents(isDefault);
+
+        //To show selected Sales market
+        var Mlist = $('#SalesMarketList option');
+        var Slist = @Html.Raw(Json.Serialize(Model.SelectedSalesMarket));
+
+        for (var i = 0; i < Mlist.length; i++) {
+            for (var j = 0; j < Slist.length; j++) {
+                if (Mlist[i].value == Slist[j].businessRegion_Id) {
+                    $(Mlist[i]).prop("selected", true);
+                }
+            }
+        }
+
+        //To show selected Operating market
+        var OpMlist = $('#OperatingMarketList option');
+         var OpSlist = @Html.Raw(Json.Serialize(Model.SelectedOperatingMarket));
+
+         for (var i = 0; i < OpMlist.length; i++) {
+             for (var j = 0; j < OpSlist.length; j++) {
+                 if (OpMlist[i].value == OpSlist[j].businessRegion_Id) {
+                    $(OpMlist[i]).prop("selected", true);
+                }
+            }
+         }
+
+         if ($("#IsDefault").prop("checked") == true) {
+
+             $("#collapseTwo :checkbox,#collapseTwo select ,#collapseThree :checkbox,#collapseThree select").prop('disabled', 'disabled');
+             $('#tblBranches button, input[type="button"]').prop('disabled', 'disabled');
+         }
+    })
+
+    $("#IsDefault").on('change', function () {
+
+        if ($(this).prop('checked') == true) {
+            $("#collapseTwo :checkbox,#collapseTwo select ,#collapseThree :checkbox,#collapseThree select").prop('disabled', 'disabled');
+            $('#tblBranches button, input[type="button"]').prop('disabled', 'disabled');
+        }
+        else {
+            $("#collapseTwo :checkbox,#collapseTwo select ,#collapseThree :checkbox,#collapseThree select").prop('disabled', false);
+            $('#tblBranches button, input[type="button"]').prop('disabled', false);
+        }
+    });
+
+
+    $("#chkOpsMkts").on('change', function () {
+        if ($(this).prop('checked') == true)
+            $("#OperatingMarketList > option").prop("selected", true);
+        else
+            $("#OperatingMarketList > option").prop("selected", false);
+    });
+
+    $("#chkSalesMkts").on('change', function () {
+        if ($(this).prop('checked') == true)
+            $("#SalesMarketList > option").prop("selected", true);
+        else
+            $("#SalesMarketList > option").prop("selected", false);
+    });
+
+    $("#btnUpdate").click(function () {
+
+        var IsValidFlag = true;
+
+        var Status = $("#ddlStatus").find("option:selected").val();
+        if (Status == '') {
+            $("#spanStatus").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var Currency = $("#ddlCurrency").find("option:selected").val();
+        if (Currency == '') {
+            $("#spanCurrency").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var ActiveFrom = $("#ActiveFrom").val();
+        if (ActiveFrom == '') {
+            $("#spanActiveFrom").text("*");
+            IsValidFlag = false;
+        }
+        else  
+            $(this).siblings("span").text("");
+        
+
+        var ActiveTo = $("#ActiveTo").val();
+        if (ActiveTo == '') {
+            $("#spanActiveTo").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        if (ActiveFrom != "" && ActiveTo != "") {
+            var from = ActiveFrom.split('/');
+            var to = ActiveTo.split('/');
+            if (Date.parse(from[2] + "/" + from[1] + "/" + from[0]) > Date.parse(to[2] + "/" + to[1] + "/" + to[0])) {
+                $("#spanActiveFrom").text("From Date should be less than To Date");
+                IsValidFlag = false;
+            }
+        }
+
+        var Sales = $("#ddlSales").find("option:selected").val();
+        if (Sales == '') {
+            $("#spanSales").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var Group = $("#ddlGroup").find("option:selected").val();
+        if (Group == '') {
+            $("#spanGroup").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var Fit = $("#ddlFit").find("option:selected").val();
+        if (Fit == '') {
+            $("#spanFit").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var Emergency = $("#ddlEmergency").find("option:selected").val();
+        if (Emergency == '') {
+            $("#spanEmergency").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var Finance = $("#ddlFinance").find("option:selected").val();
+        if (Finance == '') {
+            $("#spanFinance").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        var Complaints = $("#ddlComplaints").find("option:selected").val();
+        if (Complaints == '') {
+            $("#spanComplaints").text("*");
+            IsValidFlag = false;
+        }
+        else
+            $(this).siblings("span").text("");
+
+        if (!IsValidFlag)
+            return false;
+
+        $(".ajaxloader").show();
+
+        var Oplist = $('#OperatingMarketList option:selected');
+        var OpListLen = $(Oplist).length;
+        var Op = "&";
+        if (OpListLen > 0) {
+            for (var i = 0; i < OpListLen; i++) {
+                //var Id = $(Oplist[i]).val().split('|')[0];
+                var brId = $(Oplist[i]).val();//.split('|')[1];
+                var br = $(Oplist[i]).text();
+                //Op = Op + "selectedlstOperatingMarket[" + i + "].ProductSupplierOperatingMkt_Id=" + Id + "&";
+                Op = Op + "selectedlstOperatingMarket[" + i + "].BusinessRegion_Id=" + brId + "&";
+                Op = Op + "selectedlstOperatingMarket[" + i + "].BusinessRegion=" + br + "&";
+            }
+        }
+
+        var Slist = $('#SalesMarketList option:selected');
+        var SListLen = $(Slist).length;
+        if (SListLen > 0) {
+            for (var i = 0; i < SListLen; i++) {
+                //var Id = $(Slist[i]).val().split('|')[0];
+                var brId = $(Slist[i]).val();//.split('|');[1];
+                var br = $(Slist[i]).text();
+                //Op = Op + "selectedlstSalesMarket[" + i + "].ProductSupplierSalesMkt_Id=" + Id + "&";
+                Op = Op + "selectedlstSalesMarket[" + i + "].BusinessRegion_Id=" + brId + "&";
+                Op = Op + "selectedlstSalesMarket[" + i + "].BusinessRegion=" + br + "&";
+            }
+        }
+
+        var model = $("#frmManageProduct").serialize();
+        model = model + Op;
+
+        $.ajax({
+            type: "POST",
+            url: "/Supplier/SaveManageProduct",
+            data: model,
+            global: false,
+            success: function (response) {
+                if (response.status == "failure") {
+                    var successmsg = '<div class="alert alert-danger" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error! ' + response.responseText + '</strong></div>';
+                    $("#frmManageProduct #message").html(successmsg);
+                }
+                else {
+                    var successmsg = '<div class="alert alert-success" id="errmsg"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Success! ' + response.responseText + '</strong></div>';
+                    $("#frmManageProduct #message").html(successmsg);
+                }
+                $("#spanStatus").text("");
+                $("#spanCurrency").text("");
+                $("#spanActiveFrom").text("");
+                $("#spanActiveTo").text("");
+                $("#spanSales").text("");
+                $("#spanGroup").text("");
+                $("#spanFit").text("");
+                $("#spanEmergency").text("");
+                $("#spanFinance").text("");
+                $("#spanComplaints").text("");
+
+                if ($("#IsDefault").prop("checked") == true) {
+                    GetProductSalesAgents(true);
+                    //To mark all selected Sales market as false
+        var Mlist = $('#SalesMarketList option');
+        for (var i = 0; i < Mlist.length; i++) {
+                $(Mlist[i]).prop("selected", false);
+
+        }
+
+        //To mark all selected Operating market as false
+        var OpMlist = $('#OperatingMarketList option');
+         for (var i = 0; i < OpMlist.length; i++) {
+                    $(OpMlist[i]).prop("selected", false);
+
+         }
+                }
+
+                $(".ajaxloader").hide();
+            },
+            error: function () {
+                $(".ajaxloader").hide();
+            }
+        });
+    });
+
+    function GetProductSRPDetail() {
+        var CompanyId = $("#CompanyId").val();
+        $.ajax({
+            type: "GET",
+            url: "/Supplier/GetProductSRPDetail",
+            data: { CompanyId: CompanyId },
+			success: function (result) {
+                $("#ProductSRPDetail").html(result);
+				$('.view-more-room-types,.view-full-prod-info').css('display', 'none');
+				$('.supplier-panel').attr('style', 'display: none !important');
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function GetProductSalesAgents(isDefault) {
+        $(".ajaxloader").show();
+        var CompanyId = $("#CompanyId").val();
+        var ProductSupplierId = $("#ProductSupplierId").val();
+        $.ajax({
+            type: "GET",
+            url: "/Supplier/GetProductSalesAgents",
+            data: { CompanyId: CompanyId, ProductSupplierId: ProductSupplierId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            global: false,
+            success: function (response) {
+
+                $("#divBranches").html(response);
+                if (isDefault == true) {
+
+                    $('#tblBranches button, input[type="button"]').prop('disabled', 'disabled');
+                }
+            },
+            failure: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                $(".ajaxloader").hide();
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

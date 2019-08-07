@@ -1,0 +1,208 @@
+﻿@model Voyager.App.ViewModels.CommunicationTrailViewModel
+
+<br />
+<div class="popup-box pop-lg" id="modelcommunitrail">
+    <div class="popup-in">
+        <div class="radio-list-bar type02">
+            <h3>Communication Trail @*<input type="button" href="#modelupldfrmemailclient" id="btnUpload" class="btn btn-primary btn-sm" value="Upload Email from Client" />*@</h3>
+        </div>
+        <hr class="hrmargintop10">
+        <p class="fontsize17">
+            @Html.HiddenFor(a => a.ModuleType)
+            @if (!string.IsNullOrWhiteSpace(Model.DocumentStoreInfoGetRes?.QRFID))
+            {
+                <span>For QRF : @Model.DocumentStoreInfoGetRes.QRFID - @Model.DocumentStoreInfoGetRes.AgentTourName</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.DocumentStoreInfoGetRes?.BookingNumber))
+            {
+                <span>For Booking : @Model.DocumentStoreInfoGetRes.BookingNumber</span>
+            }
+        </p>
+        <div class="modal-body">
+            @if (Model.DocumentStoreInfoGetRes?.ResponseStatus?.Status.ToLower() == "success")
+            {
+                @if (Model.DocumentStoreInfoGetRes.DocumentStoreList != null && Model.DocumentStoreInfoGetRes.DocumentStoreList.Count > 0)
+                {
+                    <div class="custom-mob-tbl table-responsive valign-top-tbl top-gap-md" style="margin-top:0px !important;">
+                        <table class="table tblcommunitrail table-bordered tbl-theme-02 dataTables" id="tblmails">
+                            <thead>
+                                <tr>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.DocumentStoreInfoGetRes.DocumentStoreList.Count; i++)
+                                {
+                                    <tr>
+                                        <td><span>@Html.DisplayFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreList[i].From)</span></td>
+                                        <td><span>@Html.DisplayFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreList[i].To)</span></td>
+                                        <td>
+                                            @if (Model.DocumentStoreInfoGetRes.DocumentStoreList[i].SendStatus.ToLower() != "sent")
+                                            {
+                                                <span></span>
+                                            }
+                                            else
+                                            {
+                                                @Html.TextBoxFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreList[i].SendDate, "{0:MMM dd yyyy HH:mm}", new { @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                            }
+                                        </td>
+                                        <td class="text-capitalize">@Html.DisplayFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreList[i].Subject, new { @class = "form-control" })</td>
+                                        <td><button type="button" class="btn btn-primary btn-sm btnview" data-id="@Model.DocumentStoreInfoGetRes.DocumentStoreList[i].DocumentId">View</button></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">Email</h3>
+                            <hr>
+                            <div style="text-align:left;margin-top:3px;display:none;" class="alert alert-danger" id="divSuccessError">
+                                <a class="close" title="close">×</a>
+                                <strong id="stMsg"></strong> <label id="lblmsg"></label>
+                            </div>
+
+                            <div class="row" style="padding-top: 8px;" id="divEmailInfo">
+                                <div class="col-lg-8">
+                                    <div class="form-group sendhtmldiv sendhtml" id="divemailhtml">
+                                        @if (!string.IsNullOrWhiteSpace(Model.DocumentStoreInfoGetRes.DocumentStoreInfo.Body))
+                                        {
+                                            @Html.Raw(Model.DocumentStoreInfoGetRes.DocumentStoreInfo.Body)
+                                        }
+                                        else
+                                        {
+                                            <span>Details not available</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <table style="width:100%;" class="tblcommunitrail">
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:25%;"><b>From</b></td>
+                                                <td>
+                                                    <span id="spfrom">
+                                                        @Html.DisplayFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreInfo.From, new { @class = "form-control" })
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>To</b></td>
+                                                <td><span id="spto">@Html.DisplayFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreInfo.To, new { @class = "form-control" })</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Sent</b></td>
+                                                <td>
+                                                    @if (Model.DocumentStoreInfoGetRes.DocumentStoreInfo.SendStatus.ToLower() != "sent")
+                                                    {
+                                                        <span id="spmailsenton">Not Sent</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.TextBoxFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreInfo.SendDate, "{0:MMM dd yyyy HH:mm}", new { @id = "spmailsenton", @class = "form-control txt-span texttolabel", @ReadOnly = "true" })
+                                                    }
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Subject</b></td>
+                                                <td><span id="spsubject">@Html.DisplayFor(m => Model.DocumentStoreInfoGetRes.DocumentStoreInfo.Subject, new { @class = "form-control" })</span></td>
+                                            </tr>
+                                            <tr id="trAttachment">
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(Model.DocumentStoreInfoGetRes.DocumentStoreInfo.DocumentPath))
+                                                    {
+                                                        <b id="attachment">Attachment</b>
+                                                    }
+                                                    else
+                                                    {
+                                                        <b id="attachment" style="display:none;">Attachment</b>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    &nbsp; &nbsp;
+                                                    @if (!string.IsNullOrEmpty(Model.DocumentStoreInfoGetRes.DocumentStoreInfo.DocumentPath))
+                                                    {
+                                                        <a href="/Download?file=@Model.DocumentStoreInfoGetRes.DocumentStoreInfo.DocumentPath" id="aFilePath" class="btn btn-primary btn-sm">Proposal</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="#" id="aFilePath" class="btn btn-primary btn-sm" style="display:none;">Proposal</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align:left;margin-top:3px;" class="alert alert-danger" id="divSuccessError">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsg">Error!</strong> <label id="lblmsg">Documents not found.</label>
+                    </div>
+                }
+            }
+            else
+            {
+                @if (Model.DocumentStoreInfoGetRes?.DocumentStoreList?.Count == 0)
+                {
+                    <h4>There are no items to display.</h4>
+                }
+                else
+                {
+                    <div style="text-align:left;margin-top:3px;" class="alert alert-danger" id="divSuccessError">
+                        <a class="close" title="close">×</a>
+                        <strong id="stMsg">Error!</strong> <label id="lblmsg">@Model.DocumentStoreInfoGetRes?.ResponseStatus?.ErrorMessage</label>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <button title="Close (Esc)" type="button" class="mfp-close close-popup"></button>
+    <div class="btn-cont text-center" id="divCommunicationTrailClose">
+        <button title="Close (Esc)" type="button" class="btn btn-blue-outline btn-md close-popup">Close</button>
+    </div>
+</div>
+
+<!--Upload From Email Client Popup Start-->
+<div id="modelupldfrmemailclient-popup"></div>
+<!--Upload From Email Client Popup End-->
+
+<link href="~/css/communicationtrail.css" rel="stylesheet" />
+<script src="~/js/CommunicationTrail/communicationtrail.js"></script>
+
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.dataTables').DataTable({
+            "ordering": false,
+            "aLengthMenu": [5, 10, 15, 20],
+            "iDisplayLength": 5,
+            "searching": false,
+            "lengthChange": true,
+            "bAutoWidth": false, // Disable the auto width calculation
+            "aoColumns": [
+                { "sWidth": "30%" }, // 1st column width From
+                { "sWidth": "30%" }, // 2nd column width To
+                { "sWidth": "16%" }, // 3rd column width Date
+                { "sWidth": "31%" }, // 4th column width Type
+                { "sWidth": "8%" } // 5th column width View
+            ],
+            "oLanguage": {
+                sLengthMenu: "Show entries _MENU_",
+            },
+            "dom": "<'row'<'col-sm-3'l><'col-sm-3'f><'col-sm-6'p>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5 margin-top-bottom-20'i><'col-sm-7'p>>",
+        });
+    });
+</script>
+
+

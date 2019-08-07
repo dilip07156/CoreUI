@@ -1,0 +1,27 @@
+﻿@model Voyager.App.ViewModels.ProductsSRPViewModel
+
+<div>
+    <div class="ttl-sec tbl-style">
+        @{
+            @if (Model.PageName == "OpsChangeProduct")
+            {
+                <h4>Choose products from the list below</h4>
+            }
+            else
+            {
+                <h3>Choose products from the list below</h3>
+            }
+        }
+    </div>
+    @Html.HiddenFor(m => m.IsHotelDefSupplier, new { @id = "IsHotelDefSupplier" })
+    <!-- Filter Section :: Start -->
+    @Html.Partial("_ProductSearchFilters", Model.ProductSRPFilters, new ViewDataDictionary(this.Vi‌​ewData) { { "PageName", Model.PageName } })
+    <!-- Filter Section :: End -->
+    <!-- Product Info Section :: Start -->
+    <div id="ProductSearchResults"></div>
+    @*@Html.Partial("_ProductInfo", Model)*@
+    <!-- Product Info Section :: End -->
+</div>
+<script src="~/datatable/DataTables-1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="~/datatable/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/js/Product/ProductSRP.js"></script>

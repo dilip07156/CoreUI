@@ -1,0 +1,281 @@
+﻿@model Voyager.App.ViewModels.ItineraryViewModel
+
+<style>
+    .center {
+        text-align: center !important;
+    }
+</style>
+
+@using (Html.BeginForm("", "", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { @class = "main-content form form-theme-02", id = "frmActivityList" }))
+{
+
+    @if (TempData.Keys.Contains("success"))
+    {
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="successmsg">Success!</strong> @TempData["success"].ToString()
+        </div>
+    }
+    else if (TempData.Keys.Contains("error"))
+    {
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+            <strong id="errormsg">Error!</strong> @TempData["error"].ToString()
+        </div>
+    }
+
+    @Html.HiddenFor(Model => Model.MenuViewModel.QRFID, new { @id = "QRFId" })
+    @Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID" })
+
+    <div class="btn-cont-rgt" style="text-align:right">
+        <a class="btn btn-blue btn-md btnSaveActivityList">Save</a>
+    </div>
+
+    <div class="filter-wrap" id="filter">
+        <h6>Filters:</h6>
+        <ul class="filter-links">
+            <li>
+                @Html.DropDownListFor(m => m.Days, new SelectList(Model.DayList, "Attribute_Id", "AttributeName"), "Day", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Days, "", new { @class = "error" })
+            </li>
+            <li>
+                @Html.DropDownListFor(m => m.Services, new SelectList(Model.ServiceTypeList, "Prodtype", "Prodtype"), "Service Type", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Services, "", new { @class = "error" })
+            </li>
+        </ul>
+    </div>
+
+    <div class="clear"></div>
+
+    <div class="table-responsive filter-table custom-mob-tbl">
+        <div class="clear"></div>
+        <table class="table" id="tblItinerary">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th class="col-md-2">Time</th>
+                    <th>Duration (In Days)</th>
+                    <th>Pax Count</th>
+                    <th>Service Type</th>
+                    <th class="col-md-3">Services</th>
+                    <th class="col-md-3">Venue</th>
+                    <th>Rooms</th>
+                    <th class="col-md-2">Tour Managers</th>
+                    <th class="col-md-2">Remarks</th>
+                </tr>
+                <tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Itinerary.ItineraryDays.Count; i++)
+                {
+                    <tr class="tbl-sub-heading">
+                        <td class="day">@Model.Itinerary.ItineraryDays[i].Day</td>
+                        <td class="time"></td>
+                        <td class="duration"></td>
+                        <td class="no-of-pax"></td>
+                        <td class="service-type"></td>
+                        <td class="original-itinerary">
+                            @if (Model.Itinerary.ItineraryDays[i].ItineraryName.Contains("Arrive at") && Model.Itinerary.ItineraryDays[i].ItineraryName.Contains(","))
+                            {
+                                var Name = Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper();
+                                var firstName = Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper().Split(',').First();
+                                var str = Name.Replace(firstName + ',', "");
+                                @firstName <br /> @str
+                            }
+                            else
+                            {
+                                @Model.Itinerary.ItineraryDays[i].ItineraryName.ToUpper()
+                            }
+                        </td>
+                        <td class="venue"></td>
+                        <td class="rooms"></td>
+                        <td class="tourmanagers"></td>
+                        <td class="remarks"></td>
+                    </tr>
+                    @for (int j = 0; j < Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count; j++)
+                    {
+                        <tr class="light-pink-bg">
+                            @Html.HiddenFor(Model => Model.Itinerary.ItineraryID, new { @id = "ItineraryID", @class = "clsItineraryId" })
+                            @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDaysId, new { @id = "ItineraryDaysId", @class = "clsItineraryDaysId" })
+                            @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId, new { @id = "PositionId", @class = "clsPositionId" })
+                            @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted, new { @id = "IsDeleted", @class = "clsIsDeleted" })
+                            @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType, new { @id = "ProductType", @class = "clsProductType" })
+                            @Html.HiddenFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].Type, new { @id = "Type", @class = "clsType" })
+                            @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].IsDeleted.ToString().ToUpper() == "FALSE")
+                            {
+                                @if (j == 0)
+                                {
+                                    <td class="date" rowspan="@Model.Itinerary.ItineraryDays[i].ItineraryDescription.Count">@Convert.ToDateTime(@Model.Itinerary.ItineraryDays[i].Date).ToString("dd MMM yy")<br /> @Model.Itinerary.ItineraryDays[i].DayOfWeek</td>
+                                }
+                                @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime == null)
+                                {
+                                    <td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime</td>
+                                }
+                                else
+                                {
+                                    <td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].StartTime - @Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].EndTime</td>
+                                }
+                                <td class="center">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].Duration</td>
+                                <td class="center">@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].NumberOfPax</td>
+                                <td class="type">
+                                    @switch (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper())
+                                    {
+                                        case "HOTEL":<i class="fa fa-custom-hotel-blue"></i>
+                                            break;
+                                        case "MEAL": <i class="fa fa-custom-meals-blue"></i>
+                                            break;
+                                        case "ATTRACTIONS": <i class="fa fa-custom-activities-blue"></i>
+                                            break;
+                                        case "LDC":<i class="fa fa-custom-bus-dark-blue"></i>
+                                            break;
+                                        case "COACH":<i class="fa fa-custom-bus-dark-blue"></i>
+                                            break;
+                                        case "OVERNIGHT FERRY": <i class="fa fa-custom-cruise-blue"></i>
+                                            break;
+                                        case "TRAIN": <i class="fa fa-custom-rail-blue"></i>
+                                            break;
+                                        case "PRIVATE TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                            break;
+                                        case "SCHEDULED TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                            break;
+                                        case "FERRY TRANSFER": <i class="fa fa-custom-car-blue"></i>
+                                            break;
+                                        case "FERRY PASSENGER": <i class="fa fa-custom-car-blue"></i>
+                                            break;
+                                        case "DOMESTIC FLIGHT": <i class="fa fa-custom-flights-blue"></i>
+                                            break;
+                                        case "SIGHTSEEING - CITYTOUR": <i class="fa fa-custom-tour-entities-black"></i>
+                                            break;
+                                        case "GUIDE": <img src="~/resources/images/common/icons/local-guide.png" />
+                                            break;
+                                        case "ASSISTANT": <img src="~/resources/images/common/icons/fa-custom-tour-entities-black.png" />
+                                            break;
+                                        case "VISA": <img src="~/resources/images/common/icons/visa.png">
+                                            break;
+                                        case "INSURANCE": <img src="~/resources/images/common/icons/insurance.png">
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                </td>
+                                <td>@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName</td>
+                                <td>
+                                    @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName.Contains("Overnight in"))
+                                    {
+                                        <label>
+                                            @for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Hotel.Count; k++)
+                                            {
+                                                @Model.Itinerary.ItineraryDays[i].Hotel[k].HotelName<br />
+                                                @Model.Itinerary.ItineraryDays[i].Hotel[k].FullAddress<br />
+                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[k].Telephone))
+                                                {
+                                                    <span><b>Tel:</b></span><br />
+                                                    @Model.Itinerary.ItineraryDays[i].Hotel[k].Telephone<br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[k].Mail))
+                                                {
+                                                    <span><b>Email:</b></span><br />
+                                                    @Model.Itinerary.ItineraryDays[i].Hotel[k].Mail<br />
+                                                }
+                                            }
+                                        </label>
+                                    }
+                                    else if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductType.ToUpper() == "MEAL")
+                                    {
+                                        @for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Meal.Count; k++)
+                                        {
+                                            @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].PositionId == @Model.Itinerary.ItineraryDays[i].Meal[k].PositionId)
+                                            {
+                                                <label>                                                   
+                                                    @Model.Itinerary.ItineraryDays[i].Meal[k].FullAddress<br />
+                                                    @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Meal[k].Telephone))
+                                                    {
+                                                        <span><b>Tel:</b></span><br />
+                                                        @Model.Itinerary.ItineraryDays[i].Meal[k].Telephone<br />
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Meal[k].Mail))
+                                                    {
+                                                        <span><b>Email:</b></span><br />
+                                                        @Model.Itinerary.ItineraryDays[i].Meal[k].Mail<br />
+                                                    }
+                                                </label>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <label></label>
+                                    }
+                                </td>
+                                <td>
+                                    @if (@Model.Itinerary.ItineraryDays[i].ItineraryDescription[j].ProductName.Contains("Overnight in"))
+                                    {
+                                        <label>
+                                            @for (int k = 0; k < Model.Itinerary.ItineraryDays[i].Hotel.Count; k++)
+                                            {
+												@Model.Itinerary.ItineraryDays[i].Hotel[k].TotalNumberOfRooms<br /><br />												
+												@if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[k].Telephone))
+												{
+													<br /><br />
+												}
+												@if (!string.IsNullOrEmpty(Model.Itinerary.ItineraryDays[i].Hotel[k].Mail))
+												{
+													<br /><br />
+												}
+											}
+                                        </label>
+                                    }                                    
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].TLRemarks, new { @id = "TLRemarks", @class = "clsTLRemarks", @style = "width:100%" })
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(x => x.Itinerary.ItineraryDays[i].ItineraryDescription[j].OPSRemarks, new { @id = "OPSRemarks", @class = "clsOPSRemarks", @style = "width:100%" })
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //Dropdown related functionality
+        $("#Days").change(function () {
+            GetItineraryData();
+        });
+
+        $("#Services").change(function () {
+            GetItineraryData();
+        });
+
+        $('.btnSaveActivityList').click(function () {
+            if ($('#frmActivityList').valid()) {
+                var model = $('#frmActivityList').serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/AgentApproval/SaveActivityList",
+                    data: model,
+                    dataType: "html",
+                    success: function (response) {
+                        GetItineraryData();
+                    },
+                    error: function (response) {
+                        var errormsg = '<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a><strong>Error!</strong> ' + response.statusText + '</div>';
+                        $('#filter').before(errormsg);
+                    }
+                });
+            }
+            else {
+                alert('Please fill the mandatory fields.');
+            }
+        });
+    });
+
+</script>
